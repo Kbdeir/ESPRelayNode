@@ -108,14 +108,19 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }
     }*/
 
-//    for (int i=0; i<2; i++){
-//      rtemp = static_cast<Relay *>(mrelays[i]);
-//      if (rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) rly = rtemp;
-//    }
+    for (int i=0; i<MAX_RELAYS; i++){
+      rtemp = static_cast<Relay *>(mrelays[i]);
+      if (rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) {
+        rly = rtemp;
+        break;
+      }
+    }
 
-          rly = static_cast<Relay *>(mrelays[0]);
+          //rly = static_cast<Relay *>(mrelays[0]);
           Serial.print("\n**************************************\n");
+          if (rly) {
           Serial.print(rly->RelayConfParam->v_PUB_TOPIC1);
+          }
           Serial.print("\n**************************************");
 
 

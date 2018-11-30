@@ -30,6 +30,8 @@
 #define InputPin12 12
 #define InputPin14 14
 
+#define MAX_RELAYS 2
+
 const uint16_t MaxWifiTrials = 100;
 
 #define RETAINED true

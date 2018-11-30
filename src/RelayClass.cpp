@@ -277,7 +277,7 @@ boolean Relay::loadrelayparams(){
           rly = rtemp;
         }*/
 
-        for (int i=0; i<2; i++){
+        for (int i=0; i<MAX_RELAYS; i++){
           rtemp = static_cast<Relay *>(mrelays[i]);
           if (rtemp->getRelayPin() == pn) rly = rtemp;
         }
