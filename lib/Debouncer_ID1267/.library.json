@@ -1,0 +1,32 @@
+{
+    "name": "Debouncer", 
+    "keywords": [
+        "debounce", 
+        "bounce"
+    ], 
+    "description": "General purpose bounce protection library. Accepts any provided value and perform delay free bounce protection logic.", 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/apechinsky/arduino-libs.git"
+    }, 
+    "version": "0.1.0", 
+    "license": "Apache-2.0", 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "atmelavr"
+    ], 
+    "export": {
+        "include": "Debouncer"
+    }, 
+    "authors": [
+        {
+            "email": "anton@pechinsky.com", 
+            "url": "https://github.com/apechinsky", 
+            "maintainer": false, 
+            "name": "Anton Pechinsky"
+        }
+    ], 
+    "id": 1267
+}

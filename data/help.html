@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Page</title>
+<meta name="generator" content="WYSIWYG Web Builder 11 - http://www.wysiwygwebbuilder.com">
+<style>
+body
+{
+   background-color: #FFFFFF;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   line-height: 1.1875;
+   margin: 0;
+   padding: 0;
+}
+a
+{
+   color: #0000FF;
+   text-decoration: underline;
+}
+a:visited
+{
+   color: #800080;
+}
+a:active
+{
+   color: #FF0000;
+}
+a:hover
+{
+   color: #0000FF;
+   text-decoration: underline;
+}
+#Table1
+{
+   border: 0px transparent solid;
+   background-color: #3370B7;
+   background-image: none;
+   border-collapse: separate;
+   border-spacing: 1px;
+}
+#Table1 td
+{
+   padding: 0px 0px 0px 0px;
+}
+#Table1 td div
+{
+   white-space: nowrap;
+}
+#Table1 .cell0
+{
+   background-color: #CD5C5C;
+   background-image: none;
+   text-align: center;
+   vertical-align: middle;
+   height: 56px;
+}
+#Table1 .cell1
+{
+   background-color: transparent;
+   background-image: none;
+   text-align: left;
+   vertical-align: top;
+   height: 52px;
+}
+#Table1 .cell2
+{
+   background-color: #CD5C5C;
+   background-image: none;
+   text-align: center;
+   vertical-align: middle;
+   height: 59px;
+}
+#Table1 .cell3
+{
+   background-color: transparent;
+   background-image: none;
+   text-align: left;
+   vertical-align: middle;
+   height: 219px;
+}
+#Table1 .cell4
+{
+   background-color: #CD5C5C;
+   background-image: none;
+   text-align: center;
+   vertical-align: middle;
+   height: 55px;
+}
+#Table1 .cell5
+{
+   background-color: transparent;
+   background-image: none;
+   text-align: left;
+   vertical-align: top;
+   height: 402px;
+}
+#Table1 .cell6
+{
+   background-color: transparent;
+   background-image: none;
+   text-align: left;
+   vertical-align: top;
+   height: 95px;
+}
+</style>
+</head>
+<body>
+<table style="position:absolute;left:24px;top:12px;width:484px;height:946px;z-index:0;" id="Table1">
+<tr>
+<td class="cell0"><span style="color:#FFFFFF;font-family:Arial;font-size:13px;line-height:16px;"><strong>Node Configuration<br></strong></span></td>
+</tr>
+<tr>
+<td class="cell1"><span style="color:#FFFFFF;font-family:Arial;font-size:13px;line-height:16px;"> 1. Physical location tag: Node loaction e.g. Ceiling light at main bedroom.</span></td>
+</tr>
+<tr>
+<td class="cell2"><span style="color:#FFFFFF;font-family:Arial;font-size:13px;line-height:16px;"><strong>MQTT configuration</strong></span></td>
+</tr>
+<tr>
+<td class="cell3"><span style="color:#FFFFFF;font-family:Arial;font-size:13px;line-height:16px;">* Pic Interface: set to 1 if board is interface to KAYB 1<br>* MQTT publishing: select to enable MQTT protocol communication<br><br>* MQTT server address: IP address of MQTT broker<br>* MQTT Port: Port number of MQTT broker<br><br>*Default MQTT Publish Topic: the MQTT Topic to which this board will publish its updates and commands<br><br>*MQTT Subscribtion Topic MQTT topic to subscribe to.</span></td>
+</tr>
+<tr>
+<td class="cell4"><span style="color:#FFFFFF;font-family:Arial;font-size:13px;line-height:16px;"><strong>Switching configuration</strong></span></td>
+</tr>
+<tr>
+<td class="cell5"><span style="color:#FFFFFF;font-family:Arial;font-size:13px;line-height:16px;"> 1. Restore Coil Status on Restart : Tick to restore last coil status on restart<br><br>2.Time to Live (TTL) in seconds: Once turned ON, the relay will turn OFF automatically after this number of seconds. The board will publish a MQTT message on status change.<br><br>3.Time to Activate (TTA) in seconds: Delay in seconds before the relay is activated.<br><br>4. Maximum current allowed before coil shutdown: Maximum user defined current allowed through the relay. Above this threshold, the relay will shut itshelf down for 30 seconds. During this time the board is NOT responsive to Modbus or MQTT commands. Normal operation will be resumed after 30 seconds. The board will publish a MQTT message on status change.<br><br>5. Unit Max Current: maximum current the Power sensor can measure. should be 20 A or 30 A<br></span><span style="color:#000000;font-family:Arial;font-size:13px;line-height:16px;"><br></span></td>
+</tr>
+<tr>
+<td class="cell6"><span style="color:#000000;font-family:Arial;font-size:13px;line-height:16px;"> </span></td>
+</tr>
+</table>
+</body>
+</html>

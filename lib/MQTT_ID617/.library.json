@@ -1,0 +1,49 @@
+{
+    "description": "MQTT library for Arduino", 
+    "repository": {
+        "url": "https://github.com/256dpi/arduino-mqtt", 
+        "type": "git"
+    }, 
+    "platforms": [
+        "atmelavr", 
+        "atmelsam", 
+        "espressif32", 
+        "espressif8266", 
+        "intel_arc32", 
+        "microchippic32", 
+        "nordicnrf51", 
+        "nordicnrf52", 
+        "ststm32", 
+        "teensy", 
+        "timsp430"
+    ], 
+    "export": {
+        "exclude": [
+            "extras", 
+            "docs", 
+            "tests", 
+            "test", 
+            "*.doxyfile", 
+            "*.pdf"
+        ], 
+        "include": null
+    }, 
+    "authors": [
+        {
+            "maintainer": true, 
+            "name": "Joel Gaehwiler", 
+            "url": null, 
+            "email": "joel.gaehwiler@gmail.com"
+        }
+    ], 
+    "keywords": [
+        "communication"
+    ], 
+    "id": 617, 
+    "name": "MQTT", 
+    "frameworks": [
+        "arduino"
+    ], 
+    "version": "2.3.3", 
+    "homepage": null
+}

@@ -1,0 +1,2593 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NODE CONFIGURATION</title>
+<meta name="generator" content="WYSIWYG Web Builder 11 - http://www.wysiwygwebbuilder.com">
+<style>
+body
+{
+   background-color: #FFFFFF;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   line-height: 1.1875;
+   margin: 0;
+   padding: 0;
+}
+a
+{
+   color: #0000FF;
+   text-decoration: underline;
+}
+a:visited
+{
+   color: #800080;
+}
+a:active
+{
+   color: #FF0000;
+}
+a:hover
+{
+   color: #0000FF;
+   text-decoration: underline;
+}
+#wb_Form1
+{
+   background-color: #F5F5F5;
+   background-image: none;
+   border: 1px #3370B7 solid;
+}
+#Button1
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#wb_Text1 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text1 div
+{
+   text-align: right;
+}
+#Editbox1
+{
+   border: 1px #CCCCCC dotted;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox1:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text2 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text2 div
+{
+   text-align: right;
+}
+#Editbox2
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox2:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text20 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text20 div
+{
+   text-align: right;
+}
+#Editbox14
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox14:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text7 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text7 div
+{
+   text-align: right;
+}
+#wb_Text4 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text4 div
+{
+   text-align: right;
+}
+#wb_Text5 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text5 div
+{
+   text-align: right;
+}
+#wb_Text6 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text6 div
+{
+   text-align: right;
+}
+#wb_Text3 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text3 div
+{
+   text-align: left;
+}
+#Editbox4
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox4:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox5
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox5:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text9 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text9 div
+{
+   text-align: right;
+}
+#Editbox6
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox6:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text10 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text10 div
+{
+   text-align: right;
+}
+#wb_Text11 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text11 div
+{
+   text-align: right;
+}
+#wb_Text17 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text17 div
+{
+   text-align: left;
+}
+#Editbox12
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox12:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox13
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox13:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text18 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text18 div
+{
+   text-align: left;
+}
+#wb_Text19 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text19 div
+{
+   text-align: right;
+}
+#wb_Text12 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text12 div
+{
+   text-align: right;
+}
+#wb_Text16 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text16 div
+{
+   text-align: right;
+}
+#ACSmultiple
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   box-sizing: border-box;
+}
+#ACSmultiple:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text13 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text13 div
+{
+   text-align: right;
+}
+#Editbox9
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox9:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text14 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text14 div
+{
+   text-align: right;
+}
+#Editbox10
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox10:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text15 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text15 div
+{
+   text-align: right;
+}
+#Editbox11
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox11:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Line2
+{
+   color: #A0A0A0;
+   background-color: #A0A0A0;
+   border-width: 0;
+   margin: 0;
+   padding: 0;
+}
+#Line3
+{
+   color: #A0A0A0;
+   background-color: #A0A0A0;
+   border-width: 0;
+   margin: 0;
+   padding: 0;
+}
+#wb_Text8 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text8 div
+{
+   text-align: left;
+}
+#wb_Text21 
+{
+   background-color: #3370B7;
+   background-image: none;
+   border: 1px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: center;
+}
+#wb_Text21 div
+{
+   text-align: center;
+   white-space: nowrap;
+}
+#Button2
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#Editbox3
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox3:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox15
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox15:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text22 
+{
+   background-color: #3370B7;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: center;
+}
+#wb_Text22 div
+{
+   text-align: center;
+   white-space: nowrap;
+}
+#Button3
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#Editbox7
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox7:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox8
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox8:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text23 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text23 div
+{
+   text-align: right;
+}
+#wb_Text24 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text24 div
+{
+   text-align: right;
+}
+#wb_Text25 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text25 div
+{
+   text-align: right;
+}
+#Button4
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#wb_Form2
+{
+   background-color: #FFFFA0;
+   background-image: none;
+   border: 1px #CCCCCC solid;
+}
+#FileUpload1
+{
+   border: 1px #A9A9A9 solid;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family:Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#Button5
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#wb_Text26 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text26 div
+{
+   text-align: left;
+}
+#wb_Text27 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text27 div
+{
+   text-align: right;
+}
+#wb_Text28 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text28 div
+{
+   text-align: right;
+}
+#Editbox16
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox16:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox17
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox17:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#ACS_Sensor_Model
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #DCDCDC;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#ACS_Sensor_Model:focus
+{
+   border-color: #696969;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
+   outline: 0;
+}
+#wb_Text30 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text30 div
+{
+   text-align: right;
+}
+#wb_Text31 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text31 div
+{
+   text-align: right;
+}
+#Editbox19
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox19:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Form3
+{
+   background-color: #FFFFA0;
+   background-image: none;
+   border: 1px #CCCCCC solid;
+}
+#wb_Text32 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text32 div
+{
+   text-align: left;
+}
+#FileUpload2
+{
+   border: 1px #A9A9A9 solid;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family:Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#Button6
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#wb_Text33 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text33 div
+{
+   text-align: right;
+}
+#Editbox20
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox20:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox21
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox21:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text34 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text34 div
+{
+   text-align: right;
+}
+#Label1
+{
+   border: 0px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: transparent;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 16px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox18
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox18:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox22
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox22:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text29 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text29 div
+{
+   text-align: right;
+}
+#wb_Text35 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text35 div
+{
+   text-align: right;
+}
+#Line4
+{
+   color: #A0A0A0;
+   background-color: #A0A0A0;
+   border-width: 0;
+   margin: 0;
+   padding: 0;
+}
+#RelayEditBox
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#RelayEditBox:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Form4
+{
+   background-color: #FFFFFF;
+   background-image: none;
+   border: 1px #CCCCCC solid;
+}
+#RelayNb2
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#RelayNb2:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Button7
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
+#wb_Text37 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text37 div
+{
+   text-align: right;
+}
+#Editbox25
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox25:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text38 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text38 div
+{
+   text-align: right;
+}
+#Editbox26
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox26:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text40 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text40 div
+{
+   text-align: right;
+}
+#wb_Text41 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text41 div
+{
+   text-align: right;
+}
+#Editbox27
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox27:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox28
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox28:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text42 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text42 div
+{
+   text-align: right;
+}
+#Editbox29
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox29:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text43 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text43 div
+{
+   text-align: right;
+}
+#Editbox30
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox30:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox31
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox31:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text44 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text44 div
+{
+   text-align: right;
+}
+#Editbox23
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox23:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text39 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text39 div
+{
+   text-align: right;
+}
+#Combobox1
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   box-sizing: border-box;
+}
+#Combobox1:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text45 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text45 div
+{
+   text-align: right;
+}
+#Editbox24
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox24:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text46 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text46 div
+{
+   text-align: right;
+}
+#Editbox32
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox32:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text47 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text47 div
+{
+   text-align: right;
+}
+#wb_Text48 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text48 div
+{
+   text-align: right;
+}
+#wb_Text49 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text49 div
+{
+   text-align: right;
+}
+#ACS_Sensor_Model_2
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #DCDCDC;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#ACS_Sensor_Model_2:focus
+{
+   border-color: #696969;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
+   outline: 0;
+}
+#wb_Text36 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text36 div
+{
+   text-align: right;
+}
+#wb_Text50 
+{
+   background-color: #3370B7;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: center;
+}
+#wb_Text50 div
+{
+   text-align: center;
+   white-space: nowrap;
+}
+#wb_Text51 
+{
+   background-color: #3370B7;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: center;
+}
+#wb_Text51 div
+{
+   text-align: center;
+   white-space: nowrap;
+}
+</style>
+    
+</head>
+<body>
+<div id="wb_Form1" style="position:absolute;left:3px;top:100px;width:529px;height:1053px;z-index:104;">
+<form name="Form1" method="get" action="Apply.html" enctype="text/plain" id="Form1" onsubmit="return ValidateForm1(this)">
+<div id="wb_Text1" style="position:absolute;left:18px;top:64px;width:55px;height:16px;text-align:right;z-index:0;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">SSID</span></div>
+<input type="text" id="Editbox1" style="position:absolute;left:77px;top:58px;width:122px;height:18px;line-height:18px;z-index:1;" name="ssid" value="%ssid%">
+<div id="wb_Text7" style="position:absolute;left:53px;top:100px;width:93px;height:16px;text-align:right;z-index:2;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Time Server IP</span></div>
+<div id="wb_Text2" style="position:absolute;left:233px;top:64px;width:68px;height:16px;text-align:right;z-index:3;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Password</span></div>
+<div id="wb_Text4" style="position:absolute;left:318px;top:100px;width:70px;height:16px;text-align:right;z-index:4;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Time Zone</span></div>
+<input type="text" id="Editbox2" style="position:absolute;left:318px;top:58px;width:129px;height:18px;line-height:18px;z-index:5;" name="pass" value="%pass%">
+<input type="text" id="Editbox14" style="position:absolute;left:184px;top:24px;width:263px;height:18px;line-height:18px;z-index:6;" name="PhyLoc" value="%PhyLoc%">
+<div id="wb_Text5" style="position:absolute;left:96px;top:184px;width:77px;height:16px;text-align:right;z-index:7;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Pic Interface</span></div>
+<div id="wb_Text6" style="position:absolute;left:69px;top:219px;width:107px;height:16px;text-align:right;z-index:8;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Active</span></div>
+<div id="wb_Text3" style="position:absolute;left:45px;top:244px;width:131px;height:16px;z-index:9;text-align:left;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Server Address</span></div>
+<input type="text" id="Editbox4" style="position:absolute;left:189px;top:239px;width:149px;height:18px;line-height:18px;z-index:10;" name="MQTT_BROKER" value="%MQTT_BROKER%">
+<input type="number" id="Editbox5" style="position:absolute;left:424px;top:239px;width:50px;height:18px;line-height:18px;z-index:11;" name="MQTT_B_PRT" value="%MQTT_B_PRT%">
+<input type="text" id="Editbox6" style="position:absolute;left:189px;top:279px;width:291px;height:18px;line-height:18px;z-index:12;" name="PUB_TOPIC1" value="%PUB_TOPIC1%">
+<select name="ACSmultiple" size="1" id="ACSmultiple" onchange="myFunction(this);return false;" style="position:absolute;left:254px;top:819px;width:89px;height:28px;z-index:13;">
+<option value="5">5 Amps</option>
+<option value="20">20 Amps</option>
+<option selected value="30">30 Amps</option>
+</select>
+<div id="wb_Text12" style="position:absolute;left:26px;top:691px;width:212px;height:16px;text-align:right;z-index:14;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Restore Coil Status on Restart</span></div>
+<div id="wb_Text16" style="position:absolute;left:26px;top:831px;width:211px;height:16px;text-align:right;z-index:15;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Select ACS Sensor Model</span></div>
+<input type="number" id="Editbox9" style="position:absolute;left:258px;top:715px;width:79px;height:18px;line-height:18px;z-index:16;" name="ttl" value="%ttl%">
+<input type="number" id="Editbox10" style="position:absolute;left:258px;top:751px;width:79px;height:18px;line-height:18px;z-index:17;" name="tta" value="%tta%">
+<input type="number" id="Editbox11" style="position:absolute;left:254px;top:783px;width:79px;height:18px;line-height:18px;z-index:18;" name="Max_Current" value="%Max_Current%" maxlength="2">
+<div id="wb_Text14" style="position:absolute;left:26px;top:759px;width:211px;height:16px;text-align:right;z-index:19;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Time to Activate (TTA) in seconds</span></div>
+<div id="wb_Text15" style="position:absolute;left:12px;top:782px;width:211px;height:32px;text-align:right;z-index:20;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Maximum current allowed before coild shutdown</span></div>
+<div id="wb_Text8" style="position:absolute;left:384px;top:244px;width:37px;height:16px;z-index:21;text-align:left;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Port</span></div>
+<div id="wb_Text13" style="position:absolute;left:62px;top:723px;width:176px;height:16px;text-align:right;z-index:22;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Time to Live (TTL) in seconds</span></div>
+<input type="submit" id="Button1" name="Submit" value="save" style="position:absolute;left:75px;top:999px;width:96px;height:25px;z-index:23;">
+<div id="wb_Text10" style="position:absolute;left:36px;top:519px;width:140px;height:16px;text-align:right;z-index:24;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Last Will Topic</span></div>
+<input type="text" id="Editbox3" style="position:absolute;left:157px;top:94px;width:131px;height:18px;line-height:18px;z-index:25;" name="timeserver" value="%timeserver%">
+<input type="checkbox" id="Checkbox1" name="PIC_Active" value="%PIC_Active%" style="position:absolute;left:184px;top:184px;z-index:26;">
+<input type="checkbox" id="Checkbox2" name="MQTT_Active" value="%MQTT_Active%" style="position:absolute;left:184px;top:217px;z-index:27;">
+<input type="checkbox" id="Checkbox3" name="myppp" value="%myppp%" style="position:absolute;left:262px;top:691px;z-index:28;">
+<input type="number" id="Editbox15" style="position:absolute;left:392px;top:94px;width:55px;height:18px;line-height:18px;z-index:29;" name="ntptz" value="%ntptz%">
+<input type="submit" id="Button3" onclick="window.location.href='restart.html';return false;" name="restart" value="restart" style="position:absolute;left:235px;top:999px;width:96px;height:25px;z-index:30;">
+<div id="wb_Text20" style="position:absolute;left:34px;top:29px;width:140px;height:16px;text-align:right;z-index:31;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Physical location tag</span></div>
+<input type="text" id="Editbox7" style="position:absolute;left:189px;top:514px;width:291px;height:18px;line-height:18px;z-index:32;" name="LWILL_TOPIC" value="%LWILL_TOPIC%">
+<input type="text" id="Editbox8" style="position:absolute;left:190px;top:559px;width:291px;height:18px;line-height:18px;z-index:33;" name="SUB_TOPIC1" value="%SUB_TOPIC1%">
+<hr id="Line2" style="position:absolute;left:4px;top:169px;width:504px;height:1px;z-index:34;">
+<input type="submit" id="Button2" onclick="window.close();return false;" name="cancelbtn" value="cancel" style="position:absolute;left:390px;top:999px;width:96px;height:25px;z-index:35;">
+<div id="wb_Text23" style="position:absolute;left:338px;top:691px;width:161px;height:16px;text-align:right;z-index:36;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Copy Input Status to Coil</span></div>
+<div id="wb_Text24" style="position:absolute;left:390px;top:715px;width:111px;height:16px;text-align:right;z-index:37;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Toggle mode</span></div>
+<div id="wb_Text25" style="position:absolute;left:386px;top:743px;width:115px;height:16px;text-align:right;z-index:38;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Measure Current</span></div>
+<div id="wb_Text17" style="position:absolute;left:55px;top:869px;width:214px;height:32px;z-index:39;text-align:left;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Server Update: Firmware update server address</span></div>
+<input type="text" id="Editbox12" style="position:absolute;left:270px;top:869px;width:127px;height:18px;line-height:18px;z-index:40;" name="FRM_IP" value="%FRM_IP%">
+<div id="wb_Text18" style="position:absolute;left:205px;top:909px;width:37px;height:16px;z-index:41;text-align:left;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Port</span></div>
+<input type="number" id="Editbox13" style="position:absolute;left:270px;top:899px;width:54px;height:18px;line-height:18px;z-index:42;" name="FRM_PRT" value="%FRM_PRT%">
+<div id="wb_Text19" style="position:absolute;left:115px;top:954px;width:89px;height:16px;text-align:right;z-index:43;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Update now?</span></div>
+<input type="checkbox" id="Checkbox4" name="Update_now" value="%Update_now%" style="position:absolute;left:215px;top:949px;z-index:44;">
+<input type="submit" id="Button4" onclick="window.location.href='./firmware.html';return false;" name="firmware" value="update firmware from server" style="position:absolute;left:260px;top:944px;width:204px;height:25px;z-index:45;">
+<input type="text" id="Editbox16" style="position:absolute;left:189px;top:314px;width:291px;height:18px;line-height:18px;z-index:46;" name="STATE_PUB_TOPIC" value="%STATE_PUB_TOPIC%">
+<input type="text" id="Editbox17" style="position:absolute;left:189px;top:359px;width:291px;height:18px;line-height:18px;z-index:47;" name="ttl_PUB_TOPIC" value="%TTL_PUB_TOPIC%">
+<input type="text" id="ACS_Sensor_Model" style="position:absolute;left:360px;top:819px;width:44px;height:18px;line-height:18px;z-index:48;" name="ACS_Sensor_Model" value="%ACS_Sensor_Model%" readonly autocomplete="off" title="AAA" type = "hidden">
+<div id="wb_Text30" style="position:absolute;left:44px;top:134px;width:413px;height:16px;text-align:right;z-index:49;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
+<input type="text" id="Editbox19" style="position:absolute;left:189px;top:399px;width:291px;height:18px;line-height:18px;z-index:50;" name="CURR_TTL_PUB_TOPIC" value="%CURR_TTL_PUB_TOPIC%">
+<hr id="Line3" style="position:absolute;left:9px;top:857px;width:503px;height:4px;z-index:51;">
+<div id="wb_Text11" style="position:absolute;left:1px;top:564px;width:175px;height:16px;text-align:right;z-index:52;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Subscribtion Topic</span></div>
+<input type="text" id="Editbox20" style="position:absolute;left:189px;top:439px;width:291px;height:18px;line-height:18px;z-index:53;" name="i_ttl_PUB_TOPIC" value="%i_ttl_PUB_TOPIC%">
+<input type="text" id="Editbox21" style="position:absolute;left:189px;top:474px;width:291px;height:18px;line-height:18px;z-index:54;" name="ACS_AMPS" value="%ACS_AMPS%">
+<div id="wb_Text34" style="position:absolute;left:11px;top:484px;width:165px;height:16px;text-align:right;z-index:55;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Amps Sensor Publish Topic</span></div>
+<input type="text" id="Editbox18" style="position:absolute;left:190px;top:599px;width:291px;height:18px;line-height:18px;z-index:56;" name="InputPin12_STATE_PUB_TOPIC" value="%InputPin12_STATE_PUB_TOPIC%">
+<input type="text" id="Editbox22" style="position:absolute;left:190px;top:639px;width:291px;height:18px;line-height:18px;z-index:57;" name="InputPin14_STATE_PUB_TOPIC" value="%InputPin14_STATE_PUB_TOPIC%">
+<div id="wb_Text29" style="position:absolute;left:1px;top:609px;width:175px;height:16px;text-align:right;z-index:58;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Input 1&nbsp; publish topic</span></div>
+<div id="wb_Text35" style="position:absolute;left:1px;top:649px;width:175px;height:16px;text-align:right;z-index:59;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Input 2&nbsp; publish topic</span></div>
+<hr id="Line4" style="position:absolute;left:11px;top:679px;width:503px;height:4px;z-index:60;">
+<div id="wb_Text28" style="position:absolute;left:18px;top:364px;width:158px;height:16px;text-align:right;z-index:61;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">TTL Publish Topic</span></div>
+<div id="wb_Text31" style="position:absolute;left:25px;top:409px;width:151px;height:32px;text-align:right;z-index:62;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Current TTL Publish Topic</span></div>
+<div id="wb_Text33" style="position:absolute;left:9px;top:444px;width:167px;height:16px;text-align:right;z-index:63;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Stored TTL Update Topic</span></div>
+<input type="text" id="RelayEditBox" style="position:absolute;left:451px;top:178px;width:23px;visibility:hidden;height:18px;line-height:18px;z-index:64;" name="RelayNB" value="1">
+<input type="checkbox" id="Checkbox5" name="Copy_IO" value="%Copy_IO%" style="position:absolute;left:506px;top:691px;z-index:65;">
+<input type="checkbox" id="Checkbox6" name="GPIO12_TOG" value="%GPIO12_TOG%" style="position:absolute;left:506px;top:715px;z-index:66;">
+<input type="checkbox" id="Checkbox7" name="ACS_Active" value="%ACS_Active%" style="position:absolute;left:506px;top:743px;z-index:67;">
+<div id="wb_Text51" style="position:absolute;left:342px;top:184px;width:120px;height:25px;text-align:center;z-index:68;">
+<span style="color:#FFFFFF;font-family:Arial;font-size:17px;line-height:19px;">Relay 1</span></div>
+</form>
+</div>
+<div id="wb_Text9" style="position:absolute;left:7px;top:385px;width:175px;height:16px;text-align:right;z-index:105;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Coil Value Publish Topic</span></div>
+<div id="wb_Text21" style="position:absolute;left:5px;top:22px;width:529px;height:82px;text-align:center;z-index:106;">
+<span style="color:#DCDCDC;font-family:Arial;font-size:24px;letter-spacing:2.07px;line-height:41px;">NODE CONFIGURATION</span><span style="color:#FFFFFF;font-family:Arial;font-size:24px;letter-spacing:4.07px;line-height:41px;"><br></span></div>
+<div id="wb_Text22" style="position:absolute;left:20px;top:60px;width:514px;height:25px;text-align:center;z-index:107;">
+<span style="color:#FFFFFF;font-family:Arial;font-size:17px;line-height:19px;">Node ID: %NODEID% - MAC : %MACADDR%</span></div>
+<div id="wb_Form2" style="position:absolute;left:18px;top:1155px;width:529px;height:128px;z-index:108;">
+<form name="Form2" method="post" action="/update" enctype="multipart/form-data" id="Form2">
+<div id="wb_Text26" style="position:absolute;left:12px;top:24px;width:336px;height:16px;z-index:69;text-align:left;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">2. Upload firmware: Select firmware file to upload</span></div>
+<input type="file" id="FileUpload1" style="position:absolute;left:38px;top:49px;width:307px;height:27px;line-height:27px;z-index:70;" name="update">
+<input type="submit" id="Button5" name="firmwareload" value="Update" style="position:absolute;left:367px;top:49px;width:126px;height:25px;z-index:71;">
+<label for="" id="Label1" onclick="window.location.href='edit';return false;" style="position:absolute;left:11px;top:89px;width:149px;height:20px;line-height:20px;z-index:72;">Start file browser</label>
+</form>
+</div>
+<div id="wb_Text27" style="position:absolute;left:7px;top:420px;width:175px;height:16px;text-align:right;z-index:109;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Coils State Publish Topic</span></div>
+<div id="wb_Form3" style="position:absolute;visibility:hidden;left:562px;top:965px;width:482px;height:158px;z-index:110;">
+<form name="Form2" method="post" action="/upload" enctype="multipart/form-data" id="Form3">
+<div id="wb_Text32" style="position:absolute;left:12px;top:24px;width:336px;height:16px;z-index:73;text-align:left;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Upload file:</span></div>
+<input type="file" id="FileUpload2" style="position:absolute;left:26px;top:49px;width:307px;height:27px;line-height:27px;z-index:74;" name="update">
+<input type="submit" id="Button6" name="UploadHTML" value="Upload" style="position:absolute;left:347px;top:51px;width:126px;height:25px;z-index:75;">
+</form>
+</div>
+<div id="wb_Form4" style="position:absolute;left:559px;top:271px;width:509px;height:591px;z-index:111;">
+<form name="Relay2Conf" method="get" action="Apply.html" enctype="text/plain" id="Form4" onsubmit="return ValidateRelay2Conf(this)">
+<input type="text" id="RelayNb2" style="position:absolute;left:436px;top:9px;width:20px;visibility:hidden;height:18px;line-height:18px;z-index:76;" name="RelayNB" value="2">
+<input type="submit" id="Button7" name="Submit" value="save" style="position:absolute;left:39px;top:546px;width:96px;height:25px;z-index:77;">
+<div id="wb_Text38" style="position:absolute;left:28px;top:301px;width:140px;height:16px;text-align:right;z-index:78;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Last Will Topic</span></div>
+<div id="wb_Text42" style="position:absolute;left:17px;top:180px;width:151px;height:32px;text-align:right;z-index:79;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Current TTL Publish Topic</span></div>
+<div id="wb_Text44" style="position:absolute;left:3px;top:264px;width:165px;height:16px;text-align:right;z-index:80;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Amps Sensor Publish Topic</span></div>
+<input type="text" id="Editbox25" style="position:absolute;left:180px;top:61px;width:276px;height:18px;line-height:18px;z-index:81;" name="PUB_TOPIC1_2" value="%PUB_TOPIC1_2%">
+<input type="text" id="Editbox27" style="position:absolute;left:180px;top:97px;width:276px;height:18px;line-height:18px;z-index:82;" name="STATE_PUB_TOPIC_2" value="%STATE_PUB_TOPIC_2%">
+<input type="text" id="Editbox28" style="position:absolute;left:180px;top:136px;width:276px;height:18px;line-height:18px;z-index:83;" name="ttl_PUB_TOPIC_2" value="%TTL_PUB_TOPIC_2%">
+<input type="text" id="Editbox29" style="position:absolute;left:178px;top:176px;width:276px;height:18px;line-height:18px;z-index:84;" name="CURR_TTL_PUB_TOPIC_2" value="%CURR_TTL_PUB_TOPIC_2%">
+<input type="text" id="Editbox30" style="position:absolute;left:178px;top:216px;width:276px;height:18px;line-height:18px;z-index:85;" name="i_ttl_PUB_TOPIC_2" value="%i_ttl_PUB_TOPIC_2%">
+<input type="text" id="Editbox31" style="position:absolute;left:180px;top:257px;width:276px;height:18px;line-height:18px;z-index:86;" name="ACS_AMPS_2" value="%ACS_AMPS_2%">
+<input type="text" id="Editbox26" style="position:absolute;left:180px;top:297px;width:276px;height:18px;line-height:18px;z-index:87;" name="LWILL_TOPIC_2" value="%LWILL_TOPIC_2%">
+<input type="number" id="Editbox23" style="position:absolute;left:235px;top:416px;width:79px;height:18px;line-height:18px;z-index:88;" name="tta_2" value="%tta_2%">
+<div id="wb_Text39" style="position:absolute;left:3px;top:496px;width:211px;height:16px;text-align:right;z-index:89;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Select ACS Sensor Model</span></div>
+<select name="ACSmultiple_2" size="1" id="Combobox1" onchange="myFunction2(this);return false;" style="position:absolute;left:235px;top:484px;width:89px;height:28px;z-index:90;">
+<option value="5">5 Amps</option>
+<option value="20">20 Amps</option>
+<option selected value="30">30 Amps</option>
+</select>
+<div id="wb_Text45" style="position:absolute;left:39px;top:388px;width:176px;height:16px;text-align:right;z-index:91;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Time to Live (TTL) in seconds</span></div>
+<input type="number" id="Editbox24" style="position:absolute;left:235px;top:380px;width:79px;height:18px;line-height:18px;z-index:92;" name="ttl_2" value="%tt_2l%">
+<div id="wb_Text46" style="position:absolute;left:7px;top:424px;width:211px;height:16px;text-align:right;z-index:93;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Time to Activate (TTA) in seconds</span></div>
+<input type="number" id="Editbox32" style="position:absolute;left:235px;top:448px;width:79px;height:18px;line-height:18px;z-index:94;" name="Max_Current_2" value="%Max_Current_2%" maxlength="2">
+<input type="text" id="ACS_Sensor_Model_2" style="position:absolute;left:336px;top:484px;width:44px;height:18px;line-height:18px;z-index:95;" name="ACS_Sensor_Model_2" value="%ACS_Sensor_Model_2%" readonly autocomplete="off" title="AAA" type = "hidden">
+<div id="wb_Text47" style="position:absolute;left:319px;top:356px;width:161px;height:16px;text-align:right;z-index:96;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Copy Input Status to Coil</span></div>
+<div id="wb_Text48" style="position:absolute;left:367px;top:380px;width:111px;height:16px;text-align:right;z-index:97;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Toggle mode</span></div>
+<div id="wb_Text49" style="position:absolute;left:363px;top:408px;width:115px;height:16px;text-align:right;z-index:98;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Measure Current</span></div>
+<input type="checkbox" id="Checkbox9" name="Copy_IO_2" value="%Copy_IO_2%" style="position:absolute;left:483px;top:356px;z-index:99;">
+<input type="checkbox" id="Checkbox10" name="GPIO12_TOG_2" value="%GPIO12_TOG_2%" style="position:absolute;left:483px;top:380px;z-index:100;">
+<input type="checkbox" id="Checkbox11" name="ACS_Active_2" value="%ACS_Active_2%" style="position:absolute;left:483px;top:408px;z-index:101;">
+<div id="wb_Text36" style="position:absolute;left:7px;top:446px;width:211px;height:32px;text-align:right;z-index:102;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Maximum current allowed before coild shutdown</span></div>
+<div id="wb_Text50" style="position:absolute;left:28px;top:13px;width:120px;height:25px;text-align:center;z-index:103;">
+<span style="color:#FFFFFF;font-family:Arial;font-size:17px;line-height:19px;">Relay 2</span></div>
+</form>
+</div>
+<div id="wb_Text37" style="position:absolute;left:551px;top:336px;width:175px;height:16px;text-align:right;z-index:112;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Coil Value Publish Topic</span></div>
+<div id="wb_Text40" style="position:absolute;left:551px;top:376px;width:175px;height:16px;text-align:right;z-index:113;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Coils State Publish Topic</span></div>
+<div id="wb_Text41" style="position:absolute;left:568px;top:412px;width:158px;height:16px;text-align:right;z-index:114;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">TTL Publish Topic</span></div>
+<div id="wb_Text43" style="position:absolute;left:559px;top:496px;width:167px;height:16px;text-align:right;z-index:115;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Stored TTL Update Topic</span></div>
+<script>
+function ValidateForm1(theForm)
+{
+   var regexp;
+   if (theForm.Editbox1.value == "")
+   {
+      alert("SSID required");
+      theForm.Editbox1.focus();
+      return false;
+   }
+   if (theForm.Editbox2.value == "")
+   {
+      alert("password min 8 chars - max 50");
+      theForm.Editbox2.focus();
+      return false;
+   }
+   if (theForm.Editbox2.value.length < 8)
+   {
+      alert("password min 8 chars - max 50");
+      theForm.Editbox2.focus();
+      return false;
+   }
+   if (theForm.Editbox2.value.length > 50)
+   {
+      alert("password min 8 chars - max 50");
+      theForm.Editbox2.focus();
+      return false;
+   }
+   if (theForm.Editbox14.value == "")
+   {
+      alert("Physical_Location");
+      theForm.Editbox14.focus();
+      return false;
+   }
+   if (theForm.Editbox14.value.length < 5)
+   {
+      alert("Physical_Location");
+      theForm.Editbox14.focus();
+      return false;
+   }
+   if (theForm.Editbox14.value.length > 100)
+   {
+      alert("Physical_Location");
+      theForm.Editbox14.focus();
+      return false;
+   }
+   if (theForm.Editbox4.value == "")
+   {
+      alert("MQTT_BROKER required");
+      theForm.Editbox4.focus();
+      return false;
+   }
+   if (theForm.Editbox4.value.length < 5)
+   {
+      alert("MQTT_BROKER required");
+      theForm.Editbox4.focus();
+      return false;
+   }
+   if (theForm.Editbox4.value.length > 100)
+   {
+      alert("MQTT_BROKER required");
+      theForm.Editbox4.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox5.value))
+   {
+      alert("Please enter only digit characters in the \"MQTT_B_PRT\" field.");
+      theForm.Editbox5.focus();
+      return false;
+   }
+   if (theForm.Editbox5.value == "")
+   {
+      alert("Please enter a value for the \"MQTT_B_PRT\" field.");
+      theForm.Editbox5.focus();
+      return false;
+   }
+   if (theForm.Editbox5.value != "" && !(theForm.Editbox5.value > 80 && theForm.Editbox5.value <= 60000))
+   {
+      alert("Please enter a value greater than \"80\" and less than or equal to \"60000\" in the \"MQTT_B_PRT\" field.");
+      theForm.Editbox5.focus();
+      return false;
+   }
+   if (theForm.Editbox6.value == "")
+   {
+      alert("MQTT_PUBLISH_TOPIC1 required");
+      theForm.Editbox6.focus();
+      return false;
+   }
+   if (theForm.Editbox6.value.length < 5)
+   {
+      alert("MQTT_PUBLISH_TOPIC1 required");
+      theForm.Editbox6.focus();
+      return false;
+   }
+   if (theForm.Editbox6.value.length > 100)
+   {
+      alert("MQTT_PUBLISH_TOPIC1 required");
+      theForm.Editbox6.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox9.value))
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox9.focus();
+      return false;
+   }
+   if (theForm.Editbox9.value == "")
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox9.focus();
+      return false;
+   }
+   if (theForm.Editbox9.value.length < 0)
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox9.focus();
+      return false;
+   }
+   if (theForm.Editbox9.value.length > 86400)
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox9.focus();
+      return false;
+   }
+   if (theForm.Editbox9.value != "" && !(theForm.Editbox9.value >= 0 && theForm.Editbox9.value <= 86400))
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox9.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox10.value))
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox10.focus();
+      return false;
+   }
+   if (theForm.Editbox10.value == "")
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox10.focus();
+      return false;
+   }
+   if (theForm.Editbox10.value.length < 0)
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox10.focus();
+      return false;
+   }
+   if (theForm.Editbox10.value.length > 86400)
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox10.focus();
+      return false;
+   }
+   if (theForm.Editbox10.value != "" && !(theForm.Editbox10.value >= 0 && theForm.Editbox10.value <= 86400))
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox10.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox11.value))
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox11.focus();
+      return false;
+   }
+   if (theForm.Editbox11.value == "")
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox11.focus();
+      return false;
+   }
+   if (theForm.Editbox11.value.length < 0)
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox11.focus();
+      return false;
+   }
+   if (theForm.Editbox11.value.length > 10)
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox11.focus();
+      return false;
+   }
+   if (theForm.Editbox11.value != "" && !(theForm.Editbox11.value >= 0 && theForm.Editbox11.value <= 10))
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox11.focus();
+      return false;
+   }
+   regexp = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+   if (!regexp.test(theForm.Editbox3.value))
+   {
+      alert("The specified value is invalid.");
+      theForm.Editbox3.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox15.value))
+   {
+      alert("Time zone values -12 to 12");
+      theForm.Editbox15.focus();
+      return false;
+   }
+   if (theForm.Editbox15.value == "")
+   {
+      alert("Time zone values -12 to 12");
+      theForm.Editbox15.focus();
+      return false;
+   }
+   if (theForm.Editbox15.value.length < -12)
+   {
+      alert("Time zone values -12 to 12");
+      theForm.Editbox15.focus();
+      return false;
+   }
+   if (theForm.Editbox15.value.length > 12)
+   {
+      alert("Time zone values -12 to 12");
+      theForm.Editbox15.focus();
+      return false;
+   }
+   regexp = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
+   if (!regexp.test(theForm.Editbox12.value))
+   {
+      alert("The specified value is invalid.");
+      theForm.Editbox12.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox13.value))
+   {
+      alert("firmware port address should be 80 - 60000");
+      theForm.Editbox13.focus();
+      return false;
+   }
+   if (theForm.Editbox13.value == "")
+   {
+      alert("firmware port address should be 80 - 60000");
+      theForm.Editbox13.focus();
+      return false;
+   }
+   if (theForm.Editbox13.value != "" && !(theForm.Editbox13.value > 79 && theForm.Editbox13.value <= 60000))
+   {
+      alert("firmware port address should be 80 - 60000");
+      theForm.Editbox13.focus();
+      return false;
+   }
+   if (theForm.Editbox16.value == "")
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox16.focus();
+      return false;
+   }
+   if (theForm.Editbox16.value.length < 5)
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox16.focus();
+      return false;
+   }
+   if (theForm.Editbox16.value.length > 100)
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox16.focus();
+      return false;
+   }
+   if (theForm.Editbox17.value == "")
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox17.focus();
+      return false;
+   }
+   if (theForm.Editbox17.value.length < 5)
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox17.focus();
+      return false;
+   }
+   if (theForm.Editbox17.value.length > 100)
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox17.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.ACS_Sensor_Model.value))
+   {
+      alert("Please enter only digit characters in the \"ACS_Sensor_Model\" field.");
+      theForm.ACS_Sensor_Model.focus();
+      return false;
+   }
+   if (theForm.ACS_Sensor_Model.value != "" && !(theForm.ACS_Sensor_Model.value >= 5 && theForm.ACS_Sensor_Model.value <= 30))
+   {
+      alert("Please enter a value greater than or equal to \"5\" and less than or equal to \"30\" in the \"ACS_Sensor_Model\" field.");
+      theForm.ACS_Sensor_Model.focus();
+      return false;
+   }
+   if (theForm.Editbox19.value == "")
+   {
+      alert("CURR_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox19.focus();
+      return false;
+   }
+   if (theForm.Editbox19.value.length < 5)
+   {
+      alert("CURR_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox19.focus();
+      return false;
+   }
+   if (theForm.Editbox19.value.length > 100)
+   {
+      alert("CURR_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox19.focus();
+      return false;
+   }
+   if (theForm.Editbox20.value == "")
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox20.focus();
+      return false;
+   }
+   if (theForm.Editbox20.value.length < 5)
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox20.focus();
+      return false;
+   }
+   if (theForm.Editbox20.value.length > 100)
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox20.focus();
+      return false;
+   }
+   if (theForm.Editbox18.value == "")
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox18.focus();
+      return false;
+   }
+   if (theForm.Editbox18.value.length < 5)
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox18.focus();
+      return false;
+   }
+   if (theForm.Editbox18.value.length > 100)
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox18.focus();
+      return false;
+   }
+   if (theForm.Editbox22.value == "")
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox22.focus();
+      return false;
+   }
+   if (theForm.Editbox22.value.length < 5)
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox22.focus();
+      return false;
+   }
+   if (theForm.Editbox22.value.length > 100)
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox22.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.RelayEditBox.value))
+   {
+      alert("Please enter only digit characters in the \"RelayNB\" field.");
+      theForm.RelayEditBox.focus();
+      return false;
+   }
+   return true;
+}
+</script>
+<script>
+function ValidateRelay2Conf(theForm)
+{
+   var regexp;
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.RelayNb2.value))
+   {
+      alert("Please enter only digit characters in the \"RelayNB\" field.");
+      theForm.RelayNb2.focus();
+      return false;
+   }
+   if (theForm.Editbox25.value == "")
+   {
+      alert("MQTT_PUBLISH_TOPIC1 required");
+      theForm.Editbox25.focus();
+      return false;
+   }
+   if (theForm.Editbox25.value.length < 5)
+   {
+      alert("MQTT_PUBLISH_TOPIC1 required");
+      theForm.Editbox25.focus();
+      return false;
+   }
+   if (theForm.Editbox25.value.length > 100)
+   {
+      alert("MQTT_PUBLISH_TOPIC1 required");
+      theForm.Editbox25.focus();
+      return false;
+   }
+   if (theForm.Editbox27.value == "")
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox27.focus();
+      return false;
+   }
+   if (theForm.Editbox27.value.length < 5)
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox27.focus();
+      return false;
+   }
+   if (theForm.Editbox27.value.length > 100)
+   {
+      alert("MQTT_STATE_PUBLISH_TOPIC required");
+      theForm.Editbox27.focus();
+      return false;
+   }
+   if (theForm.Editbox28.value == "")
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox28.focus();
+      return false;
+   }
+   if (theForm.Editbox28.value.length < 5)
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox28.focus();
+      return false;
+   }
+   if (theForm.Editbox28.value.length > 100)
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox28.focus();
+      return false;
+   }
+   if (theForm.Editbox29.value == "")
+   {
+      alert("CURR_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox29.focus();
+      return false;
+   }
+   if (theForm.Editbox29.value.length < 5)
+   {
+      alert("CURR_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox29.focus();
+      return false;
+   }
+   if (theForm.Editbox29.value.length > 100)
+   {
+      alert("CURR_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox29.focus();
+      return false;
+   }
+   if (theForm.Editbox30.value == "")
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox30.focus();
+      return false;
+   }
+   if (theForm.Editbox30.value.length < 5)
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox30.focus();
+      return false;
+   }
+   if (theForm.Editbox30.value.length > 100)
+   {
+      alert("MQTT_TTL_PUBLISH_TOPIC required");
+      theForm.Editbox30.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox23.value))
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox23.focus();
+      return false;
+   }
+   if (theForm.Editbox23.value == "")
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox23.focus();
+      return false;
+   }
+   if (theForm.Editbox23.value.length < 0)
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox23.focus();
+      return false;
+   }
+   if (theForm.Editbox23.value.length > 86400)
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox23.focus();
+      return false;
+   }
+   if (theForm.Editbox23.value != "" && !(theForm.Editbox23.value >= 0 && theForm.Editbox23.value <= 86400))
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox23.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox24.value))
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox24.focus();
+      return false;
+   }
+   if (theForm.Editbox24.value == "")
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox24.focus();
+      return false;
+   }
+   if (theForm.Editbox24.value.length < 0)
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox24.focus();
+      return false;
+   }
+   if (theForm.Editbox24.value.length > 86400)
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox24.focus();
+      return false;
+   }
+   if (theForm.Editbox24.value != "" && !(theForm.Editbox24.value >= 0 && theForm.Editbox24.value <= 86400))
+   {
+      alert("must be between 0 and 86400");
+      theForm.Editbox24.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.Editbox32.value))
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox32.focus();
+      return false;
+   }
+   if (theForm.Editbox32.value == "")
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox32.focus();
+      return false;
+   }
+   if (theForm.Editbox32.value.length < 0)
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox32.focus();
+      return false;
+   }
+   if (theForm.Editbox32.value.length > 10)
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox32.focus();
+      return false;
+   }
+   if (theForm.Editbox32.value != "" && !(theForm.Editbox32.value >= 0 && theForm.Editbox32.value <= 10))
+   {
+      alert("must be between 1 and 10");
+      theForm.Editbox32.focus();
+      return false;
+   }
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.ACS_Sensor_Model_2.value))
+   {
+      alert("Please enter only digit characters in the \"ACS_Sensor_Model_2\" field.");
+      theForm.ACS_Sensor_Model_2.focus();
+      return false;
+   }
+   if (theForm.ACS_Sensor_Model_2.value != "" && !(theForm.ACS_Sensor_Model_2.value >= 5 && theForm.ACS_Sensor_Model_2.value <= 30))
+   {
+      alert("Please enter a value greater than or equal to \"5\" and less than or equal to \"30\" in the \"ACS_Sensor_Model_2\" field.");
+      theForm.ACS_Sensor_Model_2.focus();
+      return false;
+   }
+   return true;
+}
+</script>
+<script>
+      function myFunction(selectObject) {
+        var x = selectObject.value;
+         document.getElementById("ACS_Sensor_Model").value=x ; 
+      }
+
+      function myFunction2(selectObject) {
+        var x = selectObject.value;
+         document.getElementById("ACS_Sensor_Model_2").value=x ; 
+      }
+
+    </script>
+</body>
+</html><script> 
+document.getElementById("ACSmultiple").value=document.getElementById("ACS_Sensor_Model").value ; 
+document.getElementById("ACSmultiple_2").value=document.getElementById("ACS_Sensor_Model_2").value ; 
+</script>
