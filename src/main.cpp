@@ -11,7 +11,9 @@
 #include "Debouncer.h"
 #include <RelayClass.h>
 #include <vector>
+//#include <RelaysArray.h>
 
+extern void *  mrelays[3];
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -224,7 +226,6 @@ void onchangeInterruptSvc(void* t){
       if (interruptCounter2 > 0) interruptCounter2--;
       */
 
-
       Relay * rly;
       rly = static_cast<Relay *>(t);
 
@@ -236,7 +237,7 @@ void onchangeInterruptSvc(void* t){
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
           rly->start_ttl_timer();
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "on");
+      //  mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "on");
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "on");
       }
 
@@ -246,7 +247,7 @@ void onchangeInterruptSvc(void* t){
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "off");
+      //  mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "off");
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "off");
       }
   }
@@ -641,12 +642,14 @@ void setup() {
   //  attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
     relay1.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
     relay1.attachLoopfunc(relayloopservicefunc);
-    relays.push_back(&relay1);
+    // relays.push_back(&relay1);
+    mrelays[0]=&relay1;
 
   //  attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
     relay2.attachSwithchButton(SwitchButtonPin, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
     relay2.attachLoopfunc(relayloopservicefunc);
-    relays.push_back(&relay2);
+    //relays.push_back(&relay2);
+    mrelays[1]=&relay2;
 
     attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
 }

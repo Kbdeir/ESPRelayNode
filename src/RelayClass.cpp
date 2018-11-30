@@ -1,5 +1,6 @@
 #include <RelayClass.h>
 
+#include <RelaysArray.h>
 
 Relay::Relay(uint8_t p)
     {
@@ -265,12 +266,16 @@ boolean Relay::loadrelayparams(){
       Relay * rly = NULL;
       Relay * rtemp = NULL;
 
-        for (std::vector<Relay *>::iterator it = relays.begin(); it != relays.end(); ++it)
+        /*for (std::vector<Relay *>::iterator it = relays.begin(); it != relays.end(); ++it)
         {
           rtemp = *it;
           if (pn == rtemp->getRelayPin()) {
           rly = rtemp;
+        }*/
+
+        for (int i=0; i<2; i++){
+          rtemp = static_cast<Relay *>(mrelays[i]);
+          if (rtemp->getRelayPin() == pn) rly = rtemp;
         }
         return rly;
       }
-    }

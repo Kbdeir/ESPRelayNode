@@ -1,12 +1,16 @@
 #include <MQTT_Processes.h>
 #include <JSONConfig.h>
 #include <RelayClass.h>
+//#include <RelaysArray.h>
+
+extern void *  mrelays[3];
 
 #ifdef ESP32
   #include <WiFi.h>
 #else
   #include <ESP8266WiFi.h>
 #endif
+
 
 
 AsyncMqttClient mqttClient;
@@ -96,16 +100,30 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Relay * rly = NULL;
   Relay * rtemp = NULL;
 
-    for (std::vector<Relay *>::iterator it = relays.begin(); it != relays.end(); ++it)
+    /*for (std::vector<Relay *>::iterator it = relays.begin(); it != relays.end(); ++it)
     {
-      rtemp = *it;
+      rtemp = static_cast<Relay *>(*it);
       if (tp == rtemp->RelayConfParam->v_PUB_TOPIC1) {
       rly = rtemp;
+    }
+    }*/
+
+//    for (int i=0; i<2; i++){
+//      rtemp = static_cast<Relay *>(mrelays[i]);
+//      if (rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) rly = rtemp;
+//    }
+
+          rly = static_cast<Relay *>(mrelays[0]);
+          Serial.print("\n**************************************\n");
+          Serial.print(rly->RelayConfParam->v_PUB_TOPIC1);
+          Serial.print("\n**************************************");
+
+
           if (rly) {
             if (tp == rly->RelayConfParam->v_PUB_TOPIC1)    {
               if (temp == ON) {
                   rly->mdigitalWrite(rly->getRelayPin(),HIGH);
-              } else if (String(payload) == OFF) {
+              } else if (temp == OFF) {
                   rly->mdigitalWrite(rly->getRelayPin(),LOW);
               }
             } else
@@ -133,8 +151,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
               }
             }
           }
-      }
-    }
+
   }
 
 

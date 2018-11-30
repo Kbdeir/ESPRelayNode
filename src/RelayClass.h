@@ -14,6 +14,8 @@ typedef void (*fnptr_b)(int, void* t);
 const int DEFLEN = 20;
 #define buffer_size  1500 // json buffer size
 
+
+
 typedef struct TRelayConfigParams {
   String v_PhyLoc ;
   String v_PUB_TOPIC1 ;
@@ -102,7 +104,7 @@ typedef struct TRelayConfigParams {
     void mdigitalWrite(uint8_t pn, uint8_t v);
     Relay * relayofpin(uint8_t pn);
 };
-  static std::vector<Relay *> relays ; // a list to hold all relays
+
   Relay * getrelaybypin(uint8_t pn);
 
 #endif
