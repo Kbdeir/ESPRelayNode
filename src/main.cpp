@@ -229,15 +229,15 @@ void onchangeInterruptSvc(void* t){
       Relay * rly;
       rly = static_cast<Relay *>(t);
 
-      if (rly->rchangedflag > 0 ) {
-        rly->rchangedflag --;
+      if (rly->rchangedflag ) {
+        rly->rchangedflag = false;
 
       if (rly->readrelay() == HIGH) {
         Serial.print(F("\n\n An interrupt *ON* has occurred."));
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
           rly->start_ttl_timer();
         }
-      //  mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "on");
+        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "on");
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "on");
       }
 
@@ -247,7 +247,7 @@ void onchangeInterruptSvc(void* t){
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
-      //  mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "off");
+        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "off");
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "off");
       }
   }

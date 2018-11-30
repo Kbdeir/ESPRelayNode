@@ -68,7 +68,7 @@ typedef struct TRelayConfigParams {
     OneButton *fbutton;
     Schedule_timer *ticker_relay_tta;
     Schedule_timer *ticker_relay_ttl;
-    uint8_t rchangedflag;
+    boolean rchangedflag;
 
     Relay(uint8_t p);
     Relay(uint8_t p, fnptr_a ttlcallback, fnptr_a ttlupdatecallback, fnptr_a ACSfunc, fnptr_a ACSfunc_mqtt, fnptr_a onchangeInterruptService,

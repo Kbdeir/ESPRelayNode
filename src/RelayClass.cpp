@@ -39,7 +39,7 @@ Relay::Relay(uint8_t p,
   fbutton = NULL;
   fonSwitchbtnServiceFunction = NULL;
   fonSwitchChangeInterrupt = NULL;
-  rchangedflag = 0;
+  rchangedflag = false;
 
 }
 
@@ -253,9 +253,13 @@ boolean Relay::loadrelayparams(){
 
     void Relay::mdigitalWrite(uint8_t pn, uint8_t v)
     {
+    uint8_t sts = digitalRead(pn);
+
+    rchangedflag = (sts != v);
+    if (rchangedflag){
      digitalWrite(pn,v);
-     rchangedflag++;
      if (fonchangeInterruptService) fonchangeInterruptService(this);
+    }
     }
 
     Relay * Relay::relayofpin(uint8_t pn){
