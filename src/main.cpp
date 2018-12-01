@@ -501,7 +501,7 @@ void Wifi_connect() {
                 		blinkled();
                     trials++;
                     Serial.print(".");
-                    yield();
+                    // yield();
                 }
                 if  (WiFi.status() == WL_CONNECTED)   {
                   Serial.println(F("WiFi Connected."));
@@ -513,6 +513,7 @@ void Wifi_connect() {
                     Serial.println(WiFi.localIP());
                     Serial.println(F("Starting UDP"));
                     Udp.begin(localPort);
+
                     #ifdef ESP8266
                       Serial.print(F("Local port: "));
                       Serial.println(Udp.localPort());
@@ -538,6 +539,7 @@ void Wifi_connect() {
                     trials = 0;
                     relay1.stop_ttl_timer();
                     relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl.toInt()*1000);
+                    ACS_Calibrate_Start(relay1,sensor);
 
                     relay2.stop_ttl_timer();
                     relay2.setRelayTTT_Timer_Interval(relay2.RelayConfParam->v_ttl.toInt()*1000);
@@ -546,8 +548,6 @@ void Wifi_connect() {
 
                 		MBserver->begin();
                 		MBserver->onClient(&handleNewClient, MBserver);
-
-                    ACS_Calibrate_Start(relay1,sensor);
 
                     /*
                     Serial.println(F("Calibrating sensor... Ensure that no current flows through the sensor at this moment"));
