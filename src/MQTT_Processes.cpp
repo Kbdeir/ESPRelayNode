@@ -107,8 +107,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     rtemp = static_cast<Relay *>(*it);
     if (rtemp) {
-      Serial.println("");
-      Serial.println(rtemp->RelayConfParam->v_PUB_TOPIC1);
+      //Serial.println("");
+      //Serial.println(rtemp->RelayConfParam->v_PUB_TOPIC1);
       if (rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) {
         rly = rtemp;
         break;
