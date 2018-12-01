@@ -1,11 +1,11 @@
+#ifndef _RELAYSCONG_H__
+#define _RELAYSCONG_H__
+
 #include "Arduino.h"
 #include <ConfigParams.h>
 #include <JSONConfig.h>
 #include <Scheduletimer.h>
 #include <OneButton.h>
-
-#ifndef _RELAYSCONG_H__
-#define _RELAYSCONG_H__
 
 typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);

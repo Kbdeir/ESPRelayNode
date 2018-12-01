@@ -11,6 +11,7 @@
 #include "Debouncer.h"
 #include <RelayClass.h>
 #include <vector>
+#include <ACS_Helper.h>
 //#include <RelaysArray.h>
 
 extern void *  mrelays[3];
@@ -481,6 +482,9 @@ void Wifi_connect() {
 	String getSsid = MyConfParam.v_ssid;
   String getPass = MyConfParam.v_pass;
 
+  relay1.loadrelayparams();
+  relay2.loadrelayparams();
+
   WiFi.softAPdisconnect();
   WiFi.disconnect();
   WiFi.mode(WIFI_AP_STA);
@@ -533,16 +537,19 @@ void Wifi_connect() {
 
                     trials = 0;
                     relay1.stop_ttl_timer();
-                    relay1.setRelayTTT_Timer_Interval(MyConfParam.v_ttl.toInt()*1000);
+                    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl.toInt()*1000);
 
                     relay2.stop_ttl_timer();
-                    relay2.setRelayTTT_Timer_Interval(MyConfParam.v_ttl.toInt()*1000);
+                    relay2.setRelayTTT_Timer_Interval(relay2.RelayConfParam->v_ttl.toInt()*1000);
 
                     connectToMqtt();
 
                 		MBserver->begin();
                 		MBserver->onClient(&handleNewClient, MBserver);
 
+                    ACS_Calibrate_Start(relay1,sensor);
+
+                    /*
                     Serial.println(F("Calibrating sensor... Ensure that no current flows through the sensor at this moment"));
                     int type = MyConfParam.v_ACS_Sensor_Model.toInt();
                     float sensitivity = 0.100;
@@ -567,13 +574,12 @@ void Wifi_connect() {
                     if (MyConfParam.v_ACS_Active == "1") {
                       relay1.start_ACS712();
                       relay1.start_ACS712_mqtt();
-
                       relay2.start_ACS712();
                       relay2.start_ACS712_mqtt();
-                      APModetimer_run_value = 0;
                     }
-                    relay1.loadrelayparams();
-                    relay2.loadrelayparams();
+                    */
+
+                      APModetimer_run_value = 0;
 
                 }  // wifi is connected
 } // if (digitalRead(ConfigInputPin) == HIGH)
@@ -640,13 +646,13 @@ void setup() {
     mb.addCoil(LAMP2_COIL);
 
   //  attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
-    relay1.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
+    relay1.attachSwithchButton(SwitchButtonPin, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
     relay1.attachLoopfunc(relayloopservicefunc);
     // relays.push_back(&relay1);
     mrelays[0]=&relay1;
 
   //  attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
-    relay2.attachSwithchButton(SwitchButtonPin, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
+    relay2.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
     relay2.attachLoopfunc(relayloopservicefunc);
     //relays.push_back(&relay2);
     mrelays[1]=&relay2;
