@@ -266,20 +266,21 @@ boolean Relay::loadrelayparams(){
       return this;
     }
 
-    Relay * getrelaybypin(uint8_t pn){
+  Relay * getrelaybypin(uint8_t pn){
       Relay * rly = NULL;
       Relay * rtemp = NULL;
 
-        /*for (std::vector<Relay *>::iterator it = relays.begin(); it != relays.end(); ++it)
+        for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
         {
-          rtemp = *it;
+          rtemp = static_cast<Relay *>(*it);
           if (pn == rtemp->getRelayPin()) {
           rly = rtemp;
-        }*/
+        }
+        }
 
-        for (int i=0; i<MAX_RELAYS; i++){
+        /*for (int i=0; i<MAX_RELAYS; i++){
           rtemp = static_cast<Relay *>(mrelays[i]);
           if (rtemp->getRelayPin() == pn) rly = rtemp;
-        }
+        }*/
         return rly;
-      }
+  }

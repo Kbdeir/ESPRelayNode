@@ -4,6 +4,7 @@
 //#include <RelaysArray.h>
 
 extern void *  mrelays[3];
+extern std::vector<void *> relays ; // a list to hold all relays
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -100,15 +101,23 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Relay * rly = NULL;
   Relay * rtemp = NULL;
 
-    /*for (std::vector<Relay *>::iterator it = relays.begin(); it != relays.end(); ++it)
-    {
-      rtemp = static_cast<Relay *>(*it);
-      if (tp == rtemp->RelayConfParam->v_PUB_TOPIC1) {
-      rly = rtemp;
-    }
-    }*/
+  //Relay * it = NULL;
 
-    for (int i=0; i<MAX_RELAYS; i++){
+  for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
+  {
+    rtemp = static_cast<Relay *>(*it);
+    if (rtemp) {
+      Serial.println("");
+      Serial.println(rtemp->RelayConfParam->v_PUB_TOPIC1);
+      if (rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) {
+        rly = rtemp;
+        break;
+      }
+    }
+  }
+
+
+  /*  for (int i=0; i<MAX_RELAYS; i++){
       rtemp = static_cast<Relay *>(mrelays[i]);
       //if (rtemp) {
         //Serial.println("");
@@ -118,7 +127,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
         rly = rtemp;
         break;
       }
-    }
+    }*/
 
           if (rly) {
             if (tp == rly->RelayConfParam->v_PUB_TOPIC1)    {
