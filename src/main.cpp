@@ -14,7 +14,7 @@
 #include <ACS_Helper.h>
 //#include <RelaysArray.h>
 
-extern void *  mrelays[3];
+//extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
 
 #ifdef ESP32
