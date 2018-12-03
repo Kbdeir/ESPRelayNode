@@ -257,12 +257,6 @@ void onchangeInterruptSvc(void* t){
 }
 
 
-void LLL(void* t){
-Serial.print("\n long pressed....");
-}
-
-
-
 void onchangeSwitchInterruptSvc(void* t){
 if (SwitchButtonPin_interruptCounter > 0) {
 SwitchButtonPin_interruptCounter--;
@@ -278,11 +272,11 @@ SwitchButtonPin_interruptCounter--;
       rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
       mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
 //    }
-    mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
+      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
   }
 
   if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
-    rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
+      rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
   }
 
   //numberOfInterrupts++;
@@ -558,37 +552,7 @@ void Wifi_connect() {
                 		MBserver->begin();
                 		MBserver->onClient(&handleNewClient, MBserver);
 
-                    /*
-                    Serial.println(F("Calibrating sensor... Ensure that no current flows through the sensor at this moment"));
-                    int type = MyConfParam.v_ACS_Sensor_Model.toInt();
-                    float sensitivity = 0.100;
-                    switch (type) {
-                  		case 5:
-                  			sensitivity = 0.185;
-                  			break;
-                  		case 20:
-                  			sensitivity = 0.100;
-                  			break;
-                  		case 30:
-                  			sensitivity = 0.066;
-                  			break;
-                	  }
-                    Serial.println("Sensitivity = " + String(sensitivity));
-                    sensor.setSensitivity(sensitivity);
-                    int zero = sensor.calibrate();
-                    Serial.println(F("Done!"));
-                    Serial.println("Zero point for this sensor = " + zero);
-                    sensor.setZeroPoint(zero);
-                    //ticker_ACS712.interval(1000);
-                    if (MyConfParam.v_ACS_Active == "1") {
-                      relay1.start_ACS712();
-                      relay1.start_ACS712_mqtt();
-                      relay2.start_ACS712();
-                      relay2.start_ACS712_mqtt();
-                    }
-                    */
-
-                      APModetimer_run_value = 0;
+                    APModetimer_run_value = 0;
 
                 }  // wifi is connected
 } // if (digitalRead(ConfigInputPin) == HIGH)
