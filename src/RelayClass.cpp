@@ -9,6 +9,14 @@ Relay::Relay(uint8_t p)
     //  ticker_relay_ttl = NULL;
     }
 
+void Relay::freelockfunc() {
+  unsigned long cmillis = millis();
+	if (cmillis - pmillis >= freeinterval) {
+		pmillis = cmillis;
+    lockupdate = false;
+	}
+  }
+
 Relay::Relay(uint8_t p,
               fnptr_a ttlcallback,
               fnptr_a ttlupdatecallback,
@@ -20,6 +28,9 @@ Relay::Relay(uint8_t p,
   pin = p;
   pinMode ( pin, OUTPUT);
   RelayConfParam = new TConfigParams;
+
+  lockupdate = false;
+  freeinterval = 1000;
 
   // tickers callback functions for ttl, acs, tta
   fttlcallback = ttlcallback;
@@ -50,7 +61,12 @@ Relay::~Relay(){
       delete ticker_ACS_MQTT;
       delete ticker_relay_tta;
       delete fbutton;
+
     }
+
+
+
+
 
 void Relay::watch(){
    if (this->ticker_relay_ttl) this->ticker_relay_ttl->update(this);
@@ -58,10 +74,14 @@ void Relay::watch(){
    if (this->ticker_ACS_MQTT) this->ticker_ACS_MQTT->update(this);
    if (this->ticker_relay_tta) this->ticker_relay_tta->update(this);
 
+   if (this->freelock) this->freelock->update(this);
+
    if (this->fonchangeInterruptService != NULL) fonchangeInterruptService(this);
    if (this->fonSwitchChangeInterrupt != NULL)  fonSwitchChangeInterrupt(this);
    if (fbutton) fbutton->tick(this);
    if (fgeneralinLoopFunc) fgeneralinLoopFunc(this);
+
+   freelockfunc();
 
 }
 
@@ -258,11 +278,15 @@ boolean Relay::loadrelayparams(){
 
   void Relay::mdigitalWrite(uint8_t pn, uint8_t v)
     {
+    if (!lockupdate){
+    lockupdate = true;
     uint8_t sts = digitalRead(pn);
     rchangedflag = (sts != v);
     if (rchangedflag){
      digitalWrite(pn,v);
      if (fonchangeInterruptService) fonchangeInterruptService(this);
+    }
+
     }
     }
 

@@ -85,6 +85,8 @@ typedef struct TConfigParams {
   #include <RelayClass.h>
 
 
+
+
 #endif //CONFIGPARAMS_H
 
 /*

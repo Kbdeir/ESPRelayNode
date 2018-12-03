@@ -62,13 +62,22 @@ typedef struct TRelayConfigParams {
    fnptr_a fonSwitchbtnServiceFunction;
    fnptr_a fgeneralinLoopFunc;
 
+   void freelockfunc(void);
+
+   uint32_t cmillis;
+   uint32_t pmillis;
+   uint32_t freeinterval;
+   boolean lockupdate;
 
   public:
     TConfigParams *RelayConfParam;
     OneButton *fbutton;
     Schedule_timer *ticker_relay_tta;
     Schedule_timer *ticker_relay_ttl;
+    Schedule_timer *freelock;
     boolean rchangedflag;
+
+
 
     Relay(uint8_t p);
     Relay(uint8_t p, fnptr_a ttlcallback, fnptr_a ttlupdatecallback, fnptr_a ACSfunc, fnptr_a ACSfunc_mqtt, fnptr_a onchangeInterruptService,
