@@ -201,41 +201,46 @@ boolean Relay::loadrelayparams(){
       this->ticker_ACS712->stop();
     }
 
-    void Relay::start_ACS712_mqtt() {
+  void Relay::start_ACS712_mqtt() {
         this->ticker_ACS_MQTT->start();
       }
 
-    void Relay::stop_ACS712_mqtt() {
+  void Relay::stop_ACS712_mqtt() {
         this->ticker_ACS_MQTT->stop();
       }
 
-    uint32_t Relay::getRelayTTLperiodscounter() {
+  uint32_t Relay::getRelayTTLperiodscounter() {
       return this->ticker_relay_ttl->periodscounter();
     }
 
-    void Relay::setRelayTTT_Timer_Interval(uint32_t interval){
+  void Relay::setRelayTTT_Timer_Interval(uint32_t interval){
       this->ticker_relay_ttl->interval(interval);
     }
 
-    ksb_status_t Relay::TTLstate() {
+  ksb_status_t Relay::TTLstate() {
     	return this->ticker_relay_ttl->state();
     	}
 
-    int Relay::readrelay (){
+  int Relay::readrelay (){
       return digitalRead(this->pin);
     }
 
-    void Relay::attachSwithchButton(uint8_t switchbutton, fnptr intfunc, fnptr_a intSvcfunc, fnptr_a OnebtnSvcfunc){
+  void Relay::attachSwithchButton(uint8_t switchbutton, fnptr intfunc, fnptr_a intSvcfunc, fnptr_a OnebtnSvcfunc){
       fswitchbutton = switchbutton;
       pinMode (fswitchbutton, INPUT_PULLUP );
       fonSwitchChangeInterrupt = intSvcfunc;
-      attachInterrupt(digitalPinToInterrupt(fswitchbutton), intfunc, CHANGE );
+      //attachInterrupt(digitalPinToInterrupt(fswitchbutton), intfunc, CHANGE );
       fbutton = new OneButton(fswitchbutton, true);
       fonSwitchbtnServiceFunction = OnebtnSvcfunc;
       if (fonSwitchbtnServiceFunction) fbutton->attachClick(fonSwitchbtnServiceFunction);
+
+      if (intfunc) fbutton->attachLongPressStart(intfunc);
+      if (intfunc) fbutton->attachLongPressStop(intfunc);
+    //  if (intfunc) fbutton->attachDuringLongPress(intfunc);
+
     }
 
-    void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){
+  void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){
       fgeneralinLoopFunc = GeneralLoopFunc;
     }
 
@@ -243,18 +248,17 @@ boolean Relay::loadrelayparams(){
       return this->fswitchbutton;
     }
 
-    uint8_t Relay::getRelaySwithbtnState(){
+  uint8_t Relay::getRelaySwithbtnState(){
       return digitalRead(this->fswitchbutton);
     }
 
-    uint8_t Relay::getRelayPin(){
+  uint8_t Relay::getRelayPin(){
       return this->pin;
     }
 
-    void Relay::mdigitalWrite(uint8_t pn, uint8_t v)
+  void Relay::mdigitalWrite(uint8_t pn, uint8_t v)
     {
     uint8_t sts = digitalRead(pn);
-
     rchangedflag = (sts != v);
     if (rchangedflag){
      digitalWrite(pn,v);
@@ -262,7 +266,7 @@ boolean Relay::loadrelayparams(){
     }
     }
 
-    Relay * Relay::relayofpin(uint8_t pn){
+  Relay * Relay::relayofpin(uint8_t pn){
       return this;
     }
 

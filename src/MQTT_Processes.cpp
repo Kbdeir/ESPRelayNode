@@ -107,8 +107,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     rtemp = static_cast<Relay *>(*it);
     if (rtemp) {
-      Serial.println("");
-      Serial.println(rtemp->RelayConfParam->v_PUB_TOPIC1);
+      //Serial.println("");
+      //Serial.println(rtemp->RelayConfParam->v_PUB_TOPIC1);
       if (rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) {
         rly = rtemp;
         break;
@@ -130,13 +130,14 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }*/
 
           if (rly) {
-            if (tp == rly->RelayConfParam->v_PUB_TOPIC1)    {
+            if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
               if (temp == ON) {
                   rly->mdigitalWrite(rly->getRelayPin(),HIGH);
               } else if (temp == OFF) {
                   rly->mdigitalWrite(rly->getRelayPin(),LOW);
               }
-            } else
+            }
+            else
             {
               // sync mqtt state to actual pin state
               if (digitalRead(rly->getRelayPin()) == HIGH) {
