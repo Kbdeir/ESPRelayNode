@@ -178,12 +178,19 @@ void OneButton::tick(bool activeLevel, void* sender)
     } else if ((activeLevel) &&
                ((unsigned long)(now - _startTime) > _pressTicks)) {
       _isLongPressed = true; // Keep track of long press state
-      if (_pressFunc)
+      if (_pressFunc) {
         _pressFunc();
-      if (_longPressStartFunc)
+        //Serial.print("\nLong press ");
+        }
+      if (_longPressStartFunc){
         _longPressStartFunc();
-      if (_duringLongPressFunc)
+        //Serial.print("\nLong press start");
+      }
+
+      if (_duringLongPressFunc) {
         _duringLongPressFunc();
+        //Serial.print("\nduring Long press ");
+      }
       _state = 6; // step to state 6
       _stopTime = now; // remember stopping time
     } else {

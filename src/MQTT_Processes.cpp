@@ -130,13 +130,14 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }*/
 
           if (rly) {
-            if (tp == rly->RelayConfParam->v_PUB_TOPIC1)    {
+            if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
               if (temp == ON) {
                   rly->mdigitalWrite(rly->getRelayPin(),HIGH);
               } else if (temp == OFF) {
                   rly->mdigitalWrite(rly->getRelayPin(),LOW);
               }
-            } else
+            }
+            else
             {
               // sync mqtt state to actual pin state
               if (digitalRead(rly->getRelayPin()) == HIGH) {

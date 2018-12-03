@@ -154,7 +154,7 @@ Relay relay1(
     relayon
   );
 
-  Relay relay2(
+  /*Relay relay2(
       Relay2Pin,
       ticker_relay_ttl_off,
       ticker_relay_ttl_periodic_callback,
@@ -163,6 +163,7 @@ Relay relay1(
       onchangeInterruptSvc,
       relayon
     );
+    */
 
 void ticker_relay_ttl_off (void* obj);
 
@@ -255,21 +256,28 @@ void onchangeInterruptSvc(void* t){
   }
 }
 
+
+void LLL(void* t){
+Serial.print("\n long pressed....");
+}
+
+
+
 void onchangeSwitchInterruptSvc(void* t){
 if (SwitchButtonPin_interruptCounter > 0) {
-  SwitchButtonPin_interruptCounter--;
+SwitchButtonPin_interruptCounter--;
 
   Relay * rly;
   rly = static_cast<Relay *>(t);
 
   if ((rly->RelayConfParam->v_GPIO12_TOG == "0") && (rly->RelayConfParam->v_Copy_IO == "0")) {
     char* msg;
-    uint8_t InputPin12State = rly->getRelaySwithbtnState();
-    bool stateChanged = debouncer.update(InputPin12State);
-    if (stateChanged) {
+//    uint8_t InputPin12State = rly->getRelaySwithbtnState();
+//    bool stateChanged = debouncer.update(InputPin12State);
+//    if (stateChanged) {
       rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
       mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
-    }
+//    }
     mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
   }
 
@@ -277,7 +285,7 @@ if (SwitchButtonPin_interruptCounter > 0) {
     rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
   }
 
-  numberOfInterrupts++;
+  //numberOfInterrupts++;
 }
 }
 
@@ -484,7 +492,7 @@ void Wifi_connect() {
   String getPass = MyConfParam.v_pass;
 
   relay1.loadrelayparams();
-  relay2.loadrelayparams();
+  //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
   WiFi.disconnect();
@@ -542,8 +550,8 @@ void Wifi_connect() {
                     relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl.toInt()*1000);
                     ACS_Calibrate_Start(relay1,sensor);
 
-                    relay2.stop_ttl_timer();
-                    relay2.setRelayTTT_Timer_Interval(relay2.RelayConfParam->v_ttl.toInt()*1000);
+                    //relay2.stop_ttl_timer();
+                    //relay2.setRelayTTT_Timer_Interval(relay2.RelayConfParam->v_ttl.toInt()*1000);
 
                     connectToMqtt();
 
@@ -647,15 +655,17 @@ void setup() {
     mb.addCoil(LAMP2_COIL);
 
   //  attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
-    relay1.attachSwithchButton(SwitchButtonPin, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
+    relay1.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
     relay1.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay1);
     //mrelays[0]=&relay1;
 
   //  attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
+    /*
     relay2.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
     relay2.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay2);
+    */
     //mrelays[1]=&relay2;
 
     attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
@@ -671,7 +681,7 @@ void loop() {
  	blinkled();
   tiker_MQTT_CONNECT.update(NULL);
   relay1.watch();
-  relay2.watch();
+  //relay2.watch();
 
   if (restartRequired){  // check the flag here to determine if a restart is required
     Serial.printf("Restarting ESP\n\r");
