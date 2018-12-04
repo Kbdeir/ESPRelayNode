@@ -58,15 +58,15 @@ typedef struct TRelayConfigParams {
    fnptr_a fticker_ACS712_mqtt_func;
 
    fnptr_a fonchangeInterruptService;
-   fnptr_a fonSwitchChangeInterrupt;
-   fnptr_a fonSwitchbtnServiceFunction;
+   fnptr_a fon_associatedbtn_change;
+   fnptr_a fonclick;
    fnptr_a fgeneralinLoopFunc;
 
    void freelockfunc(void);
 
-   uint32_t cmillis;
-   uint32_t pmillis;
-   uint32_t freeinterval;
+   //unsigned long cmillis;
+   unsigned long pmillis;
+   unsigned long freeinterval;
    boolean lockupdate;
 
   public:
@@ -77,13 +77,18 @@ typedef struct TRelayConfigParams {
     Schedule_timer *freelock;
     boolean rchangedflag;
 
+  //  Relay(uint8_t p);
+    Relay(uint8_t p,
+          fnptr_a ttlcallback,
+          fnptr_a ttlupdatecallback,
+          fnptr_a ACSfunc,
+          fnptr_a ACSfunc_mqtt,
+          fnptr_a onchangeInterruptService,
+          fnptr_a ttacallback );
 
 
-    Relay(uint8_t p);
-    Relay(uint8_t p, fnptr_a ttlcallback, fnptr_a ttlupdatecallback, fnptr_a ACSfunc, fnptr_a ACSfunc_mqtt, fnptr_a onchangeInterruptService,
-      fnptr_a ttacallback  );
-    //Relay(uint8_t p);
     ~Relay();
+
     String getRelayPubTopic();
     void setRelayConfig(TConfigParams * RelayConf);
     TConfigParams * getRelayConfig();
@@ -104,14 +109,14 @@ typedef struct TRelayConfigParams {
     void setRelayTTT_Timer_Interval(uint32_t interval);
     ksb_status_t TTLstate();
     int readrelay ();
-    void attachSwithchButton(uint8_t switchbutton,  fnptr intfunc, fnptr_a intSvcfunc, fnptr_a OnebtnSvcfunc);
+    void attachSwithchButton(uint8_t switchbutton, fnptr_a intSvcfunc, fnptr_a OnebtnSvcfunc);
     uint8_t getRelaySwithbtn();
     uint8_t getRelayPin();
     uint8_t getRelaySwithbtnState();
     void attachLoopfunc(fnptr_a GeneralLoopFunc);
 
     void mdigitalWrite(uint8_t pn, uint8_t v);
-    Relay * relayofpin(uint8_t pn);
+  //  Relay * relayofpin(uint8_t pn);
 };
 
   Relay * getrelaybypin(uint8_t pn);

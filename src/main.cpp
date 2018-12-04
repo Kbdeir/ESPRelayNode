@@ -139,7 +139,7 @@ ACS712 sensor(ACS712_20A, A0);
 void ticker_relay_ttl_off (void* obj) ;
 void ticker_relay_ttl_periodic_callback(void* obj);
 void ticker_ACS712_func (void* obj);
-void onchangeInterruptSvc(void* t);
+void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
 
 //std::vector<Relay*> v; // a list to hold all clients
@@ -150,7 +150,7 @@ Relay relay1(
     ticker_relay_ttl_periodic_callback,
     ticker_ACS712_func,
     ticker_ACS712_mqtt,
-    onchangeInterruptSvc,
+    onRelaychangeInterruptSvc,
     relayon
   );
 
@@ -160,7 +160,7 @@ Relay relay1(
       ticker_relay_ttl_periodic_callback,
       ticker_ACS712_func,
       ticker_ACS712_mqtt,
-      onchangeInterruptSvc,
+      onRelaychangeInterruptSvc,
       relayon
     );
     */
@@ -223,7 +223,7 @@ void ticker_relay_ttl_off (void* obj) {
 }
 
 
-void onchangeInterruptSvc(void* t){
+void onRelaychangeInterruptSvc(void* t){
 /*  if((interruptCounter > 0) or (interruptCounter2 > 0)){
       if (interruptCounter > 0) interruptCounter--;
       if (interruptCounter2 > 0) interruptCounter2--;
@@ -258,28 +258,19 @@ void onchangeInterruptSvc(void* t){
 
 
 void onchangeSwitchInterruptSvc(void* t){
-if (SwitchButtonPin_interruptCounter > 0) {
-SwitchButtonPin_interruptCounter--;
-
+if (true){ //}(SwitchButtonPin_interruptCounter > 0) {
+  //SwitchButtonPin_interruptCounter--;
   Relay * rly;
   rly = static_cast<Relay *>(t);
-
   if ((rly->RelayConfParam->v_GPIO12_TOG == "0") && (rly->RelayConfParam->v_Copy_IO == "0")) {
     char* msg;
-//    uint8_t InputPin12State = rly->getRelaySwithbtnState();
-//    bool stateChanged = debouncer.update(InputPin12State);
-//    if (stateChanged) {
       rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
       mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
-//    }
-      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
+      mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
   }
-
   if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
       rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
   }
-
-  //numberOfInterrupts++;
 }
 }
 
@@ -619,7 +610,11 @@ void setup() {
     mb.addCoil(LAMP2_COIL);
 
   //  attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
-    relay1.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
+    relay1.attachSwithchButton(SwitchButtonPin2,
+                            //  SwitchButtonPin_handleInterrupt,
+                              onchangeSwitchInterruptSvc,  // for input mode and copy to relay ,ode
+                              buttonclick);                // for toggle mode
+
     relay1.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay1);
     //mrelays[0]=&relay1;

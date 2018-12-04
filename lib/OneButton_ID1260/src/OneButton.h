@@ -63,9 +63,9 @@ public:
   void attachPress(
       callbackFunction newFunction); // DEPRECATED, replaced by longPressStart,
                                      // longPressStop and duringLongPress
-  void attachLongPressStart(callbackFunction newFunction);
-  void attachLongPressStop(callbackFunction newFunction);
-  void attachDuringLongPress(callbackFunction newFunction);
+  void attachLongPressStart(callbackFunction_obj newFunction);
+  void attachLongPressStop(callbackFunction_obj newFunction);
+  void attachDuringLongPress(callbackFunction_obj newFunction);
 
   // ----- State machine functions -----
 
@@ -103,9 +103,9 @@ private:
   callbackFunction_obj _clickFunc_obj = NULL;
   callbackFunction _doubleClickFunc = NULL;
   callbackFunction _pressFunc = NULL;
-  callbackFunction _longPressStartFunc = NULL;
-  callbackFunction _longPressStopFunc = NULL;
-  callbackFunction _duringLongPressFunc = NULL;
+  callbackFunction_obj _longPressStartFunc = NULL;
+  callbackFunction_obj _longPressStopFunc = NULL;
+  callbackFunction_obj _duringLongPressFunc = NULL;
 
   // These variables that hold information across the upcoming tick calls.
   // They are initialized once on program start and are updated every time the
