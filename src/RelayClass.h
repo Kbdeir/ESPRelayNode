@@ -102,7 +102,7 @@ typedef struct TRelayConfigParams {
     void start_ttl_timer();
     void stop_ttl_timer();
     void start_ACS712();
-    void stop_ACS712r();
+    void stop_ACS712();
     void start_ACS712_mqtt();
     void stop_ACS712_mqtt();
     uint32_t getRelayTTLperiodscounter();
@@ -114,7 +114,6 @@ typedef struct TRelayConfigParams {
     uint8_t getRelayPin();
     uint8_t getRelaySwithbtnState();
     void attachLoopfunc(fnptr_a GeneralLoopFunc);
-
     void mdigitalWrite(uint8_t pn, uint8_t v);
   //  Relay * relayofpin(uint8_t pn);
 };

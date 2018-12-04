@@ -215,7 +215,7 @@ boolean Relay::loadrelayparams(){
       this->ticker_ACS712->start();
     }
 
-  void Relay::stop_ACS712r() {
+  void Relay::stop_ACS712() {
       this->ticker_ACS712->stop();
     }
 
