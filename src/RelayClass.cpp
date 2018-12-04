@@ -18,6 +18,10 @@ void Relay::freelockfunc() {
 	}
   }
 
+  void Relay::freelockreset() {
+    this->pmillis = millis();
+    }
+
 Relay::Relay(uint8_t p,
               fnptr_a ttlcallback,
               fnptr_a ttlupdatecallback,
@@ -31,7 +35,7 @@ Relay::Relay(uint8_t p,
   RelayConfParam = new TConfigParams;
 
   lockupdate = false;
-  freeinterval = 1000;
+  freeinterval = 600;
 
   // tickers callback functions for ttl, acs, tta
   fttlcallback = ttlcallback;
@@ -280,6 +284,7 @@ boolean Relay::loadrelayparams(){
     }
 
   void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
+    this->freelockreset();
     if (!lockupdate){
       lockupdate = true;
       uint8_t sts = digitalRead(pn);

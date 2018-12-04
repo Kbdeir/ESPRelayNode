@@ -63,6 +63,7 @@ typedef struct TRelayConfigParams {
    fnptr_a fgeneralinLoopFunc;
 
    void freelockfunc(void);
+   void freelockreset() ;
 
    //unsigned long cmillis;
    unsigned long pmillis;
