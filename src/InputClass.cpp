@@ -21,15 +21,14 @@ InputSensor::InputSensor(uint8_t p,
 
 InputSensor::~InputSensor(){
       delete Input_debouncer;
-
     }
 
 
 void InputSensor::watch(){
-//  if (attached_to_relay == 0) {
+  if (attached_to_relay == 0) {
      Input_debouncer->update();
      if (Input_debouncer->fell() || Input_debouncer->rose()) {
         if (fon_callback) fon_callback(this);
    }
-//  }
+  }
 }

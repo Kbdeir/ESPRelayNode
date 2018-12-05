@@ -62,11 +62,12 @@ const char * EventNames[] = {
   NULL
 };
 
+/*
 volatile byte interruptCounter = 0;
 volatile byte interruptCounter2 = 0;
 volatile byte SwitchButtonPin_interruptCounter=0;
 volatile byte InputPin14_interruptCounter=0;
-
+*/
 
 //#include <KSBWebHelper.h>
 /* You only need to format SPIFFS the first time you run a
@@ -169,7 +170,7 @@ Relay relay1(
     );
     */
 
-void ticker_relay_ttl_off (void* obj);
+
 
 void ticker_ACS712_mqtt (void* obj) {
   if (obj != NULL) {
@@ -580,27 +581,6 @@ if (digitalRead(ConfigInputPin) == LOW){
 }
 }
 
-/*
-void handleInterrupt() {
-  interruptCounter++;
-}
-
-void handleInterrupt2() {
-  Serial.print("\n******  interrupt r2 ******");
-  interruptCounter2++;
-}
-*/
-
-void SwitchButtonPin_handleInterrupt() {
-  SwitchButtonPin_interruptCounter++;
-}
-
-void InputPin14_handleInterrupt() {
-    InputPin14_interruptCounter++;
-}
-
-
-
 
 void setup() {
     pinMode ( led, OUTPUT );
@@ -694,20 +674,6 @@ void loop() {
 
 Inputsnsr14.watch();
 Inputsnsr12.watch();
-
-/*
-  if (InputPin14_interruptCounter > 0) {
-    InputPin14_interruptCounter--;
-    char* msg;
-    debouncer14.update();
-    int stateChanged = debouncer14.read();
-
-    if (stateChanged) {
-      digitalRead(InputPin14) == HIGH ? msg = ON : msg = OFF;
-      mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
-    }
-  }
-  */
 
 
   if (millis() - lastMillis > 1000) {
