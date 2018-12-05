@@ -12,6 +12,7 @@
 #include <RelayClass.h>
 #include <vector>
 #include <ACS_Helper.h>
+#include <InputClass.h>
 //#include <RelaysArray.h>
 
 //extern void *  mrelays[3];
@@ -91,8 +92,8 @@ volatile byte InputPin14_interruptCounter=0;
 #define WIFI_CLT_MODE 0
 #define DEFAULT_BOUNCE_TIME 100
 
-Bounce debouncer14 = Bounce();
-Bounce debouncer12 = Bounce();
+//Bounce debouncer14 = Bounce();
+//Bounce debouncer12 = Bounce();
 
 File file;
 
@@ -144,6 +145,8 @@ void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
 
 //std::vector<Relay*> v; // a list to hold all clients
+
+
 
 Relay relay1(
     RelayPin,
@@ -464,6 +467,19 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 }
 
 
+void process_Input(void * obj){
+  if (obj != NULL) {
+    InputSensor * snsr;
+    snsr = static_cast<InputSensor *>(obj);
+    char* msg;
+    digitalRead(snsr->pin) == HIGH ? msg = ON : msg = OFF;
+    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, msg);
+  }
+}
+
+InputSensor Inputsnsr14(InputPin14,process_Input);
+InputSensor Inputsnsr12(InputPin12,process_Input);
+
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
@@ -546,6 +562,14 @@ void Wifi_connect() {
 
                     APModetimer_run_value = 0;
 
+                    Inputsnsr14.post_mqtt = true;
+                    Inputsnsr14.attached_to_relay = 0;
+                    Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
+
+                    Inputsnsr12.post_mqtt = true;
+                    Inputsnsr12.attached_to_relay = 0;
+                    Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
+
                 }  // wifi is connected
 } // if (digitalRead(ConfigInputPin) == HIGH)
 
@@ -575,6 +599,9 @@ void InputPin14_handleInterrupt() {
     InputPin14_interruptCounter++;
 }
 
+
+
+
 void setup() {
     pinMode ( led, OUTPUT );
     pinMode ( ConfigInputPin, INPUT_PULLUP );
@@ -582,11 +609,11 @@ void setup() {
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
 
-    debouncer14.attach(InputPin14);
-    debouncer14.interval(5); // interval in ms
+    //debouncer14.attach(InputPin14);
+    //debouncer14.interval(5); // interval in ms
 
-    debouncer12.attach(ConfigInputPin,INPUT_PULLUP);
-    debouncer12.interval(25); // interval in ms
+    //debouncer12.attach(ConfigInputPin,INPUT_PULLUP);
+    //debouncer12.interval(25); // interval in ms
 
     /* You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
@@ -634,7 +661,7 @@ void setup() {
     */
     //mrelays[1]=&relay2;
 
-    attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
+  //  attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
 }
 
 
@@ -665,7 +692,10 @@ void loop() {
   }
 
 
+Inputsnsr14.watch();
+Inputsnsr12.watch();
 
+/*
   if (InputPin14_interruptCounter > 0) {
     InputPin14_interruptCounter--;
     char* msg;
@@ -677,6 +707,7 @@ void loop() {
       mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
     }
   }
+  */
 
 
   if (millis() - lastMillis > 1000) {
