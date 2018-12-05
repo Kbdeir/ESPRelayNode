@@ -8,7 +8,7 @@
 #include <Scheduletimer.h>
 #include "ACS712.h"
 #include "OneButton.h"
-#include "Debouncer.h"
+#include <Bounce2.h>
 #include <RelayClass.h>
 #include <vector>
 #include <ACS_Helper.h>
@@ -65,7 +65,7 @@ volatile byte interruptCounter = 0;
 volatile byte interruptCounter2 = 0;
 volatile byte SwitchButtonPin_interruptCounter=0;
 volatile byte InputPin14_interruptCounter=0;
-int numberOfInterrupts = 0;
+
 
 //#include <KSBWebHelper.h>
 /* You only need to format SPIFFS the first time you run a
@@ -91,7 +91,8 @@ int numberOfInterrupts = 0;
 #define WIFI_CLT_MODE 0
 #define DEFAULT_BOUNCE_TIME 100
 
-Debouncer debouncer(DEFAULT_BOUNCE_TIME);
+Bounce debouncer14 = Bounce();
+Bounce debouncer12 = Bounce();
 
 File file;
 
@@ -583,6 +584,12 @@ void setup() {
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
 
+    debouncer14.attach(InputPin14);
+    debouncer14.interval(5); // interval in ms
+
+    debouncer12.attach(ConfigInputPin,INPUT_PULLUP);
+    debouncer12.interval(25); // interval in ms
+
     /* You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
        https://github.com/me-no-dev/arduino-esp32fs-plugin */
@@ -659,16 +666,18 @@ void loop() {
     }
   }
 
+
+
   if (InputPin14_interruptCounter > 0) {
     InputPin14_interruptCounter--;
     char* msg;
-    uint8_t  InputPin14State = digitalRead(InputPin14);
-    bool stateChanged = debouncer.update(InputPin14State);
+    debouncer14.update();
+    int stateChanged = debouncer14.read();
+
     if (stateChanged) {
       digitalRead(InputPin14) == HIGH ? msg = ON : msg = OFF;
       mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
     }
-    numberOfInterrupts++;
   }
 
 

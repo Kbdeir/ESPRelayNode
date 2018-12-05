@@ -1,5 +1,4 @@
 #include <RelayClass.h>
-
 #include <RelaysArray.h>
 
 /*Relay::Relay(uint8_t p)
@@ -51,6 +50,8 @@ Relay::Relay(uint8_t p,
   ticker_ACS_MQTT = new Schedule_timer (fticker_ACS712_mqtt_func,1000,0,MILLIS_);
   ticker_relay_tta = new Schedule_timer(fttacallback,0,0,MILLIS_);
 
+  //Bounce debouncer12 = Bounce();
+  btn_debouncer = new Bounce();
   // switch button callback functions, set in Relay::attachSwithchButton method
   fbutton = NULL;
   fonclick = NULL;
@@ -66,6 +67,7 @@ Relay::~Relay(){
       delete ticker_ACS_MQTT;
       delete ticker_relay_tta;
       delete fbutton;
+      delete btn_debouncer;
 
     }
 
@@ -84,6 +86,15 @@ void Relay::watch(){
    if (fgeneralinLoopFunc) fgeneralinLoopFunc(this);
 
    freelockfunc();
+
+   if (fon_associatedbtn_change){
+   btn_debouncer->update();
+   //int stateChanged12 = !debouncer12.read();
+   if (btn_debouncer->fell() || btn_debouncer->rose()) {
+       fon_associatedbtn_change(this);
+       //stateChanged12 = false;
+   }
+  }
 
 }
 
@@ -258,11 +269,12 @@ boolean Relay::loadrelayparams(){
       fonclick = onclick;
       //attachInterrupt(digitalPinToInterrupt(fswitchbutton), intfunc,
       fbutton = new OneButton(fswitchbutton, true);
-
+      btn_debouncer->attach(fswitchbutton,INPUT_PULLUP);
+      btn_debouncer->interval(25); // interval in ms
 
       if (fonclick) fbutton->attachClick(fonclick);        // toggle mode function
-      if (fon_associatedbtn_change) fbutton->attachLongPressStart(fon_associatedbtn_change); // pin change function
-      if (fon_associatedbtn_change) fbutton->attachLongPressStop(fon_associatedbtn_change);  // pin change function
+      //if (fon_associatedbtn_change) fbutton->attachLongPressStart(fon_associatedbtn_change); // pin change function
+      //if (fon_associatedbtn_change) fbutton->attachLongPressStop(fon_associatedbtn_change);  // pin change function
 
     //  if (intfunc) fbutton->attachDuringLongPress(intfunc);
     }

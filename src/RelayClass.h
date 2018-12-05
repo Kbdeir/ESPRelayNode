@@ -6,6 +6,7 @@
 #include <JSONConfig.h>
 #include <Scheduletimer.h>
 #include <OneButton.h>
+#include <Bounce2.h>
 
 typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
@@ -73,6 +74,7 @@ typedef struct TRelayConfigParams {
   public:
     TConfigParams *RelayConfParam;
     OneButton *fbutton;
+    Bounce *btn_debouncer;
     Schedule_timer *ticker_relay_tta;
     Schedule_timer *ticker_relay_ttl;
     Schedule_timer *freelock;
@@ -110,7 +112,10 @@ typedef struct TRelayConfigParams {
     void setRelayTTT_Timer_Interval(uint32_t interval);
     ksb_status_t TTLstate();
     int readrelay ();
-    void attachSwithchButton(uint8_t switchbutton, fnptr_a intSvcfunc, fnptr_a OnebtnSvcfunc);
+    void attachSwithchButton(uint8_t switchbutton,
+                            fnptr_a intSvcfunc,
+                            fnptr_a OnebtnSvcfunc);
+
     uint8_t getRelaySwithbtn();
     uint8_t getRelayPin();
     uint8_t getRelaySwithbtnState();
