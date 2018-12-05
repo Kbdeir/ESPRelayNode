@@ -267,9 +267,7 @@ if (true){ //}(SwitchButtonPin_interruptCounter > 0) {
     char* msg;
       rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
       mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
-      Serial.print("\npublished1");
       mqttClient.publish(MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
-      Serial.print("\npublished2");
   }
   if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
       rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());

@@ -275,8 +275,7 @@ boolean Relay::loadrelayparams(){
       if (fonclick) fbutton->attachClick(fonclick);        // toggle mode function
       //if (fon_associatedbtn_change) fbutton->attachLongPressStart(fon_associatedbtn_change); // pin change function
       //if (fon_associatedbtn_change) fbutton->attachLongPressStop(fon_associatedbtn_change);  // pin change function
-
-    //  if (intfunc) fbutton->attachDuringLongPress(intfunc);
+      //if (intfunc) fbutton->attachDuringLongPress(intfunc);
     }
 
   void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){
