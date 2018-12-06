@@ -383,24 +383,21 @@ static void handleError(void* arg, AsyncClient* client, int8_t error) {
 }
 
 static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
- Serial.printf("\n Modbus query received from client %s \n", client->remoteIP().toString().c_str());
- Serial.print("\n Modbusfunction: ");
 
  uint fn = mb.task(client, data, len, false); // first time read to determine function
-
+ /*
+  Serial.printf("\n Modbus query received from client %s \n", client->remoteIP().toString().c_str());
+  Serial.print("\n Modbusfunction: ");
   Serial.print(fn);
   Serial.print("\n");
+  */
 
   if (fn==1){
     Relay * t = NULL;
     t = getrelaybypin(RelayPin);
     if (t) {
-      Serial.print("\n Readding relay:");
-      Serial.print(t->RelayConfParam->v_PUB_TOPIC1);
-      Serial.print("=");
       uint8_t tv = t->readrelay();
-      Serial.print(tv);
-      mb.Coil(LAMP1_COIL, tv);
+      mb.Coil(LAMP1_COIL, tv);  // set internal coil value in the mb system to the actual value of the relay
     }
     uint fn = mb.task(client, data, len,true);
   }
@@ -411,6 +408,7 @@ static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
      if (t) t->mdigitalWrite(RelayPin, mb.Coil(LAMP1_COIL));
      uint fn = mb.task(client, data, len, true);
   }
+
 }
 
 static void handleDisconnect(void* arg, AsyncClient* client) {
