@@ -59,7 +59,7 @@ class Modbus {
             void readCoils(word startreg, word numregs);
             void readInputStatus(word startreg, word numregs);
             void readInputRegisters(word startreg, word numregs);
-            void writeSingleCoil(word reg, word status);
+          //  void writeSingleCoil(word reg, word status);
             void writeMultipleCoils(byte* frame,word startreg, word numoutputs, byte bytecount);
         #endif
 
@@ -77,7 +77,7 @@ class Modbus {
 
     public:
         Modbus();
-
+            void writeSingleCoil(word reg, word status);
         void addHreg(word offset, word value = 0);
         bool Hreg(word offset, word value);
         word Hreg(word offset);

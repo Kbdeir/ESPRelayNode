@@ -237,7 +237,7 @@ void onRelaychangeInterruptSvc(void* t){
       Relay * rly;
       rly = static_cast<Relay *>(t);
 
-      if (rly->rchangedflag ) {
+  if (rly->rchangedflag ) {
         rly->rchangedflag = false;
 
       if (rly->readrelay() == HIGH) {
@@ -258,6 +258,10 @@ void onRelaychangeInterruptSvc(void* t){
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "off");
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "off");
       }
+  } else {
+        char* msg;
+        digitalRead(rly->getRelayPin()) == HIGH ? msg = ON : msg = OFF;
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
   }
 }
 
@@ -270,7 +274,7 @@ if (true){ //}(SwitchButtonPin_interruptCounter > 0) {
   if ((rly->RelayConfParam->v_GPIO12_TOG == "0") && (rly->RelayConfParam->v_Copy_IO == "0")) {
     char* msg;
       rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
-      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
+      mqttClient.publish(MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
       mqttClient.publish(MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
   }
   if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
@@ -380,11 +384,33 @@ static void handleError(void* arg, AsyncClient* client, int8_t error) {
 
 static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
  Serial.printf("\n Modbus query received from client %s \n", client->remoteIP().toString().c_str());
- mb.task(client, data, len);
- Relay * t = NULL;
- t = getrelaybypin(RelayPin);
- if (t) t->mdigitalWrite(RelayPin, mb.Coil(LAMP1_COIL));
- String pld = (mb.Coil(LAMP1_COIL) == 0) ? OFF : ON;
+ Serial.print("\n Modbusfunction: ");
+
+ uint fn = mb.task(client, data, len, false); // first time read to determine function
+
+  Serial.print(fn);
+  Serial.print("\n");
+
+  if (fn==1){
+    Relay * t = NULL;
+    t = getrelaybypin(RelayPin);
+    if (t) {
+      Serial.print("\n Readding relay:");
+      Serial.print(t->RelayConfParam->v_PUB_TOPIC1);
+      Serial.print("=");
+      uint8_t tv = t->readrelay();
+      Serial.print(tv);
+      mb.Coil(LAMP1_COIL, tv);
+    }
+    uint fn = mb.task(client, data, len,true);
+  }
+
+  if (fn==5) {
+     Relay * t = NULL;
+     t = getrelaybypin(RelayPin);
+     if (t) t->mdigitalWrite(RelayPin, mb.Coil(LAMP1_COIL));
+     uint fn = mb.task(client, data, len, true);
+  }
 }
 
 static void handleDisconnect(void* arg, AsyncClient* client) {
@@ -623,7 +649,6 @@ void setup() {
 
   //  attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
     relay1.attachSwithchButton(SwitchButtonPin2,
-                            //  SwitchButtonPin_handleInterrupt,
                               onchangeSwitchInterruptSvc,  // for input mode and copy to relay ,ode
                               buttonclick);                // for toggle mode
 

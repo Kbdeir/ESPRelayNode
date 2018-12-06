@@ -138,7 +138,7 @@ void ModbusIP::task() {
 
 
 
-void ModbusIP::task(AsyncClient* _KSBClient,void *data, size_t len) {
+uint8_t ModbusIP::task(AsyncClient* _KSBClient,void *data, size_t len, boolean respond) {
  //Serial.write((uint8_t*)data, len);
 
  uint8_t buffer[128] = {0};
@@ -159,8 +159,8 @@ void ModbusIP::task(AsyncClient* _KSBClient,void *data, size_t len) {
 
      _len = _MBAP[4] << 8 | _MBAP[5];
      _len--; // Do not count with last byte from MBAP
-     if (_MBAP[2] !=0 || _MBAP[3] !=0) return;  //Not a MODBUSIP packet
-     if (_len > MODBUSIP_MAXFRAME) return;      //Length is over MODBUSIP_MAXFRAME
+     if (_MBAP[2] !=0 || _MBAP[3] !=0) return 0;  //Not a MODBUSIP packet
+     if (_len > MODBUSIP_MAXFRAME) return 0;      //Length is over MODBUSIP_MAXFRAME
 
      _frame = (byte*) malloc(_len);
 
@@ -179,14 +179,16 @@ void ModbusIP::task(AsyncClient* _KSBClient,void *data, size_t len) {
          for (int i=0; i<_len; i++)	buffer[i+7] = _frame[i];
 
         // _wifi->send(mux_id, buffer, _len + 7);
+        if (respond) {
         if (_KSBClient->canSend()) {
           _KSBClient->add((char*)buffer,  _len + 7);
        	 _KSBClient->send();
+       }
         }
      }
 
  //prev_conn = true;
-
+    return res;
      free(_frame);
      _len = 0;
  }
