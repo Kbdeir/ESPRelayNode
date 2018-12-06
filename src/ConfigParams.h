@@ -24,6 +24,7 @@
 
 #define RelayPin 05
 #define Relay2Pin 16
+
 #define ConfigInputPin 13
 #define SwitchButtonPin 12 // revert to 12 when done testing
 #define SwitchButtonPin2 13 // revert to 12 when done testing

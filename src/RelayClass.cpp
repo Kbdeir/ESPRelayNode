@@ -1,13 +1,13 @@
 #include <RelayClass.h>
-
 #include <RelaysArray.h>
 
-Relay::Relay(uint8_t p)
+/*Relay::Relay(uint8_t p)
     {
       pin = p;
       RelayConfParam = new TConfigParams;
     //  ticker_relay_ttl = NULL;
     }
+    */
 
 void Relay::freelockfunc() {
   unsigned long cmillis = millis();
@@ -16,6 +16,10 @@ void Relay::freelockfunc() {
     lockupdate = false;
 	}
   }
+
+  void Relay::freelockreset() {
+    this->pmillis = millis();
+    }
 
 Relay::Relay(uint8_t p,
               fnptr_a ttlcallback,
@@ -30,7 +34,7 @@ Relay::Relay(uint8_t p,
   RelayConfParam = new TConfigParams;
 
   lockupdate = false;
-  freeinterval = 1000;
+  freeinterval = 600;
 
   // tickers callback functions for ttl, acs, tta
   fttlcallback = ttlcallback;
@@ -45,11 +49,11 @@ Relay::Relay(uint8_t p,
   ticker_ACS712 = new Schedule_timer (fticker_ACS712_func,100,0,MILLIS_);
   ticker_ACS_MQTT = new Schedule_timer (fticker_ACS712_mqtt_func,1000,0,MILLIS_);
   ticker_relay_tta = new Schedule_timer(fttacallback,0,0,MILLIS_);
-
-  // switch button callback functions, set in Relay::attachSwithchButton method
+  btn_debouncer = new Bounce();
+  
   fbutton = NULL;
-  fonSwitchbtnServiceFunction = NULL;
-  fonSwitchChangeInterrupt = NULL;
+  fonclick = NULL;
+  fon_associatedbtn_change = NULL;
   rchangedflag = false;
 
 }
@@ -61,11 +65,9 @@ Relay::~Relay(){
       delete ticker_ACS_MQTT;
       delete ticker_relay_tta;
       delete fbutton;
+      delete btn_debouncer;
 
     }
-
-
-
 
 
 void Relay::watch(){
@@ -73,16 +75,20 @@ void Relay::watch(){
    if (this->ticker_ACS712) this->ticker_ACS712->update(this);
    if (this->ticker_ACS_MQTT) this->ticker_ACS_MQTT->update(this);
    if (this->ticker_relay_tta) this->ticker_relay_tta->update(this);
-
    if (this->freelock) this->freelock->update(this);
-
-   if (this->fonchangeInterruptService != NULL) fonchangeInterruptService(this);
-   if (this->fonSwitchChangeInterrupt != NULL)  fonSwitchChangeInterrupt(this);
-   if (fbutton) fbutton->tick(this);
-   if (fgeneralinLoopFunc) fgeneralinLoopFunc(this);
-
    freelockfunc();
+   // if (this->fonchangeInterruptService != NULL) fonchangeInterruptService(this); moved to mdigitalwrite function
+   // if (this->fon_associatedbtn_change != NULL)  fon_associatedbtn_change(this);
+   if (fbutton) fbutton->tick(this);
 
+   if (fon_associatedbtn_change){
+     btn_debouncer->update();
+     if (btn_debouncer->fell() || btn_debouncer->rose()) {
+         fon_associatedbtn_change(this);
+     }
+   }
+
+   if (fgeneralinLoopFunc) fgeneralinLoopFunc(this);
 }
 
 String Relay::getRelayPubTopic() {
@@ -217,7 +223,7 @@ boolean Relay::loadrelayparams(){
       this->ticker_ACS712->start();
     }
 
-  void Relay::stop_ACS712r() {
+  void Relay::stop_ACS712() {
       this->ticker_ACS712->stop();
     }
 
@@ -245,19 +251,24 @@ boolean Relay::loadrelayparams(){
       return digitalRead(this->pin);
     }
 
-  void Relay::attachSwithchButton(uint8_t switchbutton, fnptr intfunc, fnptr_a intSvcfunc, fnptr_a OnebtnSvcfunc){
+  void Relay::attachSwithchButton(uint8_t switchbutton,
+                                  //fnptr intfunc,
+                                  fnptr_a on_associatedbtn_change, // on change for input or copy io mode
+                                  fnptr_a onclick) // on click for toggle mode
+                                  {
       fswitchbutton = switchbutton;
       pinMode (fswitchbutton, INPUT_PULLUP );
-      fonSwitchChangeInterrupt = intSvcfunc;
-      //attachInterrupt(digitalPinToInterrupt(fswitchbutton), intfunc, CHANGE );
+      fon_associatedbtn_change = on_associatedbtn_change;
+      fonclick = onclick;
+      //attachInterrupt(digitalPinToInterrupt(fswitchbutton), intfunc,
       fbutton = new OneButton(fswitchbutton, true);
-      fonSwitchbtnServiceFunction = OnebtnSvcfunc;
-      if (fonSwitchbtnServiceFunction) fbutton->attachClick(fonSwitchbtnServiceFunction);
+      btn_debouncer->attach(fswitchbutton,INPUT_PULLUP);
+      btn_debouncer->interval(25); // interval in ms
 
-      if (intfunc) fbutton->attachLongPressStart(intfunc);
-      if (intfunc) fbutton->attachLongPressStop(intfunc);
-    //  if (intfunc) fbutton->attachDuringLongPress(intfunc);
-
+      if (fonclick) fbutton->attachClick(fonclick);        // toggle mode function
+      //if (fon_associatedbtn_change) fbutton->attachLongPressStart(fon_associatedbtn_change); // pin change function
+      //if (fon_associatedbtn_change) fbutton->attachLongPressStop(fon_associatedbtn_change);  // pin change function
+      //if (intfunc) fbutton->attachDuringLongPress(intfunc);
     }
 
   void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){
@@ -276,39 +287,35 @@ boolean Relay::loadrelayparams(){
       return this->pin;
     }
 
-  void Relay::mdigitalWrite(uint8_t pn, uint8_t v)
-    {
+  void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
+    this->freelockreset();
     if (!lockupdate){
-    lockupdate = true;
-    uint8_t sts = digitalRead(pn);
-    rchangedflag = (sts != v);
-    if (rchangedflag){
-     digitalWrite(pn,v);
-     if (fonchangeInterruptService) fonchangeInterruptService(this);
+      lockupdate = true;
+      uint8_t sts = digitalRead(pn);
+      rchangedflag = (sts != v);
+      if (rchangedflag){
+       digitalWrite(pn,v);
+       if (fonchangeInterruptService) fonchangeInterruptService(this);
+      }
+    }
     }
 
-    }
-    }
-
-  Relay * Relay::relayofpin(uint8_t pn){
+  /*Relay * Relay::relayofpin(uint8_t pn){
       return this;
-    }
+    }*/
 
   Relay * getrelaybypin(uint8_t pn){
-      Relay * rly = NULL;
-      Relay * rtemp = NULL;
-
-        for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
-        {
-          rtemp = static_cast<Relay *>(*it);
-          if (pn == rtemp->getRelayPin()) {
+    Relay * rly = NULL;
+    Relay * rtemp = NULL;
+      for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)  {
+        rtemp = static_cast<Relay *>(*it);
+        if (pn == rtemp->getRelayPin()) {
           rly = rtemp;
         }
-        }
-
+      }
         /*for (int i=0; i<MAX_RELAYS; i++){
           rtemp = static_cast<Relay *>(mrelays[i]);
           if (rtemp->getRelayPin() == pn) rly = rtemp;
         }*/
-        return rly;
+    return rly;
   }

@@ -63,9 +63,9 @@ public:
   void attachPress(
       callbackFunction newFunction); // DEPRECATED, replaced by longPressStart,
                                      // longPressStop and duringLongPress
-  void attachLongPressStart(callbackFunction newFunction);
-  void attachLongPressStop(callbackFunction newFunction);
-  void attachDuringLongPress(callbackFunction newFunction);
+  void attachLongPressStart(callbackFunction_obj newFunction);
+  void attachLongPressStop(callbackFunction_obj newFunction);
+  void attachDuringLongPress(callbackFunction_obj newFunction);
 
   // ----- State machine functions -----
 
@@ -89,9 +89,9 @@ public:
 private:
   int _pin; // hardware pin number.
   unsigned int _debounceTicks = 50; // number of ticks for debounce times.
-  unsigned int _clickTicks = 600; // number of ticks that have to pass by
+  unsigned int _clickTicks = 300; // number of ticks that have to pass by
                                   // before a click is detected.
-  unsigned int _pressTicks = 1000; // number of ticks that have to pass by
+  unsigned int _pressTicks = 600; // number of ticks that have to pass by
                                    // before a long button press is detected
 
   int _buttonPressed;
@@ -103,9 +103,9 @@ private:
   callbackFunction_obj _clickFunc_obj = NULL;
   callbackFunction _doubleClickFunc = NULL;
   callbackFunction _pressFunc = NULL;
-  callbackFunction _longPressStartFunc = NULL;
-  callbackFunction _longPressStopFunc = NULL;
-  callbackFunction _duringLongPressFunc = NULL;
+  callbackFunction_obj _longPressStartFunc = NULL;
+  callbackFunction_obj _longPressStopFunc = NULL;
+  callbackFunction_obj _duringLongPressFunc = NULL;
 
   // These variables that hold information across the upcoming tick calls.
   // They are initialized once on program start and are updated every time the

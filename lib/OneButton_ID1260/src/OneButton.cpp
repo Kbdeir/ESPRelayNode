@@ -102,19 +102,19 @@ void OneButton::attachPress(callbackFunction newFunction)
 } // attachPress
 
 // save function for longPressStart event
-void OneButton::attachLongPressStart(callbackFunction newFunction)
+void OneButton::attachLongPressStart(callbackFunction_obj newFunction)
 {
   _longPressStartFunc = newFunction;
 } // attachLongPressStart
 
 // save function for longPressStop event
-void OneButton::attachLongPressStop(callbackFunction newFunction)
+void OneButton::attachLongPressStop(callbackFunction_obj newFunction)
 {
   _longPressStopFunc = newFunction;
 } // attachLongPressStop
 
 // save function for during longPress event
-void OneButton::attachDuringLongPress(callbackFunction newFunction)
+void OneButton::attachDuringLongPress(callbackFunction_obj newFunction)
 {
   _duringLongPressFunc = newFunction;
 } // attachDuringLongPress
@@ -180,16 +180,16 @@ void OneButton::tick(bool activeLevel, void* sender)
       _isLongPressed = true; // Keep track of long press state
       if (_pressFunc) {
         _pressFunc();
-        //Serial.print("\nLong press ");
+        Serial.print("\nLong press ");
         }
       if (_longPressStartFunc){
-        _longPressStartFunc();
-        //Serial.print("\nLong press start");
+        _longPressStartFunc(sender);
+        Serial.print("\nLong press start");
       }
 
       if (_duringLongPressFunc) {
-        _duringLongPressFunc();
-        //Serial.print("\nduring Long press ");
+        _duringLongPressFunc(sender);
+        Serial.print("\nduring Long press ");
       }
       _state = 6; // step to state 6
       _stopTime = now; // remember stopping time
@@ -229,15 +229,17 @@ void OneButton::tick(bool activeLevel, void* sender)
     // waiting for menu pin being release after long press.
     if (!activeLevel) {
       _isLongPressed = false; // Keep track of long press state
-      if (_longPressStopFunc)
-        _longPressStopFunc();
+      if (_longPressStopFunc) {
+        _longPressStopFunc(sender);
+        Serial.print("\n long press stop");
+      }
       _state = 0; // restart.
       _stopTime = now; // remember stopping time
     } else {
       // button is being long pressed
       _isLongPressed = true; // Keep track of long press state
       if (_duringLongPressFunc)
-        _duringLongPressFunc();
+        _duringLongPressFunc(sender);
     } // if
 
   } // if
