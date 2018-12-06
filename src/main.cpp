@@ -564,11 +564,9 @@ void Wifi_connect() {
                     APModetimer_run_value = 0;
 
                     Inputsnsr14.post_mqtt = true;
-                    Inputsnsr14.attached_to_relay = 0;
                     Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
 
                     Inputsnsr12.post_mqtt = true;
-                    Inputsnsr12.attached_to_relay = 0;
                     Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
 
                 }  // wifi is connected
@@ -656,6 +654,9 @@ void loop() {
   relay1.watch();
   //relay2.watch();
 
+  Inputsnsr14.watch();
+  Inputsnsr12.watch();
+
   if (restartRequired){  // check the flag here to determine if a restart is required
     Serial.printf("Restarting ESP\n\r");
     restartRequired = false;
@@ -670,11 +671,6 @@ void loop() {
       chronosevaluatetimers(MyCalendar);
     }
   }
-
-
-Inputsnsr14.watch();
-Inputsnsr12.watch();
-
 
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
