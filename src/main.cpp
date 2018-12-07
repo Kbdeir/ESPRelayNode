@@ -531,7 +531,7 @@ void Wifi_connect() {
               	 blinkInterval = 50;
                 while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials)){
                 //  while ((WiFi.waitForConnectResult() != WL_CONNECTED) & (trials < MaxWifiTrials)){
-                    delay(50);
+                    delay(100);
                 		blinkled();
                     trials++;
                     Serial.print(".");
