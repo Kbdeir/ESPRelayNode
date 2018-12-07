@@ -384,32 +384,30 @@ static void handleError(void* arg, AsyncClient* client, int8_t error) {
 
 static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
 
- uint fn = mb.task(client, data, len, false); // first time read to determine function
  /*
   Serial.printf("\n Modbus query received from client %s \n", client->remoteIP().toString().c_str());
   Serial.print("\n Modbusfunction: ");
   Serial.print(fn);
   Serial.print("\n");
   */
-
+  uint8_t fn = mb.task(client, data, len, false); // first time, process to determine function - don't respond
   if (fn==1){
     Relay * t = NULL;
     t = getrelaybypin(RelayPin);
     if (t) {
-      uint8_t tv = t->readrelay();
-      mb.Coil(LAMP1_COIL, tv);  // set internal coil value in the mb system to the actual value of the relay
+      mb.Coil(LAMP1_COIL, t->readrelay());  // set internal coil value in the mb system to the actual value of the relay
     }
-    uint fn = mb.task(client, data, len,true);
   }
 
   if (fn==5) {
      Relay * t = NULL;
      t = getrelaybypin(RelayPin);
      if (t) t->mdigitalWrite(RelayPin, mb.Coil(LAMP1_COIL));
-     uint fn = mb.task(client, data, len, true);
   }
 
+  mb.task(client, data, len, true);
 }
+
 
 static void handleDisconnect(void* arg, AsyncClient* client) {
  Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
@@ -533,7 +531,7 @@ void Wifi_connect() {
               	 blinkInterval = 50;
                 while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials)){
                 //  while ((WiFi.waitForConnectResult() != WL_CONNECTED) & (trials < MaxWifiTrials)){
-                    delay(250);
+                    delay(50);
                 		blinkled();
                     trials++;
                     Serial.print(".");
