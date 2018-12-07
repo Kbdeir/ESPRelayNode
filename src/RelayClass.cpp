@@ -50,7 +50,7 @@ Relay::Relay(uint8_t p,
   ticker_ACS_MQTT = new Schedule_timer (fticker_ACS712_mqtt_func,1000,0,MILLIS_);
   ticker_relay_tta = new Schedule_timer(fttacallback,0,0,MILLIS_);
   btn_debouncer = new Bounce();
-  
+
   fbutton = NULL;
   fonclick = NULL;
   fon_associatedbtn_change = NULL;
@@ -295,8 +295,8 @@ boolean Relay::loadrelayparams(){
       rchangedflag = (sts != v);
       if (rchangedflag){
        digitalWrite(pn,v);
-       if (fonchangeInterruptService) fonchangeInterruptService(this);
       }
+      if (fonchangeInterruptService) fonchangeInterruptService(this);
     }
     }
 

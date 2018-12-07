@@ -33,7 +33,7 @@ class ModbusIP : public Modbus {
         void config(uint8_t *mac, IPAddress ip, IPAddress dns);
         void config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress gateway);
         void config(uint8_t *mac, IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress subnet);
-        void task(AsyncClient* _KSBClient,void *data, size_t len);
+        uint8_t task(AsyncClient* _KSBClient,void *data, size_t len,boolean respond);
 };
 
 #endif //MODBUSIP_H

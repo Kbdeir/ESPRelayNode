@@ -43,10 +43,11 @@ time_t getNtpTime()
   timeZone = MyConfParam.v_ntptz.toInt();
 
   Serial.print(ntpServerName);
-  Serial.print(": ");
+  Serial.print(F(": "));
   Serial.print(F("timezone"));
-  Serial.print(": ");
+  Serial.print(F(": "));
   Serial.print(String(timeZone));
+    Serial.print(F(" - NTP server: "));
   Serial.println(ntpServerIP);
   sendNTPpacket(ntpServerIP);
   uint32_t beginWait = millis();
