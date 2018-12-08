@@ -1,5 +1,5 @@
 #include <TimerClass.h>
-
+#define buffer_size  1500 
 
 
 NodeTimer::NodeTimer(uint8_t para_id,
@@ -7,8 +7,8 @@ NodeTimer::NodeTimer(uint8_t para_id,
           uint8_t para_marktype) {
     id = para_id;
     type = 0;
-    spanDatefrom  = "01/01/1970";
-    spanDateto    = "01/01/2100";
+    spanDatefrom  = "01-01-1970";
+    spanDateto    = "01-01-2100";
     spantimefrom  = "00:00";
     spantimeto    = "00:00";
 
@@ -28,10 +28,10 @@ NodeTimer::NodeTimer(uint8_t para_id,
 }
 
 NodeTimer::NodeTimer(uint8_t para_id,
-          char * para_spanDatefrom,
-          char * para_spanDateto,
-          char * para_spantimefrom,
-          char * para_spantimeto,
+          String para_spanDatefrom,
+          String para_spanDateto,
+          String para_spantimefrom,
+          String para_spantimeto,
           TWeekdays * para_weekdays,
           unsigned int para_mark,
           uint8_t para_marktype,
@@ -129,10 +129,12 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   }
 
   para_NodeTimer.id = (json["TNumber"].as<String>()!="") ? json["TNumber"].as<uint8_t>() : 0;
-  if (json["Dfrom"]!="") { strcpy(para_NodeTimer.spanDatefrom , json["Dfrom"]); } else  { strcpy(para_NodeTimer.spanDatefrom , "01/01/1970"); }
-  if (json["DTo"]!="")   { strcpy(para_NodeTimer.spanDateto   , json["DTo"]); }   else  { strcpy(para_NodeTimer.spanDateto   , "01/01/2100"); }
-  if (json["TFrom"]!="") { strcpy(para_NodeTimer.spantimefrom , json["TFrom"]); } else  { strcpy(para_NodeTimer.spantimefrom , "00:00"); }
-  if (json["TTo"]!="")   { strcpy(para_NodeTimer.spantimeto   , json["TTo"]); }   else  { strcpy(para_NodeTimer.spantimeto   , "00:00"); }
+  para_NodeTimer.spanDatefrom = (json["Dfrom"].as<String>()!="") ? json["Dfrom"].as<String>() : String("01-01-1970");
+  Serial.print("\n++++++++++++++saved date time\n");
+  Serial.print(para_NodeTimer.spanDatefrom);
+  para_NodeTimer.spanDateto  = (json["DTo"].as<String>()!="")  ? json["DTo"].as<String>() : String("01-01-2100");
+  para_NodeTimer.spantimefrom = (json["TFrom"].as<String>()!="") ? json["TFrom"].as<String>() : String("00:00");
+  para_NodeTimer.spantimeto  = (json["TTo"].as<String>()!="")  ? json["TTo"].as<String>() : String("00:00");
 
   para_NodeTimer.weekdays->Sunday = json["CSunday"];
   para_NodeTimer.weekdays->Monday = json["CMonday"];
@@ -141,6 +143,8 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.weekdays->Thursday = json["CThursday"];
   para_NodeTimer.weekdays->Friday = json["CFriday"];
   para_NodeTimer.weekdays->Saturday = json["CSaturday"];
+
+  para_NodeTimer.fyear=2018;
 
   para_NodeTimer.mark = 0;
   para_NodeTimer.marktype = 0;

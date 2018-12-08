@@ -36,14 +36,15 @@ typedef struct TWeekdays {
   public:
     uint8_t id;
     uint8_t type;
-    char * spanDatefrom;
-    char * spanDateto;
-    char * spantimefrom;
-    char * spantimeto;
+    String spanDatefrom;
+    String spanDateto;
+    String spantimefrom;
+    String spantimeto;
     TWeekdays * weekdays;
     unsigned int mark;
     uint8_t marktype;
     boolean enabled;
+    uint16_t fyear;
 
     NodeTimer(uint8_t para_id,
       unsigned int para_mark,
@@ -51,10 +52,11 @@ typedef struct TWeekdays {
       );
 
     NodeTimer(uint8_t para_id,
-              char * para_spanDatefrom,
-              char * para_spanDateto,
-              char * para_spantimefrom,
-              char * para_spantimeto,
+              String para_spanDatefrom,
+              String para_spanDateto,
+              String para_spantimefrom,
+              String para_spantimeto,
+
               TWeekdays * para_weekdays,
               unsigned int para_mark,
               uint8_t para_marktype,

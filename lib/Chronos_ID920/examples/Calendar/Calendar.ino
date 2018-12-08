@@ -1,42 +1,42 @@
 /*
  * Calendar.ino  -- scheduling and event manipulation example.
  *
- * To use: 
+ * To use:
  *         - install Arduino Time library, if not built-in https://www.pjrc.com/teensy/td_libs_Time.html
  *         - optionally, edit the configuration #defines below
  *         - compile and install on Arduino-compatible device
  *         - open serial monitor/terminal and check it out
- * 
- * 
+ *
+ *
  * Synopsis:
- *   This program demonstrates some of the functions of the higher level APIs in 
- *   the Chronos library, related to scheduling one-time and repeat events and 
+ *   This program demonstrates some of the functions of the higher level APIs in
+ *   the Chronos library, related to scheduling one-time and repeat events and
  *   querying the calendar to know what's going on and when.
  *
  *   For more info check out the documentation at http://flyingcarsandstuff.com/projects/chronos/
  *   or the examples for:
  *          - DateTime object manipulations in the DateTime.ino example
- *          - Point event (basically repeating marks on a timeline, like "every Sunday at 07h00") 
+ *          - Point event (basically repeating marks on a timeline, like "every Sunday at 07h00")
  *            handling in the PointEvents.ino example.
  *
- *  
+ *
  *  Created on: Jan 2, 2016
  *      Author: Pat Deegan
  *      Part of the Chronos library project
  *      Copyright (C) 2016 Pat Deegan, http://psychogenic.com
- * 
+ *
  *  This file is part of the Chronos embedded datetime/calendar library.
- * 
+ *
  *     Chronos is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Lesser Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
- * 
+ *
  *     Chronos is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU Lesser Public License for more details.
- * 
+ *
  *    You should have received a copy of the GNU Lesser Public License
  *    along with Chronos.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -55,7 +55,7 @@
 // CALENDAR_MAX_NUM_EVENTS:
 // The max number of events the calendar will accept.
 // The larger you make this, the more memory it'll eat up.
-// The calendar takes a little over 5 bytes + (41*NUM_EVENTS), 
+// The calendar takes a little over 5 bytes + (41*NUM_EVENTS),
 // whether they are one-shot or recurring events.
 // 46 bytes for 1 event
 // 87 for 2 events ...
@@ -74,14 +74,14 @@ DefineCalendarType(Calendar, CALENDAR_MAX_NUM_EVENTS);
 Calendar MyCalendar;
 
 // NOTE: this is just a convenience #define... if you need multiple calendars
-// of different sizes, or want to sidestep the syntactic sugar, 
+// of different sizes, or want to sidestep the syntactic sugar,
 // you can just use the templating directly, e.g. declare a cal with:
 //    Chronos::CalendarStaticArray<10> a10EventMaxCalendar;
 // etc.
 
 
 // OCCURRENCES_LIST_SIZE: array size for calendar query results
-// At a size of 30, with the RAM strings and other stuff we're 
+// At a size of 30, with the RAM strings and other stuff we're
 // using here, we're right at the limit of what an ATMega328
 // (basic Arduino) can handle... any bigger and we smash the stack
 // and get out-of-memory weirdness/resets/etc.
@@ -130,7 +130,7 @@ void setup() {
 
   LINES(2);
   PRINTLN(F(" *** No real time source set, so pretending it is currently :"));
-  
+
   // printTo is a convenience method useful for debugging
   // in real life, you'd use accessors and format it however you like.
   Chronos::DateTime::now().printTo(SERIAL_DEVICE);
@@ -139,8 +139,8 @@ void setup() {
 
   DUMPSIZE(F("Calendar"), MyCalendar);
   LINES(2);
-  
-  
+
+
   /* Add some Chronos::Event objects to the calendar to make it useful */
 
   // Chronos::Event can be initialized a few ways, namely:
@@ -150,14 +150,14 @@ void setup() {
   // Some examples:
   // two meetings, one shot events, one setup using a duration and the other using bounding datetimes
   // meeting one, about a half hour long.
-  
-  // NOTE: MyCalendar.add() returns a true value if the add succeeded, which you might 
+
+  // NOTE: MyCalendar.add() returns a true value if the add succeeded, which you might
   // want to check in real life, if you're dynamically adding/removing events...
-  
-  // Also note that, though you can keep these various Event, Span etc. objects 
+
+  // Also note that, though you can keep these various Event, Span etc. objects
   // around if you like, everything's designed to let you just pass temporary
   // "anonymous" objects like this.
-  
+
   // so here's the meeting, an event created with a DateTime and a Span
   MyCalendar.add(Chronos::Event(1, Chronos::DateTime(2015, 12, 21, 17, 00),
                              Chronos::Span::Minutes(33))
@@ -166,7 +166,7 @@ void setup() {
 
 
   // don't forget the daily workout, a daily recurring event every morning at 9:
-  // another Event constructed with (DateTime, Span) 
+  // another Event constructed with (DateTime, Span)
   MyCalendar.add(
     Chronos::Event(2, Chronos::Mark::Daily(9, 00, 00),
                 Chronos::Span::Minutes(45)));
@@ -174,7 +174,7 @@ void setup() {
 
 
   // that longer meeting, what a drag...
-  // This one is constructed using bounding DateTimes for 
+  // This one is constructed using bounding DateTimes for
   // the start and finish
   MyCalendar.add(
     Chronos::Event(3, Chronos::DateTime(2015, 12, 21, 18, 00),
@@ -185,7 +185,7 @@ void setup() {
   // an Event created using a repeating Mark, and a Span
   MyCalendar.add(
     Chronos::Event(4,
-                Chronos::Mark::Weekly(Chronos::Weekday::Monday, 10, 30, 00),
+                Chronos::Mark::Weekly(Chronos::Weekday::Monday::Tuesday::Saturday, 10, 30, 00),
                 Chronos::Span::Hours(1)));
 
   // new year's eve party!
@@ -208,15 +208,15 @@ void setup() {
 
   // WARNING: if you choose to add more events, make sure to adjust the EventNames array, above, so
   // we don't try to print out-of-bounds (no checking in this simple test).
-  
-  
+
+
   PRINT(F("Calendar now set up with "));
   PRINT(MyCalendar.numEvents());
   PRINT(F(" events ("));
   PRINT(MyCalendar.numRecurring());
   PRINTLN(F(" of which are repeat events)."));
   LINES(2);
-  
+
 
   PRINTLN(F("Now we'll display the current and upcoming events, then delete them one by one and refresh..."));
   LINE();
@@ -233,7 +233,7 @@ void calendarTest() {
 
   Chronos::DateTime nowTime(Chronos::DateTime::now());
   PRINT("Right \"now\" it's: ");
-  
+
   nowTime.printTo(SERIAL_DEVICE);
   LINES(2);
 
@@ -259,7 +259,7 @@ void calendarTest() {
   if (numOngoing) {
 
     // At least one event is happening at "nowTime"...
-    
+
     LINE();
     PRINTLN("**** Some things are going on this very minute! ****");
 
@@ -330,10 +330,10 @@ void calendarTest() {
 
   // listForDay, similar to listOngoing and listNext, but the returned
   // data is restricted to a events starting on the particular day of the query
-  
+
   // let's check the following monday:
   Chronos::DateTime nextMonday = nowTime.next(Chronos::Weekday::Monday);
-  
+
   int numMon = MyCalendar.listForDay(OCCURRENCES_LIST_SIZE, occurrenceList, nextMonday);
   if (numMon) {
     LINES(2);
@@ -354,7 +354,7 @@ void calendarTest() {
 
 }
 
-// start our delete id counter 
+// start our delete id counter
 // negative, so we see the full list a couple of times
 // before deleting items:
 int8_t anEventId = -1;
@@ -364,11 +364,11 @@ void loop() {
 
   // call the test function
   calendarTest();
-  
+
   // wait a bit
   delay(DELAY_BETWEEN_TESTS_MS);
-  
-  // try and delete an event, to show 
+
+  // try and delete an event, to show
   // how the schedule is modified
   if (MyCalendar.remove(anEventId++))
   {

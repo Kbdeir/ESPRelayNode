@@ -438,11 +438,38 @@ void chronosInit() {
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
   NodeTimer NTmr(4,0,0);
-  loadNodeTimer("timer.json",NTmr);
+  loadNodeTimer("/timer.json",NTmr);
 
-  MyCalendar.add(
-      Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday, 16, 00, 05), Chronos::Span::Minutes(45))
-    );
+  PRINTLN("\n ********** timer 1 details ***********");
+  PRINTLN(NTmr.id);
+  PRINTLN(NTmr.spanDatefrom);
+  PRINTLN(NTmr.spanDateto);
+  PRINTLN(NTmr.spantimefrom);
+  PRINTLN(NTmr.spantimeto);
+  PRINTLN(NTmr.enabled);
+
+  //Chronos::DateTime DT(2015, 12, 21, 17, 30, 0);
+
+String str = "2017-03-27 10:30:15";
+int Year, Month, Day, Hour, Minute, Second ;
+String DT = NTmr.spanDatefrom + " " + NTmr.spantimefrom;
+sscanf(DT.c_str(), "%d-%d-%d %d:%d:%d", &Year, &Month, &Day, &Hour, &Minute, &Second);
+
+PRINTLN("* my timer values: +++++++++++++++++++++");
+PRINTLN(NTmr.spanDatefrom);
+PRINTLN(Year);
+PRINTLN(Month);
+PRINTLN(Day);
+PRINTLN(" ");
+PRINTLN(Hour);
+PRINTLN(Minute);
+
+ if (NTmr.weekdays->Saturday) {
+    MyCalendar.add(
+        Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
+        Chronos::Span::Minutes(55))
+      );
+  }
   LINE();
 
   PRINTLN(F("**** presumably got NTP time **** :"));
