@@ -3,6 +3,7 @@
 #include <SPIFFSEditor.h>
 #include <MQTT_Processes.h>
 #include <RelayClass.h>
+#include <TimerClass.h>
 
 
 //const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
@@ -63,7 +64,6 @@ void SetAsyncHTTP(){
     request->send(200, "text/plain", String(ESP.getFreeHeap()));
   });
 
-
   AsyncWeb_server.on("/JConfig", HTTP_GET, [](AsyncWebServerRequest *request){
     if (!request->authenticate("user", "pass")) return request->requestAuthentication();
     request->send(SPIFFS, "/config.json");
@@ -76,7 +76,14 @@ void SetAsyncHTTP(){
         // int args = request->args();
     });
 
-
+  AsyncWeb_server.on("/savetimer.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/savetimer.html");
+            saveNodeTimer(request);
+            //loadConfig(MyConfParam);
+            //uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
+            //uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
+      });
 
   AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
     if (!request->authenticate("user", "pass")) return request->requestAuthentication();

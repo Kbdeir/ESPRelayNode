@@ -2,22 +2,148 @@
 
 
 
-NodeTimer::NodeTimer(uint8_t pid) {
+NodeTimer::NodeTimer(uint8_t para_id,
+          unsigned int para_mark,
+          uint8_t para_marktype) {
+    id = para_id;
+    type = 0;
+    spanDatefrom  = "01/01/1970";
+    spanDateto    = "01/01/2100";
+    spantimefrom  = "00:00";
+    spantimeto    = "00:00";
 
-  id = pid;
+    weekdays = new TWeekdays;
 
+    weekdays->Monday    = true;
+    weekdays->Tuesday   = true;
+    weekdays->Wednesday = true;
+    weekdays->Thursday  = true;
+    weekdays->Friday    = true;
+    weekdays->Saturday  = true;
+    weekdays->Sunday    = true;
+
+    mark = para_mark;
+    marktype = para_marktype;
+    enabled = true;
+}
+
+NodeTimer::NodeTimer(uint8_t para_id,
+          char * para_spanDatefrom,
+          char * para_spanDateto,
+          char * para_spantimefrom,
+          char * para_spantimeto,
+          TWeekdays * para_weekdays,
+          unsigned int para_mark,
+          uint8_t para_marktype,
+          boolean para_enabled
+) {
+    id = para_id;
+    type = 1;
+    spanDatefrom = para_spanDatefrom;
+    spanDateto = para_spanDateto;
+    weekdays = para_weekdays;
+    mark = para_mark;
+    marktype = para_marktype;
+    enabled = para_enabled;
+    spantimefrom = para_spantimefrom;
+    spantimeto = para_spantimeto;
 }
 
 NodeTimer::~NodeTimer(){
-
-    }
-
-
-void NodeTimer::watch(){
-
+    delete weekdays;
 }
 
-  NodeTimer * gettimerbypin(uint8_t pn){
+void NodeTimer::watch(){
+}
+
+NodeTimer * gettimerbypin(uint8_t pn){
     NodeTimer * tmr = NULL;
     return tmr;
+}
+
+bool saveNodeTimer(AsyncWebServerRequest *request){
+    StaticJsonBuffer<buffer_size> jsonBuffer;
+    JsonObject& json = jsonBuffer.createObject();
+
+  File configFile = SPIFFS.open("/timer.json", "w");
+  if (!configFile) {
+    Serial.println(F("Failed to open timer file for writing"));
+    return false;
   }
+
+  int args = request->args();
+  for(int i=0;i<args;i++){
+    //Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
+    json[request->argName(i)] =  request->arg(i) ;
+  }
+
+  request->hasParam("CSunday")    ? json["CSunday"]    =  "1"   : json["CSunday"]   =  "0" ;
+  request->hasParam("CMonday")    ? json["CMonday"]    =  "1"   : json["CMonday"]   =  "0" ;
+  request->hasParam("CTuesday")   ? json["CTuesday"]   =  "1"   : json["CTuesday"]  =  "0" ;
+  request->hasParam("CWednesday") ? json["CWednesday"] =  "1"   : json["CWednesday"]=  "0" ;
+  request->hasParam("CThursday")  ? json["CThursday"]  =  "1"   : json["CThursday"] =  "0" ;
+  request->hasParam("CFriday")    ? json["CFriday"]    =  "1"   : json["CFriday"]   =  "0" ;
+  request->hasParam("CSaturday")  ? json["CSaturday"]  =  "1"   : json["CSaturday"] =  "0" ;
+
+  json.printTo(configFile);
+  configFile.close();
+  return true;
+}
+
+
+
+config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
+
+  if (! SPIFFS.exists(filename)) {
+    Serial.println(F("timer file does not exist!"));
+    return FILE_NOT_FOUND;
+  }
+
+  File configFile = SPIFFS.open(filename, "r");
+  if (!configFile) {
+    Serial.println(F("Failed to open timer file"));
+    return ERROR_OPENING_FILE;
+  }
+
+  size_t size = configFile.size();
+  if (size > buffer_size) {
+    Serial.println(F("timer file size is too large, rebuilding."));
+    return ERROR_OPENING_FILE;
+  }
+
+  // Allocate a buffer to store contents of the file.
+  std::unique_ptr<char[]> buf(new char[size]);
+
+  // We don't use String here because ArduinoJson library requires the input
+  // buffer to be mutable. If you don't use ArduinoJson, you may as well
+  // use configFile.readString instead.
+  configFile.readBytes(buf.get(), size);
+
+  StaticJsonBuffer<buffer_size> jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(buf.get());
+
+  if (!json.success()) {
+    Serial.println(F("Failed to parse timer file"));
+    //saveDefaultConfig();
+    return JSONCONFIG_CORRUPTED;
+  }
+
+  para_NodeTimer.id = (json["TNumber"].as<String>()!="") ? json["TNumber"].as<uint8_t>() : 0;
+  if (json["Dfrom"]!="") { strcpy(para_NodeTimer.spanDatefrom , json["Dfrom"]); } else  { strcpy(para_NodeTimer.spanDatefrom , "01/01/1970"); }
+  if (json["DTo"]!="")   { strcpy(para_NodeTimer.spanDateto   , json["DTo"]); }   else  { strcpy(para_NodeTimer.spanDateto   , "01/01/2100"); }
+  if (json["TFrom"]!="") { strcpy(para_NodeTimer.spantimefrom , json["TFrom"]); } else  { strcpy(para_NodeTimer.spantimefrom , "00:00"); }
+  if (json["TTo"]!="")   { strcpy(para_NodeTimer.spantimeto   , json["TTo"]); }   else  { strcpy(para_NodeTimer.spantimeto   , "00:00"); }
+
+  para_NodeTimer.weekdays->Sunday = json["CSunday"];
+  para_NodeTimer.weekdays->Monday = json["CMonday"];
+  para_NodeTimer.weekdays->Tuesday = json["CTuesday"];
+  para_NodeTimer.weekdays->Wednesday = json["CWednesday"];
+  para_NodeTimer.weekdays->Thursday = json["CThursday"];
+  para_NodeTimer.weekdays->Friday = json["CFriday"];
+  para_NodeTimer.weekdays->Saturday = json["CSaturday"];
+
+  para_NodeTimer.mark = 0;
+  para_NodeTimer.marktype = 0;
+
+  return SUCCESS;
+}

@@ -13,6 +13,7 @@
 #include <vector>
 #include <ACS_Helper.h>
 #include <InputClass.h>
+#include <TimerClass.h>
 //#include <RelaysArray.h>
 
 //extern void *  mrelays[3];
@@ -435,6 +436,9 @@ void chronosInit() {
   PRINTLN(F("Starting up PointsEvents test"));
   Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second());
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
+
+  NodeTimer NTmr(4,0,0);
+  loadNodeTimer("timer.json",NTmr);
 
   MyCalendar.add(
       Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday, 16, 00, 05), Chronos::Span::Minutes(45))
