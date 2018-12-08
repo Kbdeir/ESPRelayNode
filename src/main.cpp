@@ -434,14 +434,14 @@ Calendar MyCalendar;
 void chronosInit() {
   PRINTLN(F("Starting up PointsEvents test"));
   Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second());
-  //Chronos::DateTime::setTime(2018, 11, 1, 10, 00, 00);
+  //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
   MyCalendar.add(
-      Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Thursday, 10, 00, 05), Chronos::Span::Seconds(15))
+      Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday, 16, 00, 05), Chronos::Span::Minutes(45))
     );
   LINE();
 
-  PRINTLN(F(" **** presumably got NTP time **** :"));
+  PRINTLN(F("**** presumably got NTP time **** :"));
   Chronos::DateTime::now().printTo(SERIAL_DEVICE);
   LINE();
   Chronos::DateTime nowTime(Chronos::DateTime::now());
@@ -470,7 +470,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
       PRINT((int )occurrenceList[i].id);
       PRINT('\t');
       PRINT(EventNames[occurrenceList[i].id]);
-      PRINT(F("\tends in: "));
+      PRINT(F("\t ends in: "));
       (nowTime - occurrenceList[i].finish).printTo(SERIAL_DEVICE);
 
       if ((nowTime == occurrenceList[i].start + 1)) {
