@@ -1,9 +1,9 @@
 
-#ifndef KSBNTP_H
-#define KSBNTP_H
+#ifndef KSBNTP_H_
+#define KSBNTP_H_
 
 #include <TimeLib.h>
-
+#include <ConfigParams.h>
 #include <WiFiUdp.h>
 #ifdef ESP32
   #include <WiFi.h>
@@ -14,6 +14,7 @@
 
 
 const int NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
+extern boolean ftimesynced;
 
 extern WiFiUDP Udp;
 extern unsigned int localPort;

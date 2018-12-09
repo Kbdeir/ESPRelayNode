@@ -1,5 +1,6 @@
 #include <ConfigParams.h>
 
+boolean ftimesynced = false;
 
 TConfigParams MyConfParam;
 

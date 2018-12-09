@@ -51,6 +51,9 @@ extern std::vector<void *> relays ; // a list to hold all relays
 #include <KSBNTP.h>
 time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
+
+   NodeTimer NTmr(4,0,0);
+
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
   "Project Meeting   ",
@@ -437,7 +440,7 @@ void chronosInit() {
   Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second());
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
-  NodeTimer NTmr(4,0,0);
+
   loadNodeTimer("/timer.json",NTmr);
 
   PRINTLN("\n ********** timer 1 details ***********");
@@ -484,6 +487,7 @@ PRINTLN(Minute);
 }
 
 void chronosevaluatetimers(Calendar MyCalendar) {
+  if (ftimesynced){
   // create an array of Event::Occurrence objects, to hold replies from the calendar
   Chronos::Event::Occurrence occurrenceList[10];
   // listOngoing: get events that are happening at specified datetime.  Called with
@@ -517,7 +521,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
   } else {
   //  PRINTLN(F("Looks like we're free for the moment..."));
   }
-
+}
 }
 
 

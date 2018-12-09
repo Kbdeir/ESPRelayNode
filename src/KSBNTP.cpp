@@ -1,10 +1,11 @@
 
 #include <KSBNTP.h>
-#include <ConfigParams.h>
+
 
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
 static const char ntpServerName[] = "us.pool.ntp.org";
 uint8_t timeZone = 1;     // Central European Time
+
 
 unsigned int localPort = 8888;  // local port to listen for UDP packets
 WiFiUDP Udp;
@@ -47,8 +48,9 @@ time_t getNtpTime()
   Serial.print(F("timezone"));
   Serial.print(F(": "));
   Serial.print(String(timeZone));
-    Serial.print(F(" - NTP server: "));
+  Serial.print(F(" - NTP server: "));
   Serial.println(ntpServerIP);
+
   sendNTPpacket(ntpServerIP);
   uint32_t beginWait = millis();
   while (millis() - beginWait < 3000) {
@@ -63,6 +65,9 @@ time_t getNtpTime()
       secsSince1900 |= (unsigned long)packetBuffer[42] << 8;
       secsSince1900 |= (unsigned long)packetBuffer[43];
       setSyncInterval(300); // got time, now sync ahgain every 300 seconds
+
+      ftimesynced = true;
+
       return secsSince1900 - 2208988800UL + timeZone * SECS_PER_HOUR;
     }
   }

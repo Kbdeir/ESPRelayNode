@@ -1,4 +1,4 @@
-<!doctype html>
+    <!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -114,7 +114,7 @@ a:hover
 {
    text-align: left;
 }
-#Tnb
+#TNB
 {
    border: 1px #CCCCCC solid;
    -moz-border-radius: 4px;
@@ -131,7 +131,7 @@ a:hover
    -moz-box-sizing: border-box;
    box-sizing: border-box;
 }
-#Tnb:focus
+#TNB:focus
 {
    border-color: #66AFE9;
    -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
@@ -331,16 +331,40 @@ a:hover
 {
    text-align: right;
 }
+#TNBT
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#TNBT:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
 </style>
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:48px;top:96px;width:310px;height:454px;z-index:25;">
+<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:310px;height:454px;z-index:26;">
 <form name="Form1" method="get" action="savetimer.html" enctype="text/plain" id="Form1">
-<input type="date" id="TDate" style="position:absolute;left:19px;top:183px;width:138px;height:19px;line-height:19px;z-index:0;" name="DTo" value="">
+<input type="date" id="TDate" style="position:absolute;left:19px;top:183px;width:138px;height:19px;line-height:19px;z-index:0;" name="DTo" value="%DTo%">
 <div id="wb_Text2" style="position:absolute;left:23px;top:37px;width:100px;height:16px;z-index:1;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Timer number:</strong></span></div>
-<input type="date" id="FDate" style="position:absolute;left:19px;top:107px;width:138px;height:18px;line-height:18px;z-index:2;" name="Dfrom" value="">
-<select name="TNumber" size="1" id="Tnb" style="position:absolute;left:123px;top:31px;width:60px;height:28px;z-index:3;">
+<input type="date" id="FDate" style="position:absolute;left:19px;top:107px;width:138px;height:18px;line-height:18px;z-index:2;" name="Dfrom" value="%Dfrom%">
+<select name="TNumber" size="1" id="TNB" onchange="myFunction(this);return false;" style="position:absolute;left:123px;top:31px;width:60px;height:28px;z-index:3;">
 <option selected value="1">1</option>
 <option value="2">2</option>
 <option value="3">3</option>
@@ -350,13 +374,13 @@ a:hover
 <div id="wb_Text3" style="position:absolute;left:27px;top:79px;width:248px;height:16px;z-index:4;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>From:</strong></span></div>
 <input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:153px;top:407px;width:126px;height:25px;z-index:5;">
-<input type="time" id="FTime" style="position:absolute;left:179px;top:107px;width:98px;height:18px;line-height:18px;z-index:6;" name="TFrom" value="">
-<input type="time" id="TTime" style="position:absolute;left:179px;top:183px;width:98px;height:18px;line-height:18px;z-index:7;" name="TTo" value="">
+<input type="time" id="FTime" style="position:absolute;left:179px;top:107px;width:98px;height:18px;line-height:18px;z-index:6;" name="TFrom" value="%TFrom%">
+<input type="time" id="TTime" style="position:absolute;left:179px;top:183px;width:98px;height:18px;line-height:18px;z-index:7;" name="TTo" value="%TTo%">
 <div id="wb_Text4" style="position:absolute;left:27px;top:156px;width:248px;height:16px;z-index:8;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>To:</strong></span></div>
 <div id="wb_Text11" style="position:absolute;left:175px;top:303px;width:60px;height:16px;text-align:right;z-index:9;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Enabled</strong></span></div>
-<input type="checkbox" id="Checkbox7" name="CSunday" value="on" style="position:absolute;left:243px;top:299px;z-index:10;">
+<input type="checkbox" id="Checkbox7" name="CEnabled" value="%CEnabled%" style="position:absolute;left:243px;top:299px;z-index:10;">
 <div id="wb_Text1" style="position:absolute;left:33px;top:231px;width:60px;height:16px;text-align:right;z-index:11;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Sunday</strong></span></div>
 <div id="wb_Text5" style="position:absolute;left:33px;top:255px;width:60px;height:16px;text-align:right;z-index:12;">
@@ -367,20 +391,30 @@ a:hover
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Wednesday</strong></span></div>
 <div id="wb_Text8" style="position:absolute;left:33px;top:327px;width:60px;height:32px;text-align:right;z-index:15;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Thursday</strong></span></div>
-<input type="checkbox" id="CSunday" name="CSunday" value="on" style="position:absolute;left:93px;top:227px;z-index:16;">
-<input type="checkbox" id="CMonday" name="CMonday" value="on" style="position:absolute;left:93px;top:251px;z-index:17;">
-<input type="checkbox" id="CTuesday" name="CTuesday" value="on" style="position:absolute;left:93px;top:275px;z-index:18;">
-<input type="checkbox" id="CWednesday" name="CWednesday" value="on" style="position:absolute;left:93px;top:299px;z-index:19;">
-<input type="checkbox" id="CThursday" name="CThursday" value="on" style="position:absolute;left:93px;top:327px;z-index:20;">
+<input type="checkbox" id="CSunday" name="CSunday" value="%CSunday%" style="position:absolute;left:93px;top:227px;z-index:16;">
+<input type="checkbox" id="CMonday" name="CMonday" value="%CMonday%" style="position:absolute;left:93px;top:251px;z-index:17;">
+<input type="checkbox" id="CTuesday" name="CTuesday" value="%CTuesday%" style="position:absolute;left:93px;top:275px;z-index:18;">
+<input type="checkbox" id="CWednesday" name="CWednesday" value="%CWednesday%" style="position:absolute;left:93px;top:299px;z-index:19;">
+<input type="checkbox" id="CThursday" name="CThursday" value="%CThursday%" style="position:absolute;left:93px;top:327px;z-index:20;">
 <div id="wb_Text9" style="position:absolute;left:173px;top:231px;width:60px;height:16px;text-align:right;z-index:21;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Friday</strong></span></div>
 <div id="wb_Text10" style="position:absolute;left:173px;top:255px;width:60px;height:32px;text-align:right;z-index:22;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Saturday</strong></span></div>
-<input type="checkbox" id="CFriday" name="CFriday" value="on" style="position:absolute;left:245px;top:227px;z-index:23;">
-<input type="checkbox" id="CSaturday" name="CSaturday" value="on" style="position:absolute;left:245px;top:251px;z-index:24;">
+<input type="checkbox" id="CFriday" name="CFriday" value="%CFriday%" style="position:absolute;left:245px;top:227px;z-index:23;">
+<input type="checkbox" id="CSaturday" name="CSaturday" value="%CSaturday%" style="position:absolute;left:245px;top:251px;z-index:24;">
+<input type="number" id="TNBT" style="position:absolute;left:191px;top:31px;width:42px;visibility:hidden;height:18px;line-height:18px;z-index:25;" name="TNBT" value="%TNBT%">
 </form>
 </div>
-<div id="wb_Text21" style="position:absolute;left:36px;top:17px;width:298px;height:41px;text-align:center;z-index:26;">
+<div id="wb_Text21" style="position:absolute;left:36px;top:17px;width:298px;height:41px;text-align:center;z-index:27;">
 <span style="color:#DCDCDC;font-family:Arial;font-size:17px;letter-spacing:2.07px;line-height:19px;">Timer configuration</span></div>
+<script>
+      function myFunction(selectObject) {
+        var x = selectObject.value;
+         document.getElementById("TNBT").value=x ; 
+      }
+
+    </script>
 </body>
-</html>
+</html><script> 
+document.getElementById("TNB").value=document.getElementById("TNBT").value ; 
+</script>

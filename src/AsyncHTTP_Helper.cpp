@@ -5,6 +5,7 @@
 #include <RelayClass.h>
 #include <TimerClass.h>
 
+extern NodeTimer NTmr;
 
 //const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 AsyncWebServer AsyncWeb_server(80);
@@ -12,6 +13,25 @@ AsyncWebServer AsyncWeb_server(80);
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
 File cf;
 
+String timerprocessor(const String& var)
+{
+
+  if(var == F( "TNBT" ))  return  String(NTmr.id);
+  if(var == F( "Dfrom" ))  return  String(NTmr.spanDatefrom.c_str());
+  if(var == F( "DTo" ))  return String( NTmr.spanDateto.c_str());
+  if(var == F( "TFrom" ))  return  String(NTmr.spantimefrom.c_str());
+  if(var == F( "TTo" ))  return String( NTmr.spantimeto.c_str());
+  if(var == F( "CMonday" )) { if (NTmr.weekdays->Monday) return "1\" checked=\"\""; };
+  if(var == F( "CTuesday" )) { if (NTmr.weekdays->Tuesday ) return "1\" checked=\"\""; };
+  if(var == F( "CWednesday" )) { if (NTmr.weekdays->Wednesday) return "1\" checked=\"\""; };
+  if(var == F( "CThursday" )) { if (NTmr.weekdays->Thursday ) return "1\" checked=\"\""; };
+  if(var == F( "CFriday" )) { if (NTmr.weekdays->Friday ) return "1\" checked=\"\""; };
+  if(var == F( "CSaturday" )) { if (NTmr.weekdays->Saturday ) return "1\" checked=\"\""; };
+  if(var == F( "CSunday" )) { if (NTmr.weekdays->Sunday ) return "1\" checked=\"\""; };
+  if(var == F( "CEnabled" )) { if (NTmr.enabled ) return "1\" checked=\"\""; };
+
+  return String();
+}
 
 String processor(const String& var)
 {
@@ -72,7 +92,10 @@ void SetAsyncHTTP(){
 
   AsyncWeb_server.on("/Timer1", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-      request->send(SPIFFS, "/Timer1.html");
+      //request->send(SPIFFS, "/Timer1.html");
+
+        request->send(SPIFFS, "/Timer1.html", String(), false, timerprocessor);
+
         // int args = request->args();
     });
 
