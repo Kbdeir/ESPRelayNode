@@ -30,6 +30,8 @@ String timerprocessor(const String& var)
   if(var == F( "CSunday" )) { if (NTmr.weekdays->Sunday ) return "1\" checked=\"\""; };
   if(var == F( "CEnabled" )) { if (NTmr.enabled ) return "1\" checked=\"\""; };
 
+  if(var == F( "TMTYPEedit" ))  return String(NTmr.TM_type);
+
   return String();
 }
 

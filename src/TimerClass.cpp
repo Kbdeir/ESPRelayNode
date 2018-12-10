@@ -1,12 +1,12 @@
 #include <TimerClass.h>
-#define buffer_size  1500 
+#define buffer_size  1500
 
 
 NodeTimer::NodeTimer(uint8_t para_id,
           unsigned int para_mark,
           uint8_t para_marktype) {
     id = para_id;
-    type = 0;
+    TM_type = TM_FULL_SPAN;
     spanDatefrom  = "01-01-1970";
     spanDateto    = "01-01-2100";
     spantimefrom  = "00:00";
@@ -38,7 +38,7 @@ NodeTimer::NodeTimer(uint8_t para_id,
           boolean para_enabled
 ) {
     id = para_id;
-    type = 1;
+    TM_type = TM_FULL_SPAN;
     spanDatefrom = para_spanDatefrom;
     spanDateto = para_spanDateto;
     weekdays = para_weekdays;
@@ -130,12 +130,9 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
 
   para_NodeTimer.id = (json["TNumber"].as<String>()!="") ? json["TNumber"].as<uint8_t>() : 0;
   para_NodeTimer.spanDatefrom = (json["Dfrom"].as<String>()!="") ? json["Dfrom"].as<String>() : String("01-01-1970");
-  Serial.print("\n++++++++++++++saved date time\n");
-  Serial.print(para_NodeTimer.spanDatefrom);
   para_NodeTimer.spanDateto  = (json["DTo"].as<String>()!="")  ? json["DTo"].as<String>() : String("01-01-2100");
   para_NodeTimer.spantimefrom = (json["TFrom"].as<String>()!="") ? json["TFrom"].as<String>() : String("00:00");
   para_NodeTimer.spantimeto  = (json["TTo"].as<String>()!="")  ? json["TTo"].as<String>() : String("00:00");
-
   para_NodeTimer.weekdays->Sunday = json["CSunday"];
   para_NodeTimer.weekdays->Monday = json["CMonday"];
   para_NodeTimer.weekdays->Tuesday = json["CTuesday"];
@@ -143,11 +140,12 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.weekdays->Thursday = json["CThursday"];
   para_NodeTimer.weekdays->Friday = json["CFriday"];
   para_NodeTimer.weekdays->Saturday = json["CSaturday"];
-
   para_NodeTimer.fyear=2018;
-
   para_NodeTimer.mark = 0;
   para_NodeTimer.marktype = 0;
+
+  para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
+  para_NodeTimer.secondsspan = 0;
 
   return SUCCESS;
 }

@@ -137,6 +137,8 @@ ModbusIP mb;
 const int LAMP1_COIL = 1;
 const int LAMP2_COIL = 2;
 
+
+
 //OneButton button(SwitchButtonPin, true);
 
 float old_acs_value = 0;
@@ -455,11 +457,23 @@ void chronosInit() {
 
 String str = "2017-03-27 10:30:15";
 int Year, Month, Day, Hour, Minute, Second ;
-String DT = NTmr.spanDatefrom + " " + NTmr.spantimefrom;
-sscanf(DT.c_str(), "%d-%d-%d %d:%d:%d", &Year, &Month, &Day, &Hour, &Minute, &Second);
+int TYear, TMonth, TDay, THour, TMinute, TSecond ;
 
-PRINTLN("* my timer values: +++++++++++++++++++++");
+String DF = NTmr.spanDatefrom + " " + NTmr.spantimefrom;
+String DT = NTmr.spanDateto + " " + NTmr.spantimeto;
+
+sscanf(DF.c_str(), "%d-%d-%d %d:%d:%d", &Year, &Month, &Day, &Hour, &Minute, &Second);
+sscanf(DT.c_str(), "%d-%d-%d %d:%d:%d", &TYear, &TMonth, &TDay, &THour, &TMinute, &TSecond);
+
+//Chronos::DateTime DS;
+Chronos::DateTime previous(Year, Month, Day, Hour, Minute, 0);
+Chronos::DateTime next(TYear, TMonth, TDay, THour, TMinute, 0);
+Chronos::Span::Absolute timeDiff = next-previous;
+
+PRINTLN("* From- timer values: +++++++++++++++++++++");
 PRINTLN(NTmr.spanDatefrom);
+PRINTLN(NTmr.spantimefrom);
+
 PRINTLN(Year);
 PRINTLN(Month);
 PRINTLN(Day);
@@ -467,12 +481,85 @@ PRINTLN(" ");
 PRINTLN(Hour);
 PRINTLN(Minute);
 
- if (NTmr.weekdays->Saturday) {
+PRINTLN("* To- timer values: +++++++++++++++++++++");
+PRINTLN(NTmr.spanDateto);
+PRINTLN(NTmr.spantimeto);
+
+PRINTLN(TYear);
+PRINTLN(TMonth);
+PRINTLN(TDay);
+PRINTLN(" ");
+PRINTLN(THour);
+PRINTLN(TMinute);
+
+PRINTLN("* timeDiff values: +++++++++++++++++++++");
+PRINT(F("There are "));
+PRINT(timeDiff.days());
+PRINT(F(" days, "));
+
+PRINT(timeDiff.hours());
+PRINT(F(" hours, "));
+
+PRINT(timeDiff.minutes());
+PRINT(F(" minutes and  "));
+
+PRINT(timeDiff.seconds());
+PRINT(F(" seconds between DF & DT "));
+
+PRINT(F(" seconds : "));
+PRINT(timeDiff.totalSeconds());
+
+uint32_t dailydiffsecs = timeDiff.totalSeconds() - (timeDiff.days() * 24 * 3600);
+//DF.printTo(SERIAL_DEVICE);
+
+ if (NTmr.weekdays->Sunday) {
     MyCalendar.add(
-        Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
-        Chronos::Span::Minutes(55))
+        Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Sunday,Hour, Minute, 00),
+        Chronos::Span::Seconds(dailydiffsecs))
       );
   }
+  if (NTmr.weekdays->Monday) {
+    PRINTLN(F(" seconds : "));
+    PRINTLN(dailydiffsecs);
+        PRINTLN(Hour);
+            PRINTLN(Minute);
+
+    //DF.printTo(SERIAL_DEVICE);
+     MyCalendar.add(
+         Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Monday,Hour, Minute, 00),
+         Chronos::Span::Seconds(dailydiffsecs))
+       );
+   }
+   if (NTmr.weekdays->Tuesday) {
+      MyCalendar.add(
+          Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
+          Chronos::Span::Seconds(dailydiffsecs))
+        );
+    }
+    if (NTmr.weekdays->Wednesday) {
+       MyCalendar.add(
+           Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Wednesday,Hour, Minute, 00),
+           Chronos::Span::Seconds(dailydiffsecs))
+         );
+     }
+     if (NTmr.weekdays->Thursday) {
+        MyCalendar.add(
+            Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Thursday,Hour, Minute, 00),
+            Chronos::Span::Seconds(dailydiffsecs))
+          );
+      }
+      if (NTmr.weekdays->Friday) {
+         MyCalendar.add(
+             Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday,Hour, Minute, 00),
+             Chronos::Span::Seconds(dailydiffsecs))
+           );
+       }
+       if (NTmr.weekdays->Saturday) {
+          MyCalendar.add(
+              Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
+              Chronos::Span::Seconds(dailydiffsecs))
+            );
+        }
   LINE();
 
   PRINTLN(F("**** presumably got NTP time **** :"));
@@ -508,15 +595,19 @@ void chronosevaluatetimers(Calendar MyCalendar) {
       PRINT(F("\t ends in: "));
       (nowTime - occurrenceList[i].finish).printTo(SERIAL_DEVICE);
 
-      if ((nowTime == occurrenceList[i].start + 1)) {
+      if ((nowTime > occurrenceList[i].start + 1)) {
         LINE();
         PRINTLN(F(" *** truning relay ON... event is Starting *** "));
+        if (!digitalRead(relay1.getRelayPin())){
+          relay1.mdigitalWrite(relay1.getRelayPin(),HIGH);
+        }
       }
-      if ((nowTime == occurrenceList[i].finish - 1)) {
+      if ((nowTime == occurrenceList[i].finish - 1 )) {
         LINE();
+        relay1.lockupdate = false;
+        relay1.mdigitalWrite(relay1.getRelayPin(),LOW);
         PRINTLN(F(" *** truning relay OFF... event is done ***"));
       }
-
     }
   } else {
   //  PRINTLN(F("Looks like we're free for the moment..."));

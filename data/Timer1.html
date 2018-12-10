@@ -355,16 +355,78 @@ a:hover
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
+#wb_Text12 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text12 div
+{
+   text-align: left;
+}
+#TMTYPE
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   box-sizing: border-box;
+}
+#TMTYPE:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#TMTYPEedit
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#TMTYPEedit:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
 </style>
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:310px;height:454px;z-index:26;">
+<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:310px;height:454px;z-index:29;">
 <form name="Form1" method="get" action="savetimer.html" enctype="text/plain" id="Form1">
 <input type="date" id="TDate" style="position:absolute;left:19px;top:183px;width:138px;height:19px;line-height:19px;z-index:0;" name="DTo" value="%DTo%">
-<div id="wb_Text2" style="position:absolute;left:23px;top:37px;width:100px;height:16px;z-index:1;text-align:left;">
+<div id="wb_Text2" style="position:absolute;left:13px;top:15px;width:100px;height:16px;z-index:1;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Timer number:</strong></span></div>
 <input type="date" id="FDate" style="position:absolute;left:19px;top:107px;width:138px;height:18px;line-height:18px;z-index:2;" name="Dfrom" value="%Dfrom%">
-<select name="TNumber" size="1" id="TNB" onchange="myFunction(this);return false;" style="position:absolute;left:123px;top:31px;width:60px;height:28px;z-index:3;">
+<select name="TNumber" size="1" id="TNB" onchange="myFunction(this);return false;" style="position:absolute;left:125px;top:9px;width:60px;height:28px;z-index:3;">
 <option selected value="1">1</option>
 <option value="2">2</option>
 <option value="3">3</option>
@@ -402,19 +464,32 @@ a:hover
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Saturday</strong></span></div>
 <input type="checkbox" id="CFriday" name="CFriday" value="%CFriday%" style="position:absolute;left:245px;top:227px;z-index:23;">
 <input type="checkbox" id="CSaturday" name="CSaturday" value="%CSaturday%" style="position:absolute;left:245px;top:251px;z-index:24;">
-<input type="number" id="TNBT" style="position:absolute;left:191px;top:31px;width:42px;visibility:hidden;height:18px;line-height:18px;z-index:25;" name="TNBT" value="%TNBT%">
+<div id="wb_Text12" style="position:absolute;left:27px;top:47px;width:100px;height:16px;z-index:25;text-align:left;">
+<span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Timer Type:</strong></span></div>
+<select name="TMTYPE" size="1" id="TMTYPE" onchange="func_TMTYPE(this);return false;" style="position:absolute;left:123px;top:41px;width:112px;height:28px;z-index:26;">
+<option value="1">Full span</option>
+<option value="2">Weekday Timer</option>
+</select>
+<input type="text" id="TMTYPEedit" style="position:absolute;left:245px;top:41px;width:36px;height:18px;line-height:18px;z-index:27;" name="TMTYPEedit" value="%TMTYPEedit%">
+<input type="number" id="TNBT" style="position:absolute;left:245px;top:9px;width:36px;height:18px;line-height:18px;z-index:28;" name="TNBT" value="%TNBT%">
 </form>
 </div>
-<div id="wb_Text21" style="position:absolute;left:36px;top:17px;width:298px;height:41px;text-align:center;z-index:27;">
+<div id="wb_Text21" style="position:absolute;left:36px;top:17px;width:298px;height:41px;text-align:center;z-index:30;">
 <span style="color:#DCDCDC;font-family:Arial;font-size:17px;letter-spacing:2.07px;line-height:19px;">Timer configuration</span></div>
 <script>
       function myFunction(selectObject) {
         var x = selectObject.value;
          document.getElementById("TNBT").value=x ; 
       }
+      function func_TMTYPE(selectObject) {
+        var x = selectObject.value;
+         document.getElementById("TMTYPEedit").value=x ; 
+      }
+
 
     </script>
 </body>
 </html><script> 
 document.getElementById("TNB").value=document.getElementById("TNBT").value ; 
+document.getElementById("TMTYPE").value=document.getElementById("TMTYPEedit").value ; 
 </script>
