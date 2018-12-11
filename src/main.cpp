@@ -443,7 +443,7 @@ void chronosInit() {
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
 
-  loadNodeTimer("/timer.json",NTmr);
+loadNodeTimer("/timer.json",NTmr);
 
 Serial.print("\n\n\nBEGIN TIMER DEBUG ************");
 int Year, Month, Day, Hour, Minute, Second ;
@@ -512,59 +512,65 @@ Serial.print(TimerType::TM_FULL_SPAN);
 Serial.print("\n\n\n END TIMER DEBUGG ************\n\n\n");
 
 if (NTmr.TM_type == TimerType::TM_WEEKDAY_SPAN) {
-        Serial.print(F("\n entered WEEKLY TIMER MODE eval 0"));
-if ((previous <= Chronos::DateTime::now()) && (Chronos::DateTime::now() <= next)) {
-        Serial.print(F("\n entered WEEKLY TIMER MODE eval 1"));   
-uint32_t dailydiffsecs = timeDiff.totalSeconds() - (timeDiff.days() * 24 * 3600);
- if (NTmr.weekdays->Sunday) {
-    MyCalendar.add(
-        Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Sunday,Hour, Minute, 00),
-        Chronos::Span::Seconds(dailydiffsecs))
-      );
+
+  Serial.print(F("\n entered WEEKLY TIMER MODE eval 0"));
+  if ((previous.startOfDay() <= Chronos::DateTime::now()) && (Chronos::DateTime::now() <= next.endOfDay())) {
+  Serial.print(F("\n entered WEEKLY TIMER MODE eval 1"));
+
+  uint32_t dailydiffsecs = timeDiff.totalSeconds() - (timeDiff.days() * 24 * 3600);
+  if (NTmr.Mark_Hours + NTmr.Mark_Minutes > 0) {
+    dailydiffsecs = (NTmr.Mark_Hours * 3600) +  (NTmr.Mark_Minutes * 60) ;
   }
-  if (NTmr.weekdays->Monday) {
-     MyCalendar.add(
-         Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Monday,Hour, Minute, 00),
-         Chronos::Span::Seconds(dailydiffsecs))
-       );
-   }
-   if (NTmr.weekdays->Tuesday) {
-     Serial.print("\n  Event added");
+
+    if (NTmr.weekdays->Sunday) {
       MyCalendar.add(
-          Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
+          Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Sunday,Hour, Minute, 00),
           Chronos::Span::Seconds(dailydiffsecs))
         );
     }
-    if (NTmr.weekdays->Wednesday) {
+      if (NTmr.weekdays->Monday) {
        MyCalendar.add(
-           Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Wednesday,Hour, Minute, 00),
+           Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Monday,Hour, Minute, 00),
            Chronos::Span::Seconds(dailydiffsecs))
          );
      }
-     if (NTmr.weekdays->Thursday) {
+      if (NTmr.weekdays->Tuesday) {
+       Serial.print("\n  Event added");
         MyCalendar.add(
-            Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Thursday,Hour, Minute, 00),
+            Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
             Chronos::Span::Seconds(dailydiffsecs))
           );
       }
-      if (NTmr.weekdays->Friday) {
+      if (NTmr.weekdays->Wednesday) {
          MyCalendar.add(
-             Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday,Hour, Minute, 00),
+             Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Wednesday,Hour, Minute, 00),
              Chronos::Span::Seconds(dailydiffsecs))
            );
        }
-       if (NTmr.weekdays->Saturday) {
+       if (NTmr.weekdays->Thursday) {
           MyCalendar.add(
-              Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
+              Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Thursday,Hour, Minute, 00),
               Chronos::Span::Seconds(dailydiffsecs))
             );
         }
+        if (NTmr.weekdays->Friday) {
+           MyCalendar.add(
+               Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday,Hour, Minute, 00),
+               Chronos::Span::Seconds(dailydiffsecs))
+             );
+         }
+         if (NTmr.weekdays->Saturday) {
+            MyCalendar.add(
+                Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
+                Chronos::Span::Seconds(dailydiffsecs))
+              );
+          }
       }
-    }
+}
 
     if (NTmr.TM_type == TimerType::TM_DAILY_SPAN) {
         Serial.print(F("\n entered DAILY TIMER MODE eval 0"));
-      if ((previous <= Chronos::DateTime::now()) && (Chronos::DateTime::now() <= next)) {
+      if ((previous.startOfDay() <= Chronos::DateTime::now()) && (Chronos::DateTime::now() <= next.endOfDay())) {
         Serial.print(F("\n entered DAILY TIMER MODE eval 1"));
         uint32_t dailydiffsecs = 0;
         if (NTmr.Mark_Hours + NTmr.Mark_Minutes == 0) {
@@ -585,7 +591,7 @@ uint32_t dailydiffsecs = timeDiff.totalSeconds() - (timeDiff.days() * 24 * 3600)
           //next.printTo(SERIAL_DEVICE);
           Serial.print(F("\n entered FULL SPAN TIMER MODE"));
           MyCalendar.add(
-              Chronos::Event(4,previous,next)
+              Chronos::Event(4,previous.startOfDay(),next.endOfDay())
             );
     }
 
