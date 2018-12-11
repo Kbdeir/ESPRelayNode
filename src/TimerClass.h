@@ -15,7 +15,7 @@ typedef void (*fnptr_b)(int, void* t);
 
 #define buffer_size  1500 // json buffer size
 
-typedef enum { TM_FULL_SPAN, TM_WEEKDAY_SPAN, TM_DAILY_SPAN } TimerType;
+typedef enum { TM_FAILURE, TM_FULL_SPAN, TM_DAILY_SPAN, TM_WEEKDAY_SPAN, TM_MONTHLY_SPAN, TM_YEARLY_SPAN } TimerType;
 
 typedef struct TWeekdays {
   boolean Monday ;
@@ -44,6 +44,8 @@ typedef struct TWeekdays {
     String spantimeto;
     uint32_t secondsspan;
     TWeekdays * weekdays;
+uint8_t Mark_Hours;
+uint8_t Mark_Minutes;
     unsigned int mark;
     uint8_t marktype;
     boolean enabled;

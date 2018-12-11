@@ -47,6 +47,9 @@ NodeTimer::NodeTimer(uint8_t para_id,
     enabled = para_enabled;
     spantimefrom = para_spantimefrom;
     spantimeto = para_spantimeto;
+    Mark_Hours = 0;
+    Mark_Minutes = 0;
+
 }
 
 NodeTimer::~NodeTimer(){
@@ -87,6 +90,8 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
 
   json.printTo(configFile);
   configFile.close();
+
+
   return true;
 }
 
@@ -140,9 +145,13 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.weekdays->Thursday = json["CThursday"];
   para_NodeTimer.weekdays->Friday = json["CFriday"];
   para_NodeTimer.weekdays->Saturday = json["CSaturday"];
+
   para_NodeTimer.fyear=2018;
   para_NodeTimer.mark = 0;
   para_NodeTimer.marktype = 0;
+
+  para_NodeTimer.Mark_Hours = (json["Mark_Hours"].as<String>()!="") ? json["Mark_Hours"].as<uint8_t>() : 0;
+  para_NodeTimer.Mark_Minutes = (json["Mark_Minutes"].as<String>()!="") ? json["Mark_Minutes"].as<uint8_t>() : 0;
 
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
   para_NodeTimer.secondsspan = 0;

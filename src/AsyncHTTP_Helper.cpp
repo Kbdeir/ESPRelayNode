@@ -30,6 +30,9 @@ String timerprocessor(const String& var)
   if(var == F( "CSunday" )) { if (NTmr.weekdays->Sunday ) return "1\" checked=\"\""; };
   if(var == F( "CEnabled" )) { if (NTmr.enabled ) return "1\" checked=\"\""; };
 
+  if(var == F( "Mark_Hours" ))  return  String(NTmr.Mark_Hours);
+  if(var == F( "Mark_Minutes" ))  return  String(NTmr.Mark_Minutes);
+
   if(var == F( "TMTYPEedit" ))  return String(NTmr.TM_type);
 
   return String();
@@ -105,6 +108,7 @@ void SetAsyncHTTP(){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/savetimer.html");
             saveNodeTimer(request);
+            loadNodeTimer("/timer.json",NTmr);
             //loadConfig(MyConfParam);
             //uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
             //uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
