@@ -442,8 +442,30 @@ void chronosInit() {
   Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second());
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
+  uint8_t tcounter = 1;
+  while(tcounter < 10){
 
-loadNodeTimer("/timer.json",NTmr);
+        char  timerfilename[30] = "";
+        strcpy(timerfilename, "/timer");
+        strcat(timerfilename, String(tcounter).c_str());
+        strcat(timerfilename, ".json");
+        Serial.print ("\n***************************************************************\n");
+        Serial.print  (timerfilename);
+        Serial.print("\n");
+        config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
+        /*String timerfilename = "";
+        timerfilename += "/timer";
+        timerfilename += String(tcounter).c_str();
+        timerfilename += ".json";
+        Serial.print ("\n***************************************************************\n");
+        Serial.print  (timerfilename);
+        Serial.print("\n");*/
+
+        tcounter++;
+        if (res == SUCCESS) {
+
+
+//loadNodeTimer("/timer.json",NTmr);
 
 Serial.print("\n\n\nBEGIN TIMER DEBUG ************");
 int Year, Month, Day, Hour, Minute, Second ;
@@ -594,7 +616,8 @@ if (NTmr.TM_type == TimerType::TM_WEEKDAY_SPAN) {
               Chronos::Event(4,previous.startOfDay(),next.endOfDay())
             );
     }
-
+}
+}
 
   LINE();
 

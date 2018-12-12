@@ -68,11 +68,15 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
-  File configFile = SPIFFS.open("/timer.json", "w");
+
+
+  /*File configFile = SPIFFS.open("/timer.json", "w");
   if (!configFile) {
     Serial.println(F("Failed to open timer file for writing"));
     return false;
-  }
+  }*/
+
+  //TNumber
 
   int args = request->args();
   for(int i=0;i<args;i++){
@@ -87,6 +91,19 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   request->hasParam("CThursday")  ? json["CThursday"]  =  "1"   : json["CThursday"] =  "0" ;
   request->hasParam("CFriday")    ? json["CFriday"]    =  "1"   : json["CFriday"]   =  "0" ;
   request->hasParam("CSaturday")  ? json["CSaturday"]  =  "1"   : json["CSaturday"] =  "0" ;
+
+  char  timerfilename[30] = "/timer";
+  strcat(timerfilename, json["TNumber"]);
+  strcat(timerfilename, ".json");
+
+  Serial.print(timerfilename);
+
+  File configFile = SPIFFS.open(timerfilename, "w");
+  //File configFile = SPIFFS.open("/timer.json", "w");
+  if (!configFile) {
+    Serial.println(F("Failed to open timer file for writing"));
+    return false;
+  }
 
   json.printTo(configFile);
   configFile.close();

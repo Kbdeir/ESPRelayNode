@@ -108,7 +108,7 @@ void SetAsyncHTTP(){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/savetimer.html");
             saveNodeTimer(request);
-            loadNodeTimer("/timer.json",NTmr);
+            //loadNodeTimer("/timer.json",NTmr);
             //loadConfig(MyConfParam);
             //uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
             //uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
