@@ -12,6 +12,7 @@ typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 
+#define MAX_NUMBER_OF_TIMERS 4
 
 #define buffer_size  1500 // json buffer size
 

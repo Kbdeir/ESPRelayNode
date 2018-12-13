@@ -444,8 +444,7 @@ void chronosInit() {
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
   uint8_t tcounter = 1;
-  while(tcounter < 10){
-
+  while(tcounter <= MAX_NUMBER_OF_TIMERS){
         char  timerfilename[30] = "";
         strcpy(timerfilename, "/timer");
         strcat(timerfilename, String(tcounter).c_str());
@@ -454,8 +453,8 @@ void chronosInit() {
         Serial.print  (timerfilename);
         Serial.print("\n");
         config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
-
         tcounter++;
+
         if ((res == SUCCESS) && NTmr.enabled) {
           //loadNodeTimer("/timer.json",NTmr);
           Serial.print("\n\n\nBEGIN TIMER DEBUG ************");
@@ -863,7 +862,7 @@ void loop() {
     }
   }
 
-    if((timeStatus() != timeNotSet) && CalendarNotInitiated){
+    if((timeStatus() == timeSet) && CalendarNotInitiated){
       chronosInit();
       CalendarNotInitiated = false;
     }

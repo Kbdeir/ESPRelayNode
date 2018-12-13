@@ -612,10 +612,23 @@ a:hover
    font-weight: normal;
    font-size: 13px;
 }
+#Button2
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
 </style>
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:464px;height:734px;z-index:41;">
+<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:464px;height:734px;z-index:42;">
 <form name="Form1" method="get" action="savetimer.html" enctype="text/plain" id="Form1">
 <input type="date" id="TDate" style="position:absolute;left:203px;top:160px;width:138px;height:19px;line-height:19px;z-index:0;" name="DTo" value="%DTo%">
 <div id="wb_Text2" style="position:absolute;left:25px;top:14px;width:156px;height:19px;z-index:1;text-align:left;">
@@ -688,19 +701,20 @@ a:hover
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Dates Bounds </strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><strong><br></strong>run timer if today is between these 2 dates</span></div>
 <div id="wb_Text13" style="position:absolute;left:31px;top:457px;width:402px;height:51px;z-index:38;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Weekdays timer</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><strong><br></strong>Select Weekday (applicable only for timers of type: Recurring Weekday timer</span></div>
+<input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:30px;top:687px;width:126px;height:25px;z-index:39;">
 </form>
 </div>
-<div id="wb_Text20" style="position:absolute;left:30px;top:32px;width:234px;height:27px;z-index:42;text-align:left;">
+<div id="wb_Text20" style="position:absolute;left:30px;top:32px;width:234px;height:27px;z-index:43;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">Timer Configuration</span></div>
-<div id="wb_Form2" style="position:absolute;left:246px;top:23px;width:248px;height:42px;z-index:43;">
+<div id="wb_Form2" style="position:absolute;left:246px;top:23px;width:248px;height:42px;z-index:44;">
 <form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
-<select name="GetTimer" size="1" id="Combobox1" style="position:absolute;left:5px;top:7px;width:96px;height:28px;z-index:39;">
+<select name="GetTimer" size="1" id="Combobox1" style="position:absolute;left:5px;top:7px;width:96px;height:28px;z-index:40;">
 <option value="1">1</option>
 <option value="2">2</option>
 <option value="3">3</option>
 <option value="4">4</option>
 </select>
-<input type="submit" id="Button1" name="Get Timer" value="Gettimer" style="position:absolute;left:110px;top:9px;width:126px;height:25px;z-index:40;">
+<input type="submit" id="Button1" name="Get Timer" value="Show Timer" style="position:absolute;left:110px;top:9px;width:126px;height:25px;z-index:41;">
 </form>
 </div>
 <script>
