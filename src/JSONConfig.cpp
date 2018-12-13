@@ -144,7 +144,7 @@ bool saveConfig(TConfigParams &ConfParam){
   json["CURR_TTL_PUB_TOPIC"]=ConfParam.v_CURR_TTL_PUB_TOPIC;
   json["STATE_PUB_TOPIC"]=ConfParam.v_STATE_PUB_TOPIC;
 
-  json[F("InputPin12_STATE_PUB_TOPIC")]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
+  json["InputPin12_STATE_PUB_TOPIC"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
   json["InputPin14_STATE_PUB_TOPIC"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
 
   json["tta"]=ConfParam.v_tta;

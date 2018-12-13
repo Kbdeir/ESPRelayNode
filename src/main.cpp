@@ -251,8 +251,8 @@ void onRelaychangeInterruptSvc(void* t){
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
           rly->start_ttl_timer();
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "on");
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "on");
+        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
       }
 
       if (digitalRead(rly->getRelayPin()) == LOW) {
@@ -261,8 +261,8 @@ void onRelaychangeInterruptSvc(void* t){
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "off");
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "off");
+        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
       }
   } else {
         char* msg;
