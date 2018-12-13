@@ -36,7 +36,7 @@ a:hover
 }
 #wb_Form1
 {
-   background-color: #FAF0E6;
+   background-color: #EEE8AA;
    background-image: none;
    border: 1px #CCCCCC solid;
 }
@@ -468,7 +468,7 @@ a:hover
 {
    text-align: left;
 }
-#Editbox1
+#Hours_edt
 {
    border: 1px #CCCCCC solid;
    -moz-border-radius: 4px;
@@ -484,7 +484,7 @@ a:hover
    text-align: left;
    vertical-align: middle;
 }
-#Editbox1:focus
+#Hours_edt:focus
 {
    border-color: #66AFE9;
    -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
@@ -518,7 +518,7 @@ a:hover
 {
    text-align: left;
 }
-#Editbox2
+#Minutes_edt
 {
    border: 1px #CCCCCC solid;
    -moz-border-radius: 4px;
@@ -534,7 +534,7 @@ a:hover
    text-align: left;
    vertical-align: middle;
 }
-#Editbox2:focus
+#Minutes_edt:focus
 {
    border-color: #66AFE9;
    -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
@@ -595,7 +595,7 @@ a:hover
 }
 #wb_Form2
 {
-   background-color: #FFFFFF;
+   background-color: #FFE4C4;
    background-image: none;
    border: 1px #CCCCCC solid;
 }
@@ -621,7 +621,7 @@ a:hover
 <div id="wb_Text2" style="position:absolute;left:25px;top:14px;width:156px;height:19px;z-index:1;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:17px;"><strong>Timer number:</strong></span></div>
 <input type="date" id="FDate" style="position:absolute;left:39px;top:164px;width:138px;height:18px;line-height:18px;z-index:2;" name="Dfrom" value="%Dfrom%">
-<select name="TNumber" size="1" id="TNB" onchange="myFunction(this);return false;" style="position:absolute;left:155px;top:9px;width:60px;height:28px;z-index:3;">
+<select name="TNumber" size="1" id="TNB" onchange="myFunction(this);return false;" style="position:absolute;left:155px;top:5px;width:60px;height:28px;z-index:3;">
 <option selected value="1">1</option>
 <option value="2">2</option>
 <option value="3">3</option>
@@ -659,8 +659,8 @@ a:hover
 <option value="4">Recurring - Monthly Timer</option>
 <option value="5">Recurring - Yearly Timer</option>
 </select>
-<input type="text" id="TMTYPEedit" style="position:absolute;left:257px;top:9px;width:36px;visibility:hidden;height:18px;line-height:18px;z-index:21;" name="TMTYPEedit" value="%TMTYPEedit%">
-<input type="number" id="TNBT" style="position:absolute;left:208px;top:9px;width:36px;visibility:hidden;height:18px;line-height:18px;z-index:22;" name="TNBT" value="%TNBT%">
+<input type="text" id="TMTYPEedit" style="position:absolute;left:399px;top:101px;width:36px;visibility:hidden;height:18px;line-height:18px;z-index:21;" name="TMTYPEedit" value="%TMTYPEedit%">
+<input type="number" id="TNBT" style="position:absolute;left:333px;top:101px;width:36px;visibility:hidden;height:18px;line-height:18px;z-index:22;" name="TNBT" value="%TNBT%">
 <div id="wb_Text14" style="position:absolute;left:29px;top:223px;width:108px;height:19px;z-index:23;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Time bounds</strong></span></div>
 <input type="time" id="FTime" style="position:absolute;left:125px;top:245px;width:98px;height:18px;line-height:18px;z-index:24;" name="TFrom" value="%TFrom%">
@@ -670,12 +670,12 @@ a:hover
 <span style="color:#000000;font-family:Arial;font-size:13px;">End time: Enter specific end time or Number of Hours and Minutes </span></div>
 <div id="wb_Text17" style="position:absolute;left:39px;top:286px;width:108px;height:18px;z-index:27;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:15px;"><strong>End time</strong></span></div>
-<input type="number" id="Editbox1" style="position:absolute;left:43px;top:390px;width:98px;height:18px;line-height:18px;z-index:28;" name="Mark_Hours" value="%Mark_Hours%">
+<input type="number" id="Hours_edt" style="position:absolute;left:43px;top:390px;width:98px;height:18px;line-height:18px;z-index:28;" name="Mark_Hours" value="%Mark_Hours%">
 <div id="wb_Text18" style="position:absolute;left:43px;top:366px;width:108px;height:16px;z-index:29;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Hours</strong></span></div>
 <div id="wb_Text19" style="position:absolute;left:167px;top:366px;width:108px;height:16px;z-index:30;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Minutes</strong></span></div>
-<input type="number" id="Editbox2" style="position:absolute;left:167px;top:390px;width:98px;height:18px;line-height:18px;z-index:31;" name="Mark_Minutes" value="%Mark_Minutes%">
+<input type="number" id="Minutes_edt" style="position:absolute;left:167px;top:390px;width:98px;height:18px;line-height:18px;z-index:31;" name="Mark_Minutes" value="%Mark_Minutes%">
 <div id="wb_Text7" style="position:absolute;left:21px;top:607px;width:84px;height:16px;text-align:right;z-index:32;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Wednesday</strong></span></div>
 <div id="wb_Text11" style="position:absolute;left:311px;top:17px;width:60px;height:16px;text-align:right;z-index:33;">
@@ -710,13 +710,25 @@ a:hover
       }
       function func_TMTYPE(selectObject) {
         var x = selectObject.value;
-         document.getElementById("TMTYPEedit").value=x ; 
+        document.getElementById("TMTYPEedit").value=x ; 
+         if (x==1){
+            document.getElementById("Hours_edt").value = 0;
+            document.getElementById("Minutes_edt").value = 0;
+            document.getElementById("Hours_edt").style.visibility = 'hidden';
+            document.getElementById("Minutes_edt").style.visibility = 'hidden';
+         } else{
+            document.getElementById("Hours_edt").style.visibility = 'visible';
+            document.getElementById("Minutes_edt").style.visibility = 'visible';
+         }
       }
-
 
     </script>
 </body>
 </html><script> 
 document.getElementById("TNB").value=document.getElementById("TNBT").value ; 
 document.getElementById("TMTYPE").value=document.getElementById("TMTYPEedit").value ; 
+if (document.getElementById("TMTYPEedit").value == 1) {
+document.getElementById("Hours_edt").style.visibility = 'hidden';
+document.getElementById("Minutes_edt").style.visibility = 'hidden';
+}
 </script>

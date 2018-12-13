@@ -68,16 +68,6 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
-
-
-  /*File configFile = SPIFFS.open("/timer.json", "w");
-  if (!configFile) {
-    Serial.println(F("Failed to open timer file for writing"));
-    return false;
-  }*/
-
-  //TNumber
-
   int args = request->args();
   for(int i=0;i<args;i++){
     //Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
@@ -91,6 +81,7 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   request->hasParam("CThursday")  ? json["CThursday"]  =  "1"   : json["CThursday"] =  "0" ;
   request->hasParam("CFriday")    ? json["CFriday"]    =  "1"   : json["CFriday"]   =  "0" ;
   request->hasParam("CSaturday")  ? json["CSaturday"]  =  "1"   : json["CSaturday"] =  "0" ;
+  request->hasParam("CEnabled")   ? json["CEnabled"]   =   "1"  : json["CEnabled"] =   "0"  ;
 
   char  timerfilename[30] = "/timer";
   strcat(timerfilename, json["TNumber"]);
@@ -151,6 +142,7 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   }
 
   para_NodeTimer.id = (json["TNumber"].as<String>()!="") ? json["TNumber"].as<uint8_t>() : 0;
+  para_NodeTimer.enabled = json["CEnabled"]; //.as<String>()!="") ? json["CEnabled"].as<uint8_t>() : 0;
   para_NodeTimer.spanDatefrom = (json["Dfrom"].as<String>()!="") ? json["Dfrom"].as<String>() : String("01-01-1970");
   para_NodeTimer.spanDateto  = (json["DTo"].as<String>()!="")  ? json["DTo"].as<String>() : String("01-01-2100");
   para_NodeTimer.spantimefrom = (json["TFrom"].as<String>()!="") ? json["TFrom"].as<String>() : String("00:00");

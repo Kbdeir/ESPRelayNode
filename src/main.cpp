@@ -438,6 +438,7 @@ DefineCalendarType(Calendar, 10);
 Calendar MyCalendar;
 
 void chronosInit() {
+  MyCalendar.clear();
   PRINTLN(F("Starting up PointsEvents test"));
   Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second());
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
@@ -455,7 +456,7 @@ void chronosInit() {
         config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
 
         tcounter++;
-        if (res == SUCCESS) {
+        if ((res == SUCCESS) && NTmr.enabled) {
           //loadNodeTimer("/timer.json",NTmr);
           Serial.print("\n\n\nBEGIN TIMER DEBUG ************");
           int Year, Month, Day, Hour, Minute, Second ;
@@ -594,12 +595,7 @@ void chronosInit() {
           }
 
           if (NTmr.TM_type == TimerType::TM_FULL_SPAN) {
-
                     Serial.print(F("\n entered FULL SPAN TIMER MODE"));
-                    previous.printTo(SERIAL_DEVICE);
-                    Serial.print(F("\n "));
-                    next.printTo(SERIAL_DEVICE);
-                    Serial.print(F("\n ----------------------------"));                                 
                     MyCalendar.add(
                         //Chronos::Event(4,previous.startOfDay(),next.endOfDay())
                         Chronos::Event(4,previous,next)
@@ -616,7 +612,6 @@ void chronosInit() {
   LINE();
   Chronos::DateTime nowTime(Chronos::DateTime::now());
   PRINT(F("Right \"now\" it's: "));
-
   nowTime.printTo(SERIAL_DEVICE);
   LINES(2);
 

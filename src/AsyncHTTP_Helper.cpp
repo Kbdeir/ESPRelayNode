@@ -28,7 +28,7 @@ String timerprocessor(const String& var)
   if(var == F( "CFriday" )) { if (NTmr.weekdays->Friday ) return "1\" checked=\"\""; };
   if(var == F( "CSaturday" )) { if (NTmr.weekdays->Saturday ) return "1\" checked=\"\""; };
   if(var == F( "CSunday" )) { if (NTmr.weekdays->Sunday ) return "1\" checked=\"\""; };
-  if(var == F( "CEnabled" )) { if (NTmr.enabled ) return "1\" checked=\"\""; };
+  if(var == F( "CEnabled" )) { if (NTmr.enabled) return "1\" checked=\"\""; };
 
   if(var == F( "Mark_Hours" ))  return  String(NTmr.Mark_Hours);
   if(var == F( "Mark_Minutes" ))  return  String(NTmr.Mark_Minutes);
@@ -97,23 +97,25 @@ void SetAsyncHTTP(){
 
   AsyncWeb_server.on("/Timer1", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-    //  if (request->hasParam("CSunday")) {
+        if (request->hasParam("GetTimer")) {
+          AsyncWebParameter * Para = request->getParam("GetTimer");
+          String tmp = Para->value();
+          char  timerfilename[30] = "";
+          strcpy(timerfilename, "/timer");
+          strcat(timerfilename, tmp.c_str());
+          strcat(timerfilename, ".json");
+          if (loadNodeTimer(timerfilename,NTmr)== SUCCESS) {
+                request->send(SPIFFS, "/Timer1.html", String(), false, timerprocessor);
+          } else {
+                request->send(SPIFFS, "/Timer1.html");
+          };
+      } else
+      {
+        request->send(SPIFFS, "/Timer1.html");
+      }
 
-    if (request->hasParam("GetTimer")) {
-      AsyncWebParameter * Para = request->getParam("GetTimer");
-      String tmp = Para->value();
-      Serial.print(tmp);
 
-      char  timerfilename[30] = "";
-      strcpy(timerfilename, "/timer");
-      strcat(timerfilename, tmp.c_str());
-      strcat(timerfilename, ".json");
 
-      config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
-    }
-    //  }
-
-    request->send(SPIFFS, "/Timer1.html", String(), false, timerprocessor);
 
         // int args = request->args();
     });
@@ -122,6 +124,7 @@ void SetAsyncHTTP(){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/savetimer.html");
             saveNodeTimer(request);
+            CalendarNotInitiated = true;
             //loadNodeTimer("/timer.json",NTmr);
             //loadConfig(MyConfParam);
             //uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
