@@ -69,9 +69,10 @@ typedef struct TRelayConfigParams {
    //unsigned long cmillis;
    unsigned long pmillis;
    unsigned long freeinterval;
-   boolean lockupdate;
+
 
   public:
+       boolean lockupdate;
     TConfigParams *RelayConfParam;
     OneButton *fbutton;
     Bounce *btn_debouncer;

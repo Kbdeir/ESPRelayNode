@@ -1,6 +1,6 @@
 
 #include <KSBNTP.h>
-#include <ConfigParams.h>
+
 
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
 static const char ntpServerName[] = "us.pool.ntp.org";
@@ -47,11 +47,12 @@ time_t getNtpTime()
   Serial.print(F("timezone"));
   Serial.print(F(": "));
   Serial.print(String(timeZone));
-    Serial.print(F(" - NTP server: "));
+  Serial.print(F(" - NTP server: "));
   Serial.println(ntpServerIP);
+  ftimesynced = false;
   sendNTPpacket(ntpServerIP);
   uint32_t beginWait = millis();
-  while (millis() - beginWait < 3000) {
+  while ((millis() - beginWait < 3000) && !ftimesynced) {
     int size = Udp.parsePacket();
     if (size >= NTP_PACKET_SIZE) {
       Serial.println(F("Receive NTP Response"));
@@ -63,11 +64,15 @@ time_t getNtpTime()
       secsSince1900 |= (unsigned long)packetBuffer[42] << 8;
       secsSince1900 |= (unsigned long)packetBuffer[43];
       setSyncInterval(300); // got time, now sync ahgain every 300 seconds
+
+      ftimesynced = true;
+
       return secsSince1900 - 2208988800UL + timeZone * SECS_PER_HOUR;
     }
   }
   Serial.println(F("No NTP Response :-("));
   setSyncInterval(10); // if failed to get time, try after 10 seconds
+
   return 0; // return 0 if unable to get the time
 }
 

@@ -13,6 +13,7 @@
 #include <vector>
 #include <ACS_Helper.h>
 #include <InputClass.h>
+#include <TimerClass.h>
 //#include <RelaysArray.h>
 
 //extern void *  mrelays[3];
@@ -50,6 +51,9 @@ extern std::vector<void *> relays ; // a list to hold all relays
 #include <KSBNTP.h>
 time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
+
+   NodeTimer NTmr(4,0,0);
+
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
   "Project Meeting   ",
@@ -132,6 +136,8 @@ AsyncServer* MBserver = new AsyncServer(502); // start listening on tcp port 705
 ModbusIP mb;
 const int LAMP1_COIL = 1;
 const int LAMP2_COIL = 2;
+
+
 
 //OneButton button(SwitchButtonPin, true);
 
@@ -432,27 +438,187 @@ DefineCalendarType(Calendar, 10);
 Calendar MyCalendar;
 
 void chronosInit() {
+  MyCalendar.clear();
   PRINTLN(F("Starting up PointsEvents test"));
   Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second());
-  //Chronos::DateTime::setTime(2018, 11, 1, 10, 00, 00);
+  //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
-  MyCalendar.add(
-      Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Thursday, 10, 00, 05), Chronos::Span::Seconds(15))
-    );
+  uint8_t tcounter = 1;
+  while(tcounter < 10){
+
+        char  timerfilename[30] = "";
+        strcpy(timerfilename, "/timer");
+        strcat(timerfilename, String(tcounter).c_str());
+        strcat(timerfilename, ".json");
+        Serial.print ("\n***************************************************************\n");
+        Serial.print  (timerfilename);
+        Serial.print("\n");
+        config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
+
+        tcounter++;
+        if ((res == SUCCESS) && NTmr.enabled) {
+          //loadNodeTimer("/timer.json",NTmr);
+          Serial.print("\n\n\nBEGIN TIMER DEBUG ************");
+          int Year, Month, Day, Hour, Minute, Second ;
+          int TYear, TMonth, TDay, THour, TMinute, TSecond ;
+
+          String DF = NTmr.spanDatefrom + " " + NTmr.spantimefrom;
+          String DT = NTmr.spanDateto + " " + NTmr.spantimeto;
+
+          sscanf(DF.c_str(), "%d-%d-%d %d:%d:%d", &Year, &Month, &Day, &Hour, &Minute, &Second);
+          sscanf(DT.c_str(), "%d-%d-%d %d:%d:%d", &TYear, &TMonth, &TDay, &THour, &TMinute, &TSecond);
+
+          Chronos::DateTime previous(Year, Month, Day, Hour, Minute, 0);
+          Chronos::DateTime next(TYear, TMonth, TDay, THour, TMinute, 0);
+          Chronos::Span::Absolute timeDiff = next-previous;
+
+          PRINTLN("\nFrom timer values: ");
+          PRINT(NTmr.spanDatefrom); PRINT(" "); PRINT(NTmr.spantimefrom);
+          PRINT(" = ");
+          PRINT(Year);
+          PRINT("-");
+          PRINT(Month);
+          PRINT("-");
+          PRINT(Day);
+          PRINT(" ");
+          PRINT(Hour);
+          PRINT(":");
+          PRINT(Minute);
+
+          PRINTLN("\n\nTo timer values: ");
+          PRINT(NTmr.spanDateto); PRINT(" ");
+          PRINT(NTmr.spantimeto);
+          PRINT(" = ");
+
+          PRINT(TYear);
+          PRINT("-");
+          PRINT(TMonth);
+          PRINT("-");
+          PRINT(TDay);
+          PRINT(" ");
+          PRINT(THour);
+          PRINT(":");
+          PRINT(TMinute);
+
+          PRINTLN("\n\ntimeDiff values: ");
+          PRINT(F("There are "));
+          PRINT(timeDiff.days());
+          PRINT(F(" days, "));
+          PRINT(timeDiff.hours());
+          PRINT(F(" hours, "));
+          PRINT(timeDiff.minutes());
+          PRINT(F(" minutes and  "));
+          PRINT(timeDiff.seconds());
+          PRINT(F(" seconds between DF & DT."));
+          PRINTLN(F("\n\nTotalSeconds: "));
+          PRINT(timeDiff.totalSeconds());
+
+          Serial.print("\nTimer type: ");
+          Serial.print(NTmr.TM_type);
+          Serial.print(" - FULL SPAN timer type: ");
+          Serial.print(TimerType::TM_FULL_SPAN);
+          Serial.print("\n\n\n END TIMER DEBUGG ************\n\n\n");
+
+          if (NTmr.TM_type == TimerType::TM_WEEKDAY_SPAN) {
+
+            Serial.print(F("\n entered WEEKLY TIMER MODE eval 0"));
+            if ((previous.startOfDay() <= Chronos::DateTime::now()) && (Chronos::DateTime::now() <= next.endOfDay())) {
+            Serial.print(F("\n entered WEEKLY TIMER MODE eval 1"));
+
+            uint32_t dailydiffsecs = timeDiff.totalSeconds() - (timeDiff.days() * 24 * 3600);
+            if (NTmr.Mark_Hours + NTmr.Mark_Minutes > 0) {
+              dailydiffsecs = (NTmr.Mark_Hours * 3600) +  (NTmr.Mark_Minutes * 60) ;
+            }
+
+              if (NTmr.weekdays->Sunday) {
+                MyCalendar.add(
+                    Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Sunday,Hour, Minute, 00),
+                    Chronos::Span::Seconds(dailydiffsecs))
+                  );
+              }
+                if (NTmr.weekdays->Monday) {
+                 MyCalendar.add(
+                     Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Monday,Hour, Minute, 00),
+                     Chronos::Span::Seconds(dailydiffsecs))
+                   );
+               }
+                if (NTmr.weekdays->Tuesday) {
+                 Serial.print("\n  Event added");
+                  MyCalendar.add(
+                      Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
+                      Chronos::Span::Seconds(dailydiffsecs))
+                    );
+                }
+                if (NTmr.weekdays->Wednesday) {
+                   MyCalendar.add(
+                       Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Wednesday,Hour, Minute, 00),
+                       Chronos::Span::Seconds(dailydiffsecs))
+                     );
+                 }
+                 if (NTmr.weekdays->Thursday) {
+                    MyCalendar.add(
+                        Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Thursday,Hour, Minute, 00),
+                        Chronos::Span::Seconds(dailydiffsecs))
+                      );
+                  }
+                  if (NTmr.weekdays->Friday) {
+                     MyCalendar.add(
+                         Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday,Hour, Minute, 00),
+                         Chronos::Span::Seconds(dailydiffsecs))
+                       );
+                   }
+                   if (NTmr.weekdays->Saturday) {
+                      MyCalendar.add(
+                          Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
+                          Chronos::Span::Seconds(dailydiffsecs))
+                        );
+                    }
+                }
+          }
+
+          if (NTmr.TM_type == TimerType::TM_DAILY_SPAN) {
+                  Serial.print(F("\n entered DAILY TIMER MODE eval 0"));
+                if ((previous.startOfDay() <= Chronos::DateTime::now()) && (Chronos::DateTime::now() <= next.endOfDay())) {
+                  Serial.print(F("\n entered DAILY TIMER MODE eval 1"));
+                  uint32_t dailydiffsecs = 0;
+                  if (NTmr.Mark_Hours + NTmr.Mark_Minutes == 0) {
+                    dailydiffsecs = timeDiff.totalSeconds() - (timeDiff.days() * 24 * 3600);
+                  }
+                  if (NTmr.Mark_Hours + NTmr.Mark_Minutes > 0) {
+                    dailydiffsecs = (NTmr.Mark_Hours * 3600) +  (NTmr.Mark_Minutes * 60) ;
+                  }
+                    MyCalendar.add(
+                        Chronos::Event(4,Chronos::Mark::Daily(Hour, Minute, 00),
+                        Chronos::Span::Seconds(dailydiffsecs))
+                      );
+                }
+          }
+
+          if (NTmr.TM_type == TimerType::TM_FULL_SPAN) {
+                    Serial.print(F("\n entered FULL SPAN TIMER MODE"));
+                    MyCalendar.add(
+                        //Chronos::Event(4,previous.startOfDay(),next.endOfDay())
+                        Chronos::Event(4,previous,next)
+                      );
+          }
+
+      } // if SUCCESS
+  } // while loop
+
   LINE();
 
-  PRINTLN(F(" **** presumably got NTP time **** :"));
+  PRINTLN(F("**** presumably got NTP time **** :"));
   Chronos::DateTime::now().printTo(SERIAL_DEVICE);
   LINE();
   Chronos::DateTime nowTime(Chronos::DateTime::now());
   PRINT(F("Right \"now\" it's: "));
-
   nowTime.printTo(SERIAL_DEVICE);
   LINES(2);
 
 }
 
 void chronosevaluatetimers(Calendar MyCalendar) {
+  if (ftimesynced){
   // create an array of Event::Occurrence objects, to hold replies from the calendar
   Chronos::Event::Occurrence occurrenceList[10];
   // listOngoing: get events that are happening at specified datetime.  Called with
@@ -470,23 +636,27 @@ void chronosevaluatetimers(Calendar MyCalendar) {
       PRINT((int )occurrenceList[i].id);
       PRINT('\t');
       PRINT(EventNames[occurrenceList[i].id]);
-      PRINT(F("\tends in: "));
+      PRINT(F("\t ends in: "));
       (nowTime - occurrenceList[i].finish).printTo(SERIAL_DEVICE);
 
-      if ((nowTime == occurrenceList[i].start + 1)) {
+      if ((nowTime > occurrenceList[i].start + 1)) {
         LINE();
         PRINTLN(F(" *** truning relay ON... event is Starting *** "));
+        if (!digitalRead(relay1.getRelayPin())){
+          relay1.mdigitalWrite(relay1.getRelayPin(),HIGH);
+        }
       }
-      if ((nowTime == occurrenceList[i].finish - 1)) {
+      if ((nowTime == occurrenceList[i].finish - 1 )) {
         LINE();
+        relay1.lockupdate = false;
+        relay1.mdigitalWrite(relay1.getRelayPin(),LOW);
         PRINTLN(F(" *** truning relay OFF... event is done ***"));
       }
-
     }
   } else {
   //  PRINTLN(F("Looks like we're free for the moment..."));
   }
-
+}
 }
 
 
@@ -568,7 +738,7 @@ void Wifi_connect() {
                     //setSyncInterval(10);
                     setSyncProvider(getNtpTime);
 
-                    chronosInit();
+
 
                     trials = 0;
                     relay1.stop_ttl_timer();
@@ -692,6 +862,11 @@ void loop() {
       chronosevaluatetimers(MyCalendar);
     }
   }
+
+    if((timeStatus() != timeNotSet) && CalendarNotInitiated){
+      chronosInit();
+      CalendarNotInitiated = false;
+    }
 
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();

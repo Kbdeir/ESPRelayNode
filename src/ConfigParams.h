@@ -42,6 +42,8 @@ const uint16_t MaxWifiTrials = 100;
 #define ON "on"
 #define OFF "off"
 
+
+
 typedef struct TConfigParams {
   String v_ssid;
   String v_pass;

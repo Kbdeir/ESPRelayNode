@@ -1,5 +1,7 @@
 #include <ConfigParams.h>
 
+boolean ftimesynced = false;
+boolean CalendarNotInitiated = true;
 
 TConfigParams MyConfParam;
 

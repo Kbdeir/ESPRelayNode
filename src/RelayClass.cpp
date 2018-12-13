@@ -34,7 +34,7 @@ Relay::Relay(uint8_t p,
   RelayConfParam = new TConfigParams;
 
   lockupdate = false;
-  freeinterval = 600;
+  freeinterval = 200;
 
   // tickers callback functions for ttl, acs, tta
   fttlcallback = ttlcallback;

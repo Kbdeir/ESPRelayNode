@@ -3,7 +3,9 @@
 #include <SPIFFSEditor.h>
 #include <MQTT_Processes.h>
 #include <RelayClass.h>
+#include <TimerClass.h>
 
+extern NodeTimer NTmr;
 
 //const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 AsyncWebServer AsyncWeb_server(80);
@@ -11,15 +13,33 @@ AsyncWebServer AsyncWeb_server(80);
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
 File cf;
 
-/*
-void Restart(){
-    ESP.restart();
+String timerprocessor(const String& var)
+{
+
+  if(var == F( "TNBT" ))  return  String(NTmr.id);
+  if(var == F( "Dfrom" ))  return  String(NTmr.spanDatefrom.c_str());
+  if(var == F( "DTo" ))  return String( NTmr.spanDateto.c_str());
+  if(var == F( "TFrom" ))  return  String(NTmr.spantimefrom.c_str());
+  if(var == F( "TTo" ))  return String( NTmr.spantimeto.c_str());
+  if(var == F( "CMonday" )) { if (NTmr.weekdays->Monday) return "1\" checked=\"\""; };
+  if(var == F( "CTuesday" )) { if (NTmr.weekdays->Tuesday ) return "1\" checked=\"\""; };
+  if(var == F( "CWednesday" )) { if (NTmr.weekdays->Wednesday) return "1\" checked=\"\""; };
+  if(var == F( "CThursday" )) { if (NTmr.weekdays->Thursday ) return "1\" checked=\"\""; };
+  if(var == F( "CFriday" )) { if (NTmr.weekdays->Friday ) return "1\" checked=\"\""; };
+  if(var == F( "CSaturday" )) { if (NTmr.weekdays->Saturday ) return "1\" checked=\"\""; };
+  if(var == F( "CSunday" )) { if (NTmr.weekdays->Sunday ) return "1\" checked=\"\""; };
+  if(var == F( "CEnabled" )) { if (NTmr.enabled) return "1\" checked=\"\""; };
+
+  if(var == F( "Mark_Hours" ))  return  String(NTmr.Mark_Hours);
+  if(var == F( "Mark_Minutes" ))  return  String(NTmr.Mark_Minutes);
+
+  if(var == F( "TMTYPEedit" ))  return String(NTmr.TM_type);
+
+  return String();
 }
-*/
 
 String processor(const String& var)
 {
-
   if(var == F( "MACADDR" ))  return (String(MAC.c_str()) + " - Chip id: " + CID());
   if(var == F( "ssid" ))  return  String(MyConfParam.v_ssid.c_str());
   if(var == F( "pass" ))  return String( MyConfParam.v_pass.c_str());
@@ -33,10 +53,8 @@ String processor(const String& var)
   if(var == F( "ACS_Sensor_Model" ))  return String( MyConfParam.v_ACS_Sensor_Model.c_str());
   if(var == F( "ttl" ))  return String( MyConfParam.v_ttl.c_str());
   if(var == F( "STATE_PUB_TOPIC" ))  return String( MyConfParam.v_STATE_PUB_TOPIC.c_str());
-
   if(var == F( "InputPin12_STATE_PUB_TOPIC" ))  return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
   if(var == F( "InputPin14_STATE_PUB_TOPIC" ))  return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
-
   if(var == F( "TTL_PUB_TOPIC" ))  return String( MyConfParam.v_ttl_PUB_TOPIC.c_str());
   if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( MyConfParam.v_CURR_TTL_PUB_TOPIC.c_str());
   if(var == F( "i_ttl_PUB_TOPIC" ))  return String( MyConfParam.v_i_ttl_PUB_TOPIC.c_str());
@@ -55,7 +73,6 @@ String processor(const String& var)
   if(var == F( "myppp" )) { if (MyConfParam.v_myppp == "1") return "1\" checked=\"\""; };
   if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now == "1") return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))  return digitalClockDisplay();
-
   return String();
 }
 
@@ -72,13 +89,47 @@ void SetAsyncHTTP(){
     request->send(200, "text/plain", String(ESP.getFreeHeap()));
   });
 
-
   AsyncWeb_server.on("/JConfig", HTTP_GET, [](AsyncWebServerRequest *request){
     if (!request->authenticate("user", "pass")) return request->requestAuthentication();
     request->send(SPIFFS, "/config.json");
       // int args = request->args();
     });
 
+  AsyncWeb_server.on("/Timer1", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        if (request->hasParam("GetTimer")) {
+          AsyncWebParameter * Para = request->getParam("GetTimer");
+          String tmp = Para->value();
+          char  timerfilename[30] = "";
+          strcpy(timerfilename, "/timer");
+          strcat(timerfilename, tmp.c_str());
+          strcat(timerfilename, ".json");
+          if (loadNodeTimer(timerfilename,NTmr)== SUCCESS) {
+                request->send(SPIFFS, "/Timer1.html", String(), false, timerprocessor);
+          } else {
+                request->send(SPIFFS, "/Timer1.html");
+          };
+      } else
+      {
+        request->send(SPIFFS, "/Timer1.html");
+      }
+
+
+
+
+        // int args = request->args();
+    });
+
+  AsyncWeb_server.on("/savetimer.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/savetimer.html");
+            saveNodeTimer(request);
+            CalendarNotInitiated = true;
+            //loadNodeTimer("/timer.json",NTmr);
+            //loadConfig(MyConfParam);
+            //uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
+            //uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
+      });
 
   AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
     if (!request->authenticate("user", "pass")) return request->requestAuthentication();
@@ -102,7 +153,7 @@ void SetAsyncHTTP(){
     });
     */
 
-    AsyncWeb_server.on("/update", HTTP_POST, [](AsyncWebServerRequest *request){
+  AsyncWeb_server.on("/update", HTTP_POST, [](AsyncWebServerRequest *request){
       // the request handler is triggered after the upload has finished...
       // create the response, add header, and send response
       AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", (Update.hasError())?"FAIL":"OK... Update Successful");
@@ -150,10 +201,10 @@ void SetAsyncHTTP(){
       });*/
 
 
-      AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+  AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         request->send(SPIFFS, "/Config.html", String(), false, processor);
-      });
+    });
 
       /*AsyncWeb_server.on("/firmware.html", HTTP_GET, [](AsyncWebServerRequest *request){
           if (!request->authenticate("user", "pass")) return request->requestAuthentication();
@@ -163,7 +214,7 @@ void SetAsyncHTTP(){
           });
           */
 
-			AsyncWeb_server.on("/restart.html", HTTP_GET, [](AsyncWebServerRequest *request){
+	AsyncWeb_server.on("/restart.html", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
 	      request->send(SPIFFS, "/Reset.html");
 				Serial.println(F("rebooting.."));
@@ -209,6 +260,6 @@ void SetAsyncHTTP(){
                                 }
                               });
         */
-		Serial.println(F("Starting HTTP server"));
-    AsyncWeb_server.begin();
+	Serial.println(F("Starting HTTP server"));
+  AsyncWeb_server.begin();
 }
