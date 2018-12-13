@@ -189,7 +189,8 @@ void SetAsyncHTTP(){
 
                             if(final){ // if the final flag is set then this is the last frame of data
                               if(Update.end(true)){ //true to set the size to the current progress
-                                  Serial.printf("Update Success: %u B\nRebooting...\n", index+len);
+                                  Serial.print(F("Update Success... \nRebooting..."));
+                                  Serial.print(index+len);
                                 } else {
                                   Update.printError(Serial);
                                 }
