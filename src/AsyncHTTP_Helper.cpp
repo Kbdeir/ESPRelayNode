@@ -73,6 +73,8 @@ String processor(const String& var)
   if(var == F( "myppp" )) { if (MyConfParam.v_myppp == "1") return "1\" checked=\"\""; };
   if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now == "1") return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))  return digitalClockDisplay();
+  if(var == F( "heap" ))  return String(ESP.getFreeHeap());
+
   return String();
 }
 
