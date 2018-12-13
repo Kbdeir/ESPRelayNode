@@ -549,11 +549,11 @@ a:hover
    border: 0px #000000 solid;
    padding: 0;
    margin: 0;
-   text-align: center;
+   text-align: left;
 }
 #wb_Text20 div
 {
-   text-align: center;
+   text-align: left;
 }
 #wb_Text21 
 {
@@ -568,10 +568,54 @@ a:hover
 {
    text-align: left;
 }
+#Combobox1
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   box-sizing: border-box;
+}
+#Combobox1:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Form2
+{
+   background-color: #FFFFFF;
+   background-image: none;
+   border: 1px #CCCCCC solid;
+}
+#Button1
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
 </style>
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:464px;height:734px;z-index:39;">
+<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:464px;height:734px;z-index:41;">
 <form name="Form1" method="get" action="savetimer.html" enctype="text/plain" id="Form1">
 <input type="date" id="TDate" style="position:absolute;left:203px;top:160px;width:138px;height:19px;line-height:19px;z-index:0;" name="DTo" value="%DTo%">
 <div id="wb_Text2" style="position:absolute;left:25px;top:14px;width:156px;height:19px;z-index:1;text-align:left;">
@@ -587,7 +631,7 @@ a:hover
 <div id="wb_Text3" style="position:absolute;left:41px;top:143px;width:144px;height:16px;z-index:4;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>From:</strong></span></div>
 <input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:303px;top:687px;width:126px;height:25px;z-index:5;">
-<input type="time" id="TTime" style="position:absolute;left:271px;top:318px;width:98px;height:18px;line-height:18px;z-index:6;" name="TTo" value="%TTo%">
+<input type="time" id="TTime" style="position:absolute;left:312px;top:316px;width:98px;height:18px;line-height:18px;z-index:6;" name="TTo" value="%TTo%">
 <div id="wb_Text4" style="position:absolute;left:201px;top:143px;width:150px;height:16px;z-index:7;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>To:</strong></span></div>
 <div id="wb_Text1" style="position:absolute;left:45px;top:535px;width:60px;height:16px;text-align:right;z-index:8;">
@@ -646,8 +690,19 @@ a:hover
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Weekdays timer</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><strong><br></strong>Select Weekday (applicable only for timers of type: Recurring Weekday timer</span></div>
 </form>
 </div>
-<div id="wb_Text20" style="position:absolute;left:30px;top:36px;width:466px;height:27px;text-align:center;z-index:40;">
+<div id="wb_Text20" style="position:absolute;left:30px;top:32px;width:234px;height:27px;z-index:42;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">Timer Configuration</span></div>
+<div id="wb_Form2" style="position:absolute;left:246px;top:23px;width:248px;height:42px;z-index:43;">
+<form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
+<select name="GetTimer" size="1" id="Combobox1" style="position:absolute;left:5px;top:7px;width:96px;height:28px;z-index:39;">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+</select>
+<input type="submit" id="Button1" name="Get Timer" value="Gettimer" style="position:absolute;left:110px;top:9px;width:126px;height:25px;z-index:40;">
+</form>
+</div>
 <script>
       function myFunction(selectObject) {
         var x = selectObject.value;

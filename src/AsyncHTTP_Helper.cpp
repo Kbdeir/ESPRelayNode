@@ -97,9 +97,23 @@ void SetAsyncHTTP(){
 
   AsyncWeb_server.on("/Timer1", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-      //request->send(SPIFFS, "/Timer1.html");
+    //  if (request->hasParam("CSunday")) {
 
-        request->send(SPIFFS, "/Timer1.html", String(), false, timerprocessor);
+    if (request->hasParam("GetTimer")) {
+      AsyncWebParameter * Para = request->getParam("GetTimer");
+      String tmp = Para->value();
+      Serial.print(tmp);
+
+      char  timerfilename[30] = "";
+      strcpy(timerfilename, "/timer");
+      strcat(timerfilename, tmp.c_str());
+      strcat(timerfilename, ".json");
+
+      config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
+    }
+    //  }
+
+    request->send(SPIFFS, "/Timer1.html", String(), false, timerprocessor);
 
         // int args = request->args();
     });

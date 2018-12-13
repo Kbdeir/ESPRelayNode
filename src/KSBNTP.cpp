@@ -6,7 +6,6 @@ byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
 static const char ntpServerName[] = "us.pool.ntp.org";
 uint8_t timeZone = 1;     // Central European Time
 
-
 unsigned int localPort = 8888;  // local port to listen for UDP packets
 WiFiUDP Udp;
 
@@ -50,10 +49,10 @@ time_t getNtpTime()
   Serial.print(String(timeZone));
   Serial.print(F(" - NTP server: "));
   Serial.println(ntpServerIP);
-
+  ftimesynced = false;
   sendNTPpacket(ntpServerIP);
   uint32_t beginWait = millis();
-  while (millis() - beginWait < 3000) {
+  while ((millis() - beginWait < 3000) && !ftimesynced) {
     int size = Udp.parsePacket();
     if (size >= NTP_PACKET_SIZE) {
       Serial.println(F("Receive NTP Response"));
@@ -73,6 +72,7 @@ time_t getNtpTime()
   }
   Serial.println(F("No NTP Response :-("));
   setSyncInterval(10); // if failed to get time, try after 10 seconds
+
   return 0; // return 0 if unable to get the time
 }
 

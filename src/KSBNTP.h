@@ -11,11 +11,11 @@
   #include <ESP8266WiFi.h>
 #endif
 
-
+typedef void (*fnptr)();
 
 const int NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
 extern boolean ftimesynced;
-
+extern boolean CalendarNotInitiated;
 extern WiFiUDP Udp;
 extern unsigned int localPort;
 

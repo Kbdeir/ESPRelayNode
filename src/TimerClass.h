@@ -44,8 +44,8 @@ typedef struct TWeekdays {
     String spantimeto;
     uint32_t secondsspan;
     TWeekdays * weekdays;
-uint8_t Mark_Hours;
-uint8_t Mark_Minutes;
+uint16_t Mark_Hours;
+uint16_t Mark_Minutes;
     unsigned int mark;
     uint8_t marktype;
     boolean enabled;
