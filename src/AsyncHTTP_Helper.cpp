@@ -111,15 +111,10 @@ void SetAsyncHTTP(){
           } else {
                 request->send(SPIFFS, "/Timer1.html");
           };
-      } else
-      {
+      } else {
         request->send(SPIFFS, "/Timer1.html");
       }
-
-
-
-
-        // int args = request->args();
+      // int args = request->args();
     });
 
   AsyncWeb_server.on("/savetimer.html", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -127,10 +122,6 @@ void SetAsyncHTTP(){
       request->send(SPIFFS, "/savetimer.html");
             saveNodeTimer(request);
             CalendarNotInitiated = true;
-            //loadNodeTimer("/timer.json",NTmr);
-            //loadConfig(MyConfParam);
-            //uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
-            //uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
       });
 
   AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -197,12 +188,6 @@ void SetAsyncHTTP(){
                                 // Serial.setDebugOutput(false);
                             }
                           });
-
-      /*AsyncWeb_server.on("/Config2.html", HTTP_GET, [](AsyncWebServerRequest *request){
-        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-        request->send(SPIFFS, "/Config2.html", String(), false, processor);
-      });*/
-
 
   AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();

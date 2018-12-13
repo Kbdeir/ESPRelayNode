@@ -35,7 +35,6 @@ typedef struct TWeekdays {
 {
   private:
 
-
   public:
     uint8_t id;
     TimerType TM_type;
@@ -45,8 +44,8 @@ typedef struct TWeekdays {
     String spantimeto;
     uint32_t secondsspan;
     TWeekdays * weekdays;
-uint16_t Mark_Hours;
-uint16_t Mark_Minutes;
+    uint16_t Mark_Hours;
+    uint16_t Mark_Minutes;
     unsigned int mark;
     uint8_t marktype;
     boolean enabled;
@@ -62,7 +61,6 @@ uint16_t Mark_Minutes;
               String para_spanDateto,
               String para_spantimefrom,
               String para_spantimeto,
-
               TWeekdays * para_weekdays,
               unsigned int para_mark,
               uint8_t para_marktype,
@@ -71,9 +69,6 @@ uint16_t Mark_Minutes;
 
     ~NodeTimer();
     void watch();
-
-
-
 };
 
 bool saveNodeTimer(AsyncWebServerRequest *request);

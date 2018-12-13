@@ -3,8 +3,8 @@
 
 
 NodeTimer::NodeTimer(uint8_t para_id,
-          unsigned int para_mark,
-          uint8_t para_marktype) {
+                      unsigned int para_mark,
+                      uint8_t para_marktype) {
     id = para_id;
     TM_type = TM_FULL_SPAN;
     spanDatefrom  = "01-01-1970";
@@ -13,7 +13,6 @@ NodeTimer::NodeTimer(uint8_t para_id,
     spantimeto    = "00:00";
 
     weekdays = new TWeekdays;
-
     weekdays->Monday    = true;
     weekdays->Tuesday   = true;
     weekdays->Wednesday = true;
@@ -25,6 +24,8 @@ NodeTimer::NodeTimer(uint8_t para_id,
     mark = para_mark;
     marktype = para_marktype;
     enabled = true;
+    Mark_Hours = 0;
+    Mark_Minutes = 0;
 }
 
 NodeTimer::NodeTimer(uint8_t para_id,
@@ -87,10 +88,7 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   strcat(timerfilename, json["TNumber"]);
   strcat(timerfilename, ".json");
 
-  Serial.print(timerfilename);
-
   File configFile = SPIFFS.open(timerfilename, "w");
-  //File configFile = SPIFFS.open("/timer.json", "w");
   if (!configFile) {
     Serial.println(F("Failed to open timer file for writing"));
     return false;
@@ -154,14 +152,11 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.weekdays->Thursday = json["CThursday"];
   para_NodeTimer.weekdays->Friday = json["CFriday"];
   para_NodeTimer.weekdays->Saturday = json["CSaturday"];
-
   para_NodeTimer.fyear=2018;
   para_NodeTimer.mark = 0;
   para_NodeTimer.marktype = 0;
-
   para_NodeTimer.Mark_Hours = (json["Mark_Hours"].as<String>()!="") ? json["Mark_Hours"].as<uint16_t>() : 0;
   para_NodeTimer.Mark_Minutes = (json["Mark_Minutes"].as<String>()!="") ? json["Mark_Minutes"].as<uint16_t>() : 0;
-
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
   para_NodeTimer.secondsspan = 0;
 
