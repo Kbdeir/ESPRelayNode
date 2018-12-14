@@ -34,6 +34,7 @@ String timerprocessor(const String& var)
   if(var == F( "Mark_Minutes" ))  return  String(NTmr.Mark_Minutes);
 
   if(var == F( "TMTYPEedit" ))  return String(NTmr.TM_type);
+  if(var == F( "Testchar" ))  return String(NTmr.Testchar);
 
   return String();
 }

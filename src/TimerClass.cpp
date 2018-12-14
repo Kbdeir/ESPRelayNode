@@ -26,6 +26,7 @@ NodeTimer::NodeTimer(uint8_t para_id,
     enabled = true;
     Mark_Hours = 0;
     Mark_Minutes = 0;
+    Testchar = new char[22]; //"Hello there I am char";
 }
 
 NodeTimer::NodeTimer(uint8_t para_id,
@@ -40,21 +41,23 @@ NodeTimer::NodeTimer(uint8_t para_id,
 ) {
     id = para_id;
     TM_type = TM_FULL_SPAN;
-    spanDatefrom = para_spanDatefrom;
-    spanDateto = para_spanDateto;
-    weekdays = para_weekdays;
-    mark = para_mark;
-    marktype = para_marktype;
-    enabled = para_enabled;
-    spantimefrom = para_spantimefrom;
-    spantimeto = para_spantimeto;
-    Mark_Hours = 0;
-    Mark_Minutes = 0;
+    spanDatefrom  = para_spanDatefrom;
+    spanDateto    = para_spanDateto;
+    weekdays      = para_weekdays;
+    mark          = para_mark;
+    marktype      = para_marktype;
+    enabled       = para_enabled;
+    spantimefrom  = para_spantimefrom;
+    spantimeto    = para_spantimeto;
+    Mark_Hours    = 0;
+    Mark_Minutes  = 0;
+    Testchar = new char[22]; //"Hello there I am char";
 
 }
 
 NodeTimer::~NodeTimer(){
     delete weekdays;
+    delete Testchar;
 }
 
 void NodeTimer::watch(){
@@ -82,7 +85,7 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   request->hasParam("CThursday")  ? json["CThursday"]  =  "1"   : json["CThursday"] =  "0" ;
   request->hasParam("CFriday")    ? json["CFriday"]    =  "1"   : json["CFriday"]   =  "0" ;
   request->hasParam("CSaturday")  ? json["CSaturday"]  =  "1"   : json["CSaturday"] =  "0" ;
-  request->hasParam("CEnabled")   ? json["CEnabled"]   =   "1"  : json["CEnabled"] =   "0"  ;
+  request->hasParam("CEnabled")   ? json["CEnabled"]   =  "1"   : json["CEnabled"]   = "0" ;
 
   char  timerfilename[30] = "/timer";
   strcat(timerfilename, json["TNumber"]);
@@ -159,6 +162,8 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.Mark_Minutes = (json["Mark_Minutes"].as<String>()!="") ? json["Mark_Minutes"].as<uint16_t>() : 0;
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
   para_NodeTimer.secondsspan = 0;
+
+  strcpy(para_NodeTimer.Testchar, json["Testchar"] | "Hello");
 
   return SUCCESS;
 }

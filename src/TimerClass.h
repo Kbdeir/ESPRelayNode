@@ -51,6 +51,8 @@ typedef struct TWeekdays {
     boolean enabled;
     uint16_t fyear;
 
+    char* Testchar;
+
     NodeTimer(uint8_t para_id,
       unsigned int para_mark,
       uint8_t para_marktype

@@ -625,15 +625,39 @@ a:hover
    font-weight: normal;
    font-size: 13px;
 }
+#Editbox1
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#Editbox1:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
 </style>
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:464px;height:734px;z-index:42;">
+<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:464px;height:734px;z-index:43;">
 <form name="Form1" method="get" action="savetimer.html" enctype="text/plain" id="Form1">
 <input type="date" id="TDate" style="position:absolute;left:203px;top:160px;width:138px;height:19px;line-height:19px;z-index:0;" name="DTo" value="%DTo%">
 <div id="wb_Text2" style="position:absolute;left:25px;top:14px;width:156px;height:19px;z-index:1;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:17px;"><strong>Timer number:</strong></span></div>
-<input type="date" id="FDate" style="position:absolute;left:39px;top:164px;width:138px;height:18px;line-height:18px;z-index:2;" name="Dfrom" value="%Dfrom%">
+<input type="date" id="FDate" style="position:absolute;left:277px;top:633px;width:138px;height:18px;line-height:18px;z-index:2;" name="Testchar" value="%Testchar%">
 <select name="TNumber" size="1" id="TNB" onchange="myFunction(this);return false;" style="position:absolute;left:155px;top:5px;width:60px;height:28px;z-index:3;">
 <option selected value="1">1</option>
 <option value="2">2</option>
@@ -702,19 +726,20 @@ a:hover
 <div id="wb_Text13" style="position:absolute;left:31px;top:457px;width:402px;height:51px;z-index:38;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Weekdays timer</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><strong><br></strong>Select Weekday (applicable only for timers of type: Recurring Weekday timer</span></div>
 <input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:30px;top:687px;width:126px;height:25px;z-index:39;">
+<input type="date" id="Editbox1" style="position:absolute;left:37px;top:160px;width:138px;height:18px;line-height:18px;z-index:40;" name="Dfrom" value="%Dfrom%">
 </form>
 </div>
-<div id="wb_Text20" style="position:absolute;left:30px;top:32px;width:234px;height:27px;z-index:43;text-align:left;">
+<div id="wb_Text20" style="position:absolute;left:30px;top:32px;width:234px;height:27px;z-index:44;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">Timer Configuration</span></div>
-<div id="wb_Form2" style="position:absolute;left:246px;top:23px;width:248px;height:42px;z-index:44;">
+<div id="wb_Form2" style="position:absolute;left:246px;top:23px;width:248px;height:42px;z-index:45;">
 <form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
-<select name="GetTimer" size="1" id="Combobox1" style="position:absolute;left:5px;top:7px;width:96px;height:28px;z-index:40;">
+<select name="GetTimer" size="1" id="Combobox1" style="position:absolute;left:5px;top:7px;width:96px;height:28px;z-index:41;">
 <option value="1">1</option>
 <option value="2">2</option>
 <option value="3">3</option>
 <option value="4">4</option>
 </select>
-<input type="submit" id="Button1" name="Get Timer" value="Show Timer" style="position:absolute;left:110px;top:9px;width:126px;height:25px;z-index:41;">
+<input type="submit" id="Button1" name="Get Timer" value="Show Timer" style="position:absolute;left:110px;top:9px;width:126px;height:25px;z-index:42;">
 </form>
 </div>
 <script>
