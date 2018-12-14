@@ -161,7 +161,7 @@ bool saveConfig(TConfigParams &ConfParam){
   json["ACS_Active"]=ConfParam.v_ACS_Active;
   json["Update_now"]=ConfParam.v_Update_now;
 
-  File configFile = SPIFFS.open("/config.json", "w");
+  File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {
     Serial.println(F("Failed to open config file for writing"));
     return false;
@@ -201,7 +201,7 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
   if(request->hasParam("myppp")) json["myppp"]                =  F("1");
   if(request->hasParam("Update_now")) json["Update_now"]      =  F("1");
 
-  File configFile = SPIFFS.open(F("/config.json"), "w");
+  File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {
     Serial.println(F("Failed to open config file for writing"));
     return false;

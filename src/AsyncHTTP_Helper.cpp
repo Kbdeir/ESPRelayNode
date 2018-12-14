@@ -11,7 +11,7 @@ extern NodeTimer NTmr;
 AsyncWebServer AsyncWeb_server(80);
 
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
-File cf;
+//File cf;
 
 String timerprocessor(const String& var)
 {
