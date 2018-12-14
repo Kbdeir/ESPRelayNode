@@ -56,13 +56,13 @@ time_t prevDisplay = 0; // when the digital clock was displayed
 
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
-  "Project Meeting   ",
-  "Daily Workout     ",
-  "Looong Meeting    ",
-  "Yoga Class--uummm ",
-  "New Year's eve!!!!",
-  "** Anniv dinner **",
-  "Council of Elders ",
+  "PM ",
+  "DW ",
+  "LM ",
+  "YC ",
+  "NY ",
+  "AD ",
+  "CE ",
   NULL
 };
 
@@ -116,9 +116,9 @@ char buf[100];
 
 int  WFstatus;
 int UpCount = 0;
-int32_t rssi;           // store WiFi signal strength here
-String getSsid;
-String getPass;
+//int32_t rssi;           // store WiFi signal strength here
+//String getSsid;
+//String getPass;
 
 WiFiClient net;
 //WiFiUDP wifiUdp;
@@ -179,7 +179,7 @@ Relay relay1(
 
 
 void ticker_ACS712_mqtt (void* obj) {
-  if (obj != NULL) {
+  if (obj != nullptr) {
   Relay * rly;
   rly = static_cast<Relay *>(obj);
     if (rly->RelayConfParam->v_ACS_Active == "1") {
@@ -195,7 +195,7 @@ void ticker_ACS712_mqtt (void* obj) {
 }
 
 void ticker_ACS712_func (void* obj) {
-  if (obj != NULL) {
+  if (obj != nullptr) {
   Relay * rly;
   rly = static_cast<Relay *>(obj);
     if (rly->RelayConfParam->v_ACS_Active == "1") {
@@ -213,7 +213,7 @@ void ticker_ACS712_func (void* obj) {
 void ticker_relay_ttl_periodic_callback(void* obj){
   Serial.print(F("\n TTL Countdown: "));
   //uint32_t t = ticker_relay_ttl.periodscounter();
-  if (obj != NULL) {
+  if (obj != nullptr) {
     Relay * rly;
     rly = static_cast<Relay *>(obj);
     uint32_t t = rly->getRelayTTLperiodscounter();
@@ -226,7 +226,7 @@ void ticker_relay_ttl_periodic_callback(void* obj){
 
 
 void ticker_relay_ttl_off (void* obj) {
-  if (obj != NULL) {
+  if (obj != nullptr) {
     Relay * rly;
     rly = static_cast<Relay *>(obj);
     rly->mdigitalWrite(rly->getRelayPin(),LOW);
@@ -251,8 +251,8 @@ void onRelaychangeInterruptSvc(void* t){
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
           rly->start_ttl_timer();
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "on");
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "on");
+        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
       }
 
       if (digitalRead(rly->getRelayPin()) == LOW) {
@@ -261,8 +261,8 @@ void onRelaychangeInterruptSvc(void* t){
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, "off");
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, "off");
+        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
       }
   } else {
         char* msg;
@@ -324,18 +324,21 @@ if (sender){
 
 void IP_info()
 {
-   getSsid = WiFi.SSID();
-   getPass = WiFi.psk();
+  //int32_t rssi;           // store WiFi signal strength here
+  //String getSsid;
+  //String getPass;
+  // String getSsid = WiFi.SSID();
+  // String getPass = WiFi.psk();
    #ifdef ESP32
      wifi_config_t conf;
      esp_wifi_get_config(WIFI_IF_STA, &conf);  // load wifi settings to struct comf
    #endif
 
       MAC = WiFi.macAddress();
-      Serial.printf( "\n\n\tSSID\t%s, ", getSsid.c_str() );
-      Serial.print( rssi);
+      Serial.printf( "\n\n\tSSID\t%s, ",  WiFi.SSID().c_str() );
+      //Serial.print( rssi);
 			Serial.printf(" dBm\n" );  // printf??
-      Serial.printf( "\tPass:\t %s\n", getPass.c_str() );
+      Serial.printf( "\tPass:\t %s\n",  WiFi.psk().c_str() );
       Serial.print( F("\n\n\tIP address:\t") );
 			Serial.print(WiFi.localIP() );
       Serial.print(F(" / "));
@@ -384,9 +387,9 @@ void startsoftAP(){
 
 //------------modbus-------------------------------------------------------------------------------------------------
 /* clients events */
-static void handleError(void* arg, AsyncClient* client, int8_t error) {
+/*static void handleError(void* arg, AsyncClient* client, int8_t error) {
  Serial.printf("\n connection error %s from client %s \n", client->errorToString(error), client->remoteIP().toString().c_str());
-}
+}*/
 
 static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
 
@@ -398,7 +401,7 @@ static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
   */
   uint8_t fn = mb.task(client, data, len, false); // first time, process to determine function - don't respond
   if (fn==1){
-    Relay * t = NULL;
+    Relay * t = nullptr;
     t = getrelaybypin(RelayPin);
     if (t) {
       mb.Coil(LAMP1_COIL, t->readrelay());  // set internal coil value in the mb system to the actual value of the relay
@@ -406,7 +409,7 @@ static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
   }
 
   if (fn==5) {
-     Relay * t = NULL;
+     Relay * t = nullptr;
      t = getrelaybypin(RelayPin);
      if (t) t->mdigitalWrite(RelayPin, mb.Coil(LAMP1_COIL));
   }
@@ -414,23 +417,23 @@ static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
   mb.task(client, data, len, true);
 }
 
-
+/*
 static void handleDisconnect(void* arg, AsyncClient* client) {
  Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
 }
 
 static void handleTimeOut(void* arg, AsyncClient* client, uint32_t time) {
  Serial.printf("\n client ACK timeout ip: %s \n", client->remoteIP().toString().c_str());
-}
+}*/
 
 /* server events */
 static void handleNewClient(void* arg, AsyncClient* client) {
    Serial.printf("\n new client has been connected to server, ip: %s", client->remoteIP().toString().c_str());
    // register events
    client->onData(&handleData, NULL);
-   client->onError(&handleError, NULL);
-   client->onDisconnect(&handleDisconnect, NULL);
-   client->onTimeout(&handleTimeOut, NULL);
+   //client->onError(&handleError, NULL);
+   //client->onDisconnect(&handleDisconnect, NULL);
+   //client->onTimeout(&handleTimeOut, NULL);
 }
 //-------------------------------------------------------------------------------------------------------------
 
@@ -444,21 +447,20 @@ void chronosInit() {
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
   uint8_t tcounter = 1;
-  while(tcounter < 10){
-
+  while(tcounter <= MAX_NUMBER_OF_TIMERS){
         char  timerfilename[30] = "";
         strcpy(timerfilename, "/timer");
         strcat(timerfilename, String(tcounter).c_str());
         strcat(timerfilename, ".json");
-        Serial.print ("\n***************************************************************\n");
+        Serial.print (F("\n***************************************************************\n"));
         Serial.print  (timerfilename);
         Serial.print("\n");
         config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
-
         tcounter++;
+
         if ((res == SUCCESS) && NTmr.enabled) {
           //loadNodeTimer("/timer.json",NTmr);
-          Serial.print("\n\n\nBEGIN TIMER DEBUG ************");
+          Serial.print(F("\n\n\nBEGIN TIMER DEBUG ************"));
           int Year, Month, Day, Hour, Minute, Second ;
           int TYear, TMonth, TDay, THour, TMinute, TSecond ;
 
@@ -472,7 +474,7 @@ void chronosInit() {
           Chronos::DateTime next(TYear, TMonth, TDay, THour, TMinute, 0);
           Chronos::Span::Absolute timeDiff = next-previous;
 
-          PRINTLN("\nFrom timer values: ");
+          PRINTLN(F("\nFrom timer values: "));
           PRINT(NTmr.spanDatefrom); PRINT(" "); PRINT(NTmr.spantimefrom);
           PRINT(" = ");
           PRINT(Year);
@@ -485,7 +487,7 @@ void chronosInit() {
           PRINT(":");
           PRINT(Minute);
 
-          PRINTLN("\n\nTo timer values: ");
+          PRINTLN(F("\n\nTo timer values: "));
           PRINT(NTmr.spanDateto); PRINT(" ");
           PRINT(NTmr.spantimeto);
           PRINT(" = ");
@@ -500,7 +502,7 @@ void chronosInit() {
           PRINT(":");
           PRINT(TMinute);
 
-          PRINTLN("\n\ntimeDiff values: ");
+          PRINTLN(F("\n\ntimeDiff values: "));
           PRINT(F("There are "));
           PRINT(timeDiff.days());
           PRINT(F(" days, "));
@@ -513,11 +515,11 @@ void chronosInit() {
           PRINTLN(F("\n\nTotalSeconds: "));
           PRINT(timeDiff.totalSeconds());
 
-          Serial.print("\nTimer type: ");
+          Serial.print(F("\nTimer type: "));
           Serial.print(NTmr.TM_type);
-          Serial.print(" - FULL SPAN timer type: ");
+          Serial.print(F(" - FULL SPAN timer type: "));
           Serial.print(TimerType::TM_FULL_SPAN);
-          Serial.print("\n\n\n END TIMER DEBUGG ************\n\n\n");
+          Serial.print(F("\n\n\n END TIMER DEBUGG ************\n\n\n"));
 
           if (NTmr.TM_type == TimerType::TM_WEEKDAY_SPAN) {
 
@@ -543,7 +545,6 @@ void chronosInit() {
                    );
                }
                 if (NTmr.weekdays->Tuesday) {
-                 Serial.print("\n  Event added");
                   MyCalendar.add(
                       Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
                       Chronos::Span::Seconds(dailydiffsecs))
@@ -661,12 +662,11 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 
 
 void process_Input(void * obj){
-  if (obj != NULL) {
+  if (obj != nullptr) {
     InputSensor * snsr;
     snsr = static_cast<InputSensor *>(obj);
-    char* msg;
-    digitalRead(snsr->pin) == HIGH ? msg = ON : msg = OFF;
-    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, msg);
+  //  char* msg;
+    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
   }
 }
 
@@ -683,8 +683,8 @@ void Wifi_connect() {
     delay(2000);
     ESP.restart();
   };
-	String getSsid = MyConfParam.v_ssid;
-  String getPass = MyConfParam.v_pass;
+	//String getSsid = MyConfParam.v_ssid;
+  //String getPass = MyConfParam.v_pass;
 
   relay1.loadrelayparams();
   //relay2.loadrelayparams();
@@ -695,7 +695,8 @@ void Wifi_connect() {
   delay(100);
 
     if (digitalRead(ConfigInputPin) == HIGH) {
-                WiFi.begin( getSsid.c_str() , getPass.c_str() ); // try to connect with saved SSID & PASS
+                //WiFi.begin( getSsid.c_str() , getPass.c_str() ); // try to connect with saved SSID & PASS
+                WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
                 //  WiFi.begin( "ksbb" , "samsam12" ); // try to connect with saved SSID & PASS
                 trials = 0;
               	 blinkInterval = 50;
@@ -704,7 +705,7 @@ void Wifi_connect() {
                     delay(100);
                 		blinkled();
                     trials++;
-                    Serial.print(".");
+                    Serial.print(F("-"));
                     // yield();
                 }
                 if  (WiFi.status() == WL_CONNECTED)   {
@@ -728,17 +729,15 @@ void Wifi_connect() {
                       Serial.println(F("Error setting up MDNS responder!"));
                     }
                     Serial.println(F("mDNS responder started"));
-                    MDNS.addService("http", "tcp", 80); // Announce esp tcp service on port 8080
-                    MDNS.addServiceTxt("http", "tcp",F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
-                    MDNS.addServiceTxt("http", "tcp",F("Pub Coil Status"), MyConfParam.v_STATE_PUB_TOPIC.c_str());
-                    MDNS.addServiceTxt("http", "tcp",F("MQTT server"), MyConfParam.v_MQTT_BROKER.c_str());
-                    MDNS.addServiceTxt("http", "tcp",F("TTL"), MyConfParam.v_ttl.c_str());
-                    MDNS.addServiceTxt("http", "tcp",F("Max Allowed Current"), MyConfParam.v_Max_Current.c_str());
+                    MDNS.addService(F("http"), F("tcp"), 80); // Announce esp tcp service on port 8080
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), MyConfParam.v_STATE_PUB_TOPIC.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), MyConfParam.v_ttl.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), MyConfParam.v_Max_Current.c_str());
 
                     //setSyncInterval(10);
                     setSyncProvider(getNtpTime);
-
-
 
                     trials = 0;
                     relay1.stop_ttl_timer();
@@ -799,7 +798,7 @@ void setup() {
     /*  if(SPIFFS.format()) { Serial.println("File System Formated"); }
         else { Serial.println("File System Formatting Error"); } */
     #endif
-    wifimode = WIFI_CLT_MODE;
+    //wifimode = WIFI_CLT_MODE;
     WiFi.mode(WIFI_AP_STA);
 
 		mqttClient.onConnect(onMqttConnect);
@@ -841,7 +840,7 @@ void loop() {
   }
 
  	blinkled();
-  tiker_MQTT_CONNECT.update(NULL);
+  tiker_MQTT_CONNECT.update(nullptr);
   relay1.watch();
   //relay2.watch();
 
@@ -863,7 +862,7 @@ void loop() {
     }
   }
 
-    if((timeStatus() != timeNotSet) && CalendarNotInitiated){
+    if((timeStatus() == timeSet) && CalendarNotInitiated){
       chronosInit();
       CalendarNotInitiated = false;
     }

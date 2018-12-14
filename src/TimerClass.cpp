@@ -3,8 +3,8 @@
 
 
 NodeTimer::NodeTimer(uint8_t para_id,
-          unsigned int para_mark,
-          uint8_t para_marktype) {
+                      unsigned int para_mark,
+                      uint8_t para_marktype) {
     id = para_id;
     TM_type = TM_FULL_SPAN;
     spanDatefrom  = "01-01-1970";
@@ -13,7 +13,6 @@ NodeTimer::NodeTimer(uint8_t para_id,
     spantimeto    = "00:00";
 
     weekdays = new TWeekdays;
-
     weekdays->Monday    = true;
     weekdays->Tuesday   = true;
     weekdays->Wednesday = true;
@@ -25,6 +24,9 @@ NodeTimer::NodeTimer(uint8_t para_id,
     mark = para_mark;
     marktype = para_marktype;
     enabled = true;
+    Mark_Hours = 0;
+    Mark_Minutes = 0;
+    Testchar = new char[22]; //"Hello there I am char";
 }
 
 NodeTimer::NodeTimer(uint8_t para_id,
@@ -39,21 +41,23 @@ NodeTimer::NodeTimer(uint8_t para_id,
 ) {
     id = para_id;
     TM_type = TM_FULL_SPAN;
-    spanDatefrom = para_spanDatefrom;
-    spanDateto = para_spanDateto;
-    weekdays = para_weekdays;
-    mark = para_mark;
-    marktype = para_marktype;
-    enabled = para_enabled;
-    spantimefrom = para_spantimefrom;
-    spantimeto = para_spantimeto;
-    Mark_Hours = 0;
-    Mark_Minutes = 0;
+    spanDatefrom  = para_spanDatefrom;
+    spanDateto    = para_spanDateto;
+    weekdays      = para_weekdays;
+    mark          = para_mark;
+    marktype      = para_marktype;
+    enabled       = para_enabled;
+    spantimefrom  = para_spantimefrom;
+    spantimeto    = para_spantimeto;
+    Mark_Hours    = 0;
+    Mark_Minutes  = 0;
+    Testchar = new char[22]; //"Hello there I am char";
 
 }
 
 NodeTimer::~NodeTimer(){
     delete weekdays;
+    delete Testchar;
 }
 
 void NodeTimer::watch(){
@@ -81,16 +85,13 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   request->hasParam("CThursday")  ? json["CThursday"]  =  "1"   : json["CThursday"] =  "0" ;
   request->hasParam("CFriday")    ? json["CFriday"]    =  "1"   : json["CFriday"]   =  "0" ;
   request->hasParam("CSaturday")  ? json["CSaturday"]  =  "1"   : json["CSaturday"] =  "0" ;
-  request->hasParam("CEnabled")   ? json["CEnabled"]   =   "1"  : json["CEnabled"] =   "0"  ;
+  request->hasParam("CEnabled")   ? json["CEnabled"]   =  "1"   : json["CEnabled"]   = "0" ;
 
   char  timerfilename[30] = "/timer";
   strcat(timerfilename, json["TNumber"]);
   strcat(timerfilename, ".json");
 
-  Serial.print(timerfilename);
-
   File configFile = SPIFFS.open(timerfilename, "w");
-  //File configFile = SPIFFS.open("/timer.json", "w");
   if (!configFile) {
     Serial.println(F("Failed to open timer file for writing"));
     return false;
@@ -154,16 +155,15 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.weekdays->Thursday = json["CThursday"];
   para_NodeTimer.weekdays->Friday = json["CFriday"];
   para_NodeTimer.weekdays->Saturday = json["CSaturday"];
-
   para_NodeTimer.fyear=2018;
   para_NodeTimer.mark = 0;
   para_NodeTimer.marktype = 0;
-
   para_NodeTimer.Mark_Hours = (json["Mark_Hours"].as<String>()!="") ? json["Mark_Hours"].as<uint16_t>() : 0;
   para_NodeTimer.Mark_Minutes = (json["Mark_Minutes"].as<String>()!="") ? json["Mark_Minutes"].as<uint16_t>() : 0;
-
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
   para_NodeTimer.secondsspan = 0;
+
+  strcpy(para_NodeTimer.Testchar, json["Testchar"] | "Hello");
 
   return SUCCESS;
 }

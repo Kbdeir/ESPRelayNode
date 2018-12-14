@@ -24,7 +24,6 @@
 
 #define RelayPin 05
 #define Relay2Pin 16
-
 #define ConfigInputPin 13
 #define SwitchButtonPin 12 // revert to 12 when done testing
 #define SwitchButtonPin2 13 // revert to 12 when done testing
@@ -41,8 +40,6 @@ const uint16_t MaxWifiTrials = 100;
 
 #define ON "on"
 #define OFF "off"
-
-
 
 typedef struct TConfigParams {
   String v_ssid;
@@ -86,9 +83,6 @@ typedef struct TConfigParams {
 
   void relayon(void* obj);
   #include <RelayClass.h>
-
-
-
 
 #endif //CONFIGPARAMS_H
 

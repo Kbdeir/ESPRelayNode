@@ -149,27 +149,27 @@ boolean Relay::SaveDefautRelayParams(){
 
 boolean Relay::loadrelayparams(){
 
-    if(SPIFFS.begin()) { Serial.println("SPIFFS Initialize....ok"); }
-       else {Serial.println("SPIFFS Initialization...failed"); }
+    if(SPIFFS.begin()) { Serial.println(F("SPIFFS Initialize....ok")); }
+       else {Serial.println(F("SPIFFS Initialization...failed")); }
 
-    char* filename = "/config.json";
+    const char* filename = "/config.json";
 
     if (! SPIFFS.exists(filename)) {
-         Serial.println("config file does not exist! ... building and rebooting....");
+         Serial.println(F("config file does not exist! ... building and rebooting...."));
          while (!saveDefaultConfig()){};
          return false;
      }
 
     File configFile = SPIFFS.open(filename, "r");
        if (!configFile) {
-         Serial.println("Failed to open config file");
+         Serial.println(F("Failed to open config file"));
          saveDefaultConfig();
          return false;
     }
 
     size_t size = configFile.size();
     if (size > buffer_size) {
-         Serial.println("Config file size is too large, rebuilding.");
+         Serial.println(F("Config file size is too large, rebuilding."));
          saveDefaultConfig();
          return false;
     }
@@ -186,7 +186,7 @@ boolean Relay::loadrelayparams(){
     JsonObject& json = jsonBuffer.parseObject(buf.get());
 
     if (!json.success()) {
-         Serial.println("Failed to parse config file");
+         Serial.println(F("Failed to parse config file"));
          saveDefaultConfig();
          return false;
     }

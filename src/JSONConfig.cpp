@@ -161,7 +161,7 @@ bool saveConfig(TConfigParams &ConfParam){
   json["ACS_Active"]=ConfParam.v_ACS_Active;
   json["Update_now"]=ConfParam.v_Update_now;
 
-  File configFile = SPIFFS.open("/config.json", "w");
+  File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {
     Serial.println(F("Failed to open config file for writing"));
     return false;
@@ -179,13 +179,13 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
-  json["PIC_Active"] =  "0" ;
-  json["MQTT_Active"]  = "0" ;
-  json["GPIO12_TOG"] =  "0" ;
-  json["Copy_IO"] =  "0" ;
-  json["ACS_Active"] =  "0" ;
-  json["myppp"] =  "0" ;
-  json["Update_now"] =  "0" ;
+  json["PIC_Active"]    =  F("0") ;
+  json["MQTT_Active"]   =  F("0") ;
+  json["GPIO12_TOG"]    =  F("0") ;
+  json["Copy_IO"]       =  F("0") ;
+  json["ACS_Active"]    =  F("0") ;
+  json["myppp"]         =  F("0") ;
+  json["Update_now"]    =  F("0") ;
 
   int args = request->args();
   for(int i=0;i<args;i++){
@@ -193,15 +193,15 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
     json[request->argName(i)] =  request->arg(i) ;
   }
 
-  if(request->hasParam("PIC_Active")) json["PIC_Active"] =  "1" ;
-  if(request->hasParam("MQTT_Active")) json["MQTT_Active"]=  "1";
-  if(request->hasParam("GPIO12_TOG")) json["GPIO12_TOG"]=  "1";
-  if(request->hasParam("Copy_IO")) json["Copy_IO"]=  "1" ;
-  if(request->hasParam("ACS_Active")) json["ACS_Active"]=  "1";
-  if(request->hasParam("myppp")) json["myppp"]=  "1";
-  if(request->hasParam("Update_now")) json["Update_now"]=  "1";
+  if(request->hasParam("PIC_Active")) json["PIC_Active"]      =  F("1");
+  if(request->hasParam("MQTT_Active")) json["MQTT_Active"]    =  F("1");
+  if(request->hasParam("GPIO12_TOG")) json["GPIO12_TOG"]      =  F("1");
+  if(request->hasParam("Copy_IO")) json["Copy_IO"]            =  F("1");
+  if(request->hasParam("ACS_Active")) json["ACS_Active"]      =  F("1");
+  if(request->hasParam("myppp")) json["myppp"]                =  F("1");
+  if(request->hasParam("Update_now")) json["Update_now"]      =  F("1");
 
-  File configFile = SPIFFS.open("/config.json", "w");
+  File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {
     Serial.println(F("Failed to open config file for writing"));
     return false;
@@ -217,11 +217,11 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
 bool saveDefaultConfig(){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
-  json["ssid"]="ksba";
-  json["pass"]="samsam12";
-  json["PhyLoc"]="Not configured yet";
-  json["MQTT_BROKER"]="192.168.1.1";
-  json["MQTT_B_PRT"]="1883";
+  json["ssid"]=F("ksba");
+  json["pass"]=F("samsam12");
+  json["PhyLoc"]=F("Not configured yet");
+  json["MQTT_BROKER"]=F("192.168.1.1");
+  json["MQTT_B_PRT"]=F("1883");
   json["PUB_TOPIC1"]="/home/Controller" + CID() + "/Coils/C1" ;
   json["STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/State/C1";
   json["InputPin12_STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/INS/sts/IN1";
@@ -232,23 +232,23 @@ bool saveDefaultConfig(){
   json["CURR_TTL_PUB_TOPIC"]="/home/Controller" + CID() + "/sts/CURRVTTL";
   json["LWILL_TOPIC"]="/home/Controller" + CID() + "/LWT";
   json["SUB_TOPIC1"]= "/home/Controller" + CID() +  "/#";
-  json["FRM_IP"]="192.168.1.1";
-  json["FRM_PRT"]="83";
-  json["ASCmultiple"]="10";
-  json["ACS_Sensor_Model"] = "10";
-  json["ttl"]="0";
-  json["tta"]="0";
-  json["Max_Current"]="10";
-  json["timeserver"]="194.97.156.5";
-  json["PIC_Active"]="0";
-  json["MQTT_Active"]="0";
-  json["myppp"]="0";
+  json["FRM_IP"]=F("192.168.1.1");
+  json["FRM_PRT"]=F("83");
+  json["ASCmultiple"]=F("10");
+  json["ACS_Sensor_Model"] = F("10");
+  json["ttl"]=F("0");
+  json["tta"]=F("0");
+  json["Max_Current"]=F("10");
+  json["timeserver"]=F("194.97.156.5");
+  json["PIC_Active"]=F("0");
+  json["MQTT_Active"]=F("0");
+  json["myppp"]=F("0");
   json["ntptz"]="2";
-  json["GPIO12_TOG"]="0";
-  json["Copy_IO"]="0";
-  json["ACS_Active"]="0";
-  json["tta"]="0";
-  json["Update_now"]="0";
+  json["GPIO12_TOG"]=F("0");
+  json["Copy_IO"]=F("0");
+  json["ACS_Active"]=F("0");
+  json["tta"]=F("0");
+  json["Update_now"]=F("0");
 
   File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {

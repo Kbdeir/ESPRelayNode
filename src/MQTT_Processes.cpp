@@ -29,20 +29,19 @@ void tiker_MQTT_CONNECT_func (void* obj) {
 Schedule_timer tiker_MQTT_CONNECT(tiker_MQTT_CONNECT_func,5000,0,MILLIS_);
 
 
-boolean isValidNumber(String str){
-   for(byte i=0;i<str.length();i++)
-   {
+boolean isValidNumber(String& str) {
+   for(byte i=0;i<str.length();i++)  {
       if(isDigit(str.charAt(i))) return true;
-        }
+   }
    return false;
 }
 
 void mqttpostinitstatusOfInputs(void* sender){
-  char* msg;
-  digitalRead(InputPin12) == HIGH ? msg = ON : msg = OFF;
-  mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
-  digitalRead(InputPin14) == HIGH ? msg = ON : msg = OFF;
-  mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
+  //char* msg;
+  //digitalRead(InputPin12) == HIGH ? msg = ON : msg = OFF;
+  mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin12) == HIGH ?  ON : OFF);
+  //digitalRead(InputPin14) == HIGH ? msg = ON : msg = OFF;
+  mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin14) == HIGH ?  ON : OFF);
 }
 
 void onMqttConnect(bool sessionPresent) {
@@ -98,20 +97,18 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   String pld = String(payload);
   String tp = String(topic);
 
-  Relay * rly = NULL;
-  Relay * rtemp = NULL;
+  Relay * rly = nullptr;
+  Relay * rtemp = nullptr;
 
   //Relay * it = NULL;
-
   for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
   {
     rtemp = static_cast<Relay *>(*it);
     if (rtemp) {
-      //Serial.println("");
-      //Serial.println(rtemp->RelayConfParam->v_PUB_TOPIC1);
-      if (rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) {
-        rly = rtemp;
-        break;
+      if ((rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) ||
+          (rtemp->RelayConfParam->v_i_ttl_PUB_TOPIC == tp)) {
+            rly = rtemp;
+            break;
       }
     }
   }
@@ -153,10 +150,13 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
             }
 
             if (tp == rly->RelayConfParam->v_i_ttl_PUB_TOPIC) {
+
               if (isValidNumber(pld)) {
-                String ttl = pld.substring(0,len);
-                rly->RelayConfParam->v_ttl = ttl;
+                //String ttl = pld.substring(0,len);
+                rly->RelayConfParam->v_ttl = pld.substring(0,len);
                 rly->ticker_relay_ttl->interval(rly->RelayConfParam->v_ttl.toInt()*1000);
+
+                MyConfParam.v_ttl = rly->RelayConfParam->v_ttl;
                 saveConfig(MyConfParam);
                 mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, false, rly->RelayConfParam->v_ttl.c_str());
               }

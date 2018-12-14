@@ -11,7 +11,7 @@ extern NodeTimer NTmr;
 AsyncWebServer AsyncWeb_server(80);
 
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
-File cf;
+//File cf;
 
 String timerprocessor(const String& var)
 {
@@ -34,6 +34,7 @@ String timerprocessor(const String& var)
   if(var == F( "Mark_Minutes" ))  return  String(NTmr.Mark_Minutes);
 
   if(var == F( "TMTYPEedit" ))  return String(NTmr.TM_type);
+  if(var == F( "Testchar" ))  return String(NTmr.Testchar);
 
   return String();
 }
@@ -73,6 +74,8 @@ String processor(const String& var)
   if(var == F( "myppp" )) { if (MyConfParam.v_myppp == "1") return "1\" checked=\"\""; };
   if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now == "1") return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))  return digitalClockDisplay();
+  if(var == F( "heap" ))  return String(ESP.getFreeHeap());
+
   return String();
 }
 
@@ -109,15 +112,10 @@ void SetAsyncHTTP(){
           } else {
                 request->send(SPIFFS, "/Timer1.html");
           };
-      } else
-      {
+      } else {
         request->send(SPIFFS, "/Timer1.html");
       }
-
-
-
-
-        // int args = request->args();
+      // int args = request->args();
     });
 
   AsyncWeb_server.on("/savetimer.html", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -125,10 +123,6 @@ void SetAsyncHTTP(){
       request->send(SPIFFS, "/savetimer.html");
             saveNodeTimer(request);
             CalendarNotInitiated = true;
-            //loadNodeTimer("/timer.json",NTmr);
-            //loadConfig(MyConfParam);
-            //uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
-            //uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
       });
 
   AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -187,19 +181,14 @@ void SetAsyncHTTP(){
 
                             if(final){ // if the final flag is set then this is the last frame of data
                               if(Update.end(true)){ //true to set the size to the current progress
-                                  Serial.printf("Update Success: %u B\nRebooting...\n", index+len);
+                                  Serial.print(F("Update Success... \nRebooting..."));
+                                  Serial.print(index+len);
                                 } else {
                                   Update.printError(Serial);
                                 }
                                 // Serial.setDebugOutput(false);
                             }
                           });
-
-      /*AsyncWeb_server.on("/Config2.html", HTTP_GET, [](AsyncWebServerRequest *request){
-        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-        request->send(SPIFFS, "/Config2.html", String(), false, processor);
-      });*/
-
 
   AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();

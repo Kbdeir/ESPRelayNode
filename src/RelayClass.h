@@ -72,7 +72,7 @@ typedef struct TRelayConfigParams {
 
 
   public:
-       boolean lockupdate;
+    boolean lockupdate;
     TConfigParams *RelayConfParam;
     OneButton *fbutton;
     Bounce *btn_debouncer;
