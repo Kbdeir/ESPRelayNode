@@ -29,10 +29,8 @@ String timerprocessor(const String& var)
   if(var == F( "CSaturday" )) { if (NTmr.weekdays->Saturday ) return "1\" checked=\"\""; };
   if(var == F( "CSunday" )) { if (NTmr.weekdays->Sunday ) return "1\" checked=\"\""; };
   if(var == F( "CEnabled" )) { if (NTmr.enabled) return "1\" checked=\"\""; };
-
   if(var == F( "Mark_Hours" ))  return  String(NTmr.Mark_Hours);
   if(var == F( "Mark_Minutes" ))  return  String(NTmr.Mark_Minutes);
-
   if(var == F( "TMTYPEedit" ))  return String(NTmr.TM_type);
   if(var == F( "Testchar" ))  return String(NTmr.Testchar);
 
@@ -103,7 +101,7 @@ void SetAsyncHTTP(){
         if (request->hasParam("GetTimer")) {
           AsyncWebParameter * Para = request->getParam("GetTimer");
           String tmp = Para->value();
-          char  timerfilename[30] = "";
+          char  timerfilename[20] = "";
           strcpy(timerfilename, "/timer");
           strcat(timerfilename, tmp.c_str());
           strcat(timerfilename, ".json");
@@ -134,8 +132,8 @@ void SetAsyncHTTP(){
           #endif
           saveConfig(MyConfParam, request);
           loadConfig(MyConfParam);
-          uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
-          uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), 2, true, MyConfParam.v_ttl.c_str());
+          uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, MyConfParam.v_ttl.c_str());
+          uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, MyConfParam.v_ttl.c_str());
     });
 
     /*

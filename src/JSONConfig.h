@@ -12,6 +12,8 @@
   #include <ESPAsyncWebServer.h>
   #include <string.h>
 
+
+
 enum config_read_error_t {FAILURE, FILE_NOT_FOUND, ERROR_OPENING_FILE, JSONCONFIG_CORRUPTED, SPIFFS_ERROR, SUCCESS};
 
 

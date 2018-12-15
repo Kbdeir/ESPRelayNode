@@ -2,9 +2,7 @@
 #define buffer_size  1500
 
 
-NodeTimer::NodeTimer(uint8_t para_id,
-                      unsigned int para_mark,
-                      uint8_t para_marktype) {
+NodeTimer::NodeTimer(uint8_t para_id) {
     id = para_id;
     TM_type = TM_FULL_SPAN;
     spanDatefrom  = "01-01-1970";
@@ -21,8 +19,6 @@ NodeTimer::NodeTimer(uint8_t para_id,
     weekdays->Saturday  = true;
     weekdays->Sunday    = true;
 
-    mark = para_mark;
-    marktype = para_marktype;
     enabled = true;
     Mark_Hours = 0;
     Mark_Minutes = 0;
@@ -35,8 +31,6 @@ NodeTimer::NodeTimer(uint8_t para_id,
           String para_spantimefrom,
           String para_spantimeto,
           TWeekdays * para_weekdays,
-          unsigned int para_mark,
-          uint8_t para_marktype,
           boolean para_enabled
 ) {
     id = para_id;
@@ -44,8 +38,6 @@ NodeTimer::NodeTimer(uint8_t para_id,
     spanDatefrom  = para_spanDatefrom;
     spanDateto    = para_spanDateto;
     weekdays      = para_weekdays;
-    mark          = para_mark;
-    marktype      = para_marktype;
     enabled       = para_enabled;
     spantimefrom  = para_spantimefrom;
     spantimeto    = para_spantimeto;
@@ -57,14 +49,14 @@ NodeTimer::NodeTimer(uint8_t para_id,
 
 NodeTimer::~NodeTimer(){
     delete weekdays;
-    delete Testchar;
+    delete[] Testchar;
 }
 
 void NodeTimer::watch(){
 }
 
 NodeTimer * gettimerbypin(uint8_t pn){
-    NodeTimer * tmr = NULL;
+    NodeTimer * tmr = nullptr;
     return tmr;
 }
 
@@ -87,7 +79,7 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   request->hasParam("CSaturday")  ? json["CSaturday"]  =  "1"   : json["CSaturday"] =  "0" ;
   request->hasParam("CEnabled")   ? json["CEnabled"]   =  "1"   : json["CEnabled"]   = "0" ;
 
-  char  timerfilename[30] = "/timer";
+  char  timerfilename[20] = "/timer";
   strcat(timerfilename, json["TNumber"]);
   strcat(timerfilename, ".json");
 
@@ -155,9 +147,6 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.weekdays->Thursday = json["CThursday"];
   para_NodeTimer.weekdays->Friday = json["CFriday"];
   para_NodeTimer.weekdays->Saturday = json["CSaturday"];
-  para_NodeTimer.fyear=2018;
-  para_NodeTimer.mark = 0;
-  para_NodeTimer.marktype = 0;
   para_NodeTimer.Mark_Hours = (json["Mark_Hours"].as<String>()!="") ? json["Mark_Hours"].as<uint16_t>() : 0;
   para_NodeTimer.Mark_Minutes = (json["Mark_Minutes"].as<String>()!="") ? json["Mark_Minutes"].as<uint16_t>() : 0;
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
