@@ -2,6 +2,7 @@
 #include <RelayClass.h>
 
 const char* filename = "/config.json";
+//String Zerochar PROGMEM = "0";
 //extern Relay relay1;
 #define buffer_size  1500 // json buffer size
 
@@ -18,11 +19,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
 
   if (! SPIFFS.exists(filename)) {
     Serial.println(F("config file does not exist! ... building and rebooting...."));
-    while (!saveDefaultConfig()){
-
-    };
-    //delay(2000);
-    //ESP.restart();
+    while (!saveDefaultConfig()){  };
     return FILE_NOT_FOUND;
   }
 

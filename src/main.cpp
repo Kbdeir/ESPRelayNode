@@ -625,9 +625,9 @@ void chronosevaluatetimers(Calendar MyCalendar) {
     // At least one event is happening at "nowTime"...
 
     LINE();
-    PRINTLN(F("**** Some things are going on this very minute! ****"));
+    //PRINTLN(F("**** Some things are going on this very minute! ****"));
     for (int i = 0; i < numOngoing; i++) {
-      PRINT(F("**** Event: "));
+      PRINT(F("**** Running Event: "));
       PRINT((int )occurrenceList[i].id);
       PRINT('\t');
       PRINT(EventNames[occurrenceList[i].id]);
