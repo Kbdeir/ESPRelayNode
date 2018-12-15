@@ -90,11 +90,11 @@ void SetAsyncHTTP(){
     request->send(200, "text/plain", String(ESP.getFreeHeap()));
   });
 
-  /*AsyncWeb_server.on("/JConfig", HTTP_GET, [](AsyncWebServerRequest *request){
+  AsyncWeb_server.on("/JConfig", HTTP_GET, [](AsyncWebServerRequest *request){
     if (!request->authenticate("user", "pass")) return request->requestAuthentication();
     request->send(SPIFFS, "/config.json");
       // int args = request->args();
-    });*/
+    });
 
   AsyncWeb_server.on("/Timer1", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
