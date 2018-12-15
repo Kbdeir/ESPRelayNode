@@ -13,9 +13,7 @@ typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 
 #define MAX_NUMBER_OF_TIMERS 4
-
 #define buffer_size  1500 // json buffer size
-
 typedef enum { TM_FAILURE, TM_FULL_SPAN, TM_DAILY_SPAN, TM_WEEKDAY_SPAN, TM_MONTHLY_SPAN, TM_YEARLY_SPAN } TimerType;
 
 typedef struct TWeekdays {
@@ -46,16 +44,13 @@ typedef struct TWeekdays {
     TWeekdays * weekdays;
     uint16_t Mark_Hours;
     uint16_t Mark_Minutes;
-    unsigned int mark;
-    uint8_t marktype;
     boolean enabled;
-    uint16_t fyear;
 
     char* Testchar;
 
-    NodeTimer(uint8_t para_id,
-      unsigned int para_mark,
-      uint8_t para_marktype
+    NodeTimer(uint8_t para_id
+      //,unsigned int para_mark,
+      //uint8_t para_marktype
       );
 
     NodeTimer(uint8_t para_id,
@@ -64,8 +59,6 @@ typedef struct TWeekdays {
               String para_spantimefrom,
               String para_spantimeto,
               TWeekdays * para_weekdays,
-              unsigned int para_mark,
-              uint8_t para_marktype,
               boolean para_enabled
             );
 

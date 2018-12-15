@@ -52,7 +52,7 @@ extern std::vector<void *> relays ; // a list to hold all relays
 time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
 
-   NodeTimer NTmr(4,0,0);
+   NodeTimer NTmr(4);
 
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
@@ -219,7 +219,7 @@ void ticker_relay_ttl_periodic_callback(void* obj){
     uint32_t t = rly->getRelayTTLperiodscounter();
     if (digitalRead(rly->getRelayPin() == HIGH)) {
       mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, rly->RelayConfParam->v_ttl.c_str());
-      mqttClient.publish( rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, false, (String(t).c_str()));
+      mqttClient.publish( rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, (String(t).c_str()));
     }
   }
 }
@@ -273,7 +273,6 @@ void onRelaychangeInterruptSvc(void* t){
 
 
 void onchangeSwitchInterruptSvc(void* t){
-if (true){ //}(SwitchButtonPin_interruptCounter > 0) {
   //SwitchButtonPin_interruptCounter--;
   Relay * rly;
   rly = static_cast<Relay *>(t);
@@ -286,7 +285,6 @@ if (true){ //}(SwitchButtonPin_interruptCounter > 0) {
   if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
       rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
   }
-}
 }
 
 
@@ -578,9 +576,7 @@ void chronosInit() {
           }
 
           if (NTmr.TM_type == TimerType::TM_DAILY_SPAN) {
-                  Serial.print(F("\n entered DAILY TIMER MODE eval 0"));
                 if ((previous.startOfDay() <= Chronos::DateTime::now()) && (Chronos::DateTime::now() <= next.endOfDay())) {
-                  Serial.print(F("\n entered DAILY TIMER MODE eval 1"));
                   uint32_t dailydiffsecs = 0;
                   if (NTmr.Mark_Hours + NTmr.Mark_Minutes == 0) {
                     dailydiffsecs = timeDiff.totalSeconds() - (timeDiff.days() * 24 * 3600);
@@ -596,9 +592,7 @@ void chronosInit() {
           }
 
           if (NTmr.TM_type == TimerType::TM_FULL_SPAN) {
-                    Serial.print(F("\n entered FULL SPAN TIMER MODE"));
                     MyCalendar.add(
-                        //Chronos::Event(4,previous.startOfDay(),next.endOfDay())
                         Chronos::Event(4,previous,next)
                       );
           }
@@ -672,7 +666,6 @@ void process_Input(void * obj){
 
 InputSensor Inputsnsr14(InputPin14,process_Input);
 InputSensor Inputsnsr12(InputPin12,process_Input);
-
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));

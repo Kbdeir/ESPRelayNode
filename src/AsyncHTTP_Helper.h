@@ -18,7 +18,7 @@
 
 extern bool restartRequired;
 
-String processor(const String& var);
+//String processor(const String& var);
 void SetAsyncHTTP();
 
 

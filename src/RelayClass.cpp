@@ -1,13 +1,6 @@
 #include <RelayClass.h>
 #include <RelaysArray.h>
 
-/*Relay::Relay(uint8_t p)
-    {
-      pin = p;
-      RelayConfParam = new TConfigParams;
-    //  ticker_relay_ttl = NULL;
-    }
-    */
 
 void Relay::freelockfunc() {
   unsigned long cmillis = millis();
@@ -51,9 +44,10 @@ Relay::Relay(uint8_t p,
   ticker_relay_tta = new Schedule_timer(fttacallback,0,0,MILLIS_);
   btn_debouncer = new Bounce();
 
-  fbutton = NULL;
-  fonclick = NULL;
-  fon_associatedbtn_change = NULL;
+  fbutton = nullptr;
+  fonclick = nullptr;
+  fon_associatedbtn_change = nullptr;
+  
   rchangedflag = false;
 
 }
