@@ -638,7 +638,9 @@ void chronosevaluatetimers(Calendar MyCalendar) {
         LINE();
         PRINTLN(F(" *** truning relay ON... event is Starting *** "));
         if (!digitalRead(relay1.getRelayPin())){
-          relay1.mdigitalWrite(relay1.getRelayPin(),HIGH);
+          if (!relay1.timerpaused) {
+            relay1.mdigitalWrite(relay1.getRelayPin(),HIGH);
+          }
         }
       }
       if ((nowTime == occurrenceList[i].finish - 1 )) {
@@ -646,6 +648,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
         relay1.lockupdate = false;
         relay1.mdigitalWrite(relay1.getRelayPin(),LOW);
         PRINTLN(F(" *** truning relay OFF... event is done ***"));
+        relay1.timerpaused = false;
       }
     }
   } else {
