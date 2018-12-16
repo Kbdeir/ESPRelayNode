@@ -240,12 +240,11 @@ void onRelaychangeInterruptSvc(void* t){
       if (interruptCounter2 > 0) interruptCounter2--;
       */
 
-      Relay * rly;
-      rly = static_cast<Relay *>(t);
+  Relay * rly;
+  rly = static_cast<Relay *>(t);
 
   if (rly->rchangedflag ) {
-        rly->rchangedflag = false;
-
+      rly->rchangedflag = false;
       if (rly->readrelay() == HIGH) {
         Serial.print(F("\n\n An interrupt *ON* has occurred."));
         if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
@@ -636,7 +635,8 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 
       if ((nowTime > occurrenceList[i].start + 1)) {
         LINE();
-        PRINTLN(F(" *** truning relay ON... event is Starting *** "));
+        PRINTLN(F(" *** truning relay ON... event is Starting - TimerPaused value: *** "));
+        PRINT(relay1.timerpaused);
         if (!digitalRead(relay1.getRelayPin())){
           if (!relay1.timerpaused) {
             relay1.mdigitalWrite(relay1.getRelayPin(),HIGH);
@@ -647,7 +647,8 @@ void chronosevaluatetimers(Calendar MyCalendar) {
         LINE();
         relay1.lockupdate = false;
         relay1.mdigitalWrite(relay1.getRelayPin(),LOW);
-        PRINTLN(F(" *** truning relay OFF... event is done ***"));
+        PRINTLN(F(" *** truning relay OFF... event is done - TimerPaused value: ***"));
+        PRINT(relay1.timerpaused);
         relay1.timerpaused = false;
       }
     }

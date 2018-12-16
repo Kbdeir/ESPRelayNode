@@ -289,12 +289,12 @@ boolean Relay::loadrelayparams(){
       uint8_t sts = digitalRead(pn);
       rchangedflag = (sts != v);
       if (rchangedflag){
-       digitalWrite(pn,v);
+        digitalWrite(pn,v);
         Relay * rl;
-       rl = getrelaybypin(pn);
-       if (rl!=nullptr) {
-         rl->timerpaused = (v==1);
-       }
+        rl = getrelaybypin(pn);
+        if (rl!=nullptr) {
+         rl->timerpaused = (v==LOW);
+        }
       }
       if (fonchangeInterruptService) fonchangeInterruptService(this);
     }
