@@ -28,6 +28,7 @@ Relay::Relay(uint8_t p,
 
   lockupdate = false;
   freeinterval = 200;
+  timerpaused = false;
 
   // tickers callback functions for ttl, acs, tta
   fttlcallback = ttlcallback;
@@ -47,7 +48,7 @@ Relay::Relay(uint8_t p,
   fbutton = nullptr;
   fonclick = nullptr;
   fon_associatedbtn_change = nullptr;
-  
+
   rchangedflag = false;
 
 }
@@ -289,6 +290,11 @@ boolean Relay::loadrelayparams(){
       rchangedflag = (sts != v);
       if (rchangedflag){
        digitalWrite(pn,v);
+        Relay * rl;
+       rl = getrelaybypin(pn);
+       if (rl!=nullptr) {
+         rl->timerpaused = (v==1);
+       }
       }
       if (fonchangeInterruptService) fonchangeInterruptService(this);
     }
@@ -299,8 +305,8 @@ boolean Relay::loadrelayparams(){
     }*/
 
   Relay * getrelaybypin(uint8_t pn){
-    Relay * rly = NULL;
-    Relay * rtemp = NULL;
+    Relay * rly = nullptr;
+    Relay * rtemp = nullptr;
       for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)  {
         rtemp = static_cast<Relay *>(*it);
         if (pn == rtemp->getRelayPin()) {

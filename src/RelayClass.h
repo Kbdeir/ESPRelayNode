@@ -80,6 +80,7 @@ typedef struct TRelayConfigParams {
     Schedule_timer *ticker_relay_ttl;
     Schedule_timer *freelock;
     boolean rchangedflag;
+    boolean timerpaused;
 
   //  Relay(uint8_t p);
     Relay(uint8_t p,
