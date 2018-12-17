@@ -69,10 +69,15 @@ String processor(const String& var)
   if(var == F( "GPIO12_TOG" )) {  if (MyConfParam.v_GPIO12_TOG == "1") return "1\" checked=\"\"";	};
   if(var == F( "Copy_IO" )) { if (MyConfParam.v_Copy_IO == "1") return "1\" checked=\"\""; };
   if(var == F( "ACS_Active" )) { if (MyConfParam.v_ACS_Active == "1") return "1\" checked=\"\""; };
-  if(var == F( "myppp" )) { if (MyConfParam.v_myppp == "1") return "1\" checked=\"\""; };
+//  if(var == F( "myppp" )) { if (MyConfParam.v_myppp == "1") return "1\" checked=\"\""; };
   if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now == "1") return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))  return digitalClockDisplay();
   if(var == F( "heap" ))  return String(ESP.getFreeHeap());
+  if(var == F( "TOGGLE_BTN_PUB_TOPIC" ))  return String( MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str());
+
+  if(var == F( "IN1_INPUTMODE" ))  return String( MyConfParam.v_IN1_INPUTMODE);
+  if(var == F( "IN2_INPUTMODE" ))  return String( MyConfParam.v_IN2_INPUTMODE);
+
 
   return String();
 }

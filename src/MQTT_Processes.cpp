@@ -130,8 +130,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
             if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
               if (temp == ON) {
                   rly->mdigitalWrite(rly->getRelayPin(),HIGH);
-              } else if (temp == OFF) {  
+              } else if (temp == OFF) {
                   rly->mdigitalWrite(rly->getRelayPin(),LOW);
+              } else if (temp = TOG) {
+                  rly->mdigitalWrite(rly->getRelayPin(),!rly->readrelay());
               }
             }
             else

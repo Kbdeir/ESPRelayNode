@@ -153,8 +153,6 @@ void ticker_ACS712_mqtt (void* obj);
 
 //std::vector<Relay*> v; // a list to hold all clients
 
-
-
 Relay relay1(
     RelayPin,
     ticker_relay_ttl_off,
@@ -175,7 +173,6 @@ Relay relay1(
       relayon
     );
     */
-
 
 
 void ticker_ACS712_mqtt (void* obj) {
@@ -264,9 +261,10 @@ void onRelaychangeInterruptSvc(void* t){
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
       }
   } else {
-        char* msg;
-        digitalRead(rly->getRelayPin()) == HIGH ? msg = ON : msg = OFF;
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
+        //char* msg;
+        //digitalRead(rly->getRelayPin()) == HIGH ? msg = ON : msg = OFF;
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+                            digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);
   }
 }
 
@@ -284,6 +282,7 @@ void onchangeSwitchInterruptSvc(void* t){
   if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
       rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
   }
+
 }
 
 
@@ -303,6 +302,8 @@ void buttonclick(void* sender) {
     rly->ticker_relay_tta->start();
     }
   }
+  mqttClient.publish(MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str(), QOS2, RETAINED,"TOG");
+  PRINTLN(MyConfParam.v_TOGGLE_BTN_PUB_TOPIC);
 }
 }
 
@@ -334,15 +335,17 @@ void IP_info()
       MAC = WiFi.macAddress();
       Serial.printf( "\n\n\tSSID\t%s, ",  WiFi.SSID().c_str() );
       //Serial.print( rssi);
-			Serial.printf(" dBm\n" );  // printf??
+			//Serial.printf(" dBm\n" );  // printf??
       Serial.printf( "\tPass:\t %s\n",  WiFi.psk().c_str() );
       Serial.print( F("\n\n\tIP address:\t") );
 			Serial.print(WiFi.localIP() );
+      /*
       Serial.print(F(" / "));
       Serial.println( WiFi.subnetMask() );
       Serial.print( F("\tGateway IP:\t") );  Serial.println( WiFi.gatewayIP() );
       Serial.print( F("\t1st DNS:\t") );     Serial.println( WiFi.dnsIP() );
-      Serial.printf( "\tMAC:\t\t%s\n", MAC.c_str() );
+      */
+      Serial.printf( "\tMAC:\t\t%s\n", MAC.c_str());
 }
 
 
@@ -471,7 +474,7 @@ void chronosInit() {
           Chronos::DateTime next(TYear, TMonth, TDay, THour, TMinute, 0);
           Chronos::Span::Absolute timeDiff = next-previous;
 
-          PRINTLN(F("\nFrom timer values: "));
+        /*  PRINTLN(F("\nFrom timer values: "));
           PRINT(NTmr.spanDatefrom); PRINT(" "); PRINT(NTmr.spantimefrom);
           PRINT(" = ");
           PRINT(Year);
@@ -517,6 +520,8 @@ void chronosInit() {
           Serial.print(F(" - FULL SPAN timer type: "));
           Serial.print(TimerType::TM_FULL_SPAN);
           Serial.print(F("\n\n\n END TIMER DEBUGG ************\n\n\n"));
+
+          */
 
           if (NTmr.TM_type == TimerType::TM_WEEKDAY_SPAN) {
 
@@ -664,18 +669,25 @@ void process_Input(void * obj){
     InputSensor * snsr;
     snsr = static_cast<InputSensor *>(obj);
   //  char* msg;
+  if (!snsr->fclickmode) {
     mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
+  }
+  if (snsr->fclickmode) {
+    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
+  }
   }
 }
 
-InputSensor Inputsnsr14(InputPin14,process_Input);
-InputSensor Inputsnsr12(InputPin12,process_Input);
+InputSensor Inputsnsr14(InputPin14,process_Input,false);
+InputSensor Inputsnsr12(InputPin12,process_Input,false);
+
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
   #ifdef USEPREF
     ReadParams(MyConfParam, preferences);
   #endif
+
   while (loadConfig(MyConfParam) != SUCCESS){
     delay(2000);
     ESP.restart();
@@ -684,6 +696,8 @@ void Wifi_connect() {
   //String getPass = MyConfParam.v_pass;
 
   relay1.loadrelayparams();
+  Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE);
+  Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE);
   //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
@@ -774,13 +788,10 @@ void setup() {
     pinMode ( InputPin12, INPUT_PULLUP );
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
-
     //debouncer14.attach(InputPin14);
     //debouncer14.interval(5); // interval in ms
-
     //debouncer12.attach(ConfigInputPin,INPUT_PULLUP);
     //debouncer12.interval(25); // interval in ms
-
     /* You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
        https://github.com/me-no-dev/arduino-esp32fs-plugin */

@@ -13,10 +13,7 @@ typedef void (*fnptr_b)(int, void* t);
  class InputSensor
 {
   private:
-
   fnptr_a fon_callback;
-
-
   public:
     uint8_t pin;
     Bounce *Input_debouncer;
@@ -24,10 +21,11 @@ typedef void (*fnptr_b)(int, void* t);
     uint8_t attached_to_relay;
     String mqtt_topic;
     boolean post_mqtt;
-
+    boolean fclickmode;
 
     InputSensor(uint8_t p,
-      fnptr_a on_callback
+      fnptr_a on_callback,
+      boolean clickmode
         );
 
 
