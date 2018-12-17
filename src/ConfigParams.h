@@ -32,7 +32,7 @@
 
 // #define MAX_RELAYS 2
 
-const uint16_t MaxWifiTrials = 100;
+const uint16_t MaxWifiTrials = 500;
 
 #define RETAINED true
 #define NOT_RETAINED false
