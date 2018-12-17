@@ -111,7 +111,7 @@ String MAC;
 //String PrefSSID, PrefPassword;  // used by preferences storage
 unsigned long lastMillis = 0;
 
-float trials = 0;
+uint32_t trials = 0;
 char buf[100];
 
 int  WFstatus;
@@ -715,9 +715,9 @@ void Wifi_connect() {
                 //  WiFi.begin( "ksbb" , "samsam12" ); // try to connect with saved SSID & PASS
                 trials = 0;
               	 blinkInterval = 50;
-                while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials)){
+                while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials*2)){
                 //  while ((WiFi.waitForConnectResult() != WL_CONNECTED) & (trials < MaxWifiTrials)){
-                    delay(100);
+                    delay(50);
                 		blinkled();
                     trials++;
                     Serial.print(F("-"));
