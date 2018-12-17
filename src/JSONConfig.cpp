@@ -67,10 +67,8 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_ACS_AMPS            = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String(F("/none"));
   ConfParam.v_CURR_TTL_PUB_TOPIC  = (json["CURR_TTL_PUB_TOPIC"].as<String>()!="") ? json["CURR_TTL_PUB_TOPIC"].as<String>() : String(F("/none"));
   ConfParam.v_STATE_PUB_TOPIC     = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String(F("/none"));
-
   ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
   ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
-
   ConfParam.v_FRM_IP              = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
   ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<String>() : String(F("83"));
   ConfParam.v_ACSmultiple         = (json["ACSmultiple"].as<String>()!="") ? json["ACSmultiple"].as<String>() : String(F("50"));
@@ -81,7 +79,6 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_timeserver          = (json["timeserver"].as<String>()!="") ? json["timeserver"].as<String>() : String(F("192.168.1.1"));
   ConfParam.v_PIC_Active          = (json["PIC_Active"].as<String>()!="") ? json["PIC_Active"].as<String>() : String(F("0"));
   ConfParam.v_MQTT_Active         = (json["MQTT_Active"].as<String>()!="") ? json["MQTT_Active"].as<String>() : String(F("0"));
-//  ConfParam.v_myppp = (json["myppp"].as<String>()!="") ? json["myppp"].as<String>() : String(F("0"));
   ConfParam.v_ntptz               = (json["ntptz"].as<String>()!="") ? json["ntptz"].as<String>() : String(F("2"));
   ConfParam.v_LWILL_TOPIC         = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String(F("/none"));
   ConfParam.v_SUB_TOPIC1          = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String(F("/none"));
@@ -131,51 +128,50 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
 bool saveConfig(TConfigParams &ConfParam){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
-  json["ssid"]= ConfParam.v_ssid ;
-  json["pass"]=ConfParam.v_pass;
-  json["PhyLoc"]=ConfParam.v_PhyLoc;
-  json["MQTT_BROKER"]=ConfParam.v_MQTT_BROKER;
-  json["MQTT_B_PRT"]=ConfParam.v_MQTT_B_PRT;
-  json["PUB_TOPIC1"]=ConfParam.v_PUB_TOPIC1;
-  json["FRM_IP"]=ConfParam.v_FRM_IP;
-  json["FRM_PRT"]=ConfParam.v_FRM_PRT;
-  json["ACSmultiple"]=ConfParam.v_ACSmultiple;
-  json["ACS_Sensor_Model"] = ConfParam.v_ACS_Sensor_Model;
-  json["ttl"]=ConfParam.v_ttl;
-  json["ttl_PUB_TOPIC"]=ConfParam.v_ttl_PUB_TOPIC;
-  json["i_ttl_PUB_TOPIC"]=ConfParam.v_i_ttl_PUB_TOPIC;
-  json["ACS_AMPS"]=ConfParam.v_ACS_AMPS;
-  json["CURR_TTL_PUB_TOPIC"]=ConfParam.v_CURR_TTL_PUB_TOPIC;
-  json["STATE_PUB_TOPIC"]=ConfParam.v_STATE_PUB_TOPIC;
-  json["I12_STS_PTP"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
-  json["I14_STS_PTP"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
-  json["TOGGLE_BTN_PUB_TOPIC"]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
-  json["I1MODE"]=ConfParam.v_IN1_INPUTMODE;
-  json["I2MODE"]=ConfParam.v_IN2_INPUTMODE;
-  json["tta"]=ConfParam.v_tta;
-  json["Max_Current"]=ConfParam.v_Max_Current;
-  json["timeserver"]=ConfParam.v_timeserver;
-  json["PIC_Active"]=ConfParam.v_PIC_Active;
-  json["MQTT_Active"]=ConfParam.v_MQTT_Active;
-//  json["myppp"]=ConfParam.v_myppp;
-  json["ntptz"]=ConfParam.v_ntptz;
-  json["LWILL_TOPIC"]=ConfParam.v_LWILL_TOPIC;
-  json["SUB_TOPIC1"]=ConfParam.v_SUB_TOPIC1;
-  json["GPIO12_TOG"]=ConfParam.v_GPIO12_TOG;
-  json["Copy_IO"]=ConfParam.v_Copy_IO;
-  json["ACS_Active"]=ConfParam.v_ACS_Active;
-  json["Update_now"]=ConfParam.v_Update_now;
+    json["ssid"]= ConfParam.v_ssid ;
+    json["pass"]=ConfParam.v_pass;
+    json["PhyLoc"]=ConfParam.v_PhyLoc;
+    json["MQTT_BROKER"]=ConfParam.v_MQTT_BROKER;
+    json["MQTT_B_PRT"]=ConfParam.v_MQTT_B_PRT;
+    json["PUB_TOPIC1"]=ConfParam.v_PUB_TOPIC1;
+    json["FRM_IP"]=ConfParam.v_FRM_IP;
+    json["FRM_PRT"]=ConfParam.v_FRM_PRT;
+    json["ACSmultiple"]=ConfParam.v_ACSmultiple;
+    json["ACS_Sensor_Model"] = ConfParam.v_ACS_Sensor_Model;
+    json["ttl"]=ConfParam.v_ttl;
+    json["ttl_PUB_TOPIC"]=ConfParam.v_ttl_PUB_TOPIC;
+    json["i_ttl_PUB_TOPIC"]=ConfParam.v_i_ttl_PUB_TOPIC;
+    json["ACS_AMPS"]=ConfParam.v_ACS_AMPS;
+    json["CURR_TTL_PUB_TOPIC"]=ConfParam.v_CURR_TTL_PUB_TOPIC;
+    json["STATE_PUB_TOPIC"]=ConfParam.v_STATE_PUB_TOPIC;
+    json["I12_STS_PTP"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
+    json["I14_STS_PTP"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
+    json["TOGGLE_BTN_PUB_TOPIC"]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
+    json["I1MODE"]=ConfParam.v_IN1_INPUTMODE;
+    json["I2MODE"]=ConfParam.v_IN2_INPUTMODE;
+    json["tta"]=ConfParam.v_tta;
+    json["Max_Current"]=ConfParam.v_Max_Current;
+    json["timeserver"]=ConfParam.v_timeserver;
+    json["PIC_Active"]=ConfParam.v_PIC_Active;
+    json["MQTT_Active"]=ConfParam.v_MQTT_Active;
+    json["ntptz"]=ConfParam.v_ntptz;
+    json["LWILL_TOPIC"]=ConfParam.v_LWILL_TOPIC;
+    json["SUB_TOPIC1"]=ConfParam.v_SUB_TOPIC1;
+    json["GPIO12_TOG"]=ConfParam.v_GPIO12_TOG;
+    json["Copy_IO"]=ConfParam.v_Copy_IO;
+    json["ACS_Active"]=ConfParam.v_ACS_Active;
+    json["Update_now"]=ConfParam.v_Update_now;
 
-  File configFile = SPIFFS.open(filename, "w");
-  if (!configFile) {
-    Serial.println(F("Failed to open config file for writing"));
-    return false;
-  }
+    File configFile = SPIFFS.open(filename, "w");
+    if (!configFile) {
+      Serial.println(F("Failed to open config file for writing"));
+      return false;
+    }
 
-  json.printTo(configFile);
-  configFile.flush();
-  configFile.close();
-  return true;
+    json.printTo(configFile);
+    configFile.flush();
+    configFile.close();
+    return true;
 }
 
 
@@ -184,37 +180,38 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
-  json["PIC_Active"]    =  "0" ;
-  json["MQTT_Active"]   =  "0" ;
-  json["GPIO12_TOG"]    =  "0" ;
-  json["Copy_IO"]       =  "0" ;
-  json["ACS_Active"]    =  "0" ;
-  json["myppp"]         =  "0" ;
-  json["Update_now"]    =  "0" ;
+    json["PIC_Active"]    =  "0" ;
+    json["MQTT_Active"]   =  "0" ;
+    json["GPIO12_TOG"]    =  "0" ;
+    json["Copy_IO"]       =  "0" ;
+    json["ACS_Active"]    =  "0" ;
+    json["myppp"]         =  "0" ;
+    json["Update_now"]    =  "0" ;
 
-  int args = request->args();
-  for(int i=0;i<args;i++){
-    Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
-    json[request->argName(i)] =  request->arg(i) ;
-  }
+    int args = request->args();
+    for(int i=0;i<args;i++){
+      Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
+      json[request->argName(i)] =  request->arg(i) ;
+    }
 
-  if(request->hasParam("PIC_Active")) json["PIC_Active"]      =  "1";
-  if(request->hasParam("MQTT_Active")) json["MQTT_Active"]    =  "1";
-  if(request->hasParam("GPIO12_TOG")) json["GPIO12_TOG"]      =  "1";
-  if(request->hasParam("Copy_IO")) json["Copy_IO"]            =  "1";
-  if(request->hasParam("ACS_Active")) json["ACS_Active"]      =  "1";
-  //if(request->hasParam("myppp")) json["myppp"]                =  "1";
-  if(request->hasParam("Update_now")) json["Update_now"]      =  "1";
+    if(request->hasParam("PIC_Active")) json["PIC_Active"]      =  "1";
+    if(request->hasParam("MQTT_Active")) json["MQTT_Active"]    =  "1";
+    if(request->hasParam("GPIO12_TOG")) json["GPIO12_TOG"]      =  "1";
+    if(request->hasParam("Copy_IO")) json["Copy_IO"]            =  "1";
+    if(request->hasParam("ACS_Active")) json["ACS_Active"]      =  "1";
+    //if(request->hasParam("myppp")) json["myppp"]                =  "1";
+    if(request->hasParam("Update_now")) json["Update_now"]      =  "1";
 
-  File configFile = SPIFFS.open(filename, "w");
-  if (!configFile) {
-    Serial.println(F("Failed to open config file for writing"));
-    return false;
-  }
+    File configFile = SPIFFS.open(filename, "w");
+    if (!configFile) {
+      Serial.println(F("Failed to open config file for writing"));
+      return false;
+    }
 
-  json.printTo(configFile);
-  configFile.close();
-  return true;
+    json.printTo(configFile);
+    configFile.flush();
+    configFile.close();
+    return true;
 }
 
 
