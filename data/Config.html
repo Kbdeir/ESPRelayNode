@@ -1982,7 +1982,7 @@ a:hover
 <input type="text" id="Editbox4" style="position:absolute;left:188px;top:199px;width:149px;height:18px;line-height:18px;z-index:10;" name="MQTT_BROKER" value="%MQTT_BROKER%">
 <input type="number" id="Editbox5" style="position:absolute;left:424px;top:199px;width:50px;height:18px;line-height:18px;z-index:11;" name="MQTT_B_PRT" value="%MQTT_B_PRT%">
 <input type="text" id="Editbox6" style="position:absolute;left:188px;top:239px;width:291px;height:18px;line-height:18px;z-index:12;" name="PUB_TOPIC1" value="%PUB_TOPIC1%">
-<select name="IN2_INPUTMODE" size="1" id="IN2_INPUTMODE_C" onchange="FUNC_IN2_INPUTMODE(this);return false;" style="position:absolute;left:188px;top:711px;width:111px;height:28px;z-index:13;">
+<select name="IN2_INPUTMODE_C" size="1" id="IN2_INPUTMODE_C" onchange="FUNC_IN2_INPUTMODE(this);return false;" style="position:absolute;left:188px;top:711px;width:111px;height:28px;z-index:13;">
 <option value="0">Click Mode</option>
 <option value="1">Input Mode</option>
 </select>
@@ -2069,7 +2069,7 @@ a:hover
 <input type="text" id="Editbox33" style="position:absolute;left:188px;top:519px;width:291px;height:18px;line-height:18px;z-index:70;" name="TOGGLE_BTN_PUB_TOPIC" value="%TOGGLE_BTN_PUB_TOPIC%">
 <div id="wb_Text52" style="position:absolute;left:0px;top:527px;width:175px;height:16px;text-align:right;z-index:71;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Toggle BTN Publish Topic</span></div>
-<select name="IN1_INPUTMODE" size="1" id="IN1_INPUTMODE_C" onchange="FUNC_IN1_INPUTMODE(this);return false;" style="position:absolute;left:190px;top:631px;width:111px;height:28px;z-index:72;">
+<select name="IN1_INPUTMODE_C" size="1" id="IN1_INPUTMODE_C" onchange="FUNC_IN1_INPUTMODE(this);return false;" style="position:absolute;left:190px;top:631px;width:111px;height:28px;z-index:72;">
 <option value="0">Click Mode</option>
 <option value="1">Input Mode</option>
 </select>
@@ -2078,8 +2078,8 @@ a:hover
 <option value="20">20 Amps</option>
 <option selected value="30">30 Amps</option>
 </select>
-<input type="text" id="IN1_INPUTMODE" style="position:absolute;left:313px;top:631px;width:44px;height:18px;line-height:18px;z-index:74;" name="IN1_INPUTMODE_TEXT" value="%IN1_INPUTMODE%" readonly autocomplete="off" title="AAA" type = "hidden">
-<input type="text" id="IN2_INPUTMODE" style="position:absolute;left:311px;top:711px;width:44px;height:18px;line-height:18px;z-index:75;" name="IN2_INPUTMODE_TEXT" value="%IN2_INPUTMODE%" readonly autocomplete="off" title="AAA" type = "hidden">
+<input type="text" id="IN1_INPUTMODE" style="position:absolute;left:313px;top:631px;width:44px;height:18px;line-height:18px;z-index:74;" name="IN1_INPUTMODE" value="%IN1_INPUTMODE%" readonly autocomplete="off" title="AAA" type = "hidden">
+<input type="text" id="IN2_INPUTMODE" style="position:absolute;left:311px;top:711px;width:44px;height:18px;line-height:18px;z-index:75;" name="IN2_INPUTMODE" value="%IN2_INPUTMODE%" readonly autocomplete="off" title="AAA" type = "hidden">
 </form>
 </div>
 <div id="wb_Text21" style="position:absolute;left:3px;top:22px;width:529px;height:82px;text-align:center;z-index:112;">
@@ -2545,26 +2545,14 @@ function ValidateForm1(theForm)
    regexp = /^[-+]?\d*\.?\d*$/;
    if (!regexp.test(theForm.IN1_INPUTMODE.value))
    {
-      alert("Please enter only digit characters in the \"IN1_INPUTMODE_TEXT\" field.");
-      theForm.IN1_INPUTMODE.focus();
-      return false;
-   }
-   if (theForm.IN1_INPUTMODE.value != "" && !(theForm.IN1_INPUTMODE.value >= 5 && theForm.IN1_INPUTMODE.value <= 30))
-   {
-      alert("Please enter a value greater than or equal to \"5\" and less than or equal to \"30\" in the \"IN1_INPUTMODE_TEXT\" field.");
+      alert("Please enter only digit characters in the \"IN1_INPUTMODE\" field.");
       theForm.IN1_INPUTMODE.focus();
       return false;
    }
    regexp = /^[-+]?\d*\.?\d*$/;
    if (!regexp.test(theForm.IN2_INPUTMODE.value))
    {
-      alert("Please enter only digit characters in the \"IN2_INPUTMODE_TEXT\" field.");
-      theForm.IN2_INPUTMODE.focus();
-      return false;
-   }
-   if (theForm.IN2_INPUTMODE.value != "" && !(theForm.IN2_INPUTMODE.value >= 5 && theForm.IN2_INPUTMODE.value <= 30))
-   {
-      alert("Please enter a value greater than or equal to \"5\" and less than or equal to \"30\" in the \"IN2_INPUTMODE_TEXT\" field.");
+      alert("Please enter only digit characters in the \"IN2_INPUTMODE\" field.");
       theForm.IN2_INPUTMODE.focus();
       return false;
    }

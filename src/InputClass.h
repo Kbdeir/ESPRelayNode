@@ -21,11 +21,11 @@ typedef void (*fnptr_b)(int, void* t);
     uint8_t attached_to_relay;
     String mqtt_topic;
     boolean post_mqtt;
-  //  boolean fclickmode;
+    boolean fclickmode;
 
     InputSensor(uint8_t p,
-      fnptr_a on_callback
-  //    boolean clickmode
+      fnptr_a on_callback,
+      boolean clickmode
         );
 
 

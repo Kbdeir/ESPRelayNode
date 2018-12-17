@@ -669,17 +669,17 @@ void process_Input(void * obj){
     InputSensor * snsr;
     snsr = static_cast<InputSensor *>(obj);
   //  char* msg;
-//  if (!snsr->fclickmode) {
+  if (!snsr->fclickmode) {
     mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
-//  }
-//  if (snsr->fclickmode) {
-//    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
-//  }
+  }
+  if (snsr->fclickmode) {
+    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
+  }
   }
 }
 
-InputSensor Inputsnsr14(InputPin14,process_Input);//,false);
-InputSensor Inputsnsr12(InputPin12,process_Input);//,false);
+InputSensor Inputsnsr14(InputPin14,process_Input,false);
+InputSensor Inputsnsr12(InputPin12,process_Input,false);
 
 
 void Wifi_connect() {
@@ -696,8 +696,8 @@ void Wifi_connect() {
   //String getPass = MyConfParam.v_pass;
 
   relay1.loadrelayparams();
-//  Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE);
-//  Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE);
+  Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE);
+  Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE);
   //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
