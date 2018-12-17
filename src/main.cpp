@@ -275,9 +275,10 @@ void onchangeSwitchInterruptSvc(void* t){
   rly = static_cast<Relay *>(t);
   if ((rly->RelayConfParam->v_GPIO12_TOG == "0") && (rly->RelayConfParam->v_Copy_IO == "0")) {
     char* msg;
-      rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
-      mqttClient.publish(MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
-      mqttClient.publish(MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
+      //rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
+      mqttClient.publish(MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str(), QOS2, RETAINED,
+        rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
+      //mqttClient.publish(MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
   }
   if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
       rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
@@ -669,10 +670,10 @@ void process_Input(void * obj){
     InputSensor * snsr;
     snsr = static_cast<InputSensor *>(obj);
   //  char* msg;
-  if (!snsr->fclickmode) {
+  if (snsr->fclickmode == INPUT_NORMAL) {
     mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
   }
-  if (snsr->fclickmode) {
+  if (snsr->fclickmode == INPUT_TOGGLE) {
     mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
   }
   }

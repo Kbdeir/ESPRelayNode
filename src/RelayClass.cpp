@@ -61,7 +61,6 @@ Relay::~Relay(){
       delete ticker_relay_tta;
       delete fbutton;
       delete btn_debouncer;
-
     }
 
 
@@ -82,7 +81,6 @@ void Relay::watch(){
          fon_associatedbtn_change(this);
      }
    }
-
    if (fgeneralinLoopFunc) fgeneralinLoopFunc(this);
 }
 
@@ -255,15 +253,10 @@ boolean Relay::loadrelayparams(){
       pinMode (fswitchbutton, INPUT_PULLUP );
       fon_associatedbtn_change = on_associatedbtn_change;
       fonclick = onclick;
-      //attachInterrupt(digitalPinToInterrupt(fswitchbutton), intfunc,
       fbutton = new OneButton(fswitchbutton, true);
       btn_debouncer->attach(fswitchbutton,INPUT_PULLUP);
       btn_debouncer->interval(25); // interval in ms
-
       if (fonclick) fbutton->attachClick(fonclick);        // toggle mode function
-      //if (fon_associatedbtn_change) fbutton->attachLongPressStart(fon_associatedbtn_change); // pin change function
-      //if (fon_associatedbtn_change) fbutton->attachLongPressStop(fon_associatedbtn_change);  // pin change function
-      //if (intfunc) fbutton->attachDuringLongPress(intfunc);
     }
 
   void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){
