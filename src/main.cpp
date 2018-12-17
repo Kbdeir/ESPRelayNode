@@ -704,11 +704,14 @@ void Wifi_connect() {
   WiFi.softAPdisconnect();
   WiFi.disconnect();
   WiFi.mode(WIFI_AP_STA);
+
   delay(100);
 
     if (digitalRead(ConfigInputPin) == HIGH) {
                 //WiFi.begin( getSsid.c_str() , getPass.c_str() ); // try to connect with saved SSID & PASS
                 WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+                Serial.print("\n ssid: "); Serial.print(MyConfParam.v_ssid.c_str());
+                Serial.print("\n pass: "); Serial.print(MyConfParam.v_pass.c_str());Serial.print("\n ");
                 //  WiFi.begin( "ksbb" , "samsam12" ); // try to connect with saved SSID & PASS
                 trials = 0;
               	 blinkInterval = 50;
