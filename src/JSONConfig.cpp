@@ -87,6 +87,11 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_Copy_IO = (json["Copy_IO"].as<String>()!="") ? json["Copy_IO"].as<String>() : String(F("0"));
   ConfParam.v_ACS_Active = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<String>() : String(F("0"));
   ConfParam.v_Update_now = (json["Update_now"].as<String>()!="") ? json["Update_now"].as<String>() : String(F("0"));
+  ConfParam.v_TOGGLE_BTN_PUB_TOPIC = (json["TOGGLE_BTN_PUB_TOPIC"].as<String>()!="") ? json["TOGGLE_BTN_PUB_TOPIC"].as<String>() : String(F("/none"));
+
+//  ConfParam.v_IN1_INPUTMODE =  json["IN1_INPUTMODE"].as<uint8_t>() | 1;
+//  ConfParam.v_IN2_INPUTMODE =  json["IN2_INPUTMODE"].as<uint8_t>() | 1;
+
 
   Serial.print(F("\n will connect to: ")); Serial.print(ConfParam.v_ssid);
   Serial.print(F("\n with pass: ")); Serial.print(ConfParam.v_pass);
@@ -115,6 +120,8 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n GPIO12_TOG:")); Serial.print(ConfParam.v_GPIO12_TOG);
   Serial.print(F("\n Copy_IO:")); Serial.print(ConfParam.v_Copy_IO);
   Serial.print(F("\n Update_now:")); Serial.print(ConfParam.v_Update_now);
+//  Serial.print(F("\n v_IN1_INPUTMODE:")); Serial.print(ConfParam.v_IN1_INPUTMODE);
+//  Serial.print(F("\n v_IN2_INPUTMODE:")); Serial.print(ConfParam.v_IN2_INPUTMODE);
 
   //relay1.loadrelayparams();
   return SUCCESS;
@@ -143,6 +150,11 @@ bool saveConfig(TConfigParams &ConfParam){
 
   json["InputPin12_STATE_PUB_TOPIC"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
   json["InputPin14_STATE_PUB_TOPIC"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
+
+  json["TOGGLE_BTN_PUB_TOPIC"]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
+
+//  json["IN1_INPUTMODE"]=ConfParam.v_IN1_INPUTMODE;
+//  json["IN2_INPUTMODE"]=ConfParam.v_IN2_INPUTMODE;
 
   json["tta"]=ConfParam.v_tta;
   json["Max_Current"]=ConfParam.v_Max_Current;
@@ -229,6 +241,8 @@ bool saveDefaultConfig(){
   json["CURR_TTL_PUB_TOPIC"]="/home/Controller" + CID() + "/sts/CURRVTTL";
   json["LWILL_TOPIC"]="/home/Controller" + CID() + "/LWT";
   json["SUB_TOPIC1"]= "/home/Controller" + CID() +  "/#";
+  json["TOGGLE_BTN_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/C1" ;
+
   json["FRM_IP"]="192.168.1.1";
   json["FRM_PRT"]="83";
   json["ASCmultiple"]="10";

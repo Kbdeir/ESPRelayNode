@@ -40,6 +40,10 @@ const uint16_t MaxWifiTrials = 100;
 
 #define ON "on"
 #define OFF "off"
+#define TOG "tog"
+
+#define TOG_MODE 0
+#define BTN_MODE 1
 
 typedef struct TConfigParams {
   String v_ssid;
@@ -73,6 +77,9 @@ typedef struct TConfigParams {
   String v_Copy_IO ;
   String v_ACS_Active ;
   String v_Update_now ;
+  String v_TOGGLE_BTN_PUB_TOPIC ;
+  //uint8_t v_IN1_INPUTMODE;
+  //uint8_t v_IN2_INPUTMODE;
 } TConfigParams;
 
   extern TConfigParams MyConfParam;
