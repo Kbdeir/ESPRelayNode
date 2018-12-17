@@ -669,10 +669,10 @@ void process_Input(void * obj){
     InputSensor * snsr;
     snsr = static_cast<InputSensor *>(obj);
   //  char* msg;
-  if (!snsr->fclickmode) {
+  if (snsr->fclickmode == INPUT_NORMAL) {
     mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
   }
-  if (snsr->fclickmode) {
+  if (snsr->fclickmode == INPUT_TOGGLE) {
     mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
   }
   }

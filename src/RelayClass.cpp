@@ -61,7 +61,6 @@ Relay::~Relay(){
       delete ticker_relay_tta;
       delete fbutton;
       delete btn_debouncer;
-
     }
 
 
@@ -82,7 +81,6 @@ void Relay::watch(){
          fon_associatedbtn_change(this);
      }
    }
-
    if (fgeneralinLoopFunc) fgeneralinLoopFunc(this);
 }
 
