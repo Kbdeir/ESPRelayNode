@@ -56,41 +56,42 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
 
 // ACS_AMPS v_InputPin12_STATE_PUB_TOPIC
 
-  ConfParam.v_ssid = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ssid"));
-  ConfParam.v_pass = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("pass"));
-  ConfParam.v_PhyLoc = (json["PhyLoc"].as<String>()!="") ? json["PhyLoc"].as<String>() : String(F("Not configured yet"));
-  ConfParam.v_MQTT_BROKER = (json["MQTT_BROKER"].as<String>()!="") ? json["MQTT_BROKER"].as<String>() : String(F("192.168.1.1"));
-  ConfParam.v_MQTT_B_PRT = (json["MQTT_B_PRT"].as<String>()!="") ? json["MQTT_B_PRT"].as<String>() : String(F("1883"));
-  ConfParam.v_PUB_TOPIC1 = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String(F("/none"));
-  ConfParam.v_ttl_PUB_TOPIC  = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_i_ttl_PUB_TOPIC = (json["i_ttl_PUB_TOPIC"].as<String>()!="") ? json["i_ttl_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_ACS_AMPS  = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String(F("/none"));
+  ConfParam.v_ssid                = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ssid"));
+  ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("pass"));
+  ConfParam.v_PhyLoc              = (json["PhyLoc"].as<String>()!="") ? json["PhyLoc"].as<String>() : String(F("Not configured yet"));
+  ConfParam.v_MQTT_BROKER         = (json["MQTT_BROKER"].as<String>()!="") ? json["MQTT_BROKER"].as<String>() : String(F("192.168.1.1"));
+  ConfParam.v_MQTT_B_PRT          = (json["MQTT_B_PRT"].as<String>()!="") ? json["MQTT_B_PRT"].as<String>() : String(F("1883"));
+  ConfParam.v_PUB_TOPIC1          = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String(F("/none"));
+  ConfParam.v_ttl_PUB_TOPIC       = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String(F("/none"));
+  ConfParam.v_i_ttl_PUB_TOPIC     = (json["i_ttl_PUB_TOPIC"].as<String>()!="") ? json["i_ttl_PUB_TOPIC"].as<String>() : String(F("/none"));
+  ConfParam.v_ACS_AMPS            = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String(F("/none"));
   ConfParam.v_CURR_TTL_PUB_TOPIC  = (json["CURR_TTL_PUB_TOPIC"].as<String>()!="") ? json["CURR_TTL_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_STATE_PUB_TOPIC = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["InputPin12_STATE_PUB_TOPIC"].as<String>()!="") ? json["InputPin12_STATE_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["InputPin14_STATE_PUB_TOPIC"].as<String>()!="") ? json["InputPin14_STATE_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_FRM_IP = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
-  ConfParam.v_FRM_PRT = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<String>() : String(F("83"));
-  ConfParam.v_ACSmultiple = (json["ACSmultiple"].as<String>()!="") ? json["ACSmultiple"].as<String>() : String(F("50"));
-  ConfParam.v_ACS_Sensor_Model = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String(F("10"));
-  ConfParam.v_ttl = (json["ttl"].as<String>()!="") ? json["ttl"].as<String>() : String(F("0"));
-  ConfParam.v_tta = (json["tta"].as<String>()!="") ? json["tta"].as<String>() : String(F("0"));
-  ConfParam.v_Max_Current = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<String>() : String(F("10"));
-  ConfParam.v_timeserver = (json["timeserver"].as<String>()!="") ? json["timeserver"].as<String>() : String(F("192.168.1.1"));
-  ConfParam.v_PIC_Active = (json["PIC_Active"].as<String>()!="") ? json["PIC_Active"].as<String>() : String(F("0"));
-  ConfParam.v_MQTT_Active = (json["MQTT_Active"].as<String>()!="") ? json["MQTT_Active"].as<String>() : String(F("0"));
-//  ConfParam.v_myppp = (json["myppp"].as<String>()!="") ? json["myppp"].as<String>() : String(F("0"));
-  ConfParam.v_ntptz = (json["ntptz"].as<String>()!="") ? json["ntptz"].as<String>() : String(F("2"));
-  ConfParam.v_LWILL_TOPIC = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_SUB_TOPIC1 = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String(F("/none"));
-  ConfParam.v_GPIO12_TOG = (json["GPIO12_TOG"].as<String>()!="") ? json["GPIO12_TOG"].as<String>() : String(F("0"));
-  ConfParam.v_Copy_IO = (json["Copy_IO"].as<String>()!="") ? json["Copy_IO"].as<String>() : String(F("0"));
-  ConfParam.v_ACS_Active = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<String>() : String(F("0"));
-  ConfParam.v_Update_now = (json["Update_now"].as<String>()!="") ? json["Update_now"].as<String>() : String(F("0"));
-  ConfParam.v_TOGGLE_BTN_PUB_TOPIC = (json["TOGGLE_BTN_PUB_TOPIC"].as<String>()!="") ? json["TOGGLE_BTN_PUB_TOPIC"].as<String>() : String(F("/none"));
+  ConfParam.v_STATE_PUB_TOPIC     = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String(F("/none"));
 
-  ConfParam.v_IN1_INPUTMODE =  json["IN1_INPUTMODE"].as<uint8_t>();
-  ConfParam.v_IN2_INPUTMODE =  json["IN2_INPUTMODE"].as<uint8_t>();
+  ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
+  ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
+
+  ConfParam.v_FRM_IP              = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
+  ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<String>() : String(F("83"));
+  ConfParam.v_ACSmultiple         = (json["ACSmultiple"].as<String>()!="") ? json["ACSmultiple"].as<String>() : String(F("50"));
+  ConfParam.v_ACS_Sensor_Model    = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String(F("10"));
+  ConfParam.v_ttl                 = (json["ttl"].as<String>()!="") ? json["ttl"].as<String>() : String(F("0"));
+  ConfParam.v_tta                 = (json["tta"].as<String>()!="") ? json["tta"].as<String>() : String(F("0"));
+  ConfParam.v_Max_Current         = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<String>() : String(F("10"));
+  ConfParam.v_timeserver          = (json["timeserver"].as<String>()!="") ? json["timeserver"].as<String>() : String(F("192.168.1.1"));
+  ConfParam.v_PIC_Active          = (json["PIC_Active"].as<String>()!="") ? json["PIC_Active"].as<String>() : String(F("0"));
+  ConfParam.v_MQTT_Active         = (json["MQTT_Active"].as<String>()!="") ? json["MQTT_Active"].as<String>() : String(F("0"));
+//  ConfParam.v_myppp = (json["myppp"].as<String>()!="") ? json["myppp"].as<String>() : String(F("0"));
+  ConfParam.v_ntptz               = (json["ntptz"].as<String>()!="") ? json["ntptz"].as<String>() : String(F("2"));
+  ConfParam.v_LWILL_TOPIC         = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String(F("/none"));
+  ConfParam.v_SUB_TOPIC1          = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String(F("/none"));
+  ConfParam.v_GPIO12_TOG          = (json["GPIO12_TOG"].as<String>()!="") ? json["GPIO12_TOG"].as<String>() : String(F("0"));
+  ConfParam.v_Copy_IO             = (json["Copy_IO"].as<String>()!="") ? json["Copy_IO"].as<String>() : String(F("0"));
+  ConfParam.v_ACS_Active          = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<String>() : String(F("0"));
+  ConfParam.v_Update_now          = (json["Update_now"].as<String>()!="") ? json["Update_now"].as<String>() : String(F("0"));
+  ConfParam.v_TOGGLE_BTN_PUB_TOPIC= (json["TOGGLE_BTN_PUB_TOPIC"].as<String>()!="") ? json["TOGGLE_BTN_PUB_TOPIC"].as<String>() : String(F("/none"));
+  ConfParam.v_IN1_INPUTMODE       =  json["I1MODE"].as<uint8_t>();
+  ConfParam.v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
 
 
   Serial.print(F("\n will connect to: ")); Serial.print(ConfParam.v_ssid);
@@ -120,10 +121,8 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n GPIO12_TOG:")); Serial.print(ConfParam.v_GPIO12_TOG);
   Serial.print(F("\n Copy_IO:")); Serial.print(ConfParam.v_Copy_IO);
   Serial.print(F("\n Update_now:")); Serial.print(ConfParam.v_Update_now);
-
   Serial.print(F("\n v_IN1_INPUTMODE:")); Serial.print(ConfParam.v_IN1_INPUTMODE);
   Serial.print(F("\n v_IN2_INPUTMODE:")); Serial.print(ConfParam.v_IN2_INPUTMODE);
-
   //relay1.loadrelayparams();
   return SUCCESS;
 }
@@ -148,15 +147,11 @@ bool saveConfig(TConfigParams &ConfParam){
   json["ACS_AMPS"]=ConfParam.v_ACS_AMPS;
   json["CURR_TTL_PUB_TOPIC"]=ConfParam.v_CURR_TTL_PUB_TOPIC;
   json["STATE_PUB_TOPIC"]=ConfParam.v_STATE_PUB_TOPIC;
-
-  json["InputPin12_STATE_PUB_TOPIC"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
-  json["InputPin14_STATE_PUB_TOPIC"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
-
+  json["I12_STS_PTP"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
+  json["I14_STS_PTP"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
   json["TOGGLE_BTN_PUB_TOPIC"]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
-
-  json["IN1_INPUTMODE"]=ConfParam.v_IN1_INPUTMODE;
-  json["IN2_INPUTMODE"]=ConfParam.v_IN2_INPUTMODE;
-
+  json["I1MODE"]=ConfParam.v_IN1_INPUTMODE;
+  json["I2MODE"]=ConfParam.v_IN2_INPUTMODE;
   json["tta"]=ConfParam.v_tta;
   json["Max_Current"]=ConfParam.v_Max_Current;
   json["timeserver"]=ConfParam.v_timeserver;
@@ -234,8 +229,8 @@ bool saveDefaultConfig(){
   json["MQTT_B_PRT"]="1883";
   json["PUB_TOPIC1"]="/home/Controller" + CID() + "/Coils/C1" ;
   json["STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/State/C1";
-  json["InputPin12_STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/INS/sts/IN1";
-  json["InputPin14_STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/INS/sts/IN2";
+  json["I12_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN1";
+  json["I14_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN2";
   json["ttl_PUB_TOPIC"]="/home/Controller" + CID() + "/sts/VTTL";
   json["i_ttl_PUB_TOPIC"]="/home/Controller" + CID() + "/i/TTL";
   json["ACS_AMPS"]="/home/Controller" + CID() + "/Coils/C1/Amps";
@@ -243,7 +238,6 @@ bool saveDefaultConfig(){
   json["LWILL_TOPIC"]="/home/Controller" + CID() + "/LWT";
   json["SUB_TOPIC1"]= "/home/Controller" + CID() +  "/#";
   json["TOGGLE_BTN_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/C1" ;
-
   json["FRM_IP"]="192.168.1.1";
   json["FRM_PRT"]="83";
   json["ASCmultiple"]="10";
@@ -261,6 +255,8 @@ bool saveDefaultConfig(){
   json["ACS_Active"]="0";
   json["tta"]="0";
   json["Update_now"]="0";
+  json["I1MODE"]=1;
+  json["I2MODE"]=1;
 
   File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {

@@ -1,10 +1,14 @@
 #include <MQTT_Processes.h>
 #include <JSONConfig.h>
 #include <RelayClass.h>
+#include <InputClass.h>
 //#include <RelaysArray.h>
 
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
+
+extern InputSensor Inputsnsr14;
+extern InputSensor Inputsnsr12;
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -39,9 +43,13 @@ boolean isValidNumber(String& str) {
 void mqttpostinitstatusOfInputs(void* sender){
   //char* msg;
   //digitalRead(InputPin12) == HIGH ? msg = ON : msg = OFF;
-  mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin12) == HIGH ?  ON : OFF);
+  if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
+    mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin12) == HIGH ?  ON : OFF);
+  }
   //digitalRead(InputPin14) == HIGH ? msg = ON : msg = OFF;
-  mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin14) == HIGH ?  ON : OFF);
+  if (Inputsnsr14.fclickmode == INPUT_NORMAL) {
+    mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin14) == HIGH ?  ON : OFF);
+  }
 }
 
 void onMqttConnect(bool sessionPresent) {

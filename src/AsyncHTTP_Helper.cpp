@@ -52,8 +52,8 @@ String processor(const String& var)
   if(var == F( "ACS_Sensor_Model" ))  return String( MyConfParam.v_ACS_Sensor_Model.c_str());
   if(var == F( "ttl" ))  return String( MyConfParam.v_ttl.c_str());
   if(var == F( "STATE_PUB_TOPIC" ))  return String( MyConfParam.v_STATE_PUB_TOPIC.c_str());
-  if(var == F( "InputPin12_STATE_PUB_TOPIC" ))  return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
-  if(var == F( "InputPin14_STATE_PUB_TOPIC" ))  return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I12_STS_PTP" ))  return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I14_STS_PTP" ))  return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
   if(var == F( "TTL_PUB_TOPIC" ))  return String( MyConfParam.v_ttl_PUB_TOPIC.c_str());
   if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( MyConfParam.v_CURR_TTL_PUB_TOPIC.c_str());
   if(var == F( "i_ttl_PUB_TOPIC" ))  return String( MyConfParam.v_i_ttl_PUB_TOPIC.c_str());
@@ -75,8 +75,8 @@ String processor(const String& var)
   if(var == F( "heap" ))  return String(ESP.getFreeHeap());
   if(var == F( "TOGGLE_BTN_PUB_TOPIC" ))  return String( MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str());
 
-  if(var == F( "IN1_INPUTMODE" ))  return String( MyConfParam.v_IN1_INPUTMODE);
-  if(var == F( "IN2_INPUTMODE" ))  return String( MyConfParam.v_IN2_INPUTMODE);
+  if(var == F( "I1MODE" ))  return String( MyConfParam.v_IN1_INPUTMODE);
+  if(var == F( "I2MODE" ))  return String( MyConfParam.v_IN2_INPUTMODE);
 
 
   return String();

@@ -1908,7 +1908,7 @@ a:hover
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
-#IN1_INPUTMODE
+#I1MODE
 {
    border: 1px #CCCCCC solid;
    -moz-border-radius: 4px;
@@ -1924,7 +1924,7 @@ a:hover
    text-align: left;
    vertical-align: middle;
 }
-#IN1_INPUTMODE:focus
+#I1MODE:focus
 {
    border-color: #696969;
    -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
@@ -1932,7 +1932,7 @@ a:hover
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
    outline: 0;
 }
-#IN2_INPUTMODE
+#I2MODE
 {
    border: 1px #CCCCCC solid;
    -moz-border-radius: 4px;
@@ -1948,7 +1948,7 @@ a:hover
    text-align: left;
    vertical-align: middle;
 }
-#IN2_INPUTMODE:focus
+#I2MODE:focus
 {
    border-color: #696969;
    -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
@@ -2043,8 +2043,8 @@ a:hover
 <input type="text" id="Editbox21" style="position:absolute;left:188px;top:431px;width:291px;height:18px;line-height:18px;z-index:53;" name="ACS_AMPS" value="%ACS_AMPS%">
 <div id="wb_Text34" style="position:absolute;left:12px;top:443px;width:165px;height:16px;text-align:right;z-index:54;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Amps Sensor Publish Topic</span></div>
-<input type="text" id="Editbox18" style="position:absolute;left:190px;top:599px;width:291px;height:18px;line-height:18px;z-index:55;" name="InputPin12_STATE_PUB_TOPIC" value="%InputPin12_STATE_PUB_TOPIC%">
-<input type="text" id="Editbox22" style="position:absolute;left:188px;top:679px;width:291px;height:18px;line-height:18px;z-index:56;" name="InputPin14_STATE_PUB_TOPIC" value="%InputPin14_STATE_PUB_TOPIC%">
+<input type="text" id="Editbox18" style="position:absolute;left:190px;top:599px;width:291px;height:18px;line-height:18px;z-index:55;" name="I12_STS_PTP" value="%I12_STS_PTP%">
+<input type="text" id="Editbox22" style="position:absolute;left:188px;top:679px;width:291px;height:18px;line-height:18px;z-index:56;" name="I14_STS_PTP" value="%I14_STS_PTP%">
 <div id="wb_Text29" style="position:absolute;left:1px;top:609px;width:175px;height:16px;text-align:right;z-index:57;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 1&nbsp; publish topic</span></div>
 <div id="wb_Text35" style="position:absolute;left:0px;top:685px;width:175px;height:16px;text-align:right;z-index:58;">
@@ -2078,8 +2078,8 @@ a:hover
 <option value="20">20 Amps</option>
 <option selected value="30">30 Amps</option>
 </select>
-<input type="text" id="IN1_INPUTMODE" style="position:absolute;left:313px;top:631px;width:44px;height:18px;line-height:18px;z-index:74;" name="IN1_INPUTMODE" value="%IN1_INPUTMODE%" readonly autocomplete="off" title="AAA" type = "hidden">
-<input type="text" id="IN2_INPUTMODE" style="position:absolute;left:311px;top:711px;width:44px;height:18px;line-height:18px;z-index:75;" name="IN2_INPUTMODE" value="%IN2_INPUTMODE%" readonly autocomplete="off" title="AAA" type = "hidden">
+<input type="text" id="I1MODE" style="position:absolute;left:313px;top:631px;width:44px;height:18px;line-height:18px;z-index:74;" name="I1MODE" value="%I1MODE%" readonly autocomplete="off" title="AAA" type = "hidden">
+<input type="text" id="I2MODE" style="position:absolute;left:311px;top:711px;width:44px;height:18px;line-height:18px;z-index:75;" name="I2MODE" value="%I2MODE%" readonly autocomplete="off" title="AAA" type = "hidden">
 </form>
 </div>
 <div id="wb_Text21" style="position:absolute;left:3px;top:22px;width:529px;height:82px;text-align:center;z-index:112;">
@@ -2543,17 +2543,17 @@ function ValidateForm1(theForm)
       return false;
    }
    regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.IN1_INPUTMODE.value))
+   if (!regexp.test(theForm.I1MODE.value))
    {
-      alert("Please enter only digit characters in the \"IN1_INPUTMODE\" field.");
-      theForm.IN1_INPUTMODE.focus();
+      alert("Please enter only digit characters in the \"I1MODE\" field.");
+      theForm.I1MODE.focus();
       return false;
    }
    regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.IN2_INPUTMODE.value))
+   if (!regexp.test(theForm.I2MODE.value))
    {
-      alert("Please enter only digit characters in the \"IN2_INPUTMODE\" field.");
-      theForm.IN2_INPUTMODE.focus();
+      alert("Please enter only digit characters in the \"I2MODE\" field.");
+      theForm.I2MODE.focus();
       return false;
    }
    return true;
@@ -2782,13 +2782,13 @@ function ValidateRelay2Conf(theForm)
 
       function FUNC_IN1_INPUTMODE(selectObject) {
         var x = selectObject.value;
-         document.getElementById("IN1_INPUTMODE").value=x ; 
+         document.getElementById("I1MODE").value=x ; 
       }
 
 
       function FUNC_IN2_INPUTMODE(selectObject) {
         var x = selectObject.value;
-         document.getElementById("IN2_INPUTMODE").value=x ; 
+         document.getElementById("I2MODE").value=x ; 
       }
 
 
@@ -2798,7 +2798,7 @@ function ValidateRelay2Conf(theForm)
 document.getElementById("ACSmultiple").value=document.getElementById("ACS_Sensor_Model").value ; 
 document.getElementById("ACSmultiple_2").value=document.getElementById("ACS_Sensor_Model_2").value ; 
 
-document.getElementById("IN1_INPUTMODE_C").value=document.getElementById("IN1_INPUTMODE").value ; 
-document.getElementById("IN2_INPUTMODE_C").value=document.getElementById("IN2_INPUTMODE").value ; 
+document.getElementById("IN1_INPUTMODE_C").value=document.getElementById("I1MODE").value ; 
+document.getElementById("IN2_INPUTMODE_C").value=document.getElementById("I2MODE").value ; 
 
 </script>

@@ -5,6 +5,7 @@ boolean CalendarNotInitiated = true;
 
 TConfigParams MyConfParam;
 
+
 String CID(){
   #ifdef ESP32
     char buf[16];

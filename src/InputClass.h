@@ -10,6 +10,8 @@ typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 
+enum input_mode {INPUT_NONE, INPUT_TOGGLE, INPUT_NORMAL};
+
  class InputSensor
 {
   private:
@@ -21,11 +23,11 @@ typedef void (*fnptr_b)(int, void* t);
     uint8_t attached_to_relay;
     String mqtt_topic;
     boolean post_mqtt;
-    boolean fclickmode;
+    input_mode fclickmode;
 
     InputSensor(uint8_t p,
       fnptr_a on_callback,
-      boolean clickmode
+      input_mode clickmode
         );
 
 

@@ -678,8 +678,8 @@ void process_Input(void * obj){
   }
 }
 
-InputSensor Inputsnsr14(InputPin14,process_Input,false);
-InputSensor Inputsnsr12(InputPin12,process_Input,false);
+InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
+InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 
 
 void Wifi_connect() {
@@ -696,8 +696,8 @@ void Wifi_connect() {
   //String getPass = MyConfParam.v_pass;
 
   relay1.loadrelayparams();
-  Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE);
-  Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE);
+  Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
+  Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
   //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
