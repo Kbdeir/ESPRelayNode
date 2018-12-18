@@ -21,10 +21,10 @@ typedef struct TWeekdays {
   boolean Tuesday ;
   boolean Wednesday ;
   boolean Thursday;
-  boolean Friday ;                // TTL VALUE
-  boolean Saturday ;      // MQTT TTL publish topic
-  boolean Sunday;  // running TTL publish topic
-  boolean AllWeek;     // TTL set/update topic
+  boolean Friday ;
+  boolean Saturday ;
+  boolean Sunday;
+  boolean AllWeek;
   void clear() {
             Monday    = false;
             Tuesday   = false;

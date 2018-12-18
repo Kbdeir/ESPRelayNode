@@ -448,7 +448,7 @@ void chronosInit() {
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
   uint8_t tcounter = 1;
-  while(tcounter <= MAX_NUMBER_OF_TIMERS){
+  while(tcounter <= MAX_NUMBER_OF_TIMERS){ [&tcounter]() {
         char  timerfilename[30] = "";
         strcpy(timerfilename, "/timer");
         strcat(timerfilename, String(tcounter).c_str());
@@ -603,6 +603,7 @@ void chronosInit() {
           }
 
       } // if SUCCESS
+    }();
   } // while loop
 
   LINE();
@@ -809,7 +810,7 @@ void setup() {
       delay(2000);
       ESP.restart();
     };
-        
+
     WiFi.mode(WIFI_AP_STA);
 
 		mqttClient.onConnect(onMqttConnect);
@@ -834,12 +835,11 @@ void setup() {
     // mrelays[0]=&relay1;
     // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
     /*
-    relay2.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
+    relay2.attachSwithchButton(SwitchButtonPin2, onchangeSwitchInterruptSvc, buttonclick);
     relay2.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay2);
     */
     //mrelays[1]=&relay2;
-
     // attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
 }
 

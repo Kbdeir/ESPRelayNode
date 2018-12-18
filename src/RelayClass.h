@@ -17,27 +17,6 @@ const int DEFLEN = 20;
 
 
 
-typedef struct TRelayConfigParams {
-  String v_PhyLoc ;
-  String v_PUB_TOPIC1 ;
-//  String v_ACSmultiple ;
-  String v_ACS_Sensor_Model;
-  String v_ttl ;                // TTL VALUE
-  String v_ttl_PUB_TOPIC ;      // MQTT TTL publish topic
-  String v_CURR_TTL_PUB_TOPIC;  // running TTL publish topic
-  String v_i_ttl_PUB_TOPIC;     // TTL set/update topic
-  String v_STATE_PUB_TOPIC ;
-  uint8_t v_tta ;
-  uint8_t v_Max_Current ;
-  uint8_t v_ACS_AMPS;
-  //String v_MQTT_Active ;
-  //String v_LWILL_TOPIC ;
-  String v_SUB_TOPIC1 ;
-  String v_GPIO12_TOG ;
-  String v_Copy_IO ;
-  boolean v_ACS_Active ;
-} TRelayConfigParams; // this is in preparation for separate relay configuations
-
  class Relay
 {
   private:

@@ -190,7 +190,6 @@ boolean Relay::loadrelayparams(){
      RelayConfParam->v_ACS_AMPS  = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String("/none");
      RelayConfParam->v_CURR_TTL_PUB_TOPIC  = (json["CURR_TTL_PUB_TOPIC"].as<String>()!="") ? json["CURR_TTL_PUB_TOPIC"].as<String>() : String("/none");
      RelayConfParam->v_STATE_PUB_TOPIC = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String("/none");
-  //   RelayConfParam->v_ACSmultiple = (json["ACSmultiple"].as<String>()!="") ? json["ACSmultiple"].as<String>() : String("50");
      RelayConfParam->v_ACS_Sensor_Model = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String("10");
      RelayConfParam->v_ttl = (json["ttl"].as<String>()!="") ? json["ttl"].as<uint32_t>() : 0;
      RelayConfParam->v_tta = (json["tta"].as<String>()!="") ? json["tta"].as<String>() : String("0");

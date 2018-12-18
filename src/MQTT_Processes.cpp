@@ -40,6 +40,7 @@ boolean isValidNumber(String& str) {
    return false;
 }
 
+/*
 void mqttpostinitstatusOfInputs(void* sender){
   if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
     mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin12) == HIGH ?  ON : OFF);
@@ -48,6 +49,7 @@ void mqttpostinitstatusOfInputs(void* sender){
     mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin14) == HIGH ?  ON : OFF);
   }
 }
+*/
 
 void onMqttConnect(bool sessionPresent) {
   tiker_MQTT_CONNECT.stop();
@@ -58,7 +60,17 @@ void onMqttConnect(bool sessionPresent) {
 	Serial.print(F("Subscribing at QoS 2, packetId: "));
   Serial.println(packetIdSub);
 
-  mqttpostinitstatusOfInputs(NULL);
+  //mqttpostinitstatusOfInputs(NULL);
+  [](){
+    if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
+      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+        digitalRead(InputPin12) == HIGH ?  ON : OFF);
+    }
+    if (Inputsnsr14.fclickmode == INPUT_NORMAL) {
+      mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+        digitalRead(InputPin14) == HIGH ?  ON : OFF);
+    }
+  }();
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
