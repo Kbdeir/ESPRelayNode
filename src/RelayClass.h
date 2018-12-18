@@ -35,7 +35,7 @@ typedef struct TRelayConfigParams {
   String v_SUB_TOPIC1 ;
   String v_GPIO12_TOG ;
   String v_Copy_IO ;
-  String v_ACS_Active ;
+  boolean v_ACS_Active ;
 } TRelayConfigParams; // this is in preparation for separate relay configuations
 
  class Relay

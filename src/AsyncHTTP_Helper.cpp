@@ -15,7 +15,6 @@ bool restartRequired = false;  // Set this flag in the callbacks to restart ESP 
 
 String timerprocessor(const String& var)
 {
-
   if(var == F( "TNBT" ))  return  String(NTmr.id);
   if(var == F( "Dfrom" ))  return  String(NTmr.spanDatefrom.c_str());
   if(var == F( "DTo" ))  return String( NTmr.spanDateto.c_str());
@@ -33,7 +32,6 @@ String timerprocessor(const String& var)
   if(var == F( "Mark_Minutes" ))  return  String(NTmr.Mark_Minutes);
   if(var == F( "TMTYPEedit" ))  return String(NTmr.TM_type);
   if(var == F( "Testchar" ))  return String(NTmr.Testchar);
-
   return String();
 }
 
@@ -44,13 +42,13 @@ String processor(const String& var)
   if(var == F( "pass" ))  return String( MyConfParam.v_pass.c_str());
   if(var == F( "PhyLoc" ))  return String( MyConfParam.v_PhyLoc.c_str());
   if(var == F( "MQTT_BROKER" ))  return String( MyConfParam.v_MQTT_BROKER.c_str());
-  if(var == F( "MQTT_B_PRT" ))  return String( MyConfParam.v_MQTT_B_PRT.c_str());
+  if(var == F( "MQTT_B_PRT" ))  return String( MyConfParam.v_MQTT_B_PRT);
   if(var == F( "PUB_TOPIC1" ))  return String( MyConfParam.v_PUB_TOPIC1.c_str());
   if(var == F( "FRM_IP" ))  return String( MyConfParam.v_FRM_IP.c_str());
-  if(var == F( "FRM_PRT" ))  return String( MyConfParam.v_FRM_PRT.c_str());
+  if(var == F( "FRM_PRT" ))  return String( MyConfParam.v_FRM_PRT);
   if(var == F( "ACSmultiple" ))  return String( MyConfParam.v_ACSmultiple.c_str());
   if(var == F( "ACS_Sensor_Model" ))  return String( MyConfParam.v_ACS_Sensor_Model.c_str());
-  if(var == F( "ttl" ))  return String( MyConfParam.v_ttl.c_str());
+  if(var == F( "ttl" ))  return String( MyConfParam.v_ttl);
   if(var == F( "STATE_PUB_TOPIC" ))  return String( MyConfParam.v_STATE_PUB_TOPIC.c_str());
   if(var == F( "I12_STS_PTP" ))  return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
   if(var == F( "I14_STS_PTP" ))  return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
@@ -59,18 +57,18 @@ String processor(const String& var)
   if(var == F( "i_ttl_PUB_TOPIC" ))  return String( MyConfParam.v_i_ttl_PUB_TOPIC.c_str());
   if(var == F( "ACS_AMPS" ))  return String( MyConfParam.v_ACS_AMPS.c_str());
   if(var == F( "tta" ))  return String( MyConfParam.v_tta.c_str());
-  if(var == F( "Max_Current" ))  return String( MyConfParam.v_Max_Current.c_str());
+  if(var == F( "Max_Current" ))  return String( MyConfParam.v_Max_Current);
   if(var == F( "timeserver" ))  return String( MyConfParam.v_timeserver.c_str());
-  if(var == F( "ntptz" ))  return String( MyConfParam.v_ntptz.c_str());
+  if(var == F( "ntptz" ))  return String( MyConfParam.v_ntptz);
   if(var == F( "LWILL_TOPIC" ))  return String( MyConfParam.v_LWILL_TOPIC.c_str());
   if(var == F( "SUB_TOPIC1" ))  return String( MyConfParam.v_SUB_TOPIC1.c_str());
-  if(var == F( "PIC_Active" )) { if (MyConfParam.v_PIC_Active == "1") return "1\" checked=\"\""; };
-  if(var == F( "MQTT_Active" )) { if (MyConfParam.v_MQTT_Active == "1") return "1\" checked=\"\""; };
+  if(var == F( "PIC_Active" )) { if (MyConfParam.v_PIC_Active) return "1\" checked=\"\""; };
+  if(var == F( "MQTT_Active" )) { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
   if(var == F( "GPIO12_TOG" )) {  if (MyConfParam.v_GPIO12_TOG == "1") return "1\" checked=\"\"";	};
   if(var == F( "Copy_IO" )) { if (MyConfParam.v_Copy_IO == "1") return "1\" checked=\"\""; };
-  if(var == F( "ACS_Active" )) { if (MyConfParam.v_ACS_Active == "1") return "1\" checked=\"\""; };
+  if(var == F( "ACS_Active" )) { if (MyConfParam.v_ACS_Active) return "1\" checked=\"\""; };
 //  if(var == F( "myppp" )) { if (MyConfParam.v_myppp == "1") return "1\" checked=\"\""; };
-  if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now == "1") return "1\" checked=\"\""; };
+  if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))  return digitalClockDisplay();
   if(var == F( "heap" ))  return String(ESP.getFreeHeap());
   if(var == F( "TOGGLE_BTN_PUB_TOPIC" ))  return String( MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str());
@@ -137,8 +135,18 @@ void SetAsyncHTTP(){
           #endif
           saveConfig(MyConfParam, request);
           loadConfig(MyConfParam);
-          uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, MyConfParam.v_ttl.c_str());
-          uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, MyConfParam.v_ttl.c_str());
+          uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
+            [](int i){
+              char buffer [33];
+              itoa (i,buffer,10);
+              return buffer;
+            }(MyConfParam.v_ttl));
+          uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
+          [](int i){
+            char buffer [33];
+            itoa (i,buffer,10);
+            return buffer;
+          }(MyConfParam.v_ttl));
     });
 
     /*

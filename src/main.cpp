@@ -179,7 +179,7 @@ void ticker_ACS712_mqtt (void* obj) {
   if (obj != nullptr) {
   Relay * rly;
   rly = static_cast<Relay *>(obj);
-    if (rly->RelayConfParam->v_ACS_Active == "1") {
+    if (rly->RelayConfParam->v_ACS_Active) {
         float variance =(abs(ACS_I_Current-old_acs_value));
         // Serial.printf("%6.*lf", 2, variance );
         if (true) {//(variance > 0.05){
@@ -195,10 +195,10 @@ void ticker_ACS712_func (void* obj) {
   if (obj != nullptr) {
   Relay * rly;
   rly = static_cast<Relay *>(obj);
-    if (rly->RelayConfParam->v_ACS_Active == "1") {
+    if (rly->RelayConfParam->v_ACS_Active) {
         ACS_I_Current = sensor.getCurrentAC();
         // Serial.println(String("I = ") + ACS_I_Current + " A");
-        if (ACS_I_Current > rly->RelayConfParam->v_Max_Current.toInt()) {
+        if (ACS_I_Current > rly->RelayConfParam->v_Max_Current) {
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
             // uint16_t packetIdPub = mqttClient.publish(MyConfParam.v_STATE_PUB_TOPIC.c_str(), 2, true, OFF); moved to interrupt
         }
@@ -215,7 +215,7 @@ void ticker_relay_ttl_periodic_callback(void* obj){
     rly = static_cast<Relay *>(obj);
     uint32_t t = rly->getRelayTTLperiodscounter();
     if (digitalRead(rly->getRelayPin() == HIGH)) {
-      mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, rly->RelayConfParam->v_ttl.c_str());
+      mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, String(rly->RelayConfParam->v_ttl).c_str());
       mqttClient.publish( rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, (String(t).c_str()));
     }
   }
@@ -244,7 +244,7 @@ void onRelaychangeInterruptSvc(void* t){
       rly->rchangedflag = false;
       if (rly->readrelay() == HIGH) {
         Serial.print(F("\n\n An interrupt *ON* has occurred."));
-        if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
+        if (rly->RelayConfParam->v_ttl > 0 ) {
           rly->start_ttl_timer();
         }
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
@@ -254,7 +254,7 @@ void onRelaychangeInterruptSvc(void* t){
       if (digitalRead(rly->getRelayPin()) == LOW) {
         Serial.print(F("\n\n An interrupt *OFF* has occurred."));
         rly->stop_ttl_timer();
-        if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
+        if (rly->RelayConfParam->v_ttl > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);
@@ -314,7 +314,7 @@ if (sender){
   rly = static_cast<Relay *>(sender);
     if (rly->TTLstate() != RUNNING_) {
       if (digitalRead(rly->getRelayPin()) == HIGH) {
-        if (rly->RelayConfParam->v_ttl.toInt() > 0 ) rly->start_ttl_timer(); // ticker_relay_ttl.start();
+        if (rly->RelayConfParam->v_ttl > 0 ) rly->start_ttl_timer(); // ticker_relay_ttl.start();
       }
     }
   }
@@ -685,14 +685,7 @@ InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-  #ifdef USEPREF
-    ReadParams(MyConfParam, preferences);
-  #endif
 
-  while (loadConfig(MyConfParam) != SUCCESS){
-    delay(2000);
-    ESP.restart();
-  };
 	//String getSsid = MyConfParam.v_ssid;
   //String getPass = MyConfParam.v_pass;
 
@@ -748,15 +741,15 @@ void Wifi_connect() {
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), MyConfParam.v_STATE_PUB_TOPIC.c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), MyConfParam.v_ttl.c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), MyConfParam.v_Max_Current.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(MyConfParam.v_ttl).c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(MyConfParam.v_Max_Current).c_str());
 
                     //setSyncInterval(10);
                     setSyncProvider(getNtpTime);
 
                     trials = 0;
                     relay1.stop_ttl_timer();
-                    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl.toInt()*1000);
+                    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
                     ACS_Calibrate_Start(relay1,sensor);
 
                     //relay2.stop_ttl_timer();
@@ -807,6 +800,16 @@ void setup() {
         else { Serial.println("File System Formatting Error"); } */
     #endif
     //wifimode = WIFI_CLT_MODE;
+
+    #ifdef USEPREF
+      ReadParams(MyConfParam, preferences);
+    #endif
+
+    while (loadConfig(MyConfParam) != SUCCESS){
+      delay(2000);
+      ESP.restart();
+    };
+        
     WiFi.mode(WIFI_AP_STA);
 
 		mqttClient.onConnect(onMqttConnect);
@@ -815,7 +818,7 @@ void setup() {
 		mqttClient.onUnsubscribe(onMqttUnsubscribe);
 		mqttClient.onMessage(onMqttMessage);
 		mqttClient.onPublish(onMqttPublish);
-		mqttClient.setServer(MyConfParam.v_MQTT_BROKER.c_str(), MQTT_PORT);
+		mqttClient.setServer(MyConfParam.v_MQTT_BROKER.c_str(), MyConfParam.v_MQTT_B_PRT);
 
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);

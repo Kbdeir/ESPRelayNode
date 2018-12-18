@@ -40,7 +40,7 @@ time_t getNtpTime()
   // get a random server from the pool
   // WiFi.hostByName(ntpServerName, ntpServerIP);
   ntpServerIP.fromString(MyConfParam.v_timeserver);
-  timeZone = MyConfParam.v_ntptz.toInt();
+  timeZone = MyConfParam.v_ntptz;
 
   Serial.print(ntpServerName);
   Serial.print(F(": "));
