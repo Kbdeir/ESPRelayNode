@@ -27,11 +27,11 @@ typedef struct TRelayConfigParams {
   String v_CURR_TTL_PUB_TOPIC;  // running TTL publish topic
   String v_i_ttl_PUB_TOPIC;     // TTL set/update topic
   String v_STATE_PUB_TOPIC ;
-  String v_tta ;
-  String v_Max_Current ;
-  String v_ACS_AMPS;
-  String v_MQTT_Active ;
-  String v_LWILL_TOPIC ;
+  uint8_t v_tta ;
+  uint8_t v_Max_Current ;
+  uint8_t v_ACS_AMPS;
+  //String v_MQTT_Active ;
+  //String v_LWILL_TOPIC ;
   String v_SUB_TOPIC1 ;
   String v_GPIO12_TOG ;
   String v_Copy_IO ;
