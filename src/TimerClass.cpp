@@ -11,14 +11,7 @@ NodeTimer::NodeTimer(uint8_t para_id) {
     spantimeto    = "00:00";
 
     weekdays = new TWeekdays;
-    weekdays->Monday    = true;
-    weekdays->Tuesday   = true;
-    weekdays->Wednesday = true;
-    weekdays->Thursday  = true;
-    weekdays->Friday    = true;
-    weekdays->Saturday  = true;
-    weekdays->Sunday    = true;
-
+    weekdays->clear();
     enabled = true;
     Mark_Hours = 0;
     Mark_Minutes = 0;

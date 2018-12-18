@@ -25,6 +25,16 @@ typedef struct TWeekdays {
   boolean Saturday ;      // MQTT TTL publish topic
   boolean Sunday;  // running TTL publish topic
   boolean AllWeek;     // TTL set/update topic
+  boolean clear() {
+            Monday    = false;
+            Tuesday   = false;
+            Wednesday = false;
+            Thursday  = false;
+            Friday    = false;
+            Saturday  = false;
+            Sunday    = false;
+            AllWeek   = false;
+          }
 
 } TWeekdays; // this is in preparation for separate relay configuations
 

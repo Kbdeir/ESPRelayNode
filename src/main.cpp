@@ -792,14 +792,10 @@ void setup() {
     pinMode ( InputPin12, INPUT_PULLUP );
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
-    //debouncer14.attach(InputPin14);
-    //debouncer14.interval(5); // interval in ms
-    //debouncer12.attach(ConfigInputPin,INPUT_PULLUP);
-    //debouncer12.interval(25); // interval in ms
+
     /* You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
        https://github.com/me-no-dev/arduino-esp32fs-plugin */
-
     #ifdef ESP32
 		if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
 		   Serial.println(F("SPIFFS Mount Failed"));
@@ -824,16 +820,16 @@ void setup() {
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 
-  //  attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
+    // attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
     relay1.attachSwithchButton(SwitchButtonPin2,
                               onchangeSwitchInterruptSvc,  // for input mode and copy to relay ,ode
                               buttonclick);                // for toggle mode
 
     relay1.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay1);
-    //mrelays[0]=&relay1;
 
-  //  attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
+    // mrelays[0]=&relay1;
+    // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
     /*
     relay2.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
     relay2.attachLoopfunc(relayloopservicefunc);
@@ -841,7 +837,7 @@ void setup() {
     */
     //mrelays[1]=&relay2;
 
-  //  attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
+    // attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
 }
 
 
@@ -859,7 +855,7 @@ void loop() {
   Inputsnsr14.watch();
   Inputsnsr12.watch();
 
-  if (restartRequired){  // check the flag here to determine if a restart is required
+  if (restartRequired){
     Serial.printf("Restarting ESP\n\r");
     restartRequired = false;
     delay(2500);
@@ -867,17 +863,17 @@ void loop() {
   }
 
   if (timeStatus() != timeNotSet) {
-    if (now() != prevDisplay) { //update the display only if time has changed
+    if (now() != prevDisplay) {                   //update the display only if time has changed
       prevDisplay = now();
       digitalClockDisplay();
       chronosevaluatetimers(MyCalendar);
     }
   }
 
-    if((timeStatus() == timeSet) && CalendarNotInitiated){
-      chronosInit();
-      CalendarNotInitiated = false;
-    }
+  if((timeStatus() == timeSet) && CalendarNotInitiated) {
+    chronosInit();
+    CalendarNotInitiated = false;
+  }
 
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
