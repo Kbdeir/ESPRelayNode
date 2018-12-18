@@ -46,7 +46,7 @@ String processor(const String& var)
   if(var == F( "PUB_TOPIC1" ))  return String( MyConfParam.v_PUB_TOPIC1.c_str());
   if(var == F( "FRM_IP" ))  return String( MyConfParam.v_FRM_IP.c_str());
   if(var == F( "FRM_PRT" ))  return String( MyConfParam.v_FRM_PRT);
-  if(var == F( "ACSmultiple" ))  return String( MyConfParam.v_ACSmultiple.c_str());
+//  if(var == F( "ACSmultiple" ))  return String( MyConfParam.v_ACSmultiple.c_str());
   if(var == F( "ACS_Sensor_Model" ))  return String( MyConfParam.v_ACS_Sensor_Model.c_str());
   if(var == F( "ttl" ))  return String( MyConfParam.v_ttl);
   if(var == F( "STATE_PUB_TOPIC" ))  return String( MyConfParam.v_STATE_PUB_TOPIC.c_str());

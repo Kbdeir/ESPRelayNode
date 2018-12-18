@@ -20,7 +20,7 @@ const int DEFLEN = 20;
 typedef struct TRelayConfigParams {
   String v_PhyLoc ;
   String v_PUB_TOPIC1 ;
-  String v_ACSmultiple ;
+//  String v_ACSmultiple ;
   String v_ACS_Sensor_Model;
   String v_ttl ;                // TTL VALUE
   String v_ttl_PUB_TOPIC ;      // MQTT TTL publish topic

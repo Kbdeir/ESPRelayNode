@@ -54,7 +54,7 @@ typedef struct TConfigParams {
   String v_PUB_TOPIC1 ;
   String v_FRM_IP ;
   uint16_t v_FRM_PRT ;
-  String v_ACSmultiple ;
+  //String v_ACSmultiple ;
   String v_ACS_Sensor_Model;
   uint32_t v_ttl ;                // TTL VALUE
   String v_ttl_PUB_TOPIC ;      // MQTT TTL publish topic

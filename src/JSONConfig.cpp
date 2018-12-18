@@ -71,7 +71,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
   ConfParam.v_FRM_IP              = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
   ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<uint16_t>() : 83;
-  ConfParam.v_ACSmultiple         = (json["ACSmultiple"].as<String>()!="") ? json["ACSmultiple"].as<String>() : String(F("50"));
+//  ConfParam.v_ACSmultiple         = (json["ACSmultiple"].as<String>()!="") ? json["ACSmultiple"].as<String>() : String(F("50"));
   ConfParam.v_ACS_Sensor_Model    = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String(F("10"));
   ConfParam.v_ttl                 = (json["ttl"].as<String>()!="") ? json["ttl"].as<uint32_t>() : 0;
   ConfParam.v_tta                 = (json["tta"].as<String>()!="") ? json["tta"].as<String>() : String(F("0"));
@@ -107,7 +107,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n SUB_TOPIC1:")); Serial.print(ConfParam.v_SUB_TOPIC1);
   Serial.print(F("\n ACS_Active:")); Serial.print(ConfParam.v_ACS_Active);
   Serial.print(F("\n ASC_Sensor_Model:")); Serial.print(ConfParam.v_ACS_Sensor_Model);
-  Serial.print(F("\n ACSmultiple:")); Serial.print(ConfParam.v_ACSmultiple);
+//  Serial.print(F("\n ACSmultiple:")); Serial.print(ConfParam.v_ACSmultiple);
   Serial.print(F("\n Max_Current:")); Serial.print(ConfParam.v_Max_Current);
   Serial.print(F("\n ttl :")); Serial.print(ConfParam.v_ttl);
   Serial.print(F("\n tta:")); Serial.print(ConfParam.v_tta);
@@ -136,7 +136,7 @@ bool saveConfig(TConfigParams &ConfParam){
     json["PUB_TOPIC1"]=ConfParam.v_PUB_TOPIC1;
     json["FRM_IP"]=ConfParam.v_FRM_IP;
     json["FRM_PRT"]=ConfParam.v_FRM_PRT;
-    json["ACSmultiple"]=ConfParam.v_ACSmultiple;
+//    json["ACSmultiple"]=ConfParam.v_ACSmultiple;
     json["ACS_Sensor_Model"] = ConfParam.v_ACS_Sensor_Model;
     json["ttl"]=ConfParam.v_ttl;
     json["ttl_PUB_TOPIC"]=ConfParam.v_ttl_PUB_TOPIC;
