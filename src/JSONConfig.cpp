@@ -82,11 +82,12 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_ntptz               = (json["ntptz"].as<String>()!="") ? json["ntptz"].as<signed char>() : 2;
   ConfParam.v_LWILL_TOPIC         = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String(F("/none"));
   ConfParam.v_SUB_TOPIC1          = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String(F("/none"));
-  ConfParam.v_GPIO12_TOG          = (json["GPIO12_TOG"].as<String>()!="") ? json["GPIO12_TOG"].as<String>() : String(F("0"));
-  ConfParam.v_Copy_IO             = (json["Copy_IO"].as<String>()!="") ? json["Copy_IO"].as<String>() : String(F("0"));
+//  ConfParam.v_GPIO12_TOG          = (json["GPIO12_TOG"].as<String>()!="") ? json["GPIO12_TOG"].as<String>() : String(F("0"));
+//  ConfParam.v_Copy_IO             = (json["Copy_IO"].as<String>()!="") ? json["Copy_IO"].as<String>() : String(F("0"));
   ConfParam.v_ACS_Active          = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<uint8_t>() == 1 : false;
   ConfParam.v_Update_now          = (json["Update_now"].as<String>()!="") ? json["Update_now"].as<uint8_t>() == 1 : false;
   ConfParam.v_TOGGLE_BTN_PUB_TOPIC= (json["TOGGLE_BTN_PUB_TOPIC"].as<String>()!="") ? json["TOGGLE_BTN_PUB_TOPIC"].as<String>() : String(F("/none"));
+  ConfParam.v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
   ConfParam.v_IN1_INPUTMODE       =  json["I1MODE"].as<uint8_t>();
   ConfParam.v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
 
@@ -115,9 +116,10 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n FRM_PRT:")); Serial.print(ConfParam.v_FRM_PRT);
 //  Serial.print(F("\n myppp:")); Serial.print(ConfParam.v_myppp);
   Serial.print(F("\n ntptz:")); Serial.print(ConfParam.v_ntptz);
-  Serial.print(F("\n GPIO12_TOG:")); Serial.print(ConfParam.v_GPIO12_TOG);
-  Serial.print(F("\n Copy_IO:")); Serial.print(ConfParam.v_Copy_IO);
+//  Serial.print(F("\n GPIO12_TOG:")); Serial.print(ConfParam.v_GPIO12_TOG);
+//  Serial.print(F("\n Copy_IO:")); Serial.print(ConfParam.v_Copy_IO);
   Serial.print(F("\n Update_now:")); Serial.print(ConfParam.v_Update_now);
+  Serial.print(F("\n v_IN0_INPUTMODE:")); Serial.print(ConfParam.v_IN0_INPUTMODE);
   Serial.print(F("\n v_IN1_INPUTMODE:")); Serial.print(ConfParam.v_IN1_INPUTMODE);
   Serial.print(F("\n v_IN2_INPUTMODE:")); Serial.print(ConfParam.v_IN2_INPUTMODE);
   //relay1.loadrelayparams();
@@ -147,6 +149,7 @@ bool saveConfig(TConfigParams &ConfParam){
     json["I12_STS_PTP"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
     json["I14_STS_PTP"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
     json["TOGGLE_BTN_PUB_TOPIC"]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
+    json["I0MODE"]=ConfParam.v_IN0_INPUTMODE;
     json["I1MODE"]=ConfParam.v_IN1_INPUTMODE;
     json["I2MODE"]=ConfParam.v_IN2_INPUTMODE;
     json["tta"]=ConfParam.v_tta;
@@ -157,8 +160,8 @@ bool saveConfig(TConfigParams &ConfParam){
     json["ntptz"]=ConfParam.v_ntptz;
     json["LWILL_TOPIC"]=ConfParam.v_LWILL_TOPIC;
     json["SUB_TOPIC1"]=ConfParam.v_SUB_TOPIC1;
-    json["GPIO12_TOG"]=ConfParam.v_GPIO12_TOG;
-    json["Copy_IO"]=ConfParam.v_Copy_IO;
+//    json["GPIO12_TOG"]=ConfParam.v_GPIO12_TOG;
+//    json["Copy_IO"]=ConfParam.v_Copy_IO;
     json["ACS_Active"]=ConfParam.v_ACS_Active;
     json["Update_now"]=ConfParam.v_Update_now;
 
@@ -247,11 +250,12 @@ bool saveDefaultConfig(){
   json["MQTT_Active"]="0";
   json["myppp"]="0";
   json["ntptz"]="2";
-  json["GPIO12_TOG"]="0";
-  json["Copy_IO"]="0";
+  //json["GPIO12_TOG"]="0";
+  //json["Copy_IO"]="0";
   json["ACS_Active"]="0";
   json["tta"]="0";
   json["Update_now"]="0";
+  json["I0MODE"]=1;  
   json["I1MODE"]=1;
   json["I2MODE"]=1;
 

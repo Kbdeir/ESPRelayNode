@@ -64,15 +64,15 @@ String processor(const String& var)
   if(var == F( "SUB_TOPIC1" ))  return String( MyConfParam.v_SUB_TOPIC1.c_str());
   if(var == F( "PIC_Active" )) { if (MyConfParam.v_PIC_Active) return "1\" checked=\"\""; };
   if(var == F( "MQTT_Active" )) { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
-  if(var == F( "GPIO12_TOG" )) {  if (MyConfParam.v_GPIO12_TOG == "1") return "1\" checked=\"\"";	};
-  if(var == F( "Copy_IO" )) { if (MyConfParam.v_Copy_IO == "1") return "1\" checked=\"\""; };
+//  if(var == F( "GPIO12_TOG" )) {  if (MyConfParam.v_GPIO12_TOG == "1") return "1\" checked=\"\"";	};
+//  if(var == F( "Copy_IO" )) { if (MyConfParam.v_Copy_IO == "1") return "1\" checked=\"\""; };
   if(var == F( "ACS_Active" )) { if (MyConfParam.v_ACS_Active) return "1\" checked=\"\""; };
 //  if(var == F( "myppp" )) { if (MyConfParam.v_myppp == "1") return "1\" checked=\"\""; };
   if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))  return digitalClockDisplay();
   if(var == F( "heap" ))  return String(ESP.getFreeHeap());
   if(var == F( "TOGGLE_BTN_PUB_TOPIC" ))  return String( MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str());
-
+  if(var == F( "I0MODE" ))  return String( MyConfParam.v_IN0_INPUTMODE);
   if(var == F( "I1MODE" ))  return String( MyConfParam.v_IN1_INPUTMODE);
   if(var == F( "I2MODE" ))  return String( MyConfParam.v_IN2_INPUTMODE);
 

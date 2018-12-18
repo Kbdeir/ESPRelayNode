@@ -273,14 +273,16 @@ void onchangeSwitchInterruptSvc(void* t){
   //SwitchButtonPin_interruptCounter--;
   Relay * rly;
   rly = static_cast<Relay *>(t);
-  if ((rly->RelayConfParam->v_GPIO12_TOG == "0") && (rly->RelayConfParam->v_Copy_IO == "0")) {
+  //if ((rly->RelayConfParam->v_GPIO12_TOG == "0") && (rly->RelayConfParam->v_Copy_IO == "0")) {
+if (rly->RelayConfParam->v_IN0_INPUTMODE == 1) {
     char* msg;
       //rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
       mqttClient.publish(MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str(), QOS2, RETAINED,
         rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
       //mqttClient.publish(MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
   }
-  if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
+  //if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
+    if (rly->RelayConfParam->v_IN0_INPUTMODE == 2) {
       rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
   }
 
@@ -293,7 +295,8 @@ void buttonclick(void* sender) {
   Relay * rly;
   rly = static_cast<Relay *>(sender);
 
-  if ((rly->RelayConfParam->v_GPIO12_TOG == "1") && (rly->RelayConfParam->v_Copy_IO == "0"))  {
+  //if ((rly->RelayConfParam->v_GPIO12_TOG == "1") && (rly->RelayConfParam->v_Copy_IO == "0"))  {
+  if (rly->RelayConfParam->v_IN0_INPUTMODE == 3)  {
     if (rly->readrelay() == HIGH) {
       rly->ticker_relay_tta->stop();
       rly->mdigitalWrite(rly->getRelayPin(), LOW);
@@ -607,7 +610,6 @@ void chronosInit() {
   } // while loop
 
   LINE();
-
   PRINTLN(F("**** presumably got NTP time **** :"));
   Chronos::DateTime::now().printTo(SERIAL_DEVICE);
   LINE();
@@ -615,7 +617,6 @@ void chronosInit() {
   PRINT(F("Right \"now\" it's: "));
   nowTime.printTo(SERIAL_DEVICE);
   LINES(2);
-
 }
 
 void chronosevaluatetimers(Calendar MyCalendar) {

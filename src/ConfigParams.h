@@ -73,11 +73,12 @@ typedef struct TConfigParams {
   signed char v_ntptz ;
   String v_LWILL_TOPIC ;
   String v_SUB_TOPIC1 ;
-  String v_GPIO12_TOG ;
-  String v_Copy_IO ;
+//  String v_GPIO12_TOG ;
+//  String v_Copy_IO ;
   boolean v_ACS_Active ;
   boolean v_Update_now ;
   String v_TOGGLE_BTN_PUB_TOPIC ;
+  uint8_t v_IN0_INPUTMODE;
   uint8_t v_IN1_INPUTMODE;
   uint8_t v_IN2_INPUTMODE;
 } TConfigParams;

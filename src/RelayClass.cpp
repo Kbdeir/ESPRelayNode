@@ -196,9 +196,11 @@ boolean Relay::loadrelayparams(){
      RelayConfParam->v_Max_Current = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<uint8_t>() : 10;
      RelayConfParam->v_LWILL_TOPIC = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String("/none");
      RelayConfParam->v_SUB_TOPIC1 = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String("/none");
-     RelayConfParam->v_GPIO12_TOG = (json["GPIO12_TOG"].as<String>()!="") ? json["GPIO12_TOG"].as<String>() : String("0");
-     RelayConfParam->v_Copy_IO = (json["Copy_IO"].as<String>()!="") ? json["Copy_IO"].as<String>() : String("0");
+//     RelayConfParam->v_GPIO12_TOG = (json["GPIO12_TOG"].as<String>()!="") ? json["GPIO12_TOG"].as<String>() : String("0");
+//     RelayConfParam->v_Copy_IO = (json["Copy_IO"].as<String>()!="") ? json["Copy_IO"].as<String>() : String("0");
      RelayConfParam->v_ACS_Active = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<uint8_t>() == 1 : false;
+
+     RelayConfParam->v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
 
      return true;
    }
