@@ -64,7 +64,7 @@ typedef struct TConfigParams {
   uint8_t v_Max_Current ;
   String v_ACS_AMPS;
   String v_timeserver ;
-  uint8_t v_PIC_Active ;
+  //uint8_t v_PIC_Active ;
   uint8_t v_MQTT_Active ;
   //String v_myppp ;
   signed char v_ntptz ;

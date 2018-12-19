@@ -72,7 +72,7 @@ String processor(const String& var)
   if(var == F( "ntptz" ))  return String( MyConfParam.v_ntptz);
   if(var == F( "LWILL_TOPIC" ))  return String( MyConfParam.v_LWILL_TOPIC.c_str());
   if(var == F( "SUB_TOPIC1" ))  return String( MyConfParam.v_SUB_TOPIC1.c_str());
-  if(var == F( "PIC_Active" )) { if (MyConfParam.v_PIC_Active) return "1\" checked=\"\""; };
+//  if(var == F( "PIC_Active" )) { if (MyConfParam.v_PIC_Active) return "1\" checked=\"\""; };
   if(var == F( "MQTT_Active" )) { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
   if(var == F( "ACS_Active" )) { if (MyConfParam.v_ACS_Active) return "1\" checked=\"\""; };
   if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };

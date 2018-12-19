@@ -96,7 +96,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_tta                 = (json["tta"].as<String>()!="") ? json["tta"].as<uint32_t>() : 0;
   ConfParam.v_Max_Current         = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<uint8_t>() : 10;
   ConfParam.v_timeserver          = (json["timeserver"].as<String>()!="") ? json["timeserver"].as<String>() : String(F("192.168.1.1"));
-  ConfParam.v_PIC_Active          = (json["PIC_Active"].as<String>()!="") ? json["PIC_Active"].as<uint8_t>() ==1 : false;
+  //ConfParam.v_PIC_Active          = (json["PIC_Active"].as<String>()!="") ? json["PIC_Active"].as<uint8_t>() ==1 : false;
   ConfParam.v_MQTT_Active         = (json["MQTT_Active"].as<String>()!="") ? json["MQTT_Active"].as<uint8_t>() ==1 : false;
   ConfParam.v_ntptz               = (json["ntptz"].as<String>()!="") ? json["ntptz"].as<signed char>() : 2;
   ConfParam.v_LWILL_TOPIC         = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String(F("/none"));
@@ -115,7 +115,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n with pass: ")); Serial.print(ConfParam.v_pass);
   Serial.print(F("\n PhyLoc:")); Serial.print(ConfParam.v_PhyLoc);
   Serial.print(F("\n timeserver:")); Serial.print(ConfParam.v_timeserver);
-  Serial.print(F("\n PIC_Active:")); Serial.print(ConfParam.v_PIC_Active);
+  //Serial.print(F("\n PIC_Active:")); Serial.print(ConfParam.v_PIC_Active);
   Serial.print(F("\n MQTT_Active:")); Serial.print(ConfParam.v_MQTT_Active);
   Serial.print(F("\n MQTT_BROKER:")); Serial.print(ConfParam.v_MQTT_BROKER);
   Serial.print(F("\n MQTT_B_PRT:")); Serial.print(ConfParam.v_MQTT_B_PRT);
@@ -167,7 +167,6 @@ bool saveConfig(TConfigParams &ConfParam){
       */
 
     json["FRM_PRT"]=ConfParam.v_FRM_PRT;
-//    json["ACSmultiple"]=ConfParam.v_ACSmultiple;
     json["ACS_Sensor_Model"] = ConfParam.v_ACS_Sensor_Model;
     json["ttl"]=ConfParam.v_ttl;
     json["ttl_PUB_TOPIC"]=ConfParam.v_ttl_PUB_TOPIC;
@@ -184,13 +183,11 @@ bool saveConfig(TConfigParams &ConfParam){
     json["tta"]=ConfParam.v_tta;
     json["Max_Current"]=ConfParam.v_Max_Current;
     json["timeserver"]=ConfParam.v_timeserver;
-    json["PIC_Active"]=ConfParam.v_PIC_Active;
+    //json["PIC_Active"]=ConfParam.v_PIC_Active;
     json["MQTT_Active"]=ConfParam.v_MQTT_Active;
     json["ntptz"]=ConfParam.v_ntptz;
     json["LWILL_TOPIC"]=ConfParam.v_LWILL_TOPIC;
     json["SUB_TOPIC1"]=ConfParam.v_SUB_TOPIC1;
-//    json["GPIO12_TOG"]=ConfParam.v_GPIO12_TOG;
-//    json["Copy_IO"]=ConfParam.v_Copy_IO;
     json["ACS_Active"]=ConfParam.v_ACS_Active;
     json["Update_now"]=ConfParam.v_Update_now;
 
@@ -212,13 +209,10 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
-    json["PIC_Active"]    =  "0" ;
-    json["MQTT_Active"]   =  "0" ;
-    json["GPIO12_TOG"]    =  "0" ;
-    json["Copy_IO"]       =  "0" ;
-    json["ACS_Active"]    =  "0" ;
-    json["myppp"]         =  "0" ;
-    json["Update_now"]    =  "0" ;
+    json["PIC_Active"]    =  0 ;
+    json["MQTT_Active"]   =  0 ;
+    json["ACS_Active"]    =  0 ;
+    json["Update_now"]    =  0 ;
 
     int args = request->args();
     for(int i=0;i<args;i++){
@@ -226,13 +220,10 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
       json[request->argName(i)] =  request->arg(i) ;
     }
 
-    if(request->hasParam("PIC_Active")) json["PIC_Active"]      =  "1";
-    if(request->hasParam("MQTT_Active")) json["MQTT_Active"]    =  "1";
-    if(request->hasParam("GPIO12_TOG")) json["GPIO12_TOG"]      =  "1";
-    if(request->hasParam("Copy_IO")) json["Copy_IO"]            =  "1";
-    if(request->hasParam("ACS_Active")) json["ACS_Active"]      =  "1";
-    //if(request->hasParam("myppp")) json["myppp"]                =  "1";
-    if(request->hasParam("Update_now")) json["Update_now"]      =  "1";
+    if(request->hasParam("PIC_Active")) json["PIC_Active"]      =  1;
+    if(request->hasParam("MQTT_Active")) json["MQTT_Active"]    =  1;
+    if(request->hasParam("ACS_Active")) json["ACS_Active"]      =  1;
+    if(request->hasParam("Update_now")) json["Update_now"]      =  1;
 
     File configFile = SPIFFS.open(filename, "w");
     if (!configFile) {
@@ -255,7 +246,7 @@ bool saveDefaultConfig(){
   json["pass"]="samsam12";
   json["PhyLoc"]="Not configured yet";
   json["MQTT_BROKER"]="192.168.1.1";
-  json["MQTT_B_PRT"]="1883";
+  json["MQTT_B_PRT"]=1883;
   json["PUB_TOPIC1"]="/home/Controller" + CID() + "/Coils/C1" ;
   json["STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/State/C1";
   json["I12_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN1";
@@ -268,22 +259,20 @@ bool saveDefaultConfig(){
   json["SUB_TOPIC1"]= "/home/Controller" + CID() +  "/#";
   json["TOGGLE_BTN_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/C1" ;
   json["FRM_IP"]="192.168.1.1";
-  json["FRM_PRT"]="83";
-  json["ASCmultiple"]="10";
+  json["FRM_PRT"]=83;
   json["ACS_Sensor_Model"] = "10";
-  json["ttl"]="0";
-  json["tta"]="0";
-  json["Max_Current"]="10";
+  json["ttl"]=0;
+  json["tta"]=0;
+  json["Max_Current"]=10;
   json["timeserver"]="194.97.156.5";
-  json["PIC_Active"]="0";
-  json["MQTT_Active"]="0";
-  json["myppp"]="0";
-  json["ntptz"]="2";
+  json["PIC_Active"]=0;
+  json["MQTT_Active"]=0;
+  json["ntptz"]=2;
   //json["GPIO12_TOG"]="0";
   //json["Copy_IO"]="0";
-  json["ACS_Active"]="0";
+  json["ACS_Active"]=0;
   json["tta"]="0";
-  json["Update_now"]="0";
+  json["Update_now"]=0;
   json["I0MODE"]=1;
   json["I1MODE"]=1;
   json["I2MODE"]=1;
