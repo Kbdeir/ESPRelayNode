@@ -35,6 +35,8 @@ String timerprocessor(const String& var)
   return String();
 }
 
+
+
 String processor(const String& var)
 {
   if(var == F( "MACADDR" ))  return (String(MAC.c_str()) + " - Chip id: " + CID());
@@ -44,7 +46,16 @@ String processor(const String& var)
   if(var == F( "MQTT_BROKER" ))  return String( MyConfParam.v_MQTT_BROKER.c_str());
   if(var == F( "MQTT_B_PRT" ))  return String( MyConfParam.v_MQTT_B_PRT);
   if(var == F( "PUB_TOPIC1" ))  return String( MyConfParam.v_PUB_TOPIC1.c_str());
-  if(var == F( "FRM_IP" ))  return String( MyConfParam.v_FRM_IP.c_str());
+
+//if(var == F( "FRM_IP" ))  return String( MyConfParam.v_FRM_IP.c_str());
+  if(var == F( "FRM_IP" ))  return IPAdrtoStr(MyConfParam.v_FRM_IP);
+/*[](){
+  char szRet[16];
+  sprintf(szRet,"%u.%u.%u.%u", MyConfParam.v_FRM_IP.bytes[0],  MyConfParam.v_FRM_IP.bytes[1],  MyConfParam.v_FRM_IP.bytes[2],
+    MyConfParam.v_FRM_IP.bytes[3]);
+  return String(szRet);
+}();*/
+
   if(var == F( "FRM_PRT" ))  return String( MyConfParam.v_FRM_PRT);
   if(var == F( "ACS_Sensor_Model" ))  return String( MyConfParam.v_ACS_Sensor_Model.c_str());
   if(var == F( "ttl" ))  return String( MyConfParam.v_ttl);
@@ -71,7 +82,6 @@ String processor(const String& var)
   if(var == F( "I0MODE" ))  return String( MyConfParam.v_IN0_INPUTMODE);
   if(var == F( "I1MODE" ))  return String( MyConfParam.v_IN1_INPUTMODE);
   if(var == F( "I2MODE" ))  return String( MyConfParam.v_IN2_INPUTMODE);
-
 
   return String();
 }

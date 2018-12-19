@@ -753,6 +753,27 @@ void setup() {
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
 
+
+
+    //String test = ;
+
+    int a, b, c, d;
+    //sscanf( json["FRM_IP"].as<String>().c_str(), "%hhu.%hhu.%hhu.%hhu", ConfParam.v_FRM_IP.bytes[1], ConfParam.v_FRM_IP.bytes[2], ConfParam.v_FRM_IP.bytes[3], ConfParam.v_FRM_IP.bytes[4] );
+    sscanf( "192.168.111.222", "%d.%d.%d.%d", &a, &b, &c, &d );
+    Serial.print("\n *****************************************************");
+    PRINTLN("");
+    Serial.print(a);
+    PRINTLN("");
+    Serial.print(b);
+    PRINTLN("");
+    Serial.print(c);
+    PRINTLN("");
+    Serial.print(d);
+    PRINTLN("");
+
+
+
+
     /* You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
        https://github.com/me-no-dev/arduino-esp32fs-plugin */

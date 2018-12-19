@@ -2,9 +2,8 @@
 #include <RelayClass.h>
 
 const char* filename = "/config.json";
-//String Zerochar PROGMEM = "0";
-//extern Relay relay1;
 #define buffer_size  1800 // json buffer size
+
 
 config_read_error_t loadConfig(TConfigParams &ConfParam) {
 
@@ -69,7 +68,27 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_STATE_PUB_TOPIC     = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String(F("/none"));
   ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
   ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
-  ConfParam.v_FRM_IP              = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
+
+  //ConfParam.v_FRM_IP              = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
+  if (json["FRM_IP"].as<String>()!="") {
+    IPAdrfromStr(json["FRM_IP"],ConfParam.v_FRM_IP);
+    /*[&](){
+    int a, b, c, d;
+    //sscanf( json["FRM_IP"].as<String>().c_str(), "%hhu.%hhu.%hhu.%hhu", ConfParam.v_FRM_IP.bytes[1], ConfParam.v_FRM_IP.bytes[2], ConfParam.v_FRM_IP.bytes[3], ConfParam.v_FRM_IP.bytes[4] );
+    sscanf( json["FRM_IP"] , "%d.%d.%d.%d", &a, &b, &c, &d );
+      ConfParam.v_FRM_IP.bytes[0] = a;
+      ConfParam.v_FRM_IP.bytes[1] = b;
+      ConfParam.v_FRM_IP.bytes[2] = c;
+      ConfParam.v_FRM_IP.bytes[3] = d;
+    }();*/
+  } else {
+    ConfParam.v_FRM_IP.bytes[0] = 192;
+    ConfParam.v_FRM_IP.bytes[1] = 168;
+    ConfParam.v_FRM_IP.bytes[2] = 1;
+    ConfParam.v_FRM_IP.bytes[3] = 1;
+  } ;
+
+
   ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<uint16_t>() : 83;
 //  ConfParam.v_ACSmultiple         = (json["ACSmultiple"].as<String>()!="") ? json["ACSmultiple"].as<String>() : String(F("50"));
   ConfParam.v_ACS_Sensor_Model    = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String(F("10"));
@@ -112,7 +131,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n Max_Current:")); Serial.print(ConfParam.v_Max_Current);
   Serial.print(F("\n ttl :")); Serial.print(ConfParam.v_ttl);
   Serial.print(F("\n tta:")); Serial.print(ConfParam.v_tta);
-  Serial.print(F("\n FRM_IP:")); Serial.print(ConfParam.v_FRM_IP);
+//  Serial.print(F("\n FRM_IP:")); Serial.print(ConfParam.v_FRM_IP);
   Serial.print(F("\n FRM_PRT:")); Serial.print(ConfParam.v_FRM_PRT);
 //  Serial.print(F("\n myppp:")); Serial.print(ConfParam.v_myppp);
   Serial.print(F("\n ntptz:")); Serial.print(ConfParam.v_ntptz);
@@ -136,7 +155,17 @@ bool saveConfig(TConfigParams &ConfParam){
     json["MQTT_BROKER"]=ConfParam.v_MQTT_BROKER;
     json["MQTT_B_PRT"]=ConfParam.v_MQTT_B_PRT;
     json["PUB_TOPIC1"]=ConfParam.v_PUB_TOPIC1;
-    json["FRM_IP"]=ConfParam.v_FRM_IP;
+
+    json["FRM_IP"]= IPAdrtoStr(MyConfParam.v_FRM_IP);
+    /*
+    [](){
+      char szRet[16];
+      sprintf(szRet,"%u.%u.%u.%u", MyConfParam.v_FRM_IP.bytes[0],  MyConfParam.v_FRM_IP.bytes[1],  MyConfParam.v_FRM_IP.bytes[2],
+        MyConfParam.v_FRM_IP.bytes[3]);
+      return String(szRet);
+      }();
+      */
+
     json["FRM_PRT"]=ConfParam.v_FRM_PRT;
 //    json["ACSmultiple"]=ConfParam.v_ACSmultiple;
     json["ACS_Sensor_Model"] = ConfParam.v_ACS_Sensor_Model;

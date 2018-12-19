@@ -20,8 +20,6 @@
 #include <Arduino.h>
 #include <Scheduletimer.h>
 
-
-
 #define RelayPin 05
 #define Relay2Pin 16
 #define ConfigInputPin 13
@@ -29,21 +27,20 @@
 #define SwitchButtonPin2 13 // revert to 12 when done testing
 #define InputPin12 12
 #define InputPin14 14
-
-// #define MAX_RELAYS 2
-
-const uint16_t MaxWifiTrials = 500;
-
 #define RETAINED true
 #define NOT_RETAINED false
 #define QOS2  2
-
 #define ON "on"
 #define OFF "off"
 #define TOG "tog"
-
 #define TOG_MODE 0
 #define BTN_MODE 1
+
+const uint16_t MaxWifiTrials = 500;
+
+typedef struct IPAdr {
+  uint8_t bytes[4];
+}IPAdr;
 
 typedef struct TConfigParams {
   String v_ssid;
@@ -52,7 +49,7 @@ typedef struct TConfigParams {
   String v_MQTT_BROKER ;
   uint16_t v_MQTT_B_PRT ;
   String v_PUB_TOPIC1 ;
-  String v_FRM_IP ;
+  IPAdr v_FRM_IP ;
   uint16_t v_FRM_PRT ;
   //String v_ACSmultiple ;
   String v_ACS_Sensor_Model;
@@ -85,11 +82,12 @@ typedef struct TConfigParams {
 
   extern TConfigParams MyConfParam;
   extern String  MAC;
-  //extern Schedule_timer relayttatimer;
-
   String CID();
-
   void relayon(void* obj);
+
+  String IPAdrtoStr(IPAdr& IP_);
+  void IPAdrfromStr(const char* strIP_, IPAdr& IP_);
+
   #include <RelayClass.h>
 
 #endif //CONFIGPARAMS_H
