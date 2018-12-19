@@ -47,7 +47,7 @@ typedef struct TConfigParams {
   String v_ssid;
   String v_pass;
   String v_PhyLoc ;
-  String v_MQTT_BROKER ;
+  IPAddress v_MQTT_BROKER ;
   uint16_t v_MQTT_B_PRT ;
   String v_PUB_TOPIC1 ;
   IPAddress v_FRM_IP ;

@@ -39,44 +39,39 @@ String timerprocessor(const String& var)
 
 String processor(const String& var)
 {
-  if(var == F( "MACADDR" ))  return (String(MAC.c_str()) + " - Chip id: " + CID());
-  if(var == F( "ssid" ))  return  String(MyConfParam.v_ssid.c_str());
-  if(var == F( "pass" ))  return String( MyConfParam.v_pass.c_str());
-  if(var == F( "PhyLoc" ))  return String( MyConfParam.v_PhyLoc.c_str());
-  if(var == F( "MQTT_BROKER" ))  return String( MyConfParam.v_MQTT_BROKER.c_str());
-  if(var == F( "MQTT_B_PRT" ))  return String( MyConfParam.v_MQTT_B_PRT);
-  if(var == F( "PUB_TOPIC1" ))  return String( MyConfParam.v_PUB_TOPIC1.c_str());
-
-  if(var == F( "FRM_IP" ))  return MyConfParam.v_FRM_IP.toString();
-
-  if(var == F( "FRM_PRT" ))  return String( MyConfParam.v_FRM_PRT);
-  if(var == F( "ACS_Sensor_Model" ))  return String( MyConfParam.v_ACS_Sensor_Model.c_str());
-  if(var == F( "ttl" ))  return String( MyConfParam.v_ttl);
-  if(var == F( "STATE_PUB_TOPIC" ))  return String( MyConfParam.v_STATE_PUB_TOPIC.c_str());
-  if(var == F( "I12_STS_PTP" ))  return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
-  if(var == F( "I14_STS_PTP" ))  return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
-  if(var == F( "TTL_PUB_TOPIC" ))  return String( MyConfParam.v_ttl_PUB_TOPIC.c_str());
+  if(var == F( "MACADDR" ))             return (String(MAC.c_str()) + " - Chip id: " + CID());
+  if(var == F( "ssid" ))                return  String(MyConfParam.v_ssid.c_str());
+  if(var == F( "pass" ))                return String( MyConfParam.v_pass.c_str());
+  if(var == F( "PhyLoc" ))              return String( MyConfParam.v_PhyLoc.c_str());
+  if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
+  if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
+  if(var == F( "PUB_TOPIC1" ))          return String( MyConfParam.v_PUB_TOPIC1.c_str());
+  if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
+  if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
+  if(var == F( "ACS_Sensor_Model" ))    return String( MyConfParam.v_ACS_Sensor_Model.c_str());
+  if(var == F( "ttl" ))                 return String( MyConfParam.v_ttl);
+  if(var == F( "STATE_PUB_TOPIC" ))     return String( MyConfParam.v_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I12_STS_PTP" ))         return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I14_STS_PTP" ))         return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
+  if(var == F( "TTL_PUB_TOPIC" ))       return String( MyConfParam.v_ttl_PUB_TOPIC.c_str());
   if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( MyConfParam.v_CURR_TTL_PUB_TOPIC.c_str());
-  if(var == F( "i_ttl_PUB_TOPIC" ))  return String( MyConfParam.v_i_ttl_PUB_TOPIC.c_str());
-  if(var == F( "ACS_AMPS" ))  return String( MyConfParam.v_ACS_AMPS.c_str());
-  if(var == F( "tta" ))  return String( MyConfParam.v_tta);
-  if(var == F( "Max_Current" ))  return String( MyConfParam.v_Max_Current);
-
-  if(var == F( "timeserver" ))  return MyConfParam.v_timeserver.toString() ;//String( MyConfParam.v_timeserver.c_str());
-
-  if(var == F( "ntptz" ))  return String( MyConfParam.v_ntptz);
-  if(var == F( "LWILL_TOPIC" ))  return String( MyConfParam.v_LWILL_TOPIC.c_str());
-  if(var == F( "SUB_TOPIC1" ))  return String( MyConfParam.v_SUB_TOPIC1.c_str());
-//  if(var == F( "PIC_Active" )) { if (MyConfParam.v_PIC_Active) return "1\" checked=\"\""; };
-  if(var == F( "MQTT_Active" )) { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
-  if(var == F( "ACS_Active" )) { if (MyConfParam.v_ACS_Active) return "1\" checked=\"\""; };
-  if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
-  if(var == F( "systemtime" ))  return digitalClockDisplay();
-  if(var == F( "heap" ))  return String(ESP.getFreeHeap());
+  if(var == F( "i_ttl_PUB_TOPIC" ))     return String( MyConfParam.v_i_ttl_PUB_TOPIC.c_str());
+  if(var == F( "ACS_AMPS" ))            return String( MyConfParam.v_ACS_AMPS.c_str());
+  if(var == F( "tta" ))                 return String( MyConfParam.v_tta);
+  if(var == F( "Max_Current" ))         return String( MyConfParam.v_Max_Current);
+  if(var == F( "timeserver" ))          return MyConfParam.v_timeserver.toString() ;//String( MyConfParam.v_timeserver.c_str());
+  if(var == F( "ntptz" ))               return String( MyConfParam.v_ntptz);
+  if(var == F( "LWILL_TOPIC" ))         return String( MyConfParam.v_LWILL_TOPIC.c_str());
+  if(var == F( "SUB_TOPIC1" ))          return String( MyConfParam.v_SUB_TOPIC1.c_str());
+  if(var == F( "MQTT_Active" ))         { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
+  if(var == F( "ACS_Active" ))          { if (MyConfParam.v_ACS_Active) return "1\" checked=\"\""; };
+  if(var == F( "Update_now" ))          { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
+  if(var == F( "systemtime" ))          return digitalClockDisplay();
+  if(var == F( "heap" ))                return String(ESP.getFreeHeap());
   if(var == F( "TOGGLE_BTN_PUB_TOPIC" ))  return String( MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str());
-  if(var == F( "I0MODE" ))  return String( MyConfParam.v_IN0_INPUTMODE);
-  if(var == F( "I1MODE" ))  return String( MyConfParam.v_IN1_INPUTMODE);
-  if(var == F( "I2MODE" ))  return String( MyConfParam.v_IN2_INPUTMODE);
+  if(var == F( "I0MODE" ))              return String( MyConfParam.v_IN0_INPUTMODE);
+  if(var == F( "I1MODE" ))              return String( MyConfParam.v_IN1_INPUTMODE);
+  if(var == F( "I2MODE" ))              return String( MyConfParam.v_IN2_INPUTMODE);
 
   return String();
 }

@@ -58,7 +58,11 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_ssid                = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ssid"));
   ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("pass"));
   ConfParam.v_PhyLoc              = (json["PhyLoc"].as<String>()!="") ? json["PhyLoc"].as<String>() : String(F("Not configured yet"));
-  ConfParam.v_MQTT_BROKER         = (json["MQTT_BROKER"].as<String>()!="") ? json["MQTT_BROKER"].as<String>() : String(F("192.168.1.1"));
+  //ConfParam.v_MQTT_BROKER         = (json["MQTT_BROKER"].as<String>()!="") ? json["MQTT_BROKER"].as<String>() : String(F("192.168.1.1"));
+
+  if (json["MQTT_BROKER"].as<String>()!="") {
+      ConfParam.v_MQTT_BROKER.fromString(json["MQTT_BROKER"].as<String>());} else { ConfParam.v_MQTT_BROKER.fromString("192.168.1.1");}
+
   ConfParam.v_MQTT_B_PRT          = (json["MQTT_B_PRT"].as<String>()!="") ? json["MQTT_B_PRT"].as<uint16_t>() : 1883;
   ConfParam.v_PUB_TOPIC1          = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String(F("/none"));
   ConfParam.v_ttl_PUB_TOPIC       = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String(F("/none"));
@@ -129,7 +133,7 @@ bool saveConfig(TConfigParams &ConfParam){
     json["ssid"]= ConfParam.v_ssid ;
     json["pass"]=ConfParam.v_pass;
     json["PhyLoc"]=ConfParam.v_PhyLoc;
-    json["MQTT_BROKER"]=ConfParam.v_MQTT_BROKER;
+    json["MQTT_BROKER"]=ConfParam.v_MQTT_BROKER.toString();
     json["MQTT_B_PRT"]=ConfParam.v_MQTT_B_PRT;
     json["PUB_TOPIC1"]=ConfParam.v_PUB_TOPIC1;
     json["FRM_IP"]= MyConfParam.v_FRM_IP.toString();

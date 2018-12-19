@@ -707,7 +707,7 @@ void Wifi_connect() {
                     MDNS.addService(F("http"), F("tcp"), 80); // Announce esp tcp service on port 8080
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), MyConfParam.v_STATE_PUB_TOPIC.c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.toString().c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(MyConfParam.v_ttl).c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(MyConfParam.v_Max_Current).c_str());
 
@@ -753,27 +753,6 @@ void setup() {
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
 
-
-
-    //String test = ;
-
-    int a, b, c, d;
-    //sscanf( json["FRM_IP"].as<String>().c_str(), "%hhu.%hhu.%hhu.%hhu", ConfParam.v_FRM_IP.bytes[1], ConfParam.v_FRM_IP.bytes[2], ConfParam.v_FRM_IP.bytes[3], ConfParam.v_FRM_IP.bytes[4] );
-    sscanf( "192.168.111.222", "%d.%d.%d.%d", &a, &b, &c, &d );
-    Serial.print("\n *****************************************************");
-    PRINTLN("");
-    Serial.print(a);
-    PRINTLN("");
-    Serial.print(b);
-    PRINTLN("");
-    Serial.print(c);
-    PRINTLN("");
-    Serial.print(d);
-    PRINTLN("");
-
-
-
-
     /* You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
        https://github.com/me-no-dev/arduino-esp32fs-plugin */
@@ -806,7 +785,7 @@ void setup() {
 		mqttClient.onUnsubscribe(onMqttUnsubscribe);
 		mqttClient.onMessage(onMqttMessage);
 		mqttClient.onPublish(onMqttPublish);
-		mqttClient.setServer(MyConfParam.v_MQTT_BROKER.c_str(), MyConfParam.v_MQTT_B_PRT);
+		mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
 
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
