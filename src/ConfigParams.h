@@ -63,7 +63,7 @@ typedef struct TConfigParams {
   String v_STATE_PUB_TOPIC ;
   String v_InputPin12_STATE_PUB_TOPIC ;
   String v_InputPin14_STATE_PUB_TOPIC ;
-  String v_tta ;
+  uint32_t v_tta ;
   uint8_t v_Max_Current ;
   String v_ACS_AMPS;
   String v_timeserver ;

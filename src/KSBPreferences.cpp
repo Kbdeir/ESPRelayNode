@@ -41,7 +41,6 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
   		ConfParam.v_GPIO12_TOG =  preferences.getString("GPIO12_TOG");
   		ConfParam.v_Copy_IO =  preferences.getString("Copy_IO");
   		ConfParam.v_ACS_Active =  preferences.getString("ACS_Active");
-  		ConfParam.v_tta =  preferences.getString("tta");
   		ConfParam.v_Update_now =  preferences.getString("Update_now");
 
       Serial.println("will connect to: " + preferences.getString("ssid"));
@@ -126,7 +125,6 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
   		ConfParam.v_GPIO12_TOG =  preferences.getString("GPIO12_TOG");
   		ConfParam.v_Copy_IO =  preferences.getString("Copy_IO");
   		ConfParam.v_ACS_Active =  preferences.getString("ACS_Active");
-  		ConfParam.v_tta =  preferences.getString("tta");
   		ConfParam.v_Update_now =  preferences.getString("Update_now");
 
     preferences.end();

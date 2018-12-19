@@ -74,7 +74,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
 //  ConfParam.v_ACSmultiple         = (json["ACSmultiple"].as<String>()!="") ? json["ACSmultiple"].as<String>() : String(F("50"));
   ConfParam.v_ACS_Sensor_Model    = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String(F("10"));
   ConfParam.v_ttl                 = (json["ttl"].as<String>()!="") ? json["ttl"].as<uint32_t>() : 0;
-  ConfParam.v_tta                 = (json["tta"].as<String>()!="") ? json["tta"].as<String>() : String(F("0"));
+  ConfParam.v_tta                 = (json["tta"].as<String>()!="") ? json["tta"].as<uint32_t>() : 0;
   ConfParam.v_Max_Current         = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<uint8_t>() : 10;
   ConfParam.v_timeserver          = (json["timeserver"].as<String>()!="") ? json["timeserver"].as<String>() : String(F("192.168.1.1"));
   ConfParam.v_PIC_Active          = (json["PIC_Active"].as<String>()!="") ? json["PIC_Active"].as<uint8_t>() ==1 : false;
@@ -255,7 +255,7 @@ bool saveDefaultConfig(){
   json["ACS_Active"]="0";
   json["tta"]="0";
   json["Update_now"]="0";
-  json["I0MODE"]=1;  
+  json["I0MODE"]=1;
   json["I1MODE"]=1;
   json["I2MODE"]=1;
 

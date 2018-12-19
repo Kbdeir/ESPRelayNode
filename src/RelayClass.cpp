@@ -192,7 +192,7 @@ boolean Relay::loadrelayparams(){
      RelayConfParam->v_STATE_PUB_TOPIC = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String("/none");
      RelayConfParam->v_ACS_Sensor_Model = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String("10");
      RelayConfParam->v_ttl = (json["ttl"].as<String>()!="") ? json["ttl"].as<uint32_t>() : 0;
-     RelayConfParam->v_tta = (json["tta"].as<String>()!="") ? json["tta"].as<String>() : String("0");
+     RelayConfParam->v_tta = (json["tta"].as<String>()!="") ? json["tta"].as<uint32_t>() : 0;
      RelayConfParam->v_Max_Current = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<uint8_t>() : 10;
      RelayConfParam->v_LWILL_TOPIC = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String("/none");
      RelayConfParam->v_SUB_TOPIC1 = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String("/none");

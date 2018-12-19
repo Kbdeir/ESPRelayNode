@@ -55,7 +55,7 @@ String processor(const String& var)
   if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( MyConfParam.v_CURR_TTL_PUB_TOPIC.c_str());
   if(var == F( "i_ttl_PUB_TOPIC" ))  return String( MyConfParam.v_i_ttl_PUB_TOPIC.c_str());
   if(var == F( "ACS_AMPS" ))  return String( MyConfParam.v_ACS_AMPS.c_str());
-  if(var == F( "tta" ))  return String( MyConfParam.v_tta.c_str());
+  if(var == F( "tta" ))  return String( MyConfParam.v_tta);
   if(var == F( "Max_Current" ))  return String( MyConfParam.v_Max_Current);
   if(var == F( "timeserver" ))  return String( MyConfParam.v_timeserver.c_str());
   if(var == F( "ntptz" ))  return String( MyConfParam.v_ntptz);

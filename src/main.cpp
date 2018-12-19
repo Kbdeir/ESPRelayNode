@@ -80,69 +80,47 @@ volatile byte InputPin14_interruptCounter=0;
 // #define FORMAT_SPIFFS_IF_FAILED true; // defined in FSFunctions
 
 #define SERIAL_DEVICE     Serial
-
-// a few defines to abstract away the Serial-specific stuff
 #define PRINT(...)    SERIAL_DEVICE.print(__VA_ARGS__)
 #define PRINTLN(...)  SERIAL_DEVICE.println(__VA_ARGS__)
 #define LINE()    PRINTLN(' ')
 #define LINES(n)  for (uint8_t _bl=0; _bl<n; _bl++) { PRINTLN(' '); }
-
+#define WIFI_AP_MODE 1
+#define WIFI_CLT_MODE 0
+#define DEFAULT_BOUNCE_TIME 100
 
 #ifdef ESP32
     #ifdef USEPREF
     Preferences preferences;
     #endif
 #endif
-#define WIFI_AP_MODE 1
-#define WIFI_CLT_MODE 0
-#define DEFAULT_BOUNCE_TIME 100
 
-//Bounce debouncer14 = Bounce();
-//Bounce debouncer12 = Bounce();
 
-File file;
 
-long timezone = 1;
-byte daysavetime = 1;
-int wifimode = WIFI_CLT_MODE;
-const int led = 02;
+long timezone     = 1;
+byte daysavetime  = 1;
+int wifimode      = WIFI_CLT_MODE;
+const int led     = 02;
 String MAC;
-
-//String PrefSSID, PrefPassword;  // used by preferences storage
 unsigned long lastMillis = 0;
-
-uint32_t trials = 0;
-char buf[100];
-
+uint32_t trials   = 0;
+//char buf[100];
 int  WFstatus;
-int UpCount = 0;
-//int32_t rssi;           // store WiFi signal strength here
-//String getSsid;
-//String getPass;
-
+int UpCount       = 0;
 WiFiClient net;
-//WiFiUDP wifiUdp;
-//NTP ntp(wifiUdp);
-
-String APssid = (String("Node-") +  CID()+"-");
+String APssid     = (String("Node-") +  CID()+"-");
 const char* APpassword = "12345678";
-
-int ledState = LOW;             					// ledState used to set the LED
+int ledState      = LOW;             					// ledState used to set the LED
 unsigned long previousMillis = 0;         // will store last time LED was updated
 long blinkInterval = 1000;           		      // blinkInterval at which to blink (milliseconds)
-long APModetimer = 60*5;
+long APModetimer  = 60*5;
 long APModetimer_run_value = 0;
 AsyncServer* MBserver = new AsyncServer(502); // start listening on tcp port 7050
 ModbusIP mb;
-const int LAMP1_COIL = 1;
-const int LAMP2_COIL = 2;
+const int LAMP1_COIL  = 1;
+const int LAMP2_COIL  = 2;
+float old_acs_value   = 0;
+float ACS_I_Current   = 0;
 
-
-
-//OneButton button(SwitchButtonPin, true);
-
-float old_acs_value = 0;
-float ACS_I_Current = 0;
 ACS712 sensor(ACS712_20A, A0);
 
 void ticker_relay_ttl_off (void* obj) ;
@@ -150,8 +128,6 @@ void ticker_relay_ttl_periodic_callback(void* obj);
 void ticker_ACS712_func (void* obj);
 void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
-
-//std::vector<Relay*> v; // a list to hold all clients
 
 Relay relay1(
     RelayPin,
@@ -172,7 +148,7 @@ Relay relay1(
       onRelaychangeInterruptSvc,
       relayon
     );
-    */
+*/
 
 
 void ticker_ACS712_mqtt (void* obj) {
@@ -190,6 +166,7 @@ void ticker_ACS712_mqtt (void* obj) {
   }
 }
 }
+
 
 void ticker_ACS712_func (void* obj) {
   if (obj != nullptr) {
@@ -236,6 +213,7 @@ void onRelaychangeInterruptSvc(void* t){
 
   if (rly->rchangedflag ) {
       rly->rchangedflag = false;
+
       if (rly->readrelay() == HIGH) {
         Serial.print(F("\n\n An interrupt *ON* has occurred."));
         if (rly->RelayConfParam->v_ttl > 0 ) {
@@ -287,7 +265,7 @@ void buttonclick(void* sender) {
       rly->mdigitalWrite(rly->getRelayPin(), LOW);
       rly->stop_ttl_timer();
     } else {
-    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta.toInt()*1000);
+    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
     rly->ticker_relay_tta->start();
     }
   }
