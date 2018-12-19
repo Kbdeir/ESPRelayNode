@@ -46,7 +46,6 @@ String processor(const String& var)
   if(var == F( "PUB_TOPIC1" ))  return String( MyConfParam.v_PUB_TOPIC1.c_str());
   if(var == F( "FRM_IP" ))  return String( MyConfParam.v_FRM_IP.c_str());
   if(var == F( "FRM_PRT" ))  return String( MyConfParam.v_FRM_PRT);
-//  if(var == F( "ACSmultiple" ))  return String( MyConfParam.v_ACSmultiple.c_str());
   if(var == F( "ACS_Sensor_Model" ))  return String( MyConfParam.v_ACS_Sensor_Model.c_str());
   if(var == F( "ttl" ))  return String( MyConfParam.v_ttl);
   if(var == F( "STATE_PUB_TOPIC" ))  return String( MyConfParam.v_STATE_PUB_TOPIC.c_str());
@@ -64,10 +63,7 @@ String processor(const String& var)
   if(var == F( "SUB_TOPIC1" ))  return String( MyConfParam.v_SUB_TOPIC1.c_str());
   if(var == F( "PIC_Active" )) { if (MyConfParam.v_PIC_Active) return "1\" checked=\"\""; };
   if(var == F( "MQTT_Active" )) { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
-//  if(var == F( "GPIO12_TOG" )) {  if (MyConfParam.v_GPIO12_TOG == "1") return "1\" checked=\"\"";	};
-//  if(var == F( "Copy_IO" )) { if (MyConfParam.v_Copy_IO == "1") return "1\" checked=\"\""; };
   if(var == F( "ACS_Active" )) { if (MyConfParam.v_ACS_Active) return "1\" checked=\"\""; };
-//  if(var == F( "myppp" )) { if (MyConfParam.v_myppp == "1") return "1\" checked=\"\""; };
   if(var == F( "Update_now" )) { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))  return digitalClockDisplay();
   if(var == F( "heap" ))  return String(ESP.getFreeHeap());

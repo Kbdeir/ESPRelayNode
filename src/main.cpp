@@ -200,7 +200,6 @@ void ticker_ACS712_func (void* obj) {
         // Serial.println(String("I = ") + ACS_I_Current + " A");
         if (ACS_I_Current > rly->RelayConfParam->v_Max_Current) {
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
-            // uint16_t packetIdPub = mqttClient.publish(MyConfParam.v_STATE_PUB_TOPIC.c_str(), 2, true, OFF); moved to interrupt
         }
     }
   }
@@ -232,11 +231,6 @@ void ticker_relay_ttl_off (void* obj) {
 
 
 void onRelaychangeInterruptSvc(void* t){
-/*  if((interruptCounter > 0) or (interruptCounter2 > 0)){
-      if (interruptCounter > 0) interruptCounter--;
-      if (interruptCounter2 > 0) interruptCounter2--;
-      */
-
   Relay * rly;
   rly = static_cast<Relay *>(t);
 
@@ -261,8 +255,6 @@ void onRelaychangeInterruptSvc(void* t){
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
       }
   } else {
-        //char* msg;
-        //digitalRead(rly->getRelayPin()) == HIGH ? msg = ON : msg = OFF;
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                             digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);
   }
@@ -270,22 +262,15 @@ void onRelaychangeInterruptSvc(void* t){
 
 
 void onchangeSwitchInterruptSvc(void* t){
-  //SwitchButtonPin_interruptCounter--;
   Relay * rly;
   rly = static_cast<Relay *>(t);
-  //if ((rly->RelayConfParam->v_GPIO12_TOG == "0") && (rly->RelayConfParam->v_Copy_IO == "0")) {
-if (rly->RelayConfParam->v_IN0_INPUTMODE == 1) {
-    char* msg;
-      //rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
+  if (rly->RelayConfParam->v_IN0_INPUTMODE == INPUT_NORMAL) {
       mqttClient.publish(MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str(), QOS2, RETAINED,
         rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
-      //mqttClient.publish(MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
   }
-  //if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
-    if (rly->RelayConfParam->v_IN0_INPUTMODE == 2) {
+  if (rly->RelayConfParam->v_IN0_INPUTMODE == INPUT_COPY_TO_RELAY) {
       rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
   }
-
 }
 
 
@@ -296,7 +281,7 @@ void buttonclick(void* sender) {
   rly = static_cast<Relay *>(sender);
 
   //if ((rly->RelayConfParam->v_GPIO12_TOG == "1") && (rly->RelayConfParam->v_Copy_IO == "0"))  {
-  if (rly->RelayConfParam->v_IN0_INPUTMODE == 3)  {
+  if (rly->RelayConfParam->v_IN0_INPUTMODE == INPUT_RELAY_TOGGLE)  {
     if (rly->readrelay() == HIGH) {
       rly->ticker_relay_tta->stop();
       rly->mdigitalWrite(rly->getRelayPin(), LOW);
@@ -326,9 +311,9 @@ if (sender){
 
 void IP_info()
 {
-  //int32_t rssi;           // store WiFi signal strength here
-  //String getSsid;
-  //String getPass;
+  // int32_t rssi;           // store WiFi signal strength here
+  // String getSsid;
+  // String getPass;
   // String getSsid = WiFi.SSID();
   // String getPass = WiFi.psk();
    #ifdef ESP32
@@ -452,14 +437,20 @@ void chronosInit() {
 
   uint8_t tcounter = 1;
   while(tcounter <= MAX_NUMBER_OF_TIMERS){ [&tcounter]() {
-        char  timerfilename[30] = "";
-        strcpy(timerfilename, "/timer");
-        strcat(timerfilename, String(tcounter).c_str());
-        strcat(timerfilename, ".json");
-        Serial.print (F("\n***************************************************************\n"));
-        Serial.print  (timerfilename);
-        Serial.print("\n");
-        config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
+
+        config_read_error_t res = loadNodeTimer(
+          [tcounter](){
+            char  timerfilename[30] = "";
+            strcpy(timerfilename, "/timer");
+            strcat(timerfilename, String(tcounter).c_str());
+            strcat(timerfilename, ".json");
+            Serial.print (F("\n--------------------------"));
+            Serial.print  (timerfilename);
+            Serial.print("\n");
+            return timerfilename;
+          }()
+        ,NTmr);
+
         tcounter++;
 
         if ((res == SUCCESS) && NTmr.enabled) {
@@ -524,7 +515,6 @@ void chronosInit() {
           Serial.print(F(" - FULL SPAN timer type: "));
           Serial.print(TimerType::TM_FULL_SPAN);
           Serial.print(F("\n\n\n END TIMER DEBUGG ************\n\n\n"));
-
           */
 
           if (NTmr.TM_type == TimerType::TM_WEEKDAY_SPAN) {
@@ -688,9 +678,6 @@ InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
 
-	//String getSsid = MyConfParam.v_ssid;
-  //String getPass = MyConfParam.v_pass;
-
   relay1.loadrelayparams();
   Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
   Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
@@ -716,7 +703,7 @@ void Wifi_connect() {
                 		blinkled();
                     trials++;
                     Serial.print(F("-"));
-                    // yield();
+
                 }
                 if  (WiFi.status() == WL_CONNECTED)   {
                   Serial.println(F("WiFi Connected."));
