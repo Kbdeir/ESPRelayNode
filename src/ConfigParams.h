@@ -19,6 +19,7 @@
 
 #include <Arduino.h>
 #include <Scheduletimer.h>
+#include <IPAddress.h>
 
 #define RelayPin 05
 #define Relay2Pin 16
@@ -49,7 +50,7 @@ typedef struct TConfigParams {
   String v_MQTT_BROKER ;
   uint16_t v_MQTT_B_PRT ;
   String v_PUB_TOPIC1 ;
-  IPAdr v_FRM_IP ;
+  IPAddress v_FRM_IP ;
   uint16_t v_FRM_PRT ;
   //String v_ACSmultiple ;
   String v_ACS_Sensor_Model;
@@ -63,7 +64,7 @@ typedef struct TConfigParams {
   uint32_t v_tta ;
   uint8_t v_Max_Current ;
   String v_ACS_AMPS;
-  String v_timeserver ;
+  IPAddress v_timeserver ;
   //uint8_t v_PIC_Active ;
   uint8_t v_MQTT_Active ;
   //String v_myppp ;

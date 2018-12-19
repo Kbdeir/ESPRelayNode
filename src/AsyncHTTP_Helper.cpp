@@ -47,14 +47,7 @@ String processor(const String& var)
   if(var == F( "MQTT_B_PRT" ))  return String( MyConfParam.v_MQTT_B_PRT);
   if(var == F( "PUB_TOPIC1" ))  return String( MyConfParam.v_PUB_TOPIC1.c_str());
 
-//if(var == F( "FRM_IP" ))  return String( MyConfParam.v_FRM_IP.c_str());
-  if(var == F( "FRM_IP" ))  return IPAdrtoStr(MyConfParam.v_FRM_IP);
-/*[](){
-  char szRet[16];
-  sprintf(szRet,"%u.%u.%u.%u", MyConfParam.v_FRM_IP.bytes[0],  MyConfParam.v_FRM_IP.bytes[1],  MyConfParam.v_FRM_IP.bytes[2],
-    MyConfParam.v_FRM_IP.bytes[3]);
-  return String(szRet);
-}();*/
+  if(var == F( "FRM_IP" ))  return MyConfParam.v_FRM_IP.toString();
 
   if(var == F( "FRM_PRT" ))  return String( MyConfParam.v_FRM_PRT);
   if(var == F( "ACS_Sensor_Model" ))  return String( MyConfParam.v_ACS_Sensor_Model.c_str());
@@ -68,7 +61,9 @@ String processor(const String& var)
   if(var == F( "ACS_AMPS" ))  return String( MyConfParam.v_ACS_AMPS.c_str());
   if(var == F( "tta" ))  return String( MyConfParam.v_tta);
   if(var == F( "Max_Current" ))  return String( MyConfParam.v_Max_Current);
-  if(var == F( "timeserver" ))  return String( MyConfParam.v_timeserver.c_str());
+
+  if(var == F( "timeserver" ))  return MyConfParam.v_timeserver.toString() ;//String( MyConfParam.v_timeserver.c_str());
+
   if(var == F( "ntptz" ))  return String( MyConfParam.v_ntptz);
   if(var == F( "LWILL_TOPIC" ))  return String( MyConfParam.v_LWILL_TOPIC.c_str());
   if(var == F( "SUB_TOPIC1" ))  return String( MyConfParam.v_SUB_TOPIC1.c_str());
