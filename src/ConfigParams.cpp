@@ -5,7 +5,6 @@ boolean CalendarNotInitiated = true;
 
 TConfigParams MyConfParam;
 
-
 String CID(){
   #ifdef ESP32
     char buf[16];
@@ -27,6 +26,7 @@ void relayon(void* obj){
 }
 
 
+/*
   String IPAdrtoStr(IPAdr& IP_){
       char szRet[16];
       sprintf(szRet,"%u.%u.%u.%u", IP_.bytes[0],  IP_.bytes[1],  IP_.bytes[2],
@@ -43,9 +43,6 @@ void relayon(void* obj){
       IP_.bytes[2] = c;
       IP_.bytes[3] = d;
   };
-
-
-
-
+*/
 
 //Schedule_timer relayttatimer(relayon,0,0,MILLIS_);

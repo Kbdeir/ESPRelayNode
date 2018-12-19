@@ -52,7 +52,6 @@ typedef struct TConfigParams {
   String v_PUB_TOPIC1 ;
   IPAddress v_FRM_IP ;
   uint16_t v_FRM_PRT ;
-  //String v_ACSmultiple ;
   String v_ACS_Sensor_Model;
   uint32_t v_ttl ;                // TTL VALUE
   String v_ttl_PUB_TOPIC ;      // MQTT TTL publish topic
@@ -65,14 +64,10 @@ typedef struct TConfigParams {
   uint8_t v_Max_Current ;
   String v_ACS_AMPS;
   IPAddress v_timeserver ;
-  //uint8_t v_PIC_Active ;
   uint8_t v_MQTT_Active ;
-  //String v_myppp ;
   signed char v_ntptz ;
   String v_LWILL_TOPIC ;
   String v_SUB_TOPIC1 ;
-//  String v_GPIO12_TOG ;
-//  String v_Copy_IO ;
   boolean v_ACS_Active ;
   boolean v_Update_now ;
   String v_TOGGLE_BTN_PUB_TOPIC ;
@@ -85,9 +80,6 @@ typedef struct TConfigParams {
   extern String  MAC;
   String CID();
   void relayon(void* obj);
-
-  String IPAdrtoStr(IPAdr& IP_);
-  void IPAdrfromStr(const char* strIP_, IPAdr& IP_);
 
   #include <RelayClass.h>
 
