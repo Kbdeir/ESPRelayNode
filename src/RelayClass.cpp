@@ -28,6 +28,8 @@ Relay::Relay(uint8_t p,
 
   lockupdate = false;
   freeinterval = 200;
+  r_in_mode = 1;
+  fMQTT_Update_Topic = "/none";
   timerpaused = false;
 
   // tickers callback functions for ttl, acs, tta
@@ -196,11 +198,12 @@ boolean Relay::loadrelayparams(){
      RelayConfParam->v_Max_Current = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<uint8_t>() : 10;
      RelayConfParam->v_LWILL_TOPIC = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String("/none");
      RelayConfParam->v_SUB_TOPIC1 = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String("/none");
-//     RelayConfParam->v_GPIO12_TOG = (json["GPIO12_TOG"].as<String>()!="") ? json["GPIO12_TOG"].as<String>() : String("0");
-//     RelayConfParam->v_Copy_IO = (json["Copy_IO"].as<String>()!="") ? json["Copy_IO"].as<String>() : String("0");
      RelayConfParam->v_ACS_Active = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<uint8_t>() == 1 : false;
 
      RelayConfParam->v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
+     RelayConfParam->v_IN1_INPUTMODE       =  json["I1MODE"].as<uint8_t>();
+     RelayConfParam->v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
+
 
      return true;
    }
@@ -245,15 +248,20 @@ boolean Relay::loadrelayparams(){
       return digitalRead(this->pin);
     }
 
-  void Relay::attachSwithchButton(uint8_t switchbutton,
-                                  //fnptr intfunc,
-                                  fnptr_a on_associatedbtn_change, // on change for input or copy io mode
-                                  fnptr_a onclick) // on click for toggle mode
-                                  {
+  void Relay::attachSwithchButton (uint8_t switchbutton
+                                  ,fnptr_a on_associatedbtn_change // on change for input or copy io mode
+                                  ,fnptr_a onclick
+                                  ,uint8_t im
+                                  ,String& MQTT_Update_Topic
+                                )
+    {
+      r_in_mode = im;
+      fMQTT_Update_Topic = MQTT_Update_Topic;
       fswitchbutton = switchbutton;
       pinMode (fswitchbutton, INPUT_PULLUP );
       fon_associatedbtn_change = on_associatedbtn_change;
       fonclick = onclick;
+
       fbutton = new OneButton(fswitchbutton, true);
       btn_debouncer->attach(fswitchbutton,INPUT_PULLUP);
       btn_debouncer->interval(25); // interval in ms
@@ -264,7 +272,7 @@ boolean Relay::loadrelayparams(){
       fgeneralinLoopFunc = GeneralLoopFunc;
     }
 
-    uint8_t Relay::getRelaySwithbtn(){
+  uint8_t Relay::getRelaySwithbtn(){
       return this->fswitchbutton;
     }
 

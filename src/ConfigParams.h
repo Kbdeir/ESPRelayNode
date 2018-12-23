@@ -23,11 +23,14 @@
 
 #define RelayPin 05
 #define Relay2Pin 16
+
 #define ConfigInputPin 13
-#define SwitchButtonPin 12 // revert to 12 when done testing
+#define SwitchButtonPin 12  // revert to 12 when done testing
 #define SwitchButtonPin2 13 // revert to 12 when done testing
+
 #define InputPin12 12
 #define InputPin14 14
+
 #define RETAINED true
 #define NOT_RETAINED false
 #define QOS2  2

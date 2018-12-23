@@ -6,6 +6,7 @@
 #include <TimerClass.h>
 
 extern NodeTimer NTmr;
+extern Relay relay1;
 
 //const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 AsyncWebServer AsyncWeb_server(80);
@@ -131,6 +132,8 @@ void SetAsyncHTTP(){
           #endif
           saveConfig(MyConfParam, request);
           loadConfig(MyConfParam);
+          relay1.loadrelayparams();
+
           uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
             [](int i){
               char buffer [33];

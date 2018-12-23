@@ -7,6 +7,8 @@
 #include <Scheduletimer.h>
 #include <OneButton.h>
 #include <Bounce2.h>
+#include <InputClass.h>
+
 
 typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
@@ -17,7 +19,7 @@ const int DEFLEN = 20;
 
 
 
- class Relay
+class Relay
 {
   private:
    uint8_t pin;
@@ -45,7 +47,6 @@ const int DEFLEN = 20;
    void freelockfunc(void);
    void freelockreset() ;
 
-   //unsigned long cmillis;
    unsigned long pmillis;
    unsigned long freeinterval;
 
@@ -60,6 +61,8 @@ const int DEFLEN = 20;
     Schedule_timer *freelock;
     boolean rchangedflag;
     boolean timerpaused;
+    uint8_t r_in_mode;
+    String fMQTT_Update_Topic;
 
   //  Relay(uint8_t p);
     Relay(uint8_t p,
@@ -93,9 +96,13 @@ const int DEFLEN = 20;
     void setRelayTTT_Timer_Interval(uint32_t interval);
     ksb_status_t TTLstate();
     int readrelay ();
-    void attachSwithchButton(uint8_t switchbutton,
+    void attachSwithchButton (
+                            uint8_t switchbutton,
                             fnptr_a intSvcfunc,
-                            fnptr_a OnebtnSvcfunc);
+                            fnptr_a OnebtnSvcfunc
+                            , uint8_t im
+                            , String& MQTT_Update_Topic
+                            );
 
     uint8_t getRelaySwithbtn();
     uint8_t getRelayPin();

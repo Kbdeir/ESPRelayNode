@@ -10,7 +10,7 @@ typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 
-enum input_mode {INPUT_NONE, INPUT_TOGGLE, INPUT_NORMAL, INPUT_RELAY_TOGGLE, INPUT_COPY_TO_RELAY};
+enum input_mode {INPUT_NONE, INPUT_TOGGLE, INPUT_NORMAL, INPUT_RELAY_TOGGLE, INPUT_COPY_TO_RELAY} ;
 
  class InputSensor
 {
