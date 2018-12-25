@@ -24,7 +24,8 @@ NodeTimer::NodeTimer(uint8_t para_id,
           String para_spantimefrom,
           String para_spantimeto,
           TWeekdays * para_weekdays,
-          boolean para_enabled
+          boolean para_enabled,
+          uint8_t para_relay
 ) {
     id = para_id;
     TM_type = TM_FULL_SPAN;
@@ -37,7 +38,7 @@ NodeTimer::NodeTimer(uint8_t para_id,
     Mark_Hours    = 0;
     Mark_Minutes  = 0;
     Testchar = new char[22]; //"Hello there I am char";
-
+    relay =  para_relay;
 }
 
 NodeTimer::~NodeTimer(){
@@ -144,6 +145,7 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.Mark_Minutes = (json["Mark_Minutes"].as<String>()!="") ? json["Mark_Minutes"].as<uint16_t>() : 0;
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
   para_NodeTimer.secondsspan = 0;
+  para_NodeTimer.relay = (json["TRelay"].as<String>()!="") ? json["TRelay"].as<uint8_t>() : 0;
 
   strcpy(para_NodeTimer.Testchar, json["Testchar"] | "Hello");
 

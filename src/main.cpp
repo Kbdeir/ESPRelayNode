@@ -52,7 +52,7 @@ extern std::vector<void *> relays ; // a list to hold all relays
 time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
 
-   NodeTimer NTmr(4);
+NodeTimer NTmr(4);
 
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
@@ -239,7 +239,7 @@ void onRelaychangeInterruptSvc(void* t){
 }
 
 
-void process_Input(void * obj){
+void process_Input(void * obj, void * obj1){
   if (obj != nullptr) {
     InputSensor * snsr;
     snsr = static_cast<InputSensor *>(obj);
@@ -470,7 +470,7 @@ void chronosInit() {
 
         if ((res == SUCCESS) && NTmr.enabled) {
           //loadNodeTimer("/timer.json",NTmr);
-          Serial.print(F("\n\n\nBEGIN TIMER DEBUG ************"));
+          //Serial.print(F("\n\n\nBEGIN TIMER DEBUG ************"));
           int Year, Month, Day, Hour, Minute, Second ;
           int TYear, TMonth, TDay, THour, TMinute, TSecond ;
 
@@ -545,43 +545,43 @@ void chronosInit() {
 
               if (NTmr.weekdays->Sunday) {
                 MyCalendar.add(
-                    Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Sunday,Hour, Minute, 00),
+                    Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Sunday,Hour, Minute, 00),
                     Chronos::Span::Seconds(dailydiffsecs))
                   );
               }
                 if (NTmr.weekdays->Monday) {
                  MyCalendar.add(
-                     Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Monday,Hour, Minute, 00),
+                     Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Monday,Hour, Minute, 00),
                      Chronos::Span::Seconds(dailydiffsecs))
                    );
                }
                 if (NTmr.weekdays->Tuesday) {
                   MyCalendar.add(
-                      Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
+                      Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
                       Chronos::Span::Seconds(dailydiffsecs))
                     );
                 }
                 if (NTmr.weekdays->Wednesday) {
                    MyCalendar.add(
-                       Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Wednesday,Hour, Minute, 00),
+                       Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Wednesday,Hour, Minute, 00),
                        Chronos::Span::Seconds(dailydiffsecs))
                      );
                  }
                  if (NTmr.weekdays->Thursday) {
                     MyCalendar.add(
-                        Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Thursday,Hour, Minute, 00),
+                        Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Thursday,Hour, Minute, 00),
                         Chronos::Span::Seconds(dailydiffsecs))
                       );
                   }
                   if (NTmr.weekdays->Friday) {
                      MyCalendar.add(
-                         Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday,Hour, Minute, 00),
+                         Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Friday,Hour, Minute, 00),
                          Chronos::Span::Seconds(dailydiffsecs))
                        );
                    }
                    if (NTmr.weekdays->Saturday) {
                       MyCalendar.add(
-                          Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
+                          Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
                           Chronos::Span::Seconds(dailydiffsecs))
                         );
                     }
@@ -597,8 +597,9 @@ void chronosInit() {
                   if (NTmr.Mark_Hours + NTmr.Mark_Minutes > 0) {
                     dailydiffsecs = (NTmr.Mark_Hours * 3600) +  (NTmr.Mark_Minutes * 60) ;
                   }
+
                     MyCalendar.add(
-                        Chronos::Event(4,Chronos::Mark::Daily(Hour, Minute, 00),
+                        Chronos::Event(NTmr.relay,Chronos::Mark::Daily(Hour, Minute, 00),
                         Chronos::Span::Seconds(dailydiffsecs))
                       );
                 }
@@ -606,7 +607,7 @@ void chronosInit() {
 
           if (NTmr.TM_type == TimerType::TM_FULL_SPAN) {
                     MyCalendar.add(
-                        Chronos::Event(4,previous,next)
+                        Chronos::Event(NTmr.relay,previous,next)
                       );
           }
 
@@ -639,6 +640,8 @@ void chronosevaluatetimers(Calendar MyCalendar) {
     LINE();
     //PRINTLN(F("**** Some things are going on this very minute! ****"));
     for (int i = 0; i < numOngoing; i++) {
+
+
       PRINT(F("**** Running Event: "));
       PRINT((int )occurrenceList[i].id);
       PRINT('\t');
@@ -646,24 +649,36 @@ void chronosevaluatetimers(Calendar MyCalendar) {
       PRINT(F("\t ends in: "));
       (nowTime - occurrenceList[i].finish).printTo(SERIAL_DEVICE);
 
+      if (occurrenceList[i].id < relays.size()) {
+      Relay * rly = static_cast<Relay *>(relays.at(occurrenceList[i].id));
+
+      if (rly) {
+
+      if ((nowTime > occurrenceList[i].start) && (nowTime < occurrenceList[i].start + 5)) {
+        rly->timerpaused = false;
+      }
+
       if ((nowTime > occurrenceList[i].start + 1)) {
         LINE();
         PRINTLN(F(" *** truning relay ON... event is Starting - TimerPaused value: *** "));
-        PRINT(relay1.timerpaused);
-        if (!digitalRead(relay1.getRelayPin())){
-          if (!relay1.timerpaused) {
-            relay1.mdigitalWrite(relay1.getRelayPin(),HIGH);
+        PRINT(rly->timerpaused);
+        if (!digitalRead(rly->getRelayPin())){
+          if (!rly->timerpaused) {
+            rly->mdigitalWrite(rly->getRelayPin(),HIGH);
           }
         }
       }
       if ((nowTime == occurrenceList[i].finish - 1 )) {
         LINE();
-        relay1.lockupdate = false;
-        relay1.mdigitalWrite(relay1.getRelayPin(),LOW);
+        rly->lockupdate = false;
+        rly->mdigitalWrite(rly->getRelayPin(),LOW);
         PRINTLN(F(" *** truning relay OFF... event is done - TimerPaused value: ***"));
-        PRINT(relay1.timerpaused);
-        relay1.timerpaused = false;
+        PRINT(rly->timerpaused);
+        rly->timerpaused = false;
       }
+    }
+  }
+
     }
   } else {
   //  PRINTLN(F("Looks like we're free for the moment..."));

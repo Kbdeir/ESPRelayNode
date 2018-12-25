@@ -55,6 +55,7 @@ typedef struct TWeekdays {
     uint16_t Mark_Hours;
     uint16_t Mark_Minutes;
     boolean enabled;
+    uint8_t relay;
 
     char* Testchar;
 
@@ -69,7 +70,8 @@ typedef struct TWeekdays {
               String para_spantimefrom,
               String para_spantimeto,
               TWeekdays * para_weekdays,
-              boolean para_enabled
+              boolean para_enabled,
+              uint8_t para_relay
             );
 
     ~NodeTimer();

@@ -348,11 +348,11 @@ a:hover
    border: 0px #000000 solid;
    padding: 0;
    margin: 0;
-   text-align: left;
+   text-align: right;
 }
 #wb_Text12 div
 {
-   text-align: left;
+   text-align: right;
 }
 #TMTYPE
 {
@@ -649,12 +649,49 @@ a:hover
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
+#wb_Text22 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text22 div
+{
+   text-align: right;
+}
+#TRelay_edt
+{
+   border: 1px #CCCCCC solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color :#000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   padding: 4px 4px 4px 4px;
+   text-align: left;
+   vertical-align: middle;
+}
+#TRelay_edt:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
 </style>
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:464px;height:734px;z-index:43;">
-<form name="Form1" method="get" action="savetimer.html" enctype="text/plain" id="Form1">
-<input type="date" id="TDate" style="position:absolute;left:203px;top:160px;width:138px;height:19px;line-height:19px;z-index:0;" name="DTo" value="%DTo%">
+<div id="wb_Form1" style="position:absolute;left:30px;top:76px;width:464px;height:734px;z-index:45;">
+<form name="Form1" method="get" action="savetimer.html" enctype="text/plain" id="Form1" onsubmit="return ValidateForm1(this)">
+<input type="date" id="TDate" style="position:absolute;left:201px;top:175px;width:138px;height:19px;line-height:19px;z-index:0;" name="DTo" value="%DTo%">
 <div id="wb_Text2" style="position:absolute;left:25px;top:14px;width:156px;height:19px;z-index:1;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:17px;"><strong>Timer number:</strong></span></div>
 <input type="date" id="FDate" style="position:absolute;left:277px;top:633px;width:138px;height:18px;line-height:18px;z-index:2;" name="Testchar" value="%Testchar%">
@@ -665,11 +702,11 @@ a:hover
 <option value="4">4</option>
 <option value="5">5</option>
 </select>
-<div id="wb_Text3" style="position:absolute;left:41px;top:143px;width:144px;height:16px;z-index:4;text-align:left;">
+<div id="wb_Text3" style="position:absolute;left:41px;top:159px;width:144px;height:16px;z-index:4;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>From:</strong></span></div>
 <input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:303px;top:687px;width:126px;height:25px;z-index:5;">
 <input type="time" id="TTime" style="position:absolute;left:312px;top:316px;width:98px;height:18px;line-height:18px;z-index:6;" name="TTo" value="%TTo%">
-<div id="wb_Text4" style="position:absolute;left:201px;top:143px;width:150px;height:16px;z-index:7;text-align:left;">
+<div id="wb_Text4" style="position:absolute;left:201px;top:159px;width:150px;height:16px;z-index:7;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>To:</strong></span></div>
 <div id="wb_Text1" style="position:absolute;left:45px;top:535px;width:60px;height:16px;text-align:right;z-index:8;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Sunday</strong></span></div>
@@ -687,9 +724,9 @@ a:hover
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Saturday</strong></span></div>
 <input type="checkbox" id="CFriday" name="CFriday" value="%CFriday%" style="position:absolute;left:257px;top:531px;z-index:17;">
 <input type="checkbox" id="CSaturday" name="CSaturday" value="%CSaturday%" style="position:absolute;left:257px;top:555px;z-index:18;">
-<div id="wb_Text12" style="position:absolute;left:31px;top:59px;width:100px;height:16px;z-index:19;text-align:left;">
+<div id="wb_Text12" style="position:absolute;left:25px;top:47px;width:100px;height:16px;text-align:right;z-index:19;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Timer Type:</strong></span></div>
-<select name="TMTYPE" size="1" id="TMTYPE" onchange="func_TMTYPE(this);return false;" style="position:absolute;left:125px;top:53px;width:280px;height:28px;z-index:20;">
+<select name="TMTYPE" size="1" id="TMTYPE" onchange="func_TMTYPE(this);return false;" style="position:absolute;left:125px;top:43px;width:280px;height:28px;z-index:20;">
 <option value="1">Specifc Date & Time</option>
 <option value="2">Recurring - Daily Timer</option>
 <option value="3">Recurring - Weekly Timer</option>
@@ -721,25 +758,28 @@ a:hover
 <input type="checkbox" id="CThursday" name="CThursday" value="%CThursday%" style="position:absolute;left:105px;top:631px;z-index:35;">
 <div id="wb_Text8" style="position:absolute;left:45px;top:631px;width:60px;height:32px;text-align:right;z-index:36;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Thursday</strong></span></div>
-<div id="wb_Text21" style="position:absolute;left:31px;top:101px;width:402px;height:35px;z-index:37;text-align:left;">
+<div id="wb_Text21" style="position:absolute;left:29px;top:115px;width:402px;height:35px;z-index:37;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Date bounds</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><strong><br></strong>run timer if time-now is between these 2 dates</span></div>
 <div id="wb_Text13" style="position:absolute;left:31px;top:457px;width:402px;height:51px;z-index:38;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Weekdays Timer</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><strong><br></strong>Select Weekday (applicable only for the timers of type: Recurring Weekday timer</span></div>
 <input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:30px;top:687px;width:126px;height:25px;z-index:39;">
-<input type="date" id="Editbox1" style="position:absolute;left:37px;top:160px;width:138px;height:18px;line-height:18px;z-index:40;" name="Dfrom" value="%Dfrom%">
+<input type="date" id="Editbox1" style="position:absolute;left:37px;top:175px;width:138px;height:18px;line-height:18px;z-index:40;" name="Dfrom" value="%Dfrom%">
+<div id="wb_Text22" style="position:absolute;left:37px;top:79px;width:88px;height:16px;text-align:right;z-index:41;">
+<span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Relay:</strong></span></div>
+<input type="number" id="TRelay_edt" style="position:absolute;left:125px;top:73px;width:66px;height:18px;line-height:18px;z-index:42;" name="TRelay" value="%TRelay%">
 </form>
 </div>
-<div id="wb_Text20" style="position:absolute;left:30px;top:32px;width:234px;height:27px;z-index:44;text-align:left;">
+<div id="wb_Text20" style="position:absolute;left:30px;top:32px;width:234px;height:27px;z-index:46;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">Timer Configuration</span></div>
-<div id="wb_Form2" style="position:absolute;left:246px;top:23px;width:248px;height:42px;z-index:45;">
+<div id="wb_Form2" style="position:absolute;left:246px;top:23px;width:248px;height:42px;z-index:47;">
 <form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
-<select name="GetTimer" size="1" id="Combobox1" style="position:absolute;left:5px;top:7px;width:96px;height:28px;z-index:41;">
+<select name="GetTimer" size="1" id="Combobox1" style="position:absolute;left:5px;top:7px;width:96px;height:28px;z-index:43;">
 <option value="1">1</option>
 <option value="2">2</option>
 <option value="3">3</option>
 <option value="4">4</option>
 </select>
-<input type="submit" id="Button1" name="Get Timer" value="Show Timer" style="position:absolute;left:110px;top:9px;width:126px;height:25px;z-index:42;">
+<input type="submit" id="Button1" name="Get Timer" value="Show Timer" style="position:absolute;left:110px;top:9px;width:126px;height:25px;z-index:44;">
 </form>
 </div>
 <script>
@@ -762,6 +802,44 @@ a:hover
       }
 
     </script>
+<script>
+function ValidateForm1(theForm)
+{
+   var regexp;
+   regexp = /^[-+]?\d*\.?\d*$/;
+   if (!regexp.test(theForm.TRelay_edt.value))
+   {
+      alert("Please enter only digit characters in the \"TRelay\" field.");
+      theForm.TRelay_edt.focus();
+      return false;
+   }
+   if (theForm.TRelay_edt.value == "")
+   {
+      alert("Please enter a value for the \"TRelay\" field.");
+      theForm.TRelay_edt.focus();
+      return false;
+   }
+   if (theForm.TRelay_edt.value.length < 1)
+   {
+      alert("Please enter at least 1 characters in the \"TRelay\" field.");
+      theForm.TRelay_edt.focus();
+      return false;
+   }
+   if (theForm.TRelay_edt.value.length > 1)
+   {
+      alert("Please enter at most 1 characters in the \"TRelay\" field.");
+      theForm.TRelay_edt.focus();
+      return false;
+   }
+   if (theForm.TRelay_edt.value != "" && !(theForm.TRelay_edt.value >= 0 && theForm.TRelay_edt.value <= 4))
+   {
+      alert("Please enter a value greater than or equal to \"0\" and less than or equal to \"4\" in the \"TRelay\" field.");
+      theForm.TRelay_edt.focus();
+      return false;
+   }
+   return true;
+}
+</script>
 </body>
 </html><script> 
 document.getElementById("TNB").value=document.getElementById("TNBT").value ; 

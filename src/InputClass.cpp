@@ -1,7 +1,7 @@
 #include <InputClass.h>
 
 InputSensor::InputSensor(uint8_t p,
-            fnptr_a on_callback,input_mode clickmode
+            fnptr_d on_callback,input_mode clickmode
           ) {
 
   pin = p;
@@ -30,12 +30,12 @@ void InputSensor::watch(){
      Input_debouncer->update();
    if (fclickmode==INPUT_NORMAL) {
      if (Input_debouncer->fell() || Input_debouncer->rose()) {
-        if (fon_callback) fon_callback(this);
+        if (fon_callback) fon_callback(this, nullptr);
       }
     }
     if (fclickmode==INPUT_TOGGLE) {
     if (Input_debouncer->fell()) {
-       if (fon_callback) fon_callback(this);
+       if (fon_callback) fon_callback(this,nullptr);
      }
    }
   }

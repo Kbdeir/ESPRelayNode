@@ -17,6 +17,7 @@ bool restartRequired = false;  // Set this flag in the callbacks to restart ESP 
 String timerprocessor(const String& var)
 {
   if(var == F( "TNBT" ))  return  String(NTmr.id);
+  if(var == F( "TRelay" ))  return  String(NTmr.relay);
   if(var == F( "Dfrom" ))  return  String(NTmr.spanDatefrom.c_str());
   if(var == F( "DTo" ))  return String( NTmr.spanDateto.c_str());
   if(var == F( "TFrom" ))  return  String(NTmr.spantimefrom.c_str());
