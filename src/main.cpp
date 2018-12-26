@@ -52,7 +52,7 @@ extern std::vector<void *> relays ; // a list to hold all relays
 time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
 
-   NodeTimer NTmr(4);
+NodeTimer NTmr(4);
 
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
@@ -80,69 +80,47 @@ volatile byte InputPin14_interruptCounter=0;
 // #define FORMAT_SPIFFS_IF_FAILED true; // defined in FSFunctions
 
 #define SERIAL_DEVICE     Serial
-
-// a few defines to abstract away the Serial-specific stuff
 #define PRINT(...)    SERIAL_DEVICE.print(__VA_ARGS__)
 #define PRINTLN(...)  SERIAL_DEVICE.println(__VA_ARGS__)
 #define LINE()    PRINTLN(' ')
 #define LINES(n)  for (uint8_t _bl=0; _bl<n; _bl++) { PRINTLN(' '); }
-
+#define WIFI_AP_MODE 1
+#define WIFI_CLT_MODE 0
+#define DEFAULT_BOUNCE_TIME 100
 
 #ifdef ESP32
     #ifdef USEPREF
     Preferences preferences;
     #endif
 #endif
-#define WIFI_AP_MODE 1
-#define WIFI_CLT_MODE 0
-#define DEFAULT_BOUNCE_TIME 100
 
-//Bounce debouncer14 = Bounce();
-//Bounce debouncer12 = Bounce();
 
-File file;
 
-long timezone = 1;
-byte daysavetime = 1;
-int wifimode = WIFI_CLT_MODE;
-const int led = 02;
+long timezone     = 1;
+byte daysavetime  = 1;
+int wifimode      = WIFI_CLT_MODE;
+const int led     = 02;
 String MAC;
-
-//String PrefSSID, PrefPassword;  // used by preferences storage
 unsigned long lastMillis = 0;
-
-float trials = 0;
-char buf[100];
-
+uint32_t trials   = 0;
+//char buf[100];
 int  WFstatus;
-int UpCount = 0;
-//int32_t rssi;           // store WiFi signal strength here
-//String getSsid;
-//String getPass;
-
+int UpCount       = 0;
 WiFiClient net;
-//WiFiUDP wifiUdp;
-//NTP ntp(wifiUdp);
-
-String APssid = (String("Node-") +  CID()+"-");
+String APssid     = (String("Node-") +  CID()+"-");
 const char* APpassword = "12345678";
-
-int ledState = LOW;             					// ledState used to set the LED
+int ledState      = LOW;             					// ledState used to set the LED
 unsigned long previousMillis = 0;         // will store last time LED was updated
 long blinkInterval = 1000;           		      // blinkInterval at which to blink (milliseconds)
-long APModetimer = 60*5;
+long APModetimer  = 60*5;
 long APModetimer_run_value = 0;
 AsyncServer* MBserver = new AsyncServer(502); // start listening on tcp port 7050
 ModbusIP mb;
-const int LAMP1_COIL = 1;
-const int LAMP2_COIL = 2;
+const int LAMP1_COIL  = 1;
+const int LAMP2_COIL  = 2;
+float old_acs_value   = 0;
+float ACS_I_Current   = 0;
 
-
-
-//OneButton button(SwitchButtonPin, true);
-
-float old_acs_value = 0;
-float ACS_I_Current = 0;
 ACS712 sensor(ACS712_20A, A0);
 
 void ticker_relay_ttl_off (void* obj) ;
@@ -150,8 +128,6 @@ void ticker_relay_ttl_periodic_callback(void* obj);
 void ticker_ACS712_func (void* obj);
 void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
-
-//std::vector<Relay*> v; // a list to hold all clients
 
 Relay relay1(
     RelayPin,
@@ -172,14 +148,14 @@ Relay relay1(
       onRelaychangeInterruptSvc,
       relayon
     );
-    */
+*/
 
 
 void ticker_ACS712_mqtt (void* obj) {
   if (obj != nullptr) {
   Relay * rly;
   rly = static_cast<Relay *>(obj);
-    if (rly->RelayConfParam->v_ACS_Active == "1") {
+    if (rly->RelayConfParam->v_ACS_Active) {
         float variance =(abs(ACS_I_Current-old_acs_value));
         // Serial.printf("%6.*lf", 2, variance );
         if (true) {//(variance > 0.05){
@@ -191,16 +167,16 @@ void ticker_ACS712_mqtt (void* obj) {
 }
 }
 
+
 void ticker_ACS712_func (void* obj) {
   if (obj != nullptr) {
   Relay * rly;
   rly = static_cast<Relay *>(obj);
-    if (rly->RelayConfParam->v_ACS_Active == "1") {
+    if (rly->RelayConfParam->v_ACS_Active) {
         ACS_I_Current = sensor.getCurrentAC();
         // Serial.println(String("I = ") + ACS_I_Current + " A");
-        if (ACS_I_Current > rly->RelayConfParam->v_Max_Current.toInt()) {
+        if (ACS_I_Current > rly->RelayConfParam->v_Max_Current) {
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
-            // uint16_t packetIdPub = mqttClient.publish(MyConfParam.v_STATE_PUB_TOPIC.c_str(), 2, true, OFF); moved to interrupt
         }
     }
   }
@@ -215,7 +191,7 @@ void ticker_relay_ttl_periodic_callback(void* obj){
     rly = static_cast<Relay *>(obj);
     uint32_t t = rly->getRelayTTLperiodscounter();
     if (digitalRead(rly->getRelayPin() == HIGH)) {
-      mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, rly->RelayConfParam->v_ttl.c_str());
+      mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, String(rly->RelayConfParam->v_ttl).c_str());
       mqttClient.publish( rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, (String(t).c_str()));
     }
   }
@@ -232,19 +208,15 @@ void ticker_relay_ttl_off (void* obj) {
 
 
 void onRelaychangeInterruptSvc(void* t){
-/*  if((interruptCounter > 0) or (interruptCounter2 > 0)){
-      if (interruptCounter > 0) interruptCounter--;
-      if (interruptCounter2 > 0) interruptCounter2--;
-      */
-
   Relay * rly;
   rly = static_cast<Relay *>(t);
 
   if (rly->rchangedflag ) {
       rly->rchangedflag = false;
+
       if (rly->readrelay() == HIGH) {
         Serial.print(F("\n\n An interrupt *ON* has occurred."));
-        if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
+        if (rly->RelayConfParam->v_ttl > 0 ) {
           rly->start_ttl_timer();
         }
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
@@ -254,36 +226,66 @@ void onRelaychangeInterruptSvc(void* t){
       if (digitalRead(rly->getRelayPin()) == LOW) {
         Serial.print(F("\n\n An interrupt *OFF* has occurred."));
         rly->stop_ttl_timer();
-        if (rly->RelayConfParam->v_ttl.toInt() > 0 ) {
+        if (rly->RelayConfParam->v_ttl > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
       }
   } else {
-        //char* msg;
-        //digitalRead(rly->getRelayPin()) == HIGH ? msg = ON : msg = OFF;
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                             digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);
   }
 }
 
 
-void onchangeSwitchInterruptSvc(void* t){
-  //SwitchButtonPin_interruptCounter--;
-  Relay * rly;
-  rly = static_cast<Relay *>(t);
-  if ((rly->RelayConfParam->v_GPIO12_TOG == "0") && (rly->RelayConfParam->v_Copy_IO == "0")) {
-    char* msg;
-      //rly->getRelaySwithbtnState() == HIGH ? msg = ON : msg = OFF;
-      mqttClient.publish(MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str(), QOS2, RETAINED,
-        rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
-      //mqttClient.publish(MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, msg);
+void process_Input(void * obj, void * obj1){
+  if (obj != nullptr) {
+    InputSensor * snsr;
+    snsr = static_cast<InputSensor *>(obj);
+  //  char* msg;
+  if (snsr->fclickmode == INPUT_NORMAL) {
+    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
   }
-  if ((rly->RelayConfParam->v_Copy_IO == "1")  && (rly->RelayConfParam->v_GPIO12_TOG == "0")) {
-      rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
+  if (snsr->fclickmode == INPUT_TOGGLE) {
+    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
   }
 
+/*
+  if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
+      rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
+      mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,
+        rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
+  }
+
+
+  if (rly->r_in_mode == INPUT_RELAY_TOGGLE)  {
+    if (rly->readrelay() == HIGH) {
+      rly->ticker_relay_tta->stop();
+      rly->mdigitalWrite(rly->getRelayPin(), LOW);
+      rly->stop_ttl_timer();
+    } else {
+    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
+    rly->ticker_relay_tta->start();
+    }
+  }
+*/
+
+  }
+}
+
+
+void onchangeSwitchInterruptSvc(void* t){
+  Relay * rly;
+  rly = static_cast<Relay *>(t);
+  if (rly->r_in_mode == INPUT_NORMAL) {
+
+  }
+  if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
+      rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
+  }
+  mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,
+    rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
 }
 
 
@@ -293,20 +295,21 @@ void buttonclick(void* sender) {
   Relay * rly;
   rly = static_cast<Relay *>(sender);
 
-  if ((rly->RelayConfParam->v_GPIO12_TOG == "1") && (rly->RelayConfParam->v_Copy_IO == "0"))  {
+  //if ((rly->RelayConfParam->v_GPIO12_TOG == "1") && (rly->RelayConfParam->v_Copy_IO == "0"))  {
+  if (rly->r_in_mode == INPUT_RELAY_TOGGLE)  {
     if (rly->readrelay() == HIGH) {
       rly->ticker_relay_tta->stop();
       rly->mdigitalWrite(rly->getRelayPin(), LOW);
       rly->stop_ttl_timer();
     } else {
-    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta.toInt()*1000);
+    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
     rly->ticker_relay_tta->start();
     }
   }
-  mqttClient.publish(MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str(), QOS2, RETAINED,"TOG");
-  PRINTLN(MyConfParam.v_TOGGLE_BTN_PUB_TOPIC);
+  mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,TOG);
 }
 }
+
 
 void relayloopservicefunc(void* sender){
 if (sender){
@@ -314,7 +317,7 @@ if (sender){
   rly = static_cast<Relay *>(sender);
     if (rly->TTLstate() != RUNNING_) {
       if (digitalRead(rly->getRelayPin()) == HIGH) {
-        if (rly->RelayConfParam->v_ttl.toInt() > 0 ) rly->start_ttl_timer(); // ticker_relay_ttl.start();
+        if (rly->RelayConfParam->v_ttl > 0 ) rly->start_ttl_timer(); // ticker_relay_ttl.start();
       }
     }
   }
@@ -323,9 +326,9 @@ if (sender){
 
 void IP_info()
 {
-  //int32_t rssi;           // store WiFi signal strength here
-  //String getSsid;
-  //String getPass;
+  // int32_t rssi;           // store WiFi signal strength here
+  // String getSsid;
+  // String getPass;
   // String getSsid = WiFi.SSID();
   // String getPass = WiFi.psk();
    #ifdef ESP32
@@ -448,20 +451,26 @@ void chronosInit() {
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
   uint8_t tcounter = 1;
-  while(tcounter <= MAX_NUMBER_OF_TIMERS){
-        char  timerfilename[30] = "";
-        strcpy(timerfilename, "/timer");
-        strcat(timerfilename, String(tcounter).c_str());
-        strcat(timerfilename, ".json");
-        Serial.print (F("\n***************************************************************\n"));
-        Serial.print  (timerfilename);
-        Serial.print("\n");
-        config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
+  while(tcounter <= MAX_NUMBER_OF_TIMERS){ [&tcounter]() {
+
+        config_read_error_t res = loadNodeTimer(
+          [tcounter](){
+            char  timerfilename[30] = "";
+            strcpy(timerfilename, "/timer");
+            strcat(timerfilename, String(tcounter).c_str());
+            strcat(timerfilename, ".json");
+            Serial.print (F("\n--------------------------"));
+            Serial.print  (timerfilename);
+            Serial.print("\n");
+            return timerfilename;
+          }()
+        ,NTmr);
+
         tcounter++;
 
         if ((res == SUCCESS) && NTmr.enabled) {
           //loadNodeTimer("/timer.json",NTmr);
-          Serial.print(F("\n\n\nBEGIN TIMER DEBUG ************"));
+          //Serial.print(F("\n\n\nBEGIN TIMER DEBUG ************"));
           int Year, Month, Day, Hour, Minute, Second ;
           int TYear, TMonth, TDay, THour, TMinute, TSecond ;
 
@@ -521,7 +530,6 @@ void chronosInit() {
           Serial.print(F(" - FULL SPAN timer type: "));
           Serial.print(TimerType::TM_FULL_SPAN);
           Serial.print(F("\n\n\n END TIMER DEBUGG ************\n\n\n"));
-
           */
 
           if (NTmr.TM_type == TimerType::TM_WEEKDAY_SPAN) {
@@ -537,43 +545,43 @@ void chronosInit() {
 
               if (NTmr.weekdays->Sunday) {
                 MyCalendar.add(
-                    Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Sunday,Hour, Minute, 00),
+                    Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Sunday,Hour, Minute, 00),
                     Chronos::Span::Seconds(dailydiffsecs))
                   );
               }
                 if (NTmr.weekdays->Monday) {
                  MyCalendar.add(
-                     Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Monday,Hour, Minute, 00),
+                     Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Monday,Hour, Minute, 00),
                      Chronos::Span::Seconds(dailydiffsecs))
                    );
                }
                 if (NTmr.weekdays->Tuesday) {
                   MyCalendar.add(
-                      Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
+                      Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Tuesday,Hour, Minute, 00),
                       Chronos::Span::Seconds(dailydiffsecs))
                     );
                 }
                 if (NTmr.weekdays->Wednesday) {
                    MyCalendar.add(
-                       Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Wednesday,Hour, Minute, 00),
+                       Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Wednesday,Hour, Minute, 00),
                        Chronos::Span::Seconds(dailydiffsecs))
                      );
                  }
                  if (NTmr.weekdays->Thursday) {
                     MyCalendar.add(
-                        Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Thursday,Hour, Minute, 00),
+                        Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Thursday,Hour, Minute, 00),
                         Chronos::Span::Seconds(dailydiffsecs))
                       );
                   }
                   if (NTmr.weekdays->Friday) {
                      MyCalendar.add(
-                         Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Friday,Hour, Minute, 00),
+                         Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Friday,Hour, Minute, 00),
                          Chronos::Span::Seconds(dailydiffsecs))
                        );
                    }
                    if (NTmr.weekdays->Saturday) {
                       MyCalendar.add(
-                          Chronos::Event(4,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
+                          Chronos::Event(NTmr.relay,Chronos::Mark::Weekly(Chronos::Weekday::Saturday,Hour, Minute, 00),
                           Chronos::Span::Seconds(dailydiffsecs))
                         );
                     }
@@ -589,8 +597,9 @@ void chronosInit() {
                   if (NTmr.Mark_Hours + NTmr.Mark_Minutes > 0) {
                     dailydiffsecs = (NTmr.Mark_Hours * 3600) +  (NTmr.Mark_Minutes * 60) ;
                   }
+
                     MyCalendar.add(
-                        Chronos::Event(4,Chronos::Mark::Daily(Hour, Minute, 00),
+                        Chronos::Event(NTmr.relay,Chronos::Mark::Daily(Hour, Minute, 00),
                         Chronos::Span::Seconds(dailydiffsecs))
                       );
                 }
@@ -598,15 +607,15 @@ void chronosInit() {
 
           if (NTmr.TM_type == TimerType::TM_FULL_SPAN) {
                     MyCalendar.add(
-                        Chronos::Event(4,previous,next)
+                        Chronos::Event(NTmr.relay,previous,next)
                       );
           }
 
       } // if SUCCESS
+    }();
   } // while loop
 
   LINE();
-
   PRINTLN(F("**** presumably got NTP time **** :"));
   Chronos::DateTime::now().printTo(SERIAL_DEVICE);
   LINE();
@@ -614,7 +623,6 @@ void chronosInit() {
   PRINT(F("Right \"now\" it's: "));
   nowTime.printTo(SERIAL_DEVICE);
   LINES(2);
-
 }
 
 void chronosevaluatetimers(Calendar MyCalendar) {
@@ -628,7 +636,6 @@ void chronosevaluatetimers(Calendar MyCalendar) {
   int numOngoing = MyCalendar.listOngoing(10, occurrenceList, nowTime);
   if (numOngoing) {
     // At least one event is happening at "nowTime"...
-
     LINE();
     //PRINTLN(F("**** Some things are going on this very minute! ****"));
     for (int i = 0; i < numOngoing; i++) {
@@ -639,45 +646,48 @@ void chronosevaluatetimers(Calendar MyCalendar) {
       PRINT(F("\t ends in: "));
       (nowTime - occurrenceList[i].finish).printTo(SERIAL_DEVICE);
 
-      if ((nowTime > occurrenceList[i].start + 1)) {
-        LINE();
-        PRINTLN(F(" *** truning relay ON... event is Starting - TimerPaused value: *** "));
-        PRINT(relay1.timerpaused);
-        if (!digitalRead(relay1.getRelayPin())){
-          if (!relay1.timerpaused) {
-            relay1.mdigitalWrite(relay1.getRelayPin(),HIGH);
+
+//      if (occurrenceList[i].id < relays.size()) {
+        Relay * rly = getrelaybynumber(occurrenceList[i].id); //static_cast<Relay *>(relays.at(occurrenceList[i].id));
+        if (rly) {
+          if ((nowTime > occurrenceList[i].start) && (nowTime < occurrenceList[i].start + 5)) {
+            rly->timerpaused = false;
+            rly->hastimerrunning = true;
           }
-        }
-      }
-      if ((nowTime == occurrenceList[i].finish - 1 )) {
-        LINE();
-        relay1.lockupdate = false;
-        relay1.mdigitalWrite(relay1.getRelayPin(),LOW);
-        PRINTLN(F(" *** truning relay OFF... event is done - TimerPaused value: ***"));
-        PRINT(relay1.timerpaused);
-        relay1.timerpaused = false;
-      }
-    }
-  } else {
+          if ((nowTime > occurrenceList[i].start + 1)) {
+            rly->hastimerrunning = true;
+            LINE();
+            PRINTLN(F(" *** truning relay ON... event is Starting - TimerPaused value: *** "));
+            PRINT(rly->timerpaused);
+            if (!digitalRead(rly->getRelayPin())){
+              if (!rly->timerpaused) {
+                rly->mdigitalWrite(rly->getRelayPin(),HIGH);
+              }
+            }
+          }
+          if ((nowTime == occurrenceList[i].finish - 1 )) {
+            LINE();
+            rly->lockupdate = false;
+            rly->mdigitalWrite(rly->getRelayPin(),LOW);
+            PRINTLN(F(" *** truning relay OFF... event is done - TimerPaused value: ***"));
+            PRINT(rly->timerpaused);
+            rly->timerpaused = false;
+            rly->hastimerrunning = false;
+          }
+        } // if rly !=nullptr
+//      } // if rly in relys vector
+
+
+
+    } // for loop
+  } // if numongoing > 0
+   else {
   //  PRINTLN(F("Looks like we're free for the moment..."));
+    }
   }
-}
 }
 
 
-void process_Input(void * obj){
-  if (obj != nullptr) {
-    InputSensor * snsr;
-    snsr = static_cast<InputSensor *>(obj);
-  //  char* msg;
-  if (snsr->fclickmode == INPUT_NORMAL) {
-    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
-  }
-  if (snsr->fclickmode == INPUT_TOGGLE) {
-    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
-  }
-  }
-}
 
 InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
@@ -685,20 +695,12 @@ InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-  #ifdef USEPREF
-    ReadParams(MyConfParam, preferences);
-  #endif
-
-  while (loadConfig(MyConfParam) != SUCCESS){
-    delay(2000);
-    ESP.restart();
-  };
-	//String getSsid = MyConfParam.v_ssid;
-  //String getPass = MyConfParam.v_pass;
 
   relay1.loadrelayparams();
-  Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
-  Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
+  //Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
+  //Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
+  Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+  Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
   //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
@@ -715,13 +717,13 @@ void Wifi_connect() {
                 //  WiFi.begin( "ksbb" , "samsam12" ); // try to connect with saved SSID & PASS
                 trials = 0;
               	 blinkInterval = 50;
-                while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials)){
+                while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials*2)){
                 //  while ((WiFi.waitForConnectResult() != WL_CONNECTED) & (trials < MaxWifiTrials)){
-                    delay(100);
+                    delay(50);
                 		blinkled();
                     trials++;
                     Serial.print(F("-"));
-                    // yield();
+
                 }
                 if  (WiFi.status() == WL_CONNECTED)   {
                   Serial.println(F("WiFi Connected."));
@@ -747,16 +749,16 @@ void Wifi_connect() {
                     MDNS.addService(F("http"), F("tcp"), 80); // Announce esp tcp service on port 8080
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), MyConfParam.v_STATE_PUB_TOPIC.c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), MyConfParam.v_ttl.c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), MyConfParam.v_Max_Current.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.toString().c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(MyConfParam.v_ttl).c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(MyConfParam.v_Max_Current).c_str());
 
                     //setSyncInterval(10);
                     setSyncProvider(getNtpTime);
 
                     trials = 0;
                     relay1.stop_ttl_timer();
-                    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl.toInt()*1000);
+                    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
                     ACS_Calibrate_Start(relay1,sensor);
 
                     //relay2.stop_ttl_timer();
@@ -792,14 +794,10 @@ void setup() {
     pinMode ( InputPin12, INPUT_PULLUP );
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
-    //debouncer14.attach(InputPin14);
-    //debouncer14.interval(5); // interval in ms
-    //debouncer12.attach(ConfigInputPin,INPUT_PULLUP);
-    //debouncer12.interval(25); // interval in ms
+
     /* You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
        https://github.com/me-no-dev/arduino-esp32fs-plugin */
-
     #ifdef ESP32
 		if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
 		   Serial.println(F("SPIFFS Mount Failed"));
@@ -811,6 +809,16 @@ void setup() {
         else { Serial.println("File System Formatting Error"); } */
     #endif
     //wifimode = WIFI_CLT_MODE;
+
+    #ifdef USEPREF
+      ReadParams(MyConfParam, preferences);
+    #endif
+
+    while (loadConfig(MyConfParam) != SUCCESS){
+      delay(2000);
+      ESP.restart();
+    };
+
     WiFi.mode(WIFI_AP_STA);
 
 		mqttClient.onConnect(onMqttConnect);
@@ -819,29 +827,31 @@ void setup() {
 		mqttClient.onUnsubscribe(onMqttUnsubscribe);
 		mqttClient.onMessage(onMqttMessage);
 		mqttClient.onPublish(onMqttPublish);
-		mqttClient.setServer(MyConfParam.v_MQTT_BROKER.c_str(), MQTT_PORT);
+		mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
 
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 
-  //  attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
+    // attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
     relay1.attachSwithchButton(SwitchButtonPin2,
                               onchangeSwitchInterruptSvc,  // for input mode and copy to relay ,ode
-                              buttonclick);                // for toggle mode
+                              buttonclick,
+                              MyConfParam.v_IN1_INPUTMODE,
+                              MyConfParam.v_InputPin12_STATE_PUB_TOPIC
+                              );                // for toggle mode
 
     relay1.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay1);
-    //mrelays[0]=&relay1;
 
-  //  attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
+    // mrelays[0]=&relay1;
+    // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
     /*
-    relay2.attachSwithchButton(SwitchButtonPin2, SwitchButtonPin_handleInterrupt, onchangeSwitchInterruptSvc, buttonclick);
+    relay2.attachSwithchButton(SwitchButtonPin2, onchangeSwitchInterruptSvc, buttonclick);
     relay2.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay2);
     */
     //mrelays[1]=&relay2;
-
-  //  attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
+    // attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
 }
 
 
@@ -859,7 +869,7 @@ void loop() {
   Inputsnsr14.watch();
   Inputsnsr12.watch();
 
-  if (restartRequired){  // check the flag here to determine if a restart is required
+  if (restartRequired){
     Serial.printf("Restarting ESP\n\r");
     restartRequired = false;
     delay(2500);
@@ -867,17 +877,17 @@ void loop() {
   }
 
   if (timeStatus() != timeNotSet) {
-    if (now() != prevDisplay) { //update the display only if time has changed
+    if (now() != prevDisplay) {                   //update the display only if time has changed
       prevDisplay = now();
       digitalClockDisplay();
       chronosevaluatetimers(MyCalendar);
     }
   }
 
-    if((timeStatus() == timeSet) && CalendarNotInitiated){
-      chronosInit();
-      CalendarNotInitiated = false;
-    }
+  if((timeStatus() == timeSet) && CalendarNotInitiated) {
+    chronosInit();
+    CalendarNotInitiated = false;
+  }
 
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();

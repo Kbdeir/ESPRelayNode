@@ -32,7 +32,7 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
   		ConfParam.v_tta =  preferences.getString("tta");
   		ConfParam.v_Max_Current =  preferences.getString("Max_Current");
   		ConfParam.v_timeserver =  preferences.getString("timeserver");
-  		ConfParam.v_PIC_Active =  preferences.getString("PIC_Active");
+  		//ConfParam.v_PIC_Active =  preferences.getString("PIC_Active");
   		ConfParam.v_MQTT_Active =  preferences.getString("MQTT_Active");
   		ConfParam.v_myppp =  preferences.getString("myppp");
   		ConfParam.v_ntptz =  preferences.getString("ntptz");
@@ -41,7 +41,6 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
   		ConfParam.v_GPIO12_TOG =  preferences.getString("GPIO12_TOG");
   		ConfParam.v_Copy_IO =  preferences.getString("Copy_IO");
   		ConfParam.v_ACS_Active =  preferences.getString("ACS_Active");
-  		ConfParam.v_tta =  preferences.getString("tta");
   		ConfParam.v_Update_now =  preferences.getString("Update_now");
 
       Serial.println("will connect to: " + preferences.getString("ssid"));
@@ -117,16 +116,13 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
   		ConfParam.v_tta =  preferences.getString("tta");
   		ConfParam.v_Max_Current =  preferences.getString("Max_Current");
   		ConfParam.v_timeserver =  preferences.getString("timeserver");
-  		ConfParam.v_PIC_Active =  preferences.getString("PIC_Active");
+  		//ConfParam.v_PIC_Active =  preferences.getString("PIC_Active");
   		ConfParam.v_MQTT_Active =  preferences.getString("MQTT_Active");
-  		ConfParam.v_myppp =  preferences.getString("myppp");
+  		//ConfParam.v_myppp =  preferences.getString("myppp");
   		ConfParam.v_ntptz =  preferences.getString("ntptz");
   		ConfParam.v_LWILL_TOPIC =  preferences.getString("LWILL_TOPIC");
   		ConfParam.v_SUB_TOPIC1 =  preferences.getString("SUB_TOPIC1");
-  		ConfParam.v_GPIO12_TOG =  preferences.getString("GPIO12_TOG");
-  		ConfParam.v_Copy_IO =  preferences.getString("Copy_IO");
   		ConfParam.v_ACS_Active =  preferences.getString("ACS_Active");
-  		ConfParam.v_tta =  preferences.getString("tta");
   		ConfParam.v_Update_now =  preferences.getString("Update_now");
 
     preferences.end();

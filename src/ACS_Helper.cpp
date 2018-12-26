@@ -24,7 +24,7 @@ void ACS_Calibrate_Start(Relay &arelay, ACS712 &asensor){
 	asensor.setZeroPoint(zero);
 	//ticker_ACS712.interval(1000);
 
-	if (arelay.RelayConfParam->v_ACS_Active == "1") {
+	if (arelay.RelayConfParam->v_ACS_Active) {
 		arelay.start_ACS712();
 		arelay.start_ACS712_mqtt();
 	}

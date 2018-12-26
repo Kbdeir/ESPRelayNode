@@ -40,6 +40,7 @@ boolean isValidNumber(String& str) {
    return false;
 }
 
+/*
 void mqttpostinitstatusOfInputs(void* sender){
   if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
     mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin12) == HIGH ?  ON : OFF);
@@ -48,6 +49,7 @@ void mqttpostinitstatusOfInputs(void* sender){
     mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(InputPin14) == HIGH ?  ON : OFF);
   }
 }
+*/
 
 void onMqttConnect(bool sessionPresent) {
   tiker_MQTT_CONNECT.stop();
@@ -58,7 +60,17 @@ void onMqttConnect(bool sessionPresent) {
 	Serial.print(F("Subscribing at QoS 2, packetId: "));
   Serial.println(packetIdSub);
 
-  mqttpostinitstatusOfInputs(NULL);
+  //mqttpostinitstatusOfInputs(NULL);
+  [](){
+    if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
+      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+        digitalRead(InputPin12) == HIGH ?  ON : OFF);
+    }
+    if (Inputsnsr14.fclickmode == INPUT_NORMAL) {
+      mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+        digitalRead(InputPin14) == HIGH ?  ON : OFF);
+    }
+  }();
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -160,12 +172,13 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
               if (isValidNumber(pld)) {
                 //String ttl = pld.substring(0,len);
-                rly->RelayConfParam->v_ttl = pld.substring(0,len);
-                rly->ticker_relay_ttl->interval(rly->RelayConfParam->v_ttl.toInt()*1000);
+                rly->RelayConfParam->v_ttl = pld.substring(0,len).toInt();
+                rly->ticker_relay_ttl->interval(rly->RelayConfParam->v_ttl*1000);
 
                 MyConfParam.v_ttl = rly->RelayConfParam->v_ttl;
                 saveConfig(MyConfParam);
-                mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED, rly->RelayConfParam->v_ttl.c_str());
+                mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED,
+                    String(rly->RelayConfParam->v_ttl).c_str());
               }
             }
           }

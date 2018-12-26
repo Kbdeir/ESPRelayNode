@@ -39,8 +39,9 @@ time_t getNtpTime()
   Serial.println(F("Transmit NTP Request"));
   // get a random server from the pool
   // WiFi.hostByName(ntpServerName, ntpServerIP);
-  ntpServerIP.fromString(MyConfParam.v_timeserver);
-  timeZone = MyConfParam.v_ntptz.toInt();
+  //ntpServerIP.fromString(MyConfParam.v_timeserver);
+  ntpServerIP=MyConfParam.v_timeserver;
+  timeZone = MyConfParam.v_ntptz;
 
   Serial.print(ntpServerName);
   Serial.print(F(": "));

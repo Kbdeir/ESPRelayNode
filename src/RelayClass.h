@@ -7,6 +7,8 @@
 #include <Scheduletimer.h>
 #include <OneButton.h>
 #include <Bounce2.h>
+#include <InputClass.h>
+
 
 typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
@@ -17,28 +19,7 @@ const int DEFLEN = 20;
 
 
 
-typedef struct TRelayConfigParams {
-  String v_PhyLoc ;
-  String v_PUB_TOPIC1 ;
-  String v_ACSmultiple ;
-  String v_ACS_Sensor_Model;
-  String v_ttl ;                // TTL VALUE
-  String v_ttl_PUB_TOPIC ;      // MQTT TTL publish topic
-  String v_CURR_TTL_PUB_TOPIC;  // running TTL publish topic
-  String v_i_ttl_PUB_TOPIC;     // TTL set/update topic
-  String v_STATE_PUB_TOPIC ;
-  String v_tta ;
-  String v_Max_Current ;
-  String v_ACS_AMPS;
-  String v_MQTT_Active ;
-  String v_LWILL_TOPIC ;
-  String v_SUB_TOPIC1 ;
-  String v_GPIO12_TOG ;
-  String v_Copy_IO ;
-  String v_ACS_Active ;
-} TRelayConfigParams; // this is in preparation for separate relay configuations
-
- class Relay
+class Relay
 {
   private:
    uint8_t pin;
@@ -66,7 +47,6 @@ typedef struct TRelayConfigParams {
    void freelockfunc(void);
    void freelockreset() ;
 
-   //unsigned long cmillis;
    unsigned long pmillis;
    unsigned long freeinterval;
 
@@ -81,6 +61,9 @@ typedef struct TRelayConfigParams {
     Schedule_timer *freelock;
     boolean rchangedflag;
     boolean timerpaused;
+    boolean hastimerrunning;
+    uint8_t r_in_mode;
+    String fMQTT_Update_Topic;
 
   //  Relay(uint8_t p);
     Relay(uint8_t p,
@@ -114,9 +97,14 @@ typedef struct TRelayConfigParams {
     void setRelayTTT_Timer_Interval(uint32_t interval);
     ksb_status_t TTLstate();
     int readrelay ();
-    void attachSwithchButton(uint8_t switchbutton,
+
+    void attachSwithchButton (
+                            uint8_t switchbutton,
                             fnptr_a intSvcfunc,
-                            fnptr_a OnebtnSvcfunc);
+                            fnptr_a OnebtnSvcfunc
+                            , uint8_t im
+                            , String& MQTT_Update_Topic
+                            );
 
     uint8_t getRelaySwithbtn();
     uint8_t getRelayPin();
@@ -127,5 +115,6 @@ typedef struct TRelayConfigParams {
 };
 
   Relay * getrelaybypin(uint8_t pn);
+  Relay * getrelaybynumber(uint8_t pn);
 
 #endif

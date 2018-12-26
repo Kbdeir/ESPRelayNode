@@ -21,10 +21,20 @@ typedef struct TWeekdays {
   boolean Tuesday ;
   boolean Wednesday ;
   boolean Thursday;
-  boolean Friday ;                // TTL VALUE
-  boolean Saturday ;      // MQTT TTL publish topic
-  boolean Sunday;  // running TTL publish topic
-  boolean AllWeek;     // TTL set/update topic
+  boolean Friday ;
+  boolean Saturday ;
+  boolean Sunday;
+  boolean AllWeek;
+  void clear() {
+            Monday    = false;
+            Tuesday   = false;
+            Wednesday = false;
+            Thursday  = false;
+            Friday    = false;
+            Saturday  = false;
+            Sunday    = false;
+            AllWeek   = false;
+          }
 
 } TWeekdays; // this is in preparation for separate relay configuations
 
@@ -45,6 +55,7 @@ typedef struct TWeekdays {
     uint16_t Mark_Hours;
     uint16_t Mark_Minutes;
     boolean enabled;
+    uint8_t relay;
 
     char* Testchar;
 
@@ -59,7 +70,8 @@ typedef struct TWeekdays {
               String para_spantimefrom,
               String para_spantimeto,
               TWeekdays * para_weekdays,
-              boolean para_enabled
+              boolean para_enabled,
+              uint8_t para_relay
             );
 
     ~NodeTimer();
