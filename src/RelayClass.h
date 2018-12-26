@@ -61,6 +61,7 @@ class Relay
     Schedule_timer *freelock;
     boolean rchangedflag;
     boolean timerpaused;
+    boolean hastimerrunning;
     uint8_t r_in_mode;
     String fMQTT_Update_Topic;
 
@@ -96,6 +97,7 @@ class Relay
     void setRelayTTT_Timer_Interval(uint32_t interval);
     ksb_status_t TTLstate();
     int readrelay ();
+
     void attachSwithchButton (
                             uint8_t switchbutton,
                             fnptr_a intSvcfunc,
@@ -113,5 +115,6 @@ class Relay
 };
 
   Relay * getrelaybypin(uint8_t pn);
+  Relay * getrelaybynumber(uint8_t pn);
 
 #endif

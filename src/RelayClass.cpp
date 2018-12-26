@@ -31,6 +31,7 @@ Relay::Relay(uint8_t p,
   r_in_mode = 1;
   fMQTT_Update_Topic = "/none";
   timerpaused = false;
+  hastimerrunning = false;
 
   // tickers callback functions for ttl, acs, tta
   fttlcallback = ttlcallback;
@@ -295,7 +296,7 @@ boolean Relay::loadrelayparams(){
         Relay * rl;
         rl = getrelaybypin(pn);
         if (rl!=nullptr) {
-         rl->timerpaused = (v==LOW);
+         if (rl->hastimerrunning) { rl->timerpaused = (v==LOW); }
         }
       }
       if (fonchangeInterruptService) fonchangeInterruptService(this);
@@ -321,3 +322,12 @@ boolean Relay::loadrelayparams(){
         }*/
     return rly;
   }
+
+Relay * getrelaybynumber(uint8_t nb){
+  if (nb < relays.size()) {
+    Relay * rly = static_cast<Relay *>(relays.at(nb));
+    if (rly) {
+      return rly;
+    } else { return nullptr;}
+  }   else { return nullptr;}
+}

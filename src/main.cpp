@@ -636,12 +636,9 @@ void chronosevaluatetimers(Calendar MyCalendar) {
   int numOngoing = MyCalendar.listOngoing(10, occurrenceList, nowTime);
   if (numOngoing) {
     // At least one event is happening at "nowTime"...
-
     LINE();
     //PRINTLN(F("**** Some things are going on this very minute! ****"));
     for (int i = 0; i < numOngoing; i++) {
-
-
       PRINT(F("**** Running Event: "));
       PRINT((int )occurrenceList[i].id);
       PRINT('\t');
@@ -649,41 +646,45 @@ void chronosevaluatetimers(Calendar MyCalendar) {
       PRINT(F("\t ends in: "));
       (nowTime - occurrenceList[i].finish).printTo(SERIAL_DEVICE);
 
-      if (occurrenceList[i].id < relays.size()) {
-      Relay * rly = static_cast<Relay *>(relays.at(occurrenceList[i].id));
 
-      if (rly) {
-
-      if ((nowTime > occurrenceList[i].start) && (nowTime < occurrenceList[i].start + 5)) {
-        rly->timerpaused = false;
-      }
-
-      if ((nowTime > occurrenceList[i].start + 1)) {
-        LINE();
-        PRINTLN(F(" *** truning relay ON... event is Starting - TimerPaused value: *** "));
-        PRINT(rly->timerpaused);
-        if (!digitalRead(rly->getRelayPin())){
-          if (!rly->timerpaused) {
-            rly->mdigitalWrite(rly->getRelayPin(),HIGH);
+//      if (occurrenceList[i].id < relays.size()) {
+        Relay * rly = getrelaybynumber(occurrenceList[i].id); //static_cast<Relay *>(relays.at(occurrenceList[i].id));
+        if (rly) {
+          if ((nowTime > occurrenceList[i].start) && (nowTime < occurrenceList[i].start + 5)) {
+            rly->timerpaused = false;
+            rly->hastimerrunning = true;
           }
-        }
-      }
-      if ((nowTime == occurrenceList[i].finish - 1 )) {
-        LINE();
-        rly->lockupdate = false;
-        rly->mdigitalWrite(rly->getRelayPin(),LOW);
-        PRINTLN(F(" *** truning relay OFF... event is done - TimerPaused value: ***"));
-        PRINT(rly->timerpaused);
-        rly->timerpaused = false;
-      }
-    }
-  }
+          if ((nowTime > occurrenceList[i].start + 1)) {
+            rly->hastimerrunning = true;
+            LINE();
+            PRINTLN(F(" *** truning relay ON... event is Starting - TimerPaused value: *** "));
+            PRINT(rly->timerpaused);
+            if (!digitalRead(rly->getRelayPin())){
+              if (!rly->timerpaused) {
+                rly->mdigitalWrite(rly->getRelayPin(),HIGH);
+              }
+            }
+          }
+          if ((nowTime == occurrenceList[i].finish - 1 )) {
+            LINE();
+            rly->lockupdate = false;
+            rly->mdigitalWrite(rly->getRelayPin(),LOW);
+            PRINTLN(F(" *** truning relay OFF... event is done - TimerPaused value: ***"));
+            PRINT(rly->timerpaused);
+            rly->timerpaused = false;
+            rly->hastimerrunning = false;
+          }
+        } // if rly !=nullptr
+//      } // if rly in relys vector
 
-    }
-  } else {
+
+
+    } // for loop
+  } // if numongoing > 0
+   else {
   //  PRINTLN(F("Looks like we're free for the moment..."));
+    }
   }
-}
 }
 
 
