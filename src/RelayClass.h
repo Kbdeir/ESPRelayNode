@@ -8,8 +8,6 @@
 #include <Bounce2.h>
 // #include <InputClass.h>
 
-
-
 typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
@@ -38,8 +36,6 @@ class Relay
    fnptr_a fticker_ACS712_mqtt_func;
 
    fnptr_a fonchangeInterruptService;
-   //fnptr_a fon_associatedbtn_change;
-   //fnptr_a fonclick;
    fnptr_a fgeneralinLoopFunc;
 
    void freelockfunc(void);
@@ -51,8 +47,6 @@ class Relay
   public:
     boolean lockupdate;
     TConfigParams *RelayConfParam;
-  //  OneButton *fbutton;
-  //  Bounce *btn_debouncer;
     Schedule_timer *ticker_relay_tta;
     Schedule_timer *ticker_relay_ttl;
     Schedule_timer *freelock;
@@ -60,9 +54,6 @@ class Relay
     boolean timerpaused;
     boolean hastimerrunning;
     uint8_t r_in_mode;
-  //  String fMQTT_Update_Topic;
-
-  //  Relay(uint8_t p);
     Relay(uint8_t p,
           fnptr_a ttlcallback,
           fnptr_a ttlupdatecallback,
@@ -95,22 +86,9 @@ class Relay
     void setRelayTTT_Timer_Interval(uint32_t interval);
     ksb_status_t TTLstate();
     int readrelay ();
-
-  /*  void attachSwithchButton (
-                            uint8_t switchbutton,
-                            fnptr_a intSvcfunc,
-                            fnptr_a OnebtnSvcfunc,
-                            uint8_t im,
-                            String& MQTT_Update_Topic
-                            );
-                            */
-
-  //  uint8_t getRelaySwithbtn();
     uint8_t getRelayPin();
-  //  uint8_t getRelaySwithbtnState();
     void attachLoopfunc(fnptr_a GeneralLoopFunc);
     void mdigitalWrite(uint8_t pn, uint8_t v);
-  //  Relay * relayofpin(uint8_t pn);
 };
 
   Relay * getrelaybypin(uint8_t pn);

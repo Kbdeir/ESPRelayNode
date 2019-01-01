@@ -660,8 +660,6 @@ void chronosevaluatetimers(Calendar MyCalendar) {
         } // if rly !=nullptr
 //      } // if rly in relys vector
 
-
-
     } // for loop
   } // if numongoing > 0
    else {
@@ -822,14 +820,6 @@ void setup() {
     Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
     Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
     Inputsnsr13.addrelay(&relay1);
-
-  /*  relay1.attachSwithchButton(SwitchButtonPin2,
-                              onchangeSwitchInterruptSvc,  // for input mode and copy to relay ,ode
-                              buttonclick,
-                              MyConfParam.v_IN1_INPUTMODE,
-                              MyConfParam.v_InputPin12_STATE_PUB_TOPIC
-                              );                // for toggle mode
-                              */
 
     relay1.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay1);

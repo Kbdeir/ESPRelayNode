@@ -7,9 +7,6 @@ InputSensor::InputSensor(uint8_t p,
   pin = p;
   fclickmode =  clickmode;
   pinMode ( pin, INPUT_PULLUP);
-  attached_to_relay = 0;
-
-  //attachedrelay = nullptr;
   onInputChange_RelayServiceRoutine = nullptr;
   onInputClick_RelayServiceRoutine = nullptr;
 
@@ -33,21 +30,20 @@ void InputSensor::addrelay(Relay * rly) {
 
 void InputSensor::watch() {
   Input_debouncer->update();
-
-//  if (attachedrelay == nullptr) {
-if (attachedrelays.size() == 0) {
-   if (fclickmode==INPUT_NORMAL) {
-     if (Input_debouncer->fell() || Input_debouncer->rose()) {
-        if (fon_callback) fon_callback(this, nullptr);
+  //  if (attachedrelay == nullptr) {
+  if (attachedrelays.size() == 0) {
+     if (fclickmode==INPUT_NORMAL) {
+       if (Input_debouncer->fell() || Input_debouncer->rose()) {
+          if (fon_callback) fon_callback(this, nullptr);
+        }
       }
-    }
-    if (fclickmode==INPUT_TOGGLE) {
-    if (Input_debouncer->fell()) {
-       if (fon_callback) fon_callback(this,nullptr);
+      if (fclickmode==INPUT_TOGGLE) {
+      if (Input_debouncer->fell()) {
+         if (fon_callback) fon_callback(this,nullptr);
+       }
      }
-   }
 
- } else {
+   } else {
 
    Relay * rtemp = nullptr;
    for (void* it : attachedrelays)  {
@@ -66,5 +62,6 @@ if (attachedrelays.size() == 0) {
        }
      }
    }
+
  }
 }

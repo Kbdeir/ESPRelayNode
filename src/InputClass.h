@@ -21,11 +21,9 @@ class InputSensor{
     uint8_t pin;
     Bounce *Input_debouncer;
     boolean rchangedflag;
-    uint8_t attached_to_relay;
     String mqtt_topic;
     boolean post_mqtt;
     input_mode fclickmode;
-    //Relay * attachedrelay;
     fnptr_d onInputChange_RelayServiceRoutine;
     fnptr_d onInputClick_RelayServiceRoutine;
 
@@ -35,12 +33,9 @@ class InputSensor{
       input_mode clickmode
     );
 
-    void addrelay(Relay * rly);
-
     ~InputSensor();
-
+    void addrelay(Relay * rly);
     void watch();
-
 };
 
 

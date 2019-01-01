@@ -46,12 +46,6 @@ Relay::Relay(uint8_t p,
   ticker_ACS712 = new Schedule_timer (fticker_ACS712_func,100,0,MILLIS_);
   ticker_ACS_MQTT = new Schedule_timer (fticker_ACS712_mqtt_func,1000,0,MILLIS_);
   ticker_relay_tta = new Schedule_timer(fttacallback,0,0,MILLIS_);
-//  btn_debouncer = new Bounce();
-
-//  fbutton = nullptr;
-//  fonclick = nullptr;
-//  fon_associatedbtn_change = nullptr;
-
   rchangedflag = false;
 
 }
@@ -74,15 +68,6 @@ void Relay::watch(){
    if (this->ticker_relay_tta) this->ticker_relay_tta->update(this);
    if (this->freelock) this->freelock->update(this);
    freelockfunc();
-/*
-   if (fbutton) fbutton->tick(this);
-   if (fon_associatedbtn_change){
-     btn_debouncer->update();
-     if (btn_debouncer->fell() || btn_debouncer->rose()) {
-         fon_associatedbtn_change(this);
-     }
-   }
-   */
    if (fgeneralinLoopFunc) fgeneralinLoopFunc(this);
 }
 
@@ -248,27 +233,6 @@ boolean Relay::loadrelayparams(){
       return digitalRead(this->pin);
     }
 
-/*
-  void Relay::attachSwithchButton (uint8_t switchbutton
-                                  ,fnptr_a on_associatedbtn_change // on change for input or copy io mode
-                                  ,fnptr_a onclick
-                                  ,uint8_t im
-                                  ,String& MQTT_Update_Topic
-                                )
-          {
-            r_in_mode = im;
-            fMQTT_Update_Topic = MQTT_Update_Topic;
-            fswitchbutton = switchbutton;
-            pinMode (fswitchbutton, INPUT_PULLUP );
-            fon_associatedbtn_change = on_associatedbtn_change;
-            fonclick = onclick;
-            fbutton = new OneButton(fswitchbutton, true);
-            btn_debouncer->attach(fswitchbutton,INPUT_PULLUP);
-            btn_debouncer->interval(25); // interval in ms
-            if (fonclick) fbutton->attachClick(fonclick);        // toggle mode function
-          }
-*/
-
   void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){
       fgeneralinLoopFunc = GeneralLoopFunc;
     }
@@ -308,9 +272,11 @@ boolean Relay::loadrelayparams(){
     }
     }
 
-  /*Relay * Relay::relayofpin(uint8_t pn){
+  /*
+  Relay * Relay::relayofpin(uint8_t pn){
       return this;
-    }*/
+    }
+  */
 
   Relay * getrelaybypin(uint8_t pn){
     Relay * rly = nullptr;
