@@ -242,36 +242,14 @@ void onRelaychangeInterruptSvc(void* t){
 void process_Input(void * obj, void * obj1){
     Serial.print("\n process_Input");
   if (obj != nullptr) {
-    InputSensor * snsr;
-    snsr = static_cast<InputSensor *>(obj);
-  //  char* msg;
-  if (snsr->fclickmode == INPUT_NORMAL) {
-    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
-  }
-  if (snsr->fclickmode == INPUT_TOGGLE) {
-    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
-  }
-
-/*
-  if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
-      rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
-      mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,
-        rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
-  }
-
-
-  if (rly->r_in_mode == INPUT_RELAY_TOGGLE)  {
-    if (rly->readrelay() == HIGH) {
-      rly->ticker_relay_tta->stop();
-      rly->mdigitalWrite(rly->getRelayPin(), LOW);
-      rly->stop_ttl_timer();
-    } else {
-    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
-    rly->ticker_relay_tta->start();
+      InputSensor * snsr;
+      snsr = static_cast<InputSensor *>(obj);
+    if (snsr->fclickmode == INPUT_NORMAL) {
+      mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
     }
-  }
-*/
-
+    if (snsr->fclickmode == INPUT_TOGGLE) {
+      mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
+    }
   }
 }
 
@@ -281,14 +259,12 @@ void onchangeSwitchInterruptSvc(void* t, void* inputSender){
   rly = static_cast<Relay *>(t);
   InputSensor * input;
   input = static_cast<InputSensor *>(inputSender);
-
   //if (rly->r_in_mode == INPUT_NORMAL) {} v_InputPin12_STATE_PUB_TOPIC
   Serial.print("\n onchangeSwitchInterruptSvc");
   //if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
-      rly->mdigitalWrite(rly->getRelayPin(),digitalRead(input->pin)); //rly->getRelaySwithbtnState());
+  rly->mdigitalWrite(rly->getRelayPin(),digitalRead(input->pin)); //rly->getRelaySwithbtnState());
   //}
-  mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,
-    digitalRead(input->pin) == HIGH ? ON : OFF);
+  mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,digitalRead(input->pin) == HIGH ? ON : OFF);
 }
 
 
@@ -702,11 +678,9 @@ InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
   relay1.loadrelayparams();
-  //Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
-  //Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
+
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
-
   Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
   //relay2.loadrelayparams();
 
@@ -785,7 +759,7 @@ void Wifi_connect() {
                     Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
 
                     Inputsnsr13.post_mqtt = true;
-                    Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;                    
+                    Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;
 
                 }  // wifi is connected
 } // if (digitalRead(ConfigInputPin) == HIGH)
@@ -845,10 +819,9 @@ void setup() {
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 
-    // attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
-    Inputsnsr13.attachedrelay = &relay1;
     Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
     Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
+    Inputsnsr13.addrelay(&relay1);
 
   /*  relay1.attachSwithchButton(SwitchButtonPin2,
                               onchangeSwitchInterruptSvc,  // for input mode and copy to relay ,ode

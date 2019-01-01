@@ -38,8 +38,8 @@ class Relay
    fnptr_a fticker_ACS712_mqtt_func;
 
    fnptr_a fonchangeInterruptService;
-   fnptr_a fon_associatedbtn_change;
-   fnptr_a fonclick;
+   //fnptr_a fon_associatedbtn_change;
+   //fnptr_a fonclick;
    fnptr_a fgeneralinLoopFunc;
 
    void freelockfunc(void);
@@ -105,7 +105,7 @@ class Relay
                             );
                             */
 
-    uint8_t getRelaySwithbtn();
+  //  uint8_t getRelaySwithbtn();
     uint8_t getRelayPin();
   //  uint8_t getRelaySwithbtnState();
     void attachLoopfunc(fnptr_a GeneralLoopFunc);

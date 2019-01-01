@@ -9,7 +9,7 @@ InputSensor::InputSensor(uint8_t p,
   pinMode ( pin, INPUT_PULLUP);
   attached_to_relay = 0;
 
-  attachedrelay = nullptr;
+  //attachedrelay = nullptr;
   onInputChange_RelayServiceRoutine = nullptr;
   onInputClick_RelayServiceRoutine = nullptr;
 
@@ -23,14 +23,19 @@ InputSensor::InputSensor(uint8_t p,
   fon_callback = on_callback;
 }
 
-InputSensor::~InputSensor(){
+InputSensor::~InputSensor() {
       delete Input_debouncer;
     }
 
+void InputSensor::addrelay(Relay * rly) {
+    attachedrelays.push_back(rly);
+};
 
-void InputSensor::watch(){
-  if (attachedrelay == nullptr) {
-     Input_debouncer->update();
+void InputSensor::watch() {
+  Input_debouncer->update();
+
+//  if (attachedrelay == nullptr) {
+if (attachedrelays.size() == 0) {
    if (fclickmode==INPUT_NORMAL) {
      if (Input_debouncer->fell() || Input_debouncer->rose()) {
         if (fon_callback) fon_callback(this, nullptr);
@@ -41,21 +46,25 @@ void InputSensor::watch(){
        if (fon_callback) fon_callback(this,nullptr);
      }
    }
+
  } else {
 
-       Input_debouncer->update();
+   Relay * rtemp = nullptr;
+   for (void* it : attachedrelays)  {
+   //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
+     rtemp = static_cast<Relay *>(it);
+     if (rtemp) {
        if (fclickmode==INPUT_COPY_TO_RELAY) {
          if (Input_debouncer->fell() || Input_debouncer->rose()) {
-           if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(this->attachedrelay, this);}
+           if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}
           }
         }
         if (fclickmode==INPUT_RELAY_TOGGLE) {
         if (Input_debouncer->fell()) {
-          if (onInputClick_RelayServiceRoutine != nullptr) {onInputClick_RelayServiceRoutine(this->attachedrelay,this);}
+          if (onInputClick_RelayServiceRoutine != nullptr) {onInputClick_RelayServiceRoutine(rtemp,this);}
          }
        }
-
-
-
+     }
+   }
  }
 }

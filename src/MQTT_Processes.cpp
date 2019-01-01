@@ -117,8 +117,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
   //Relay * it = NULL;
   //for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
-  for (void* it : relays)
-  {
+  for (void* it : relays)  {
     rtemp = static_cast<Relay *>(it);
     if (rtemp) {
       if ((rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) ||

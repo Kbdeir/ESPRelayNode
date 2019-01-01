@@ -15,6 +15,7 @@ enum input_mode {INPUT_NONE, INPUT_TOGGLE, INPUT_NORMAL, INPUT_RELAY_TOGGLE, INP
 class InputSensor{
   private:
   fnptr_d fon_callback;
+  std::vector<void *> attachedrelays ; // a list to hold all relays
 
   public:
     uint8_t pin;
@@ -24,7 +25,7 @@ class InputSensor{
     String mqtt_topic;
     boolean post_mqtt;
     input_mode fclickmode;
-    Relay * attachedrelay;
+    //Relay * attachedrelay;
     fnptr_d onInputChange_RelayServiceRoutine;
     fnptr_d onInputClick_RelayServiceRoutine;
 
@@ -33,6 +34,8 @@ class InputSensor{
       fnptr_d on_callback,
       input_mode clickmode
     );
+
+    void addrelay(Relay * rly);
 
     ~InputSensor();
 

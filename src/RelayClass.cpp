@@ -49,8 +49,8 @@ Relay::Relay(uint8_t p,
 //  btn_debouncer = new Bounce();
 
 //  fbutton = nullptr;
-  fonclick = nullptr;
-  fon_associatedbtn_change = nullptr;
+//  fonclick = nullptr;
+//  fon_associatedbtn_change = nullptr;
 
   rchangedflag = false;
 
