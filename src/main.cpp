@@ -15,7 +15,6 @@
 #include <InputClass.h>
 #include <TimerClass.h>
 //#include <RelaysArray.h>
-
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
 
@@ -30,11 +29,7 @@ extern std::vector<void *> relays ; // a list to hold all relays
   #include <AsyncTCP.h>
   #include <update.h>
   #include <esp_wifi.h>
-    /*
-    extern "C" {
-  	#include "freertos/FreeRTOS.h"
-  	#include "freertos/timers.h"
-    }*/
+
 #else
   #include <ESP8266WiFi.h>
   #include <ESP.h>
@@ -66,19 +61,6 @@ const char * EventNames[] = {
   NULL
 };
 
-/*
-volatile byte interruptCounter = 0;
-volatile byte interruptCounter2 = 0;
-volatile byte SwitchButtonPin_interruptCounter=0;
-volatile byte InputPin14_interruptCounter=0;
-*/
-
-//#include <KSBWebHelper.h>
-/* You only need to format SPIFFS the first time you run a
-   test or else use the SPIFFS plugin to create a partition
-   https://github.com/me-no-dev/arduino-esp32fs-plugin */
-// #define FORMAT_SPIFFS_IF_FAILED true; // defined in FSFunctions
-
 #define SERIAL_DEVICE     Serial
 #define PRINT(...)    SERIAL_DEVICE.print(__VA_ARGS__)
 #define PRINTLN(...)  SERIAL_DEVICE.println(__VA_ARGS__)
@@ -95,7 +77,6 @@ volatile byte InputPin14_interruptCounter=0;
 #endif
 
 
-
 long timezone     = 1;
 byte daysavetime  = 1;
 int wifimode      = WIFI_CLT_MODE;
@@ -103,7 +84,6 @@ const int led     = 02;
 String MAC;
 unsigned long lastMillis = 0;
 uint32_t trials   = 0;
-//char buf[100];
 int  WFstatus;
 int UpCount       = 0;
 WiFiClient net;
@@ -271,26 +251,21 @@ void onchangeSwitchInterruptSvc(void* t, void* inputSender){
 // this function will be called when button is clicked.
 void buttonclick(void* sender, void* inputSender) {
   if (sender){
-  Relay * rly;
-  rly = static_cast<Relay *>(sender);
-
-  InputSensor * input;
-  input = static_cast<InputSensor *>(inputSender);
-
-  Serial.print("\n buttonclick");
-  //if ((rly->RelayConfParam->v_GPIO12_TOG == "1") && (rly->RelayConfParam->v_Copy_IO == "0"))  {
-//  if (rly->r_in_mode == INPUT_RELAY_TOGGLE)  {
-    if (rly->readrelay() == HIGH) {
-      rly->ticker_relay_tta->stop();
-      rly->mdigitalWrite(rly->getRelayPin(), LOW);
-      rly->stop_ttl_timer();
-    } else {
-    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
-    rly->ticker_relay_tta->start();
-    }
-//  }
-  mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
-}
+    Relay * rly;
+    rly = static_cast<Relay *>(sender);
+    InputSensor * input;
+    input = static_cast<InputSensor *>(inputSender);
+    Serial.print("\n buttonclick");
+      if (rly->readrelay() == HIGH) {
+        rly->ticker_relay_tta->stop();
+        rly->mdigitalWrite(rly->getRelayPin(), LOW);
+        rly->stop_ttl_timer();
+      } else {
+      rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
+      rly->ticker_relay_tta->start();
+      }
+    mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
+  }
 }
 
 

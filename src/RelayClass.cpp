@@ -29,7 +29,6 @@ Relay::Relay(uint8_t p,
   lockupdate = false;
   freeinterval = 200;
   r_in_mode = 1;
-  //fMQTT_Update_Topic = "/none";
   timerpaused = false;
   hastimerrunning = false;
 
@@ -47,7 +46,6 @@ Relay::Relay(uint8_t p,
   ticker_ACS_MQTT = new Schedule_timer (fticker_ACS712_mqtt_func,1000,0,MILLIS_);
   ticker_relay_tta = new Schedule_timer(fttacallback,0,0,MILLIS_);
   rchangedflag = false;
-
 }
 
 Relay::~Relay(){
@@ -56,8 +54,6 @@ Relay::~Relay(){
       delete ticker_ACS712;
       delete ticker_ACS_MQTT;
       delete ticker_relay_tta;
-//      delete fbutton;
-//      delete btn_debouncer;
     }
 
 
@@ -127,7 +123,7 @@ boolean Relay::SaveDefautRelayParams(){
    return true;
    }
 
-boolean Relay::loadrelayparams(){
+  boolean Relay::loadrelayparams(){
 
     if(SPIFFS.begin()) { Serial.println(F("SPIFFS Initialize....ok")); }
        else {Serial.println(F("SPIFFS Initialization...failed")); }
@@ -188,73 +184,58 @@ boolean Relay::loadrelayparams(){
      RelayConfParam->v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
      RelayConfParam->v_IN1_INPUTMODE       =  json["I1MODE"].as<uint8_t>();
      RelayConfParam->v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
-
-
      return true;
-   }
+}
 
-  void Relay::start_ttl_timer() {
+void Relay::start_ttl_timer() {
       this->ticker_relay_ttl->start();
-    }
+}
 
-  void Relay::stop_ttl_timer() {
+void Relay::stop_ttl_timer() {
       this->ticker_relay_ttl->stop();
-    }
+}
 
-  void Relay::start_ACS712() {
+void Relay::start_ACS712() {
       this->ticker_ACS712->start();
-    }
+}
 
-  void Relay::stop_ACS712() {
+void Relay::stop_ACS712() {
       this->ticker_ACS712->stop();
-    }
+}
 
-  void Relay::start_ACS712_mqtt() {
+void Relay::start_ACS712_mqtt() {
         this->ticker_ACS_MQTT->start();
-      }
+}
 
-  void Relay::stop_ACS712_mqtt() {
+void Relay::stop_ACS712_mqtt() {
         this->ticker_ACS_MQTT->stop();
-      }
+}
 
-  uint32_t Relay::getRelayTTLperiodscounter() {
+uint32_t Relay::getRelayTTLperiodscounter() {
       return this->ticker_relay_ttl->periodscounter();
-    }
+}
 
-  void Relay::setRelayTTT_Timer_Interval(uint32_t interval){
+void Relay::setRelayTTT_Timer_Interval(uint32_t interval){
       this->ticker_relay_ttl->interval(interval);
-    }
+}
 
-  ksb_status_t Relay::TTLstate() {
+ksb_status_t Relay::TTLstate() {
     	return this->ticker_relay_ttl->state();
-    	}
+}
 
-  int Relay::readrelay (){
+int Relay::readrelay (){
       return digitalRead(this->pin);
-    }
+}
 
-  void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){
+void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){
       fgeneralinLoopFunc = GeneralLoopFunc;
-    }
+}
 
-/*
-  uint8_t Relay::getRelaySwithbtn(){
-      return this->fswitchbutton;
-    }
-
-    */
-/*
-  uint8_t Relay::getRelaySwithbtnState(){
-      return digitalRead(this->fswitchbutton);
-    }
-    */
-
-  uint8_t Relay::getRelayPin(){
+uint8_t Relay::getRelayPin(){
       return this->pin;
-    }
+}
 
-
-  void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
+void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
     this->freelockreset();
     if (!lockupdate){
       lockupdate = true;
@@ -270,17 +251,12 @@ boolean Relay::loadrelayparams(){
       }
       if (fonchangeInterruptService) fonchangeInterruptService(this);
     }
-    }
+}
 
-  /*
-  Relay * Relay::relayofpin(uint8_t pn){
-      return this;
-    }
-  */
 
-  Relay * getrelaybypin(uint8_t pn){
-    Relay * rly = nullptr;
-    Relay * rtemp = nullptr;
+Relay * getrelaybypin(uint8_t pn){
+      Relay * rly = nullptr;
+      Relay * rtemp = nullptr;
       for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)  {
         rtemp = static_cast<Relay *>(*it);
         if (pn == rtemp->getRelayPin()) {
@@ -292,7 +268,8 @@ boolean Relay::loadrelayparams(){
           if (rtemp->getRelayPin() == pn) rly = rtemp;
         }*/
     return rly;
-  }
+}
+
 
 Relay * getrelaybynumber(uint8_t nb){
   if (nb < relays.size()) {
