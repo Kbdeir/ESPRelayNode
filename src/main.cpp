@@ -240,6 +240,7 @@ void onRelaychangeInterruptSvc(void* t){
 
 
 void process_Input(void * obj, void * obj1){
+    Serial.print("\n process_Input");
   if (obj != nullptr) {
     InputSensor * snsr;
     snsr = static_cast<InputSensor *>(obj);
@@ -275,28 +276,34 @@ void process_Input(void * obj, void * obj1){
 }
 
 
-void onchangeSwitchInterruptSvc(void* t){
+void onchangeSwitchInterruptSvc(void* t, void* inputSender){
   Relay * rly;
   rly = static_cast<Relay *>(t);
-  if (rly->r_in_mode == INPUT_NORMAL) {
+  InputSensor * input;
+  input = static_cast<InputSensor *>(inputSender);
 
-  }
-  if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
-      rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
-  }
-  mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,
-    rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
+  //if (rly->r_in_mode == INPUT_NORMAL) {} v_InputPin12_STATE_PUB_TOPIC
+  Serial.print("\n onchangeSwitchInterruptSvc");
+  //if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
+      rly->mdigitalWrite(rly->getRelayPin(),digitalRead(input->pin)); //rly->getRelaySwithbtnState());
+  //}
+  mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,
+    digitalRead(input->pin) == HIGH ? ON : OFF);
 }
 
 
-// this function will be called when the button was pressed.
-void buttonclick(void* sender) {
+// this function will be called when button is clicked.
+void buttonclick(void* sender, void* inputSender) {
   if (sender){
   Relay * rly;
   rly = static_cast<Relay *>(sender);
 
+  InputSensor * input;
+  input = static_cast<InputSensor *>(inputSender);
+
+  Serial.print("\n buttonclick");
   //if ((rly->RelayConfParam->v_GPIO12_TOG == "1") && (rly->RelayConfParam->v_Copy_IO == "0"))  {
-  if (rly->r_in_mode == INPUT_RELAY_TOGGLE)  {
+//  if (rly->r_in_mode == INPUT_RELAY_TOGGLE)  {
     if (rly->readrelay() == HIGH) {
       rly->ticker_relay_tta->stop();
       rly->mdigitalWrite(rly->getRelayPin(), LOW);
@@ -305,8 +312,8 @@ void buttonclick(void* sender) {
     rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
     rly->ticker_relay_tta->start();
     }
-  }
-  mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,TOG);
+//  }
+  mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
 }
 }
 
@@ -688,19 +695,19 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 }
 
 
-
 InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
-
+InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-
   relay1.loadrelayparams();
   //Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
   //Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
+
+  Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
   //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
@@ -777,6 +784,9 @@ void Wifi_connect() {
                     Inputsnsr12.post_mqtt = true;
                     Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
 
+                    Inputsnsr13.post_mqtt = true;
+                    Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;                    
+
                 }  // wifi is connected
 } // if (digitalRead(ConfigInputPin) == HIGH)
 
@@ -795,9 +805,12 @@ void setup() {
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
 
-    /* You only need to format SPIFFS the first time you run a
+    /*
+       You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
-       https://github.com/me-no-dev/arduino-esp32fs-plugin */
+       https://github.com/me-no-dev/arduino-esp32fs-plugin
+    */
+
     #ifdef ESP32
 		if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
 		   Serial.println(F("SPIFFS Mount Failed"));
@@ -833,12 +846,17 @@ void setup() {
     mb.addCoil(LAMP2_COIL);
 
     // attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
-    relay1.attachSwithchButton(SwitchButtonPin2,
+    Inputsnsr13.attachedrelay = &relay1;
+    Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+    Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
+
+  /*  relay1.attachSwithchButton(SwitchButtonPin2,
                               onchangeSwitchInterruptSvc,  // for input mode and copy to relay ,ode
                               buttonclick,
                               MyConfParam.v_IN1_INPUTMODE,
                               MyConfParam.v_InputPin12_STATE_PUB_TOPIC
                               );                // for toggle mode
+                              */
 
     relay1.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay1);
@@ -868,6 +886,7 @@ void loop() {
 
   Inputsnsr14.watch();
   Inputsnsr12.watch();
+  Inputsnsr13.watch();
 
   if (restartRequired){
     Serial.printf("Restarting ESP\n\r");
