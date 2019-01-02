@@ -6,7 +6,6 @@
 
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
-
 extern InputSensor Inputsnsr14;
 extern InputSensor Inputsnsr12;
 
@@ -16,12 +15,11 @@ extern InputSensor Inputsnsr12;
   #include <ESP8266WiFi.h>
 #endif
 
-
-
 AsyncMqttClient mqttClient;
 
 void connectToMqtt() {
   Serial.println(F("Connecting MQTT..."));
+  mqttClient.setCleanSession(true);
   mqttClient.connect();
 }
 
@@ -118,9 +116,9 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Relay * rtemp = nullptr;
 
   //Relay * it = NULL;
-  for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
-  {
-    rtemp = static_cast<Relay *>(*it);
+  //for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
+  for (void* it : relays)  {
+    rtemp = static_cast<Relay *>(it);
     if (rtemp) {
       if ((rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) ||
           (rtemp->RelayConfParam->v_i_ttl_PUB_TOPIC == tp)) {

@@ -15,7 +15,6 @@
 #include <InputClass.h>
 #include <TimerClass.h>
 //#include <RelaysArray.h>
-
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
 
@@ -30,11 +29,7 @@ extern std::vector<void *> relays ; // a list to hold all relays
   #include <AsyncTCP.h>
   #include <update.h>
   #include <esp_wifi.h>
-    /*
-    extern "C" {
-  	#include "freertos/FreeRTOS.h"
-  	#include "freertos/timers.h"
-    }*/
+
 #else
   #include <ESP8266WiFi.h>
   #include <ESP.h>
@@ -66,19 +61,6 @@ const char * EventNames[] = {
   NULL
 };
 
-/*
-volatile byte interruptCounter = 0;
-volatile byte interruptCounter2 = 0;
-volatile byte SwitchButtonPin_interruptCounter=0;
-volatile byte InputPin14_interruptCounter=0;
-*/
-
-//#include <KSBWebHelper.h>
-/* You only need to format SPIFFS the first time you run a
-   test or else use the SPIFFS plugin to create a partition
-   https://github.com/me-no-dev/arduino-esp32fs-plugin */
-// #define FORMAT_SPIFFS_IF_FAILED true; // defined in FSFunctions
-
 #define SERIAL_DEVICE     Serial
 #define PRINT(...)    SERIAL_DEVICE.print(__VA_ARGS__)
 #define PRINTLN(...)  SERIAL_DEVICE.println(__VA_ARGS__)
@@ -95,7 +77,6 @@ volatile byte InputPin14_interruptCounter=0;
 #endif
 
 
-
 long timezone     = 1;
 byte daysavetime  = 1;
 int wifimode      = WIFI_CLT_MODE;
@@ -103,7 +84,6 @@ const int led     = 02;
 String MAC;
 unsigned long lastMillis = 0;
 uint32_t trials   = 0;
-//char buf[100];
 int  WFstatus;
 int UpCount       = 0;
 WiFiClient net;
@@ -151,10 +131,10 @@ Relay relay1(
 */
 
 
-void ticker_ACS712_mqtt (void* obj) {
-  if (obj != nullptr) {
+void ticker_ACS712_mqtt (void* relaySender) {
+  if (relaySender != nullptr) {
   Relay * rly;
-  rly = static_cast<Relay *>(obj);
+  rly = static_cast<Relay *>(relaySender);
     if (rly->RelayConfParam->v_ACS_Active) {
         float variance =(abs(ACS_I_Current-old_acs_value));
         // Serial.printf("%6.*lf", 2, variance );
@@ -168,10 +148,10 @@ void ticker_ACS712_mqtt (void* obj) {
 }
 
 
-void ticker_ACS712_func (void* obj) {
-  if (obj != nullptr) {
+void ticker_ACS712_func (void* relaySender) {
+  if (relaySender != nullptr) {
   Relay * rly;
-  rly = static_cast<Relay *>(obj);
+  rly = static_cast<Relay *>(relaySender);
     if (rly->RelayConfParam->v_ACS_Active) {
         ACS_I_Current = sensor.getCurrentAC();
         // Serial.println(String("I = ") + ACS_I_Current + " A");
@@ -183,12 +163,12 @@ void ticker_ACS712_func (void* obj) {
 }
 
 
-void ticker_relay_ttl_periodic_callback(void* obj){
+void ticker_relay_ttl_periodic_callback(void* relaySender){
   Serial.print(F("\n TTL Countdown: "));
   //uint32_t t = ticker_relay_ttl.periodscounter();
-  if (obj != nullptr) {
+  if (relaySender != nullptr) {
     Relay * rly;
-    rly = static_cast<Relay *>(obj);
+    rly = static_cast<Relay *>(relaySender);
     uint32_t t = rly->getRelayTTLperiodscounter();
     if (digitalRead(rly->getRelayPin() == HIGH)) {
       mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, String(rly->RelayConfParam->v_ttl).c_str());
@@ -198,18 +178,18 @@ void ticker_relay_ttl_periodic_callback(void* obj){
 }
 
 
-void ticker_relay_ttl_off (void* obj) {
-  if (obj != nullptr) {
+void ticker_relay_ttl_off (void* relaySender) {
+  if (relaySender != nullptr) {
     Relay * rly;
-    rly = static_cast<Relay *>(obj);
+    rly = static_cast<Relay *>(relaySender);
     rly->mdigitalWrite(rly->getRelayPin(),LOW);
   }
 }
 
 
-void onRelaychangeInterruptSvc(void* t){
+void onRelaychangeInterruptSvc(void* relaySender){
   Relay * rly;
-  rly = static_cast<Relay *>(t);
+  rly = static_cast<Relay *>(relaySender);
 
   if (rly->rchangedflag ) {
       rly->rchangedflag = false;
@@ -239,82 +219,60 @@ void onRelaychangeInterruptSvc(void* t){
 }
 
 
-void process_Input(void * obj, void * obj1){
-  if (obj != nullptr) {
-    InputSensor * snsr;
-    snsr = static_cast<InputSensor *>(obj);
-  //  char* msg;
-  if (snsr->fclickmode == INPUT_NORMAL) {
-    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
-  }
-  if (snsr->fclickmode == INPUT_TOGGLE) {
-    mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
-  }
-
-/*
-  if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
-      rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
-      mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,
-        rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
-  }
-
-
-  if (rly->r_in_mode == INPUT_RELAY_TOGGLE)  {
-    if (rly->readrelay() == HIGH) {
-      rly->ticker_relay_tta->stop();
-      rly->mdigitalWrite(rly->getRelayPin(), LOW);
-      rly->stop_ttl_timer();
-    } else {
-    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
-    rly->ticker_relay_tta->start();
+void process_Input(void * inputSender, void * obj){
+    Serial.print("\n process_Input");
+  if (inputSender != nullptr) {
+      InputSensor * snsr;
+      snsr = static_cast<InputSensor *>(inputSender);
+    if (snsr->fclickmode == INPUT_NORMAL) {
+      mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
+    }
+    if (snsr->fclickmode == INPUT_TOGGLE) {
+      mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, TOG);
     }
   }
-*/
-
-  }
 }
 
 
-void onchangeSwitchInterruptSvc(void* t){
+void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
   Relay * rly;
-  rly = static_cast<Relay *>(t);
-  if (rly->r_in_mode == INPUT_NORMAL) {
-
-  }
-  if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
-      rly->mdigitalWrite(rly->getRelayPin(),rly->getRelaySwithbtnState());
-  }
-  mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,
-    rly->getRelaySwithbtnState() == HIGH ? ON : OFF);
+  rly = static_cast<Relay *>(relaySender);
+  InputSensor * input;
+  input = static_cast<InputSensor *>(inputSender);
+  //if (rly->r_in_mode == INPUT_NORMAL) {} v_InputPin12_STATE_PUB_TOPIC
+  Serial.print("\n onchangeSwitchInterruptSvc");
+  //if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
+  rly->mdigitalWrite(rly->getRelayPin(),digitalRead(input->pin)); //rly->getRelaySwithbtnState());
+  //}
+  mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,digitalRead(input->pin) == HIGH ? ON : OFF);
 }
 
 
-// this function will be called when the button was pressed.
-void buttonclick(void* sender) {
-  if (sender){
+// this function will be called when button is clicked.
+void buttonclick(void* relaySender, void* inputSender) {
+  if (relaySender){
+    Relay * rly;
+    rly = static_cast<Relay *>(relaySender);
+    InputSensor * input;
+    input = static_cast<InputSensor *>(inputSender);
+    Serial.print("\n buttonclick");
+      if (rly->readrelay() == HIGH) {
+        rly->ticker_relay_tta->stop();
+        rly->mdigitalWrite(rly->getRelayPin(), LOW);
+        rly->stop_ttl_timer();
+      } else {
+      rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
+      rly->ticker_relay_tta->start();
+      }
+    mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
+  }
+}
+
+
+void relayloopservicefunc(void* relaySender){
+if (relaySender){
   Relay * rly;
-  rly = static_cast<Relay *>(sender);
-
-  //if ((rly->RelayConfParam->v_GPIO12_TOG == "1") && (rly->RelayConfParam->v_Copy_IO == "0"))  {
-  if (rly->r_in_mode == INPUT_RELAY_TOGGLE)  {
-    if (rly->readrelay() == HIGH) {
-      rly->ticker_relay_tta->stop();
-      rly->mdigitalWrite(rly->getRelayPin(), LOW);
-      rly->stop_ttl_timer();
-    } else {
-    rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
-    rly->ticker_relay_tta->start();
-    }
-  }
-  mqttClient.publish(rly->fMQTT_Update_Topic.c_str(), QOS2, RETAINED,TOG);
-}
-}
-
-
-void relayloopservicefunc(void* sender){
-if (sender){
-  Relay * rly;
-  rly = static_cast<Relay *>(sender);
+  rly = static_cast<Relay *>(relaySender);
     if (rly->TTLstate() != RUNNING_) {
       if (digitalRead(rly->getRelayPin()) == HIGH) {
         if (rly->RelayConfParam->v_ttl > 0 ) rly->start_ttl_timer(); // ticker_relay_ttl.start();
@@ -677,8 +635,6 @@ void chronosevaluatetimers(Calendar MyCalendar) {
         } // if rly !=nullptr
 //      } // if rly in relys vector
 
-
-
     } // for loop
   } // if numongoing > 0
    else {
@@ -688,19 +644,17 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 }
 
 
-
 InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
-
+InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-
   relay1.loadrelayparams();
-  //Inputsnsr12.fclickmode = (MyConfParam.v_IN1_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
-  //Inputsnsr14.fclickmode = (MyConfParam.v_IN2_INPUTMODE == TOG_MODE) ? INPUT_TOGGLE : INPUT_NORMAL;
+
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
+  Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
   //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
@@ -777,6 +731,9 @@ void Wifi_connect() {
                     Inputsnsr12.post_mqtt = true;
                     Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
 
+                    Inputsnsr13.post_mqtt = true;
+                    Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;
+
                 }  // wifi is connected
 } // if (digitalRead(ConfigInputPin) == HIGH)
 
@@ -795,9 +752,12 @@ void setup() {
     pinMode ( InputPin14, INPUT_PULLUP );
     Serial.begin(115200);
 
-    /* You only need to format SPIFFS the first time you run a
+    /*
+       You only need to format SPIFFS the first time you run a
        test or else use the SPIFFS plugin to create a partition
-       https://github.com/me-no-dev/arduino-esp32fs-plugin */
+       https://github.com/me-no-dev/arduino-esp32fs-plugin
+    */
+
     #ifdef ESP32
 		if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
 		   Serial.println(F("SPIFFS Mount Failed"));
@@ -832,13 +792,9 @@ void setup() {
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 
-    // attachInterrupt(digitalPinToInterrupt(relay1.getRelayPin()), handleInterrupt, CHANGE );
-    relay1.attachSwithchButton(SwitchButtonPin2,
-                              onchangeSwitchInterruptSvc,  // for input mode and copy to relay ,ode
-                              buttonclick,
-                              MyConfParam.v_IN1_INPUTMODE,
-                              MyConfParam.v_InputPin12_STATE_PUB_TOPIC
-                              );                // for toggle mode
+    Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+    Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
+    Inputsnsr13.addrelay(&relay1);
 
     relay1.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay1);
@@ -868,6 +824,7 @@ void loop() {
 
   Inputsnsr14.watch();
   Inputsnsr12.watch();
+  Inputsnsr13.watch();
 
   if (restartRequired){
     Serial.printf("Restarting ESP\n\r");
