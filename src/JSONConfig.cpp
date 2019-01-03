@@ -2,6 +2,7 @@
 #include <RelayClass.h>
 
 const char* filename = "/config.json";
+const char* IRMapfilename = "/IRMAP.json";
 #define buffer_size  1800 // json buffer size
 
 
@@ -53,7 +54,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
     return JSONCONFIG_CORRUPTED;
   }
 
-// ACS_AMPS v_InputPin12_STATE_PUB_TOPIC
+  // ACS_AMPS v_InputPin12_STATE_PUB_TOPIC
 
   ConfParam.v_ssid                = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ssid"));
   ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("pass"));
@@ -96,7 +97,6 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
   ConfParam.v_IN1_INPUTMODE       =  json["I1MODE"].as<uint8_t>();
   ConfParam.v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
-
 
   Serial.print(F("\n will connect to: ")); Serial.print(ConfParam.v_ssid);
   Serial.print(F("\n with pass: ")); Serial.print(ConfParam.v_pass);
@@ -260,4 +260,100 @@ bool saveDefaultConfig(){
     configFile.flush();
     configFile.close();
   return true;
+}
+
+
+bool saveIRMapConfig(AsyncWebServerRequest *request){
+    StaticJsonBuffer<buffer_size> jsonBuffer;
+    JsonObject& json = jsonBuffer.createObject();
+    int args = request->args();
+
+    for(int i=0;i<args;i++){
+      Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
+      json[request->argName(i)] =  request->arg(i) ;
+    }
+
+    File configFile = SPIFFS.open(IRMapfilename, "w");
+    if (!configFile) {
+      Serial.println(F("Failed to open config file for writing"));
+      return false;
+    }
+    json.printTo(configFile);
+    configFile.flush();
+    configFile.close();
+    return true;
+}
+
+
+
+config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
+
+  if(SPIFFS.begin())
+  {
+    Serial.println(F("SPIFFS Initialize....ok"));
+  }
+  else
+  {
+    Serial.println(F("SPIFFS Initialization...failed"));
+  }
+
+  if (! SPIFFS.exists(IRMapfilename)) {
+    Serial.println(F("config file does not exist! ... building and rebooting...."));
+    while (!saveDefaultConfig()){  };
+    return FILE_NOT_FOUND;
+  }
+
+  File configFile = SPIFFS.open(IRMapfilename, "r");
+  if (!configFile) {
+    Serial.println(F("Failed to open config file"));
+    saveDefaultConfig();
+    return ERROR_OPENING_FILE;
+  }
+
+  size_t size = configFile.size();
+  if (size > buffer_size) {
+    Serial.println(F("Config file size is too large, rebuilding."));
+    saveDefaultConfig();
+    return ERROR_OPENING_FILE;
+  }
+
+  // Allocate a buffer to store contents of the file.
+  std::unique_ptr<char[]> buf(new char[size]);
+
+  // We don't use String here because ArduinoJson library requires the input
+  // buffer to be mutable. If you don't use ArduinoJson, you may as well
+  // use configFile.readString instead.
+  configFile.readBytes(buf.get(), size);
+
+  StaticJsonBuffer<buffer_size> jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(buf.get());
+
+  if (!json.success()) {
+    Serial.println(F("Failed to parse config file"));
+    saveDefaultConfig();
+    return JSONCONFIG_CORRUPTED;
+  }
+
+  myIRMap.I1       =  json["I1"].as<uint8_t>();
+  myIRMap.I2       =  json["I2"].as<uint8_t>();
+  myIRMap.I3       =  json["I3"].as<uint8_t>();
+  myIRMap.I4       =  json["I4"].as<uint8_t>();
+  myIRMap.I5       =  json["I5"].as<uint8_t>();
+  myIRMap.I6       =  json["I6"].as<uint8_t>();
+  myIRMap.I7       =  json["I7"].as<uint8_t>();
+  myIRMap.I8       =  json["I8"].as<uint8_t>();
+  myIRMap.I9       =  json["I9"].as<uint8_t>();
+  myIRMap.I10      =  json["I10"].as<uint8_t>();
+  myIRMap.R1       =  json["R1"].as<uint8_t>();
+  myIRMap.R2       =  json["R2"].as<uint8_t>();
+  myIRMap.R3       =  json["R3"].as<uint8_t>();
+  myIRMap.R4       =  json["R4"].as<uint8_t>();
+  myIRMap.R5       =  json["R5"].as<uint8_t>();
+  myIRMap.R6       =  json["R6"].as<uint8_t>();
+  myIRMap.R7       =  json["R7"].as<uint8_t>();
+  myIRMap.R8       =  json["R8"].as<uint8_t>();
+  myIRMap.R9       =  json["R9"].as<uint8_t>();
+  myIRMap.R10      =  json["R10"].as<uint8_t>();
+
+  return SUCCESS;
 }

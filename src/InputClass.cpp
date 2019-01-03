@@ -1,4 +1,5 @@
 #include <InputClass.h>
+#include <InputsArray.h>
 
 InputSensor::InputSensor(uint8_t p,
             fnptr_d on_callback,input_mode clickmode
@@ -64,4 +65,14 @@ void InputSensor::watch() {
    }
 
  }
+}
+
+
+InputSensor * getinputbynumber(uint8_t nb){
+  if (nb < inputs.size()) {
+    InputSensor * inp = static_cast<InputSensor *>(inputs.at(nb));
+    if (inp) {
+      return inp;
+    } else { return nullptr;}
+  }   else { return nullptr;}
 }

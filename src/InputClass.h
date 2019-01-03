@@ -5,6 +5,7 @@
 #include <Bounce2.h>
 #include <RelayClass.h>
 
+
 typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
@@ -36,6 +37,7 @@ class InputSensor{
     ~InputSensor();
     void addrelay(Relay * rly);
     void watch();
+    InputSensor * getinputbynumber(uint8_t nb);
 };
 
 

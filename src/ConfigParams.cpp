@@ -4,6 +4,7 @@ boolean ftimesynced = false;
 boolean CalendarNotInitiated = true;
 
 TConfigParams MyConfParam;
+TIRMap myIRMap;
 
 String CID(){
   #ifdef ESP32

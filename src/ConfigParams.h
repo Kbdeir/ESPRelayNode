@@ -78,9 +78,35 @@ typedef struct TConfigParams {
   uint8_t v_IN0_INPUTMODE;
   uint8_t v_IN1_INPUTMODE;
   uint8_t v_IN2_INPUTMODE;
+
 } TConfigParams;
 
+typedef struct TIRMap {
+uint8_t I1;
+uint8_t I2;
+uint8_t I3;
+uint8_t I4;
+uint8_t I5;
+uint8_t I6;
+uint8_t I7;
+uint8_t I8;
+uint8_t I9;
+uint8_t I10;
+uint8_t R1;
+uint8_t R2;
+uint8_t R3;
+uint8_t R4;
+uint8_t R5;
+uint8_t R6;
+uint8_t R7;
+uint8_t R8;
+uint8_t R9;
+uint8_t R10;
+} TIRMap;
+
   extern TConfigParams MyConfParam;
+  extern TIRMap myIRMap;
+   
   extern String  MAC;
   String CID();
   void relayon(void* obj);
