@@ -70,7 +70,7 @@ void InputSensor::watch() {
 }
 
 
-InputSensor * getinputbynumber(uint8_t nb){
+InputSensor * getinputbynumber(uint8_t nb) {
   if (nb < inputs.size()) {
     InputSensor * inp = static_cast<InputSensor *>(inputs.at(nb));
     if (inp) {
@@ -79,16 +79,17 @@ InputSensor * getinputbynumber(uint8_t nb){
   }   else { return nullptr;}
 }
 
-void applyIRMAp(uint8_t Inpn, uint8_t rlyn){
-  InputSensor * t = nullptr;
-  Relay  * r = nullptr;
 
-  if ((Inpn <= inputs.size()-1) && (rlyn <= relays.size()-1)) {
-    t = static_cast<InputSensor *>(inputs.at(Inpn));
-    r = static_cast<Relay *>(relays.at(rlyn));
-    if ((t != nullptr) && (r !=nullptr)) {
-      t->addrelay(r);
+void applyIRMap(int8_t Inpn, int8_t rlyn) {
+  if ((Inpn > -1) && (rlyn > -1)) {
+    InputSensor * t = nullptr;
+    Relay  * r = nullptr;
+    if ((Inpn <= inputs.size()-1) && (rlyn <= relays.size()-1)) {
+      t = static_cast<InputSensor *>(inputs.at(Inpn));
+      r = static_cast<Relay *>(relays.at(rlyn));
+      if ((t != nullptr) && (r !=nullptr)) {
+        t->addrelay(r);
+      }
     }
   }
-
 }

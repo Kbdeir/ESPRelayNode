@@ -1,11 +1,11 @@
 #include <JSONConfig.h>
 #include <RelayClass.h>
 
-const char* filename = "/config.json";
+const char* filename      = "/config.json";
 const char* IRMapfilename = "/IRMAP.json";
-#define buffer_size  1800 // json buffer size
+#define buffer_size  1800 
 
-extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
+extern void applyIRMap(int8_t Inpn, int8_t rlyn);
 
 
 config_read_error_t loadConfig(TConfigParams &ConfParam) {
@@ -178,7 +178,6 @@ bool saveConfig(TConfigParams &ConfParam){
 }
 
 
-
 bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
@@ -287,87 +286,84 @@ bool saveIRMapConfig(AsyncWebServerRequest *request){
 }
 
 
-
 config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
+    if(SPIFFS.begin())
+    {
+      Serial.println(F("SPIFFS Initialize....ok"));
+    }
+    else
+    {
+      Serial.println(F("SPIFFS Initialization...failed"));
+    }
 
-  if(SPIFFS.begin())
-  {
-    Serial.println(F("SPIFFS Initialize....ok"));
-  }
-  else
-  {
-    Serial.println(F("SPIFFS Initialization...failed"));
-  }
+    if (! SPIFFS.exists(IRMapfilename)) {
+      Serial.println(F("config file does not exist! ... building and rebooting...."));
+      while (!saveDefaultConfig()){  };
+      return FILE_NOT_FOUND;
+    }
 
-  if (! SPIFFS.exists(IRMapfilename)) {
-    Serial.println(F("config file does not exist! ... building and rebooting...."));
-    while (!saveDefaultConfig()){  };
-    return FILE_NOT_FOUND;
-  }
+    File configFile = SPIFFS.open(IRMapfilename, "r");
+    if (!configFile) {
+      Serial.println(F("Failed to open config file"));
+      saveDefaultConfig();
+      return ERROR_OPENING_FILE;
+    }
 
-  File configFile = SPIFFS.open(IRMapfilename, "r");
-  if (!configFile) {
-    Serial.println(F("Failed to open config file"));
-    saveDefaultConfig();
-    return ERROR_OPENING_FILE;
-  }
+    size_t size = configFile.size();
+    if (size > buffer_size) {
+      Serial.println(F("Config file size is too large, rebuilding."));
+      saveDefaultConfig();
+      return ERROR_OPENING_FILE;
+    }
 
-  size_t size = configFile.size();
-  if (size > buffer_size) {
-    Serial.println(F("Config file size is too large, rebuilding."));
-    saveDefaultConfig();
-    return ERROR_OPENING_FILE;
-  }
+    // Allocate a buffer to store contents of the file.
+    std::unique_ptr<char[]> buf(new char[size]);
 
-  // Allocate a buffer to store contents of the file.
-  std::unique_ptr<char[]> buf(new char[size]);
+    // We don't use String here because ArduinoJson library requires the input
+    // buffer to be mutable. If you don't use ArduinoJson, you may as well
+    // use configFile.readString instead.
+    configFile.readBytes(buf.get(), size);
 
-  // We don't use String here because ArduinoJson library requires the input
-  // buffer to be mutable. If you don't use ArduinoJson, you may as well
-  // use configFile.readString instead.
-  configFile.readBytes(buf.get(), size);
+    StaticJsonBuffer<buffer_size> jsonBuffer;
+    JsonObject& json = jsonBuffer.parseObject(buf.get());
 
-  StaticJsonBuffer<buffer_size> jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(buf.get());
+    if (!json.success()) {
+      Serial.println(F("Failed to parse config file"));
+      saveDefaultConfig();
+      return JSONCONFIG_CORRUPTED;
+    }
 
-  if (!json.success()) {
-    Serial.println(F("Failed to parse config file"));
-    saveDefaultConfig();
-    return JSONCONFIG_CORRUPTED;
-  }
+    myIRMap.I1   =  json["I1"].as<int8_t>();
+    myIRMap.I2   =  json["I2"].as<int8_t>();
+    myIRMap.I3   =  json["I3"].as<int8_t>();
+    myIRMap.I4   =  json["I4"].as<int8_t>();
+    myIRMap.I5   =  json["I5"].as<int8_t>();
+    myIRMap.I6   =  json["I6"].as<int8_t>();
+    myIRMap.I7   =  json["I7"].as<int8_t>();
+    myIRMap.I8   =  json["I8"].as<int8_t>();
+    myIRMap.I9   =  json["I9"].as<int8_t>();
+    myIRMap.I10  =  json["I10"].as<int8_t>();
 
-  myIRMap.I1       =  json["I1"].as<uint8_t>();
-  myIRMap.I2       =  json["I2"].as<uint8_t>();
-  myIRMap.I3       =  json["I3"].as<uint8_t>();
-  myIRMap.I4       =  json["I4"].as<uint8_t>();
-  myIRMap.I5       =  json["I5"].as<uint8_t>();
-  myIRMap.I6       =  json["I6"].as<uint8_t>();
-  myIRMap.I7       =  json["I7"].as<uint8_t>();
-  myIRMap.I8       =  json["I8"].as<uint8_t>();
-  myIRMap.I9       =  json["I9"].as<uint8_t>();
-  myIRMap.I10      =  json["I10"].as<uint8_t>();
-  myIRMap.R1       =  json["R1"].as<uint8_t>();
-  myIRMap.R2       =  json["R2"].as<uint8_t>();
-  myIRMap.R3       =  json["R3"].as<uint8_t>();
-  myIRMap.R4       =  json["R4"].as<uint8_t>();
-  myIRMap.R5       =  json["R5"].as<uint8_t>();
-  myIRMap.R6       =  json["R6"].as<uint8_t>();
-  myIRMap.R7       =  json["R7"].as<uint8_t>();
-  myIRMap.R8       =  json["R8"].as<uint8_t>();
-  myIRMap.R9       =  json["R9"].as<uint8_t>();
-  myIRMap.R10      =  json["R10"].as<uint8_t>();
+    myIRMap.R1   =  json["R1"].as<int8_t>();
+    myIRMap.R2   =  json["R2"].as<int8_t>();
+    myIRMap.R3   =  json["R3"].as<int8_t>();
+    myIRMap.R4   =  json["R4"].as<int8_t>();
+    myIRMap.R5   =  json["R5"].as<int8_t>();
+    myIRMap.R6   =  json["R6"].as<int8_t>();
+    myIRMap.R7   =  json["R7"].as<int8_t>();
+    myIRMap.R8   =  json["R8"].as<int8_t>();
+    myIRMap.R9   =  json["R9"].as<int8_t>();
+    myIRMap.R10  =  json["R10"].as<int8_t>();
 
-
-  applyIRMAp(myIRMap.I1 , myIRMap.R1);
-  applyIRMAp(myIRMap.I2 , myIRMap.R2);
-  applyIRMAp(myIRMap.I3 , myIRMap.R3);
-  applyIRMAp(myIRMap.I4 , myIRMap.R4);
-  applyIRMAp(myIRMap.I5 , myIRMap.R5);
-  applyIRMAp(myIRMap.I6 , myIRMap.R6);
-  applyIRMAp(myIRMap.I7 , myIRMap.R7);
-  applyIRMAp(myIRMap.I8 , myIRMap.R8);
-  applyIRMAp(myIRMap.I9 , myIRMap.R9);
-  applyIRMAp(myIRMap.I10 , myIRMap.R10);
-
-  return SUCCESS;
+    applyIRMap(myIRMap.I1 , myIRMap.R1);
+    applyIRMap(myIRMap.I2 , myIRMap.R2);
+    applyIRMap(myIRMap.I3 , myIRMap.R3);
+    applyIRMap(myIRMap.I4 , myIRMap.R4);
+    applyIRMap(myIRMap.I5 , myIRMap.R5);
+    applyIRMap(myIRMap.I6 , myIRMap.R6);
+    applyIRMap(myIRMap.I7 , myIRMap.R7);
+    applyIRMap(myIRMap.I8 , myIRMap.R8);
+    applyIRMap(myIRMap.I9 , myIRMap.R9);
+    applyIRMap(myIRMap.I10 , myIRMap.R10);
+    return SUCCESS;
 }

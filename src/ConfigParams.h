@@ -82,26 +82,27 @@ typedef struct TConfigParams {
 } TConfigParams;
 
 typedef struct TIRMap {
-uint8_t I1;
-uint8_t I2;
-uint8_t I3;
-uint8_t I4;
-uint8_t I5;
-uint8_t I6;
-uint8_t I7;
-uint8_t I8;
-uint8_t I9;
-uint8_t I10;
-uint8_t R1;
-uint8_t R2;
-uint8_t R3;
-uint8_t R4;
-uint8_t R5;
-uint8_t R6;
-uint8_t R7;
-uint8_t R8;
-uint8_t R9;
-uint8_t R10;
+int8_t I1;
+int8_t I2;
+int8_t I3;
+int8_t I4;
+int8_t I5;
+int8_t I6;
+int8_t I7;
+int8_t I8;
+int8_t I9;
+int8_t I10;
+
+int8_t R1;
+int8_t R2;
+int8_t R3;
+int8_t R4;
+int8_t R5;
+int8_t R6;
+int8_t R7;
+int8_t R8;
+int8_t R9;
+int8_t R10;
 } TIRMap;
 
   extern TConfigParams MyConfParam;
