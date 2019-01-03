@@ -106,12 +106,13 @@ uint8_t R10;
 
   extern TConfigParams MyConfParam;
   extern TIRMap myIRMap;
-   
+
   extern String  MAC;
   String CID();
   void relayon(void* obj);
 
   #include <RelayClass.h>
+
 
 #endif //CONFIGPARAMS_H
 

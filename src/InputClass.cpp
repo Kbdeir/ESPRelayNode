@@ -1,6 +1,8 @@
 #include <InputClass.h>
 #include <InputsArray.h>
 
+extern std::vector<void *> relays ; // a list to hold all relays
+
 InputSensor::InputSensor(uint8_t p,
             fnptr_d on_callback,input_mode clickmode
           ) {
@@ -75,4 +77,18 @@ InputSensor * getinputbynumber(uint8_t nb){
       return inp;
     } else { return nullptr;}
   }   else { return nullptr;}
+}
+
+void applyIRMAp(uint8_t Inpn, uint8_t rlyn){
+  InputSensor * t = nullptr;
+  Relay  * r = nullptr;
+
+  if ((Inpn <= inputs.size()-1) && (rlyn <= relays.size()-1)) {
+    t = static_cast<InputSensor *>(inputs.at(Inpn));
+    r = static_cast<Relay *>(relays.at(rlyn));
+    if ((t != nullptr) && (r !=nullptr)) {
+      t->addrelay(r);
+    }
+  }
+
 }

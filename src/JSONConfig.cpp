@@ -5,6 +5,8 @@ const char* filename = "/config.json";
 const char* IRMapfilename = "/IRMAP.json";
 #define buffer_size  1800 // json buffer size
 
+extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
+
 
 config_read_error_t loadConfig(TConfigParams &ConfParam) {
 
@@ -354,6 +356,18 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
   myIRMap.R8       =  json["R8"].as<uint8_t>();
   myIRMap.R9       =  json["R9"].as<uint8_t>();
   myIRMap.R10      =  json["R10"].as<uint8_t>();
+
+
+  applyIRMAp(myIRMap.I1 , myIRMap.R1);
+  applyIRMAp(myIRMap.I2 , myIRMap.R2);
+  applyIRMAp(myIRMap.I3 , myIRMap.R3);
+  applyIRMAp(myIRMap.I4 , myIRMap.R4);
+  applyIRMAp(myIRMap.I5 , myIRMap.R5);
+  applyIRMAp(myIRMap.I6 , myIRMap.R6);
+  applyIRMAp(myIRMap.I7 , myIRMap.R7);
+  applyIRMAp(myIRMap.I8 , myIRMap.R8);
+  applyIRMAp(myIRMap.I9 , myIRMap.R9);
+  applyIRMAp(myIRMap.I10 , myIRMap.R10);
 
   return SUCCESS;
 }
