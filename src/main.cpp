@@ -822,10 +822,10 @@ void setup() {
   //  applyIRMAp(0,0);
   //  applyIRMAp(1,0);
 
-  while (loadIRMapConfig(myIRMap) != SUCCESS){
-    delay(2000);
-    ESP.restart();
-  };
+    while (loadIRMapConfig(myIRMap) != SUCCESS){
+//      delay(2000);
+      ESP.restart();
+    };
 
     // mrelays[0]=&relay1;
     // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
