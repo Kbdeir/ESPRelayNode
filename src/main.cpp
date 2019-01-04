@@ -801,7 +801,7 @@ void setup() {
     Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
 
     Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;    
+    Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
     //Inputsnsr13.addrelay(&relay1);
 
     inputs.push_back(&Inputsnsr13);
@@ -821,7 +821,11 @@ void setup() {
 
   //  applyIRMAp(0,0);
   //  applyIRMAp(1,0);
-    loadIRMapConfig(myIRMap);
+
+  while (loadIRMapConfig(myIRMap) != SUCCESS){
+    delay(2000);
+    ESP.restart();
+  };
 
     // mrelays[0]=&relay1;
     // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );

@@ -3,7 +3,7 @@
 
 const char* filename      = "/config.json";
 const char* IRMapfilename = "/IRMAP.json";
-#define buffer_size  1800 
+#define buffer_size  1800
 
 extern void applyIRMap(int8_t Inpn, int8_t rlyn);
 
@@ -264,6 +264,44 @@ bool saveDefaultConfig(){
 }
 
 
+
+bool saveDefaultIRMapConfig(){
+    StaticJsonBuffer<buffer_size> jsonBuffer;
+    JsonObject& json = jsonBuffer.createObject();
+  json["I1"]="-1";
+  json["R1"]="-1";
+  json["I2"]="-1";
+  json["R2"]="-1";
+  json["I3"]="-1";
+  json["R3"]="-1";
+  json["I4"]="-1";
+  json["R4"]="-1";
+  json["I5"]="-1";
+  json["R5"]="-1";
+  json["I6"]="-1";
+  json["R6"]="-1";
+  json["I7"]="-1";
+  json["R7"]="-1";
+  json["I8"]="-1";
+  json["R8"]="-1";
+  json["I9"]="-1";
+  json["R9"]="-1";
+  json["I10"]="-1";
+  json["R10"]="-1";
+
+  File configFile = SPIFFS.open(IRMapfilename, "w");
+  if (!configFile) {
+    Serial.println(F("Failed to write default config file"));
+    return false;
+  }
+
+  json.printTo(configFile);
+    Serial.println(F("Saved default IRMap config"));
+    configFile.flush();
+    configFile.close();
+  return true;
+}
+
 bool saveIRMapConfig(AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
@@ -297,22 +335,24 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
     }
 
     if (! SPIFFS.exists(IRMapfilename)) {
-      Serial.println(F("config file does not exist! ... building and rebooting...."));
-      while (!saveDefaultConfig()){  };
+      Serial.println(F("IRMAP config file does not exist! ... building and rebooting...."));
+      while (!saveDefaultIRMapConfig()){
+
+      };
       return FILE_NOT_FOUND;
     }
 
     File configFile = SPIFFS.open(IRMapfilename, "r");
     if (!configFile) {
-      Serial.println(F("Failed to open config file"));
-      saveDefaultConfig();
+      Serial.println(F("Failed to open IRMAP config file"));
+      saveDefaultIRMapConfig();
       return ERROR_OPENING_FILE;
     }
 
     size_t size = configFile.size();
     if (size > buffer_size) {
-      Serial.println(F("Config file size is too large, rebuilding."));
-      saveDefaultConfig();
+      Serial.println(F("IRMAP Config file size is too large, rebuilding."));
+      saveDefaultIRMapConfig();
       return ERROR_OPENING_FILE;
     }
 
@@ -329,7 +369,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 
     if (!json.success()) {
       Serial.println(F("Failed to parse config file"));
-      saveDefaultConfig();
+      saveDefaultIRMapConfig();
       return JSONCONFIG_CORRUPTED;
     }
 
