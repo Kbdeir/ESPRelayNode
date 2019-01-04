@@ -89,7 +89,7 @@ String processor(const String& var)
   if(var == F( "I0MODE" ))              return String( MyConfParam.v_IN0_INPUTMODE);
   if(var == F( "I1MODE" ))              return String( MyConfParam.v_IN1_INPUTMODE);
   if(var == F( "I2MODE" ))              return String( MyConfParam.v_IN2_INPUTMODE);
-  if(var == F( "RSTATE0" ))              return (getrelaybynumber(0)->readrelay() == HIGH) ? "ON" : "OFF";
+  if(var == F( "RSTATE0" ))             return (getrelaybynumber(0)->readrelay() == HIGH) ? "ON" : "OFF";
 
   if(var == F( "RSTATE1" ))              return [](){
     if (getrelaybynumber(1) != nullptr) {
@@ -99,6 +99,34 @@ String processor(const String& var)
 
   return String();
 }
+
+
+String IRMAPprocessor(const String& var)
+{
+  if(var == F( "I1" ))        return String( myIRMap.I1);
+  if(var == F( "I2" ))        return String( myIRMap.I2);
+  if(var == F( "I3" ))        return String( myIRMap.I3);
+  if(var == F( "I4" ))        return String( myIRMap.I4);
+  if(var == F( "I5" ))        return String( myIRMap.I5);
+  if(var == F( "I6" ))        return String( myIRMap.I6);
+  if(var == F( "I7" ))        return String( myIRMap.I7);
+  if(var == F( "I8" ))        return String( myIRMap.I8);
+  if(var == F( "I9" ))        return String( myIRMap.I9);
+  if(var == F( "I10" ))       return String( myIRMap.I10);
+  if(var == F( "R1" ))        return String( myIRMap.R1);
+  if(var == F( "R2" ))        return String( myIRMap.R2);
+  if(var == F( "R3" ))        return String( myIRMap.R3);
+  if(var == F( "R4" ))        return String( myIRMap.R4);
+  if(var == F( "R5" ))        return String( myIRMap.R5);
+  if(var == F( "R6" ))        return String( myIRMap.R6);
+  if(var == F( "R7" ))        return String( myIRMap.R7);
+  if(var == F( "R8" ))        return String( myIRMap.R8);
+  if(var == F( "R9" ))        return String( myIRMap.R9);
+  if(var == F( "R10" ))       return String( myIRMap.R10);
+
+  return String();
+}
+
 
 
 void SetAsyncHTTP(){
@@ -139,6 +167,7 @@ void SetAsyncHTTP(){
       // int args = request->args();
     });
 
+
   AsyncWeb_server.on("/savetimer.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/savetimer.html");
@@ -169,6 +198,19 @@ void SetAsyncHTTP(){
             itoa (i,buffer,10);
             return buffer;
           }(MyConfParam.v_ttl));
+    });
+
+    AsyncWeb_server.on("/Input_Relays_Map", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        request->send(SPIFFS, "/Input_Relays_Map.html", String(), false, IRMAPprocessor);
+      });
+
+    AsyncWeb_server.on("/ApplyIRMap.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/ApplyIRMap.html");
+        // int args = request->args();
+          saveIRMapConfig(request);
+          loadIRMapConfig(myIRMap);
     });
 
     /*

@@ -4,6 +4,7 @@ boolean ftimesynced = false;
 boolean CalendarNotInitiated = true;
 
 TConfigParams MyConfParam;
+TIRMap myIRMap;
 
 String CID(){
   #ifdef ESP32
@@ -24,6 +25,7 @@ void relayon(void* obj){
     rly->ticker_relay_tta->stop();
   }
 }
+
 
 
 /*

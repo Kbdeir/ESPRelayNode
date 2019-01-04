@@ -22,4 +22,7 @@ enum config_read_error_t {FAILURE, FILE_NOT_FOUND, ERROR_OPENING_FILE, JSONCONFI
   bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request) ;
   bool saveConfig(TConfigParams &ConfParam) ;
   bool saveDefaultConfig();
+
+  bool saveIRMapConfig(AsyncWebServerRequest *request) ;
+  config_read_error_t loadIRMapConfig(TIRMap &IRMap);
 #endif

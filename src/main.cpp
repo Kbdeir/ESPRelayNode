@@ -14,9 +14,14 @@
 #include <ACS_Helper.h>
 #include <InputClass.h>
 #include <TimerClass.h>
+
+
 //#include <RelaysArray.h>
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
+extern std::vector<void *> inputs ; // a list to hold all relays
+
+extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -332,9 +337,7 @@ void startsoftAP(){
   WiFi.softAPdisconnect();
   WiFi.disconnect();
   delay(100);
-
   String t = APssid + String(MyConfParam.v_PhyLoc);
-
   WiFi.softAP(t.c_str(), APpassword);
   Serial.println(F("starting softAP mode - Connect to: "));
   Serial.println(t);
@@ -354,8 +357,7 @@ void startsoftAP(){
 }*/
 
 static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
-
- /*
+  /*
   Serial.printf("\n Modbus query received from client %s \n", client->remoteIP().toString().c_str());
   Serial.print("\n Modbusfunction: ");
   Serial.print(fn);
@@ -794,10 +796,36 @@ void setup() {
 
     Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
     Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr13.addrelay(&relay1);
+
+    Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+    Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
+
+    Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+    Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
+    //Inputsnsr13.addrelay(&relay1);
+
+    inputs.push_back(&Inputsnsr13);
+    inputs.push_back(&Inputsnsr12);
+    inputs.push_back(&Inputsnsr14);
+
+    /*
+    InputSensor * t;
+    t = static_cast<InputSensor *>(inputs.at(0));
+    t->addrelay(&relay1);
+    t = static_cast<InputSensor *>(inputs.at(1));
+    t->addrelay(&relay1);
+    */
 
     relay1.attachLoopfunc(relayloopservicefunc);
     relays.push_back(&relay1);
+
+  //  applyIRMAp(0,0);
+  //  applyIRMAp(1,0);
+
+  while (loadIRMapConfig(myIRMap) != SUCCESS){
+    delay(2000);
+    ESP.restart();
+  };
 
     // mrelays[0]=&relay1;
     // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
