@@ -51,30 +51,36 @@ typedef struct TConfigParams {
   String v_ssid;
   String v_pass;
   String v_PhyLoc ;
+
+  IPAddress v_timeserver ;
+  signed char v_ntptz ;
+  uint8_t v_MQTT_Active ;
   IPAddress v_MQTT_BROKER ;
   uint16_t v_MQTT_B_PRT ;
+
+  uint8_t relaynb;
   String v_PUB_TOPIC1 ;
-  IPAddress v_FRM_IP ;
-  uint16_t v_FRM_PRT ;
-  String v_ACS_Sensor_Model;
-  uint32_t v_ttl ;                // TTL VALUE
+  String v_STATE_PUB_TOPIC ;
+  String v_LWILL_TOPIC ;
+  String v_SUB_TOPIC1 ;
   String v_ttl_PUB_TOPIC ;      // MQTT TTL publish topic
   String v_CURR_TTL_PUB_TOPIC;  // running TTL publish topic
   String v_i_ttl_PUB_TOPIC;     // TTL set/update topic
-  String v_STATE_PUB_TOPIC ;
-  String v_InputPin12_STATE_PUB_TOPIC ;
-  String v_InputPin14_STATE_PUB_TOPIC ;
+  uint32_t v_ttl ;                // TTL VALUE
   uint32_t v_tta ;
+
+  String v_ACS_Sensor_Model;
+  boolean v_ACS_Active ;
   uint8_t v_Max_Current ;
   String v_ACS_AMPS;
-  IPAddress v_timeserver ;
-  uint8_t v_MQTT_Active ;
-  signed char v_ntptz ;
-  String v_LWILL_TOPIC ;
-  String v_SUB_TOPIC1 ;
-  boolean v_ACS_Active ;
+
+  IPAddress v_FRM_IP ;
+  uint16_t v_FRM_PRT ;
   boolean v_Update_now ;
+
   String v_TOGGLE_BTN_PUB_TOPIC ;
+  String v_InputPin12_STATE_PUB_TOPIC ;
+  String v_InputPin14_STATE_PUB_TOPIC ;
   uint8_t v_IN0_INPUTMODE;
   uint8_t v_IN1_INPUTMODE;
   uint8_t v_IN2_INPUTMODE;

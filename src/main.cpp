@@ -227,8 +227,8 @@ void onRelaychangeInterruptSvc(void* relaySender){
 void process_Input(void * inputSender, void * obj){
     Serial.print("\n process_Input");
   if (inputSender != nullptr) {
-      InputSensor * snsr;
-      snsr = static_cast<InputSensor *>(inputSender);
+    InputSensor * snsr;
+    snsr = static_cast<InputSensor *>(inputSender);
     if (snsr->fclickmode == INPUT_NORMAL) {
       mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
     }
@@ -305,7 +305,7 @@ void IP_info()
 			//Serial.printf(" dBm\n" );  // printf??
       Serial.printf( "\tPass:\t %s\n",  WiFi.psk().c_str() );
       Serial.print( F("\n\n\tIP address:\t") );
-			Serial.print(WiFi.localIP() );
+			Serial.print(WiFi.localIP());
       /*
       Serial.print(F(" / "));
       Serial.println( WiFi.subnetMask() );
@@ -316,7 +316,7 @@ void IP_info()
 }
 
 
-void blinkled(){
+void blinkled() {
 	unsigned long currentMillis = millis();
 	if (currentMillis - previousMillis >= blinkInterval) {
 		previousMillis = currentMillis;
@@ -419,9 +419,9 @@ void chronosInit() {
             strcpy(timerfilename, "/timer");
             strcat(timerfilename, String(tcounter).c_str());
             strcat(timerfilename, ".json");
-            Serial.print (F("\n--------------------------"));
+        //    Serial.print (F("\n--------------------------"));
             Serial.print  (timerfilename);
-            Serial.print("\n");
+        //    Serial.print("\n");
             return timerfilename;
           }()
         ,NTmr);
@@ -571,9 +571,9 @@ void chronosInit() {
                       );
           }
 
-      } // if SUCCESS
+      }   // if SUCCESS
     }();
-  } // while loop
+  }       // while loop
 
   LINE();
   PRINTLN(F("**** presumably got NTP time **** :"));
