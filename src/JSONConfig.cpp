@@ -250,6 +250,8 @@ bool saveDefaultConfig(){
   json["I1MODE"]=1;
   json["I2MODE"]=1;
 
+  Serial.print("Intializing config file");
+  SPIFFS.remove(filename);
   File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {
     Serial.println(F("Failed to write default config file"));

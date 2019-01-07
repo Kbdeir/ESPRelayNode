@@ -225,11 +225,12 @@ void onRelaychangeInterruptSvc(void* relaySender){
 
 
 void process_Input(void * inputSender, void * obj){
-    Serial.print("\n process_Input");
+  Serial.print("\n process_Input");
   if (inputSender != nullptr) {
       InputSensor * snsr;
       snsr = static_cast<InputSensor *>(inputSender);
     if (snsr->fclickmode == INPUT_NORMAL) {
+      Serial.print(snsr->mqtt_topic.c_str());
       mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
     }
     if (snsr->fclickmode == INPUT_TOGGLE) {
@@ -240,6 +241,7 @@ void process_Input(void * inputSender, void * obj){
 
 
 void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
+  Serial.print("\n onchangeSwitchInterruptSvc");
   Relay * rly;
   rly = static_cast<Relay *>(relaySender);
   InputSensor * input;
@@ -255,6 +257,7 @@ void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
 
 // this function will be called when button is clicked.
 void buttonclick(void* relaySender, void* inputSender) {
+  Serial.print("\n buttonclick");
   if (relaySender){
     Relay * rly;
     rly = static_cast<Relay *>(relaySender);
