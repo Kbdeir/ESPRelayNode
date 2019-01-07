@@ -62,26 +62,28 @@ String processor(const String& var)
   if(var == F( "PhyLoc" ))              return String( MyConfParam.v_PhyLoc.c_str());
   if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
   if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
-  if(var == F( "PUB_TOPIC1" ))          return String( MyConfParam.v_PUB_TOPIC1.c_str());
+
+  if(var == F( "PUB_TOPIC1" ))          return String( relay1.RelayConfParam->v_PUB_TOPIC1.c_str());
+  if(var == F( "ACS_Sensor_Model" ))    return String( relay1.RelayConfParam->v_ACS_Sensor_Model.c_str());
+  if(var == F( "ttl" ))                 return String( relay1.RelayConfParam->v_ttl);
+  if(var == F( "STATE_PUB_TOPIC" ))     return String( relay1.RelayConfParam->v_STATE_PUB_TOPIC.c_str());
+  if(var == F( "TTL_PUB_TOPIC" ))       return String( relay1.RelayConfParam->v_ttl_PUB_TOPIC.c_str());
+  if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( relay1.RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str());
+  if(var == F( "i_ttl_PUB_TOPIC" ))     return String( relay1.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str());
+  if(var == F( "ACS_AMPS" ))            return String( relay1.RelayConfParam->v_ACS_AMPS.c_str());
+  if(var == F( "tta" ))                 return String( relay1.RelayConfParam->v_tta);
+  if(var == F( "Max_Current" ))         return String( relay1.RelayConfParam->v_Max_Current);
+  if(var == F( "LWILL_TOPIC" ))         return String( relay1.RelayConfParam->v_LWILL_TOPIC.c_str());
+  if(var == F( "SUB_TOPIC1" ))          return String( relay1.RelayConfParam->v_SUB_TOPIC1.c_str());
+  if(var == F( "ACS_Active" ))          { if (relay1.RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; }; 
+
   if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
   if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
-  if(var == F( "ACS_Sensor_Model" ))    return String( MyConfParam.v_ACS_Sensor_Model.c_str());
-  if(var == F( "ttl" ))                 return String( MyConfParam.v_ttl);
-  if(var == F( "STATE_PUB_TOPIC" ))     return String( MyConfParam.v_STATE_PUB_TOPIC.c_str());
   if(var == F( "I12_STS_PTP" ))         return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
   if(var == F( "I14_STS_PTP" ))         return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
-  if(var == F( "TTL_PUB_TOPIC" ))       return String( MyConfParam.v_ttl_PUB_TOPIC.c_str());
-  if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( MyConfParam.v_CURR_TTL_PUB_TOPIC.c_str());
-  if(var == F( "i_ttl_PUB_TOPIC" ))     return String( MyConfParam.v_i_ttl_PUB_TOPIC.c_str());
-  if(var == F( "ACS_AMPS" ))            return String( MyConfParam.v_ACS_AMPS.c_str());
-  if(var == F( "tta" ))                 return String( MyConfParam.v_tta);
-  if(var == F( "Max_Current" ))         return String( MyConfParam.v_Max_Current);
   if(var == F( "timeserver" ))          return MyConfParam.v_timeserver.toString() ;//String( MyConfParam.v_timeserver.c_str());
   if(var == F( "ntptz" ))               return String( MyConfParam.v_ntptz);
-  if(var == F( "LWILL_TOPIC" ))         return String( MyConfParam.v_LWILL_TOPIC.c_str());
-  if(var == F( "SUB_TOPIC1" ))          return String( MyConfParam.v_SUB_TOPIC1.c_str());
   if(var == F( "MQTT_Active" ))         { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
-  if(var == F( "ACS_Active" ))          { if (MyConfParam.v_ACS_Active) return "1\" checked=\"\""; };
   if(var == F( "Update_now" ))          { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))          return digitalClockDisplay();
   if(var == F( "heap" ))                return String(ESP.getFreeHeap());
@@ -90,7 +92,6 @@ String processor(const String& var)
   if(var == F( "I1MODE" ))              return String( MyConfParam.v_IN1_INPUTMODE);
   if(var == F( "I2MODE" ))              return String( MyConfParam.v_IN2_INPUTMODE);
   if(var == F( "RSTATE0" ))             return (getrelaybynumber(0)->readrelay() == HIGH) ? "ON" : "OFF";
-
   if(var == F( "RSTATE1" ))              return [](){
     if (getrelaybynumber(1) != nullptr) {
       return (getrelaybynumber(1)->readrelay() == HIGH) ? "ON" : "OFF";
@@ -184,20 +185,22 @@ void SetAsyncHTTP(){
           #endif
           saveConfig(MyConfParam, request);
           loadConfig(MyConfParam);
-          relay1.loadrelayparams();
+          saveRelayConfig(relay1.RelayConfParam, request);
+          relay1.loadrelayparams2();
 
-          uint16_t packetIdPub2 = mqttClient.publish( MyConfParam.v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
+
+          uint16_t packetIdPub2 = mqttClient.publish( relay1.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
             [](int i){
               char buffer [33];
               itoa (i,buffer,10);
               return buffer;
-            }(MyConfParam.v_ttl));
-          uint16_t packetIdPub3 = mqttClient.publish( MyConfParam.v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
+            }(relay1.RelayConfParam->v_ttl));
+          uint16_t packetIdPub3 = mqttClient.publish( relay1.RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
           [](int i){
             char buffer [33];
             itoa (i,buffer,10);
             return buffer;
-          }(MyConfParam.v_ttl));
+          }(relay1.RelayConfParam->v_ttl));
     });
 
     AsyncWeb_server.on("/Input_Relays_Map", HTTP_GET, [](AsyncWebServerRequest *request){

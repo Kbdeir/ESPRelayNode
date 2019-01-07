@@ -650,9 +650,12 @@ InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 
+
+
+
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-  relay1.loadrelayparams();
+  relay1.loadrelayparams2();
 
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
@@ -667,10 +670,11 @@ void Wifi_connect() {
 
     if (digitalRead(ConfigInputPin) == HIGH) {
                 //WiFi.begin( getSsid.c_str() , getPass.c_str() ); // try to connect with saved SSID & PASS
-                WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+                //WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+                WiFi.begin( "ksba" , "samsam12" ); // try to connect with saved SSID & PASS
                 Serial.print("\n ssid: "); Serial.print(MyConfParam.v_ssid.c_str());
                 Serial.print("\n pass: "); Serial.print(MyConfParam.v_pass.c_str());Serial.print("\n ");
-                //  WiFi.begin( "ksbb" , "samsam12" ); // try to connect with saved SSID & PASS
+
                 trials = 0;
               	 blinkInterval = 50;
                 while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials*2)){
@@ -703,11 +707,11 @@ void Wifi_connect() {
                     }
                     Serial.println(F("mDNS responder started"));
                     MDNS.addService(F("http"), F("tcp"), 80); // Announce esp tcp service on port 8080
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), MyConfParam.v_STATE_PUB_TOPIC.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), relay1.RelayConfParam->v_PUB_TOPIC1.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), relay1.RelayConfParam->v_STATE_PUB_TOPIC.c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.toString().c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(MyConfParam.v_ttl).c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(MyConfParam.v_Max_Current).c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(relay1.RelayConfParam->v_ttl).c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(relay1.RelayConfParam->v_Max_Current).c_str());
 
                     //setSyncInterval(10);
                     setSyncProvider(getNtpTime);
@@ -767,8 +771,9 @@ void setup() {
 		}
   	listDir(SPIFFS, "/", 0);
     #else
-    /*  if(SPIFFS.format()) { Serial.println("File System Formated"); }
-        else { Serial.println("File System Formatting Error"); } */
+    //Serial.println("File System formating");
+    //  if(SPIFFS.format()) { Serial.println("File System Formated"); }
+    //    else { Serial.println("File System Formatting Error"); }
     #endif
     //wifimode = WIFI_CLT_MODE;
 
@@ -777,6 +782,7 @@ void setup() {
     #endif
 
     while (loadConfig(MyConfParam) != SUCCESS){
+      Serial.print("\n cant read config");
       delay(2000);
       ESP.restart();
     };
