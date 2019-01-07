@@ -75,7 +75,7 @@ String processor(const String& var)
   if(var == F( "Max_Current" ))         return String( relay1.RelayConfParam->v_Max_Current);
   if(var == F( "LWILL_TOPIC" ))         return String( relay1.RelayConfParam->v_LWILL_TOPIC.c_str());
   if(var == F( "SUB_TOPIC1" ))          return String( relay1.RelayConfParam->v_SUB_TOPIC1.c_str());
-  if(var == F( "ACS_Active" ))          { if (relay1.RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; }; 
+  if(var == F( "ACS_Active" ))          { if (relay1.RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; };
 
   if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
   if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
@@ -185,23 +185,31 @@ void SetAsyncHTTP(){
           #endif
           saveConfig(MyConfParam, request);
           loadConfig(MyConfParam);
-          saveRelayConfig(relay1.RelayConfParam, request);
-          relay1.loadrelayparams2();
+    });
 
 
-          uint16_t packetIdPub2 = mqttClient.publish( relay1.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
+    AsyncWeb_server.on("/ApplyRelay.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/ApplyRelay.html");
+
+            saveRelayConfig(relay1.RelayConfParam, request);
+            relay1.loadrelayparams2();
+
+            uint16_t packetIdPub2 = mqttClient.publish( relay1.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
+              [](int i){
+                char buffer [33];
+                itoa (i,buffer,10);
+                return buffer;
+              }(relay1.RelayConfParam->v_ttl));
+            uint16_t packetIdPub3 = mqttClient.publish( relay1.RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
             [](int i){
               char buffer [33];
               itoa (i,buffer,10);
               return buffer;
             }(relay1.RelayConfParam->v_ttl));
-          uint16_t packetIdPub3 = mqttClient.publish( relay1.RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
-          [](int i){
-            char buffer [33];
-            itoa (i,buffer,10);
-            return buffer;
-          }(relay1.RelayConfParam->v_ttl));
-    });
+      });
+
+
 
     AsyncWeb_server.on("/Input_Relays_Map", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();

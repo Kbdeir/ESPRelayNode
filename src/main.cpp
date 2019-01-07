@@ -225,10 +225,10 @@ void onRelaychangeInterruptSvc(void* relaySender){
 
 
 void process_Input(void * inputSender, void * obj){
-    Serial.print("\n process_Input");
+  Serial.print("\n process_Input");
   if (inputSender != nullptr) {
-    InputSensor * snsr;
-    snsr = static_cast<InputSensor *>(inputSender);
+      InputSensor * snsr;
+      snsr = static_cast<InputSensor *>(inputSender);
     if (snsr->fclickmode == INPUT_NORMAL) {
       mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
     }
@@ -240,6 +240,7 @@ void process_Input(void * inputSender, void * obj){
 
 
 void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
+  Serial.print("\n onchangeSwitchInterruptSvc");
   Relay * rly;
   rly = static_cast<Relay *>(relaySender);
   InputSensor * input;
@@ -255,12 +256,12 @@ void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
 
 // this function will be called when button is clicked.
 void buttonclick(void* relaySender, void* inputSender) {
+  Serial.print("\n buttonclick");
   if (relaySender){
     Relay * rly;
     rly = static_cast<Relay *>(relaySender);
     InputSensor * input;
     input = static_cast<InputSensor *>(inputSender);
-    Serial.print("\n buttonclick");
       if (rly->readrelay() == HIGH) {
         rly->ticker_relay_tta->stop();
         rly->mdigitalWrite(rly->getRelayPin(), LOW);
@@ -305,7 +306,7 @@ void IP_info()
 			//Serial.printf(" dBm\n" );  // printf??
       Serial.printf( "\tPass:\t %s\n",  WiFi.psk().c_str() );
       Serial.print( F("\n\n\tIP address:\t") );
-			Serial.print(WiFi.localIP());
+			Serial.print(WiFi.localIP() );
       /*
       Serial.print(F(" / "));
       Serial.println( WiFi.subnetMask() );
@@ -316,7 +317,7 @@ void IP_info()
 }
 
 
-void blinkled() {
+void blinkled(){
 	unsigned long currentMillis = millis();
 	if (currentMillis - previousMillis >= blinkInterval) {
 		previousMillis = currentMillis;
@@ -419,9 +420,9 @@ void chronosInit() {
             strcpy(timerfilename, "/timer");
             strcat(timerfilename, String(tcounter).c_str());
             strcat(timerfilename, ".json");
-        //    Serial.print (F("\n--------------------------"));
+            Serial.print (F("\n--------------------------"));
             Serial.print  (timerfilename);
-        //    Serial.print("\n");
+            Serial.print("\n");
             return timerfilename;
           }()
         ,NTmr);
@@ -571,9 +572,9 @@ void chronosInit() {
                       );
           }
 
-      }   // if SUCCESS
+      } // if SUCCESS
     }();
-  }       // while loop
+  } // while loop
 
   LINE();
   PRINTLN(F("**** presumably got NTP time **** :"));
@@ -650,12 +651,9 @@ InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 
-
-
-
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-  relay1.loadrelayparams2();
+//  if (!relay1.loadrelayparams2()) relay1.loadrelayparams2();
 
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
@@ -670,11 +668,10 @@ void Wifi_connect() {
 
     if (digitalRead(ConfigInputPin) == HIGH) {
                 //WiFi.begin( getSsid.c_str() , getPass.c_str() ); // try to connect with saved SSID & PASS
-                //WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
-                WiFi.begin( "ksba" , "samsam12" ); // try to connect with saved SSID & PASS
+                WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
                 Serial.print("\n ssid: "); Serial.print(MyConfParam.v_ssid.c_str());
                 Serial.print("\n pass: "); Serial.print(MyConfParam.v_pass.c_str());Serial.print("\n ");
-
+                //  WiFi.begin( "ksbb" , "samsam12" ); // try to connect with saved SSID & PASS
                 trials = 0;
               	 blinkInterval = 50;
                 while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials*2)){
@@ -707,12 +704,12 @@ void Wifi_connect() {
                     }
                     Serial.println(F("mDNS responder started"));
                     MDNS.addService(F("http"), F("tcp"), 80); // Announce esp tcp service on port 8080
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), relay1.RelayConfParam->v_PUB_TOPIC1.c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), relay1.RelayConfParam->v_STATE_PUB_TOPIC.c_str());
+                /*    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), MyConfParam.v_STATE_PUB_TOPIC.c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.toString().c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(relay1.RelayConfParam->v_ttl).c_str());
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(relay1.RelayConfParam->v_Max_Current).c_str());
-
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(MyConfParam.v_ttl).c_str());
+                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(MyConfParam.v_Max_Current).c_str());
+*/
                     //setSyncInterval(10);
                     setSyncProvider(getNtpTime);
 
@@ -771,9 +768,8 @@ void setup() {
 		}
   	listDir(SPIFFS, "/", 0);
     #else
-    //Serial.println("File System formating");
-    //  if(SPIFFS.format()) { Serial.println("File System Formated"); }
-    //    else { Serial.println("File System Formatting Error"); }
+    /*  if(SPIFFS.format()) { Serial.println("File System Formated"); }
+        else { Serial.println("File System Formatting Error"); } */
     #endif
     //wifimode = WIFI_CLT_MODE;
 
@@ -782,7 +778,12 @@ void setup() {
     #endif
 
     while (loadConfig(MyConfParam) != SUCCESS){
-      Serial.print("\n cant read config");
+      delay(2000);
+      ESP.restart();
+    };
+
+
+    while (relay1.loadrelayparams2() != true){
       delay(2000);
       ESP.restart();
     };
@@ -828,10 +829,10 @@ void setup() {
   //  applyIRMAp(0,0);
   //  applyIRMAp(1,0);
 
-    while (loadIRMapConfig(myIRMap) != SUCCESS){
-//      delay(2000);
-      ESP.restart();
-    };
+  while (loadIRMapConfig(myIRMap) != SUCCESS){
+    delay(2000);
+    ESP.restart();
+  };
 
     // mrelays[0]=&relay1;
     // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );

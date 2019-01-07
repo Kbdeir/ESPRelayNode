@@ -1617,7 +1617,7 @@ a:hover
 </form>
 </div>
 <div id="wb_Form4" style="position:absolute;left:559px;top:271px;width:509px;height:639px;z-index:82;">
-<form name="Relay2Conf" method="get" action="Apply.html" enctype="text/plain" id="Form4" onsubmit="return ValidateRelay2Conf(this)">
+<form name="Relay2Conf" method="get" action="ApplyRelay.html" enctype="text/plain" id="Form4" onsubmit="return ValidateRelay2Conf(this)">
 <input type="text" id="RelayNb2" style="position:absolute;left:436px;top:9px;width:20px;visibility:hidden;height:18px;line-height:18px;z-index:49;" name="RelayNB" value="2">
 <input type="submit" id="Button7" name="Submit" value="save" style="position:absolute;left:27px;top:603px;width:96px;height:25px;z-index:50;">
 <div id="wb_Text38" style="position:absolute;left:28px;top:301px;width:140px;height:16px;text-align:right;z-index:51;">
@@ -2096,10 +2096,6 @@ function ValidateRelay2Conf(theForm)
          document.getElementById("ACS_Sensor_Model").value=x ; 
       }
 
-      function myFunction2(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("ACS_Sensor_Model_2").value=x ; 
-      }
 
       function FUNC_IN1_INPUTMODE(selectObject) {
         var x = selectObject.value;
@@ -2121,11 +2117,8 @@ function ValidateRelay2Conf(theForm)
 </body>
 </html><script> 
 document.getElementById("ACSmultiple").value=document.getElementById("ACS_Sensor_Model").value ; 
-document.getElementById("ACSmultiple_2").value=document.getElementById("ACS_Sensor_Model_2").value ; 
 
+document.getElementById("IN0_INPUTMODE_C").value=document.getElementById("I0MODE").value ;
 document.getElementById("IN1_INPUTMODE_C").value=document.getElementById("I1MODE").value ; 
 document.getElementById("IN2_INPUTMODE_C").value=document.getElementById("I2MODE").value ; 
-
-document.getElementById("IN0_INPUTMODE_C").value=document.getElementById("I0MODE").value ; 
-
-</script>
+ </script>
