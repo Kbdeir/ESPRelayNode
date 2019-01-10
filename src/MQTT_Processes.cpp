@@ -54,9 +54,19 @@ void onMqttConnect(bool sessionPresent) {
   Serial.println(F("Connected to MQTT."));
   Serial.print(F("Session present: "));
   Serial.println(sessionPresent);
-	uint16_t packetIdSub = mqttClient.subscribe(MyConfParam.v_SUB_TOPIC1.c_str(), 2);
+
+	//uint16_t packetIdSub = mqttClient.subscribe(relay1.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
+  Relay * rtemp = nullptr;
+  for (void* it : relays)  {
+    rtemp = static_cast<Relay *>(it);
+    if (rtemp) {
+        uint16_t packetIdSub = mqttClient.subscribe(rtemp->RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
+    }
+  }
+
+
 	Serial.print(F("Subscribing at QoS 2, packetId: "));
-  Serial.println(packetIdSub);
+  //Serial.println(packetIdSub);
 
   //mqttpostinitstatusOfInputs(NULL);
   [](){
@@ -173,8 +183,9 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
                 rly->RelayConfParam->v_ttl = pld.substring(0,len).toInt();
                 rly->ticker_relay_ttl->interval(rly->RelayConfParam->v_ttl*1000);
 
-                MyConfParam.v_ttl = rly->RelayConfParam->v_ttl;
-                saveConfig(MyConfParam);
+              //  MyConfParam.v_ttl = rly->RelayConfParam->v_ttl;
+              //  saveConfig(MyConfParam);
+                saveRelayConfig(rly->RelayConfParam);
                 mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED,
                     String(rly->RelayConfParam->v_ttl).c_str());
               }

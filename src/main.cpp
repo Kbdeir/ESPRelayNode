@@ -14,6 +14,7 @@
 #include <ACS_Helper.h>
 #include <InputClass.h>
 #include <TimerClass.h>
+#include <TempSensor.h>
 
 
 //#include <RelaysArray.h>
@@ -106,6 +107,7 @@ const int LAMP2_COIL  = 2;
 float old_acs_value   = 0;
 float ACS_I_Current   = 0;
 
+TempSensor ts(12);
 ACS712 sensor(ACS712_20A, A0);
 
 void ticker_relay_ttl_off (void* obj) ;
@@ -225,7 +227,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
 
 
 void process_Input(void * inputSender, void * obj){
-    Serial.print("\n process_Input");
+  Serial.print("\n process_Input");
   if (inputSender != nullptr) {
       InputSensor * snsr;
       snsr = static_cast<InputSensor *>(inputSender);
@@ -240,6 +242,7 @@ void process_Input(void * inputSender, void * obj){
 
 
 void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
+  Serial.print("\n onchangeSwitchInterruptSvc");
   Relay * rly;
   rly = static_cast<Relay *>(relaySender);
   InputSensor * input;
@@ -255,12 +258,12 @@ void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
 
 // this function will be called when button is clicked.
 void buttonclick(void* relaySender, void* inputSender) {
+  Serial.print("\n buttonclick");
   if (relaySender){
     Relay * rly;
     rly = static_cast<Relay *>(relaySender);
     InputSensor * input;
     input = static_cast<InputSensor *>(inputSender);
-    Serial.print("\n buttonclick");
       if (rly->readrelay() == HIGH) {
         rly->ticker_relay_tta->stop();
         rly->mdigitalWrite(rly->getRelayPin(), LOW);
@@ -646,13 +649,18 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 }
 
 
-InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
+InputSensor Inputsnsr14(Relay2Pin,process_Input,INPUT_NONE);
+
+//InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
+
+
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 
+
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-  relay1.loadrelayparams();
+//  if (!relay1.loadrelayparams2()) relay1.loadrelayparams2();
 
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
@@ -703,12 +711,12 @@ void Wifi_connect() {
                     }
                     Serial.println(F("mDNS responder started"));
                     MDNS.addService(F("http"), F("tcp"), 80); // Announce esp tcp service on port 8080
-                    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
+                /*    MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil"), MyConfParam.v_PUB_TOPIC1.c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Pub Coil Status"), MyConfParam.v_STATE_PUB_TOPIC.c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.toString().c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(MyConfParam.v_ttl).c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(MyConfParam.v_Max_Current).c_str());
-
+*/
                     //setSyncInterval(10);
                     setSyncProvider(getNtpTime);
 
@@ -777,6 +785,12 @@ void setup() {
     #endif
 
     while (loadConfig(MyConfParam) != SUCCESS){
+      delay(2000);
+      ESP.restart();
+    };
+
+
+    while (relay1.loadrelayparams2() != true){
       delay(2000);
       ESP.restart();
     };
@@ -874,7 +888,10 @@ void loop() {
     CalendarNotInitiated = false;
   }
 
+
   if (millis() - lastMillis > 1000) {
+
+    mqttClient.publish(relay1.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, String(ts.getCurrentTemp()).c_str());
     lastMillis = millis();
     if (wifimode == WIFI_AP_MODE) {
   		APModetimer_run_value++;
