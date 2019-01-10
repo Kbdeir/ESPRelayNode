@@ -57,6 +57,7 @@ typedef struct Trelayconf {
   String v_ttl_PUB_TOPIC ;      // MQTT TTL publish topic
   String v_CURR_TTL_PUB_TOPIC;  // running TTL publish topic
   String v_i_ttl_PUB_TOPIC;     // TTL set/update topic
+  String v_TemperatureValue;     // TTL set/update topic
   uint32_t v_ttl ;                // TTL VALUE
   uint32_t v_tta ;
   String v_ACS_Sensor_Model;

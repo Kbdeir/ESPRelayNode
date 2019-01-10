@@ -64,6 +64,7 @@ String processor(const String& var)
   if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
 
   if(var == F( "PUB_TOPIC1" ))          return String( relay1.RelayConfParam->v_PUB_TOPIC1.c_str());
+  if(var == F( "TemperatureValue" ))          return String( relay1.RelayConfParam->v_TemperatureValue.c_str());
   if(var == F( "ACS_Sensor_Model" ))    return String( relay1.RelayConfParam->v_ACS_Sensor_Model.c_str());
   if(var == F( "ttl" ))                 return String( relay1.RelayConfParam->v_ttl);
   if(var == F( "STATE_PUB_TOPIC" ))     return String( relay1.RelayConfParam->v_STATE_PUB_TOPIC.c_str());

@@ -14,6 +14,7 @@
 #include <ACS_Helper.h>
 #include <InputClass.h>
 #include <TimerClass.h>
+#include <TempSensor.h>
 
 
 //#include <RelaysArray.h>
@@ -106,6 +107,7 @@ const int LAMP2_COIL  = 2;
 float old_acs_value   = 0;
 float ACS_I_Current   = 0;
 
+TempSensor ts(12);
 ACS712 sensor(ACS712_20A, A0);
 
 void ticker_relay_ttl_off (void* obj) ;
@@ -647,9 +649,14 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 }
 
 
-InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
+InputSensor Inputsnsr14(Relay2Pin,process_Input,INPUT_NONE);
+
+//InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
+
+
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
+
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
@@ -881,7 +888,10 @@ void loop() {
     CalendarNotInitiated = false;
   }
 
+
   if (millis() - lastMillis > 1000) {
+
+    mqttClient.publish(relay1.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, String(ts.getCurrentTemp()).c_str());
     lastMillis = millis();
     if (wifimode == WIFI_AP_MODE) {
   		APModetimer_run_value++;

@@ -522,6 +522,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
 
     json["PhyLoc"]=RConfParam->v_PhyLoc;
     json["PUB_TOPIC1"]=RConfParam->v_PUB_TOPIC1;
+    json["TemperatureValue"]=RConfParam->v_TemperatureValue;
     json["ACS_Sensor_Model"] = RConfParam->v_ACS_Sensor_Model;
     json["ttl"]=RConfParam->v_ttl;
     json["ttl_PUB_TOPIC"]=RConfParam->v_ttl_PUB_TOPIC;
