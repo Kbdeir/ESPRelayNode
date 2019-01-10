@@ -46,7 +46,9 @@ class Relay
 
   public:
     boolean lockupdate;
-    TConfigParams *RelayConfParam;
+    //TConfigParams *RelayConfParam;
+    Trelayconf *RelayConfParam;
+    //Trelayconf *RelayxxConfParam;
     Schedule_timer *ticker_relay_tta;
     Schedule_timer *ticker_relay_ttl;
     Schedule_timer *freelock;
@@ -67,14 +69,14 @@ class Relay
     ~Relay();
 
     String getRelayPubTopic();
-    void setRelayConfig(TConfigParams * RelayConf);
-    TConfigParams * getRelayConfig();
+    void setRelayConfig(Trelayconf * RelayConf);
+    Trelayconf * getRelayConfig();
     void setRelayTag(char *Relayt);
     void setIdNumber(int id);
     char *getName();
     int getIdNumber();
-    boolean SaveDefautRelayParams();
     boolean loadrelayparams();
+    boolean loadrelayparams2();
     void watch();
     void start_ttl_timer();
     void stop_ttl_timer();
