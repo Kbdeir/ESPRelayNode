@@ -1552,6 +1552,19 @@ a:hover
 {
    text-align: right;
 }
+#wb_Text9 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text9 div
+{
+   text-align: right;
+}
 </style>
     
 </head>
@@ -1712,6 +1725,8 @@ a:hover
 <input type="submit" id="Button8" onclick="window.location.href='Timer1';return false;" name="" value="Timer configuration" style="position:absolute;left:555px;top:1019px;width:511px;height:25px;z-index:89;">
 <label for="" id="Label2" onclick="window.location.href='/heap';return false;" style="position:absolute;left:860px;top:51px;width:195px;height:18px;line-height:18px;z-index:90;">System heap: %heap%</label>
 <input type="submit" id="Button9" onclick="window.location.href='Input_Relays_Map';return false;" name="" value="Input to Relays Map" style="position:absolute;left:555px;top:1059px;width:511px;height:25px;z-index:91;">
+<div id="wb_Text9" style="position:absolute;left:726px;top:85px;width:340px;height:16px;text-align:right;z-index:92;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Ambiant Temperature: %ATEMP% C</span></div>
 <script>
 function ValidateForm1(theForm)
 {
