@@ -7,6 +7,7 @@
 
 extern NodeTimer NTmr;
 extern Relay relay1;
+extern float MCelcius;
 
 //const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 AsyncWebServer AsyncWeb_server(80);
@@ -88,6 +89,16 @@ String processor(const String& var)
   if(var == F( "Update_now" ))          { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))          return digitalClockDisplay();
   if(var == F( "heap" ))                return String(ESP.getFreeHeap());
+
+  if(var == F( "ATEMP" ))                return [](){
+    //char tmp[10];
+    //itoa(MCelcius,tmp,10);
+    return String(MCelcius);
+  }();
+
+
+
+  //String(MCelcius);
   if(var == F( "TOGGLE_BTN_PUB_TOPIC" ))  return String( MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str());
   if(var == F( "I0MODE" ))              return String( MyConfParam.v_IN0_INPUTMODE);
   if(var == F( "I1MODE" ))              return String( MyConfParam.v_IN1_INPUTMODE);

@@ -23,6 +23,17 @@ InputSensor::InputSensor(uint8_t p,
   fon_callback = on_callback;
 }
 
+
+void InputSensor::SetInputSensorPin(uint8_t p) {
+  if (Input_debouncer) {
+    pin = p;
+    pinMode ( pin, INPUT_PULLUP);
+    Input_debouncer->attach(pin,INPUT_PULLUP);
+    Input_debouncer->interval(25); // interval in ms
+    rchangedflag = false;
+  }
+}
+
 InputSensor::~InputSensor() {
       delete Input_debouncer;
     }

@@ -11,14 +11,15 @@ class TempSensor {
 public:
   float Celcius;
   float Fahrenheit;
+  TempSensor();
   TempSensor(uint8_t _pin);
   ~TempSensor();
-  float getCurrentTemp();
-
-  OneWire * oneWire;
-  DallasTemperature * sensors;
+  void tempbegin(uint8_t _pin);
+  float getCurrentTemp(uint8_t index);
 
 private:
+  OneWire * oneWire;
+  DallasTemperature * sensors;
   uint8_t pin;
 
 };
