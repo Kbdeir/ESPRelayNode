@@ -859,6 +859,13 @@ a:hover
 function ValidateForm1(theForm)
 {
    var regexp;
+   regexp = /^[A-Za-zÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ \t\r\n\f0-9-]*$/;
+   if (!regexp.test(theForm.FDate.value))
+   {
+      alert("Please enter only letter, digit and whitespace characters in the \"Testchar\" field.");
+      theForm.FDate.focus();
+      return false;
+   }
    regexp = /^[-+]?\d*\.?\d*$/;
    if (!regexp.test(theForm.TRelay_edt.value))
    {

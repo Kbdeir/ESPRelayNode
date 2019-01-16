@@ -147,7 +147,7 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.secondsspan = 0;
   para_NodeTimer.relay = (json["TRelay"].as<String>()!="") ? json["TRelay"].as<uint8_t>() : 0;
 
-  strcpy(para_NodeTimer.Testchar, json["Testchar"] | "Hello");
+  json["Testchar"]  != "" ? strcpy(para_NodeTimer.Testchar,json["Testchar"]) :  strcpy(para_NodeTimer.Testchar,"NA");
 
   return SUCCESS;
 }
