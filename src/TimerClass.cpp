@@ -146,8 +146,6 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
   para_NodeTimer.secondsspan = 0;
   para_NodeTimer.relay = (json["TRelay"].as<String>()!="") ? json["TRelay"].as<uint8_t>() : 0;
-
-  json["Testchar"]  != "" ? strcpy(para_NodeTimer.Testchar,json["Testchar"]) :  strcpy(para_NodeTimer.Testchar,"NA");
-
+  strcpy(para_NodeTimer.Testchar,json["Testchar"] | "NA");
   return SUCCESS;
 }
