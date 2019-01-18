@@ -430,7 +430,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 
 
 
-bool saveRelayDefaultConfig(){
+bool saveRelayDefaultConfig(uint8_t rnb){
 
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
@@ -457,9 +457,11 @@ bool saveRelayDefaultConfig(){
   json["I1MODE"]=1;
   json["I2MODE"]=1;
 
-  char  relayfilename[20] = "/relay";
-  strcat(relayfilename, "01");
-  strcat(relayfilename, ".json");
+  char  relayfilename[20];// = "/relay";
+  //strcat(relayfilename, "01");
+  //strcat(relayfilename, ".json");
+
+  mkRelayConfigName(relayfilename, rnb);
 
   SPIFFS.remove(relayfilename);
   File configFile = SPIFFS.open(relayfilename, "w");

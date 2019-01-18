@@ -791,7 +791,7 @@ void setup() {
       ESP.restart();
     };
 
-    while (relay1.loadrelayparams2() != true){
+    while (relay1.loadrelayparams2(01) != true){
       delay(2000);
       ESP.restart();
     };

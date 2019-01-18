@@ -92,7 +92,7 @@ int Relay::getIdNumber()
    { return IDRelayTag;}
 
 
-
+/*
 boolean Relay::loadrelayparams(){
 
     if(SPIFFS.begin()) { Serial.println(F("SPIFFS Initialize....ok")); }
@@ -157,12 +157,17 @@ boolean Relay::loadrelayparams(){
      RelayConfParam->v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
      return true;
 }
+*/
 
-boolean Relay::loadrelayparams2(){
+boolean Relay::loadrelayparams2(uint8_t rnb){
 
-  char  rfilename[20] = "/relay";
-  strcat(rfilename, "01");
-  strcat(rfilename, ".json");
+  //char  rfilename[20] = "/relay";
+  //strcat(rfilename, "01");
+  //strcat(rfilename, ".json");
+
+  char rfilename[20];
+  mkRelayConfigName(rfilename, rnb);
+
 
     if(SPIFFS.begin()) { Serial.println(F("SPIFFS Initialize....ok")); }
        else {Serial.println(F("SPIFFS Initialization...failed")); }
@@ -171,21 +176,21 @@ boolean Relay::loadrelayparams2(){
 
     if (!(SPIFFS.exists(rfilename))) {
          Serial.println(F("Relay config file does not exist! ... building and rebooting...."));
-         saveRelayDefaultConfig();
+         saveRelayDefaultConfig(rnb);
          return false;
      }
 
     File configFile = SPIFFS.open(rfilename, "r");
        if (!configFile) {
          Serial.println(F("Failed to open relay config file"));
-         saveRelayDefaultConfig();
+         saveRelayDefaultConfig(rnb);
          return false;
     }
 
     size_t size = configFile.size();
     if (size > buffer_size) {
          Serial.println(F("Relay Config file size is too large, rebuilding."));
-         saveRelayDefaultConfig();
+         saveRelayDefaultConfig(rnb);
          return false;
     }
 
@@ -202,7 +207,7 @@ boolean Relay::loadrelayparams2(){
 
     if (!json.success()) {
          Serial.println(F("Failed to parse relay config file"));
-         saveRelayDefaultConfig();
+         saveRelayDefaultConfig(rnb);
          return false;
     }
 
@@ -321,4 +326,11 @@ Relay * getrelaybynumber(uint8_t nb){
       return rly;
     } else { return nullptr;}
   }   else { return nullptr;}
+}
+
+
+void mkRelayConfigName(char name[], uint8_t rnb){
+  strcpy(name,"/relay");
+  strcat(name, String(rnb).c_str());
+  strcat(name,".json");
 }

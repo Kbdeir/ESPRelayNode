@@ -26,7 +26,7 @@ enum config_read_error_t {FAILURE, FILE_NOT_FOUND, ERROR_OPENING_FILE, JSONCONFI
   bool saveIRMapConfig(AsyncWebServerRequest *request) ;
   config_read_error_t loadIRMapConfig(TIRMap &IRMap);
 
-  bool saveRelayDefaultConfig();
+  bool saveRelayDefaultConfig(uint8_t rnb);
   bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request);
   bool saveRelayConfig(Trelayconf * RConfParam);
 #endif

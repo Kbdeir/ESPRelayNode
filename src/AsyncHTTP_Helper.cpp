@@ -212,7 +212,7 @@ void SetAsyncHTTP(){
       request->send(SPIFFS, "/ApplyRelay.html");
 
             saveRelayConfig(relay1.RelayConfParam, request);
-            relay1.loadrelayparams2();
+            relay1.loadrelayparams2(01);
 
             uint16_t packetIdPub2 = mqttClient.publish( relay1.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
               [](int i){
