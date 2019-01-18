@@ -211,7 +211,7 @@ void SetAsyncHTTP(){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/ApplyRelay.html");
 
-            saveRelayConfig(relay1.RelayConfParam, request, 01);
+            saveRelayConfig(request);
             relay1.loadrelayparams2(01);
 
             uint16_t packetIdPub2 = mqttClient.publish( relay1.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,

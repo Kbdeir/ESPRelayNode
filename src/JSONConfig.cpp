@@ -437,6 +437,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
 
   Serial.print("\n Initializing default relay parameters");
 
+  json["RELAYNB"]             = rnb;
   json["PhyLoc"]              ="Not configured yet";
   json["PUB_TOPIC1"]          ="/home/Controller" + CID() + "/Coils/C1" ;
   json["STATE_PUB_TOPIC"]     ="/home/Controller" + CID() + "/Coils/State/C1";
@@ -483,7 +484,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
 
 
 
-bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request, uint8_t rnb){
+bool saveRelayConfig(AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
@@ -501,7 +502,7 @@ bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request, ui
     //strcat(relayfilename, "01");
     //strcat(relayfilename, ".json");
 
-    mkRelayConfigName(relayfilename, rnb);
+    mkRelayConfigName(relayfilename, json["RELAYNB"]);
 
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
@@ -520,10 +521,11 @@ bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request, ui
 
 
 
-bool saveRelayConfig(Trelayconf * RConfParam, uint8_t rnb){
+bool saveRelayConfig(Trelayconf * RConfParam){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
+    json["RELAYNB"]=RConfParam->v_relaynb;
     json["PhyLoc"]=RConfParam->v_PhyLoc;
     json["PUB_TOPIC1"]=RConfParam->v_PUB_TOPIC1;
     json["TemperatureValue"]=RConfParam->v_TemperatureValue;
@@ -547,7 +549,7 @@ bool saveRelayConfig(Trelayconf * RConfParam, uint8_t rnb){
     //strcat(relayfilename, "01");
     //strcat(relayfilename, ".json");
 
-    mkRelayConfigName(relayfilename, rnb);
+    mkRelayConfigName(relayfilename, RConfParam->v_relaynb);
 
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
