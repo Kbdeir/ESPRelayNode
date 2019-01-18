@@ -71,6 +71,7 @@ String processor(const String& var)
   if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
   if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
 
+  if(var == F( "RELAYNB" ))             return String( relay1.RelayConfParam->v_relaynb);
   if(var == F( "PUB_TOPIC1" ))          return String( relay1.RelayConfParam->v_PUB_TOPIC1.c_str());
   if(var == F( "TemperatureValue" ))    return String( relay1.RelayConfParam->v_TemperatureValue.c_str());
   if(var == F( "ACS_Sensor_Model" ))    return String( relay1.RelayConfParam->v_ACS_Sensor_Model.c_str());
@@ -227,7 +228,6 @@ void SetAsyncHTTP(){
               return buffer;
             }(relay1.RelayConfParam->v_ttl));
       });
-
 
 
     AsyncWeb_server.on("/Input_Relays_Map", HTTP_GET, [](AsyncWebServerRequest *request){
