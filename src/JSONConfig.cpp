@@ -465,7 +465,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
 
   SPIFFS.remove(relayfilename);
   File configFile = SPIFFS.open(relayfilename, "w");
-  Serial.println(F("\n opened file /relay01.json for writing."));
+  //Serial.println(F("\n opened file /relay01.json for writing."));
 
   if (!configFile) {
     Serial.println(F("\n Failed to write default relay config file"));
@@ -483,7 +483,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
 
 
 
-bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request){
+bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request, uint8_t rnb){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
@@ -497,9 +497,11 @@ bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request){
 
     if(request->hasParam("ACS_Active")) json["ACS_Active"]  =  1;
 
-    char  relayfilename[20] = "/relay";
-    strcat(relayfilename, "01");
-    strcat(relayfilename, ".json");
+    char  relayfilename[20]; // = "/relay";
+    //strcat(relayfilename, "01");
+    //strcat(relayfilename, ".json");
+
+    mkRelayConfigName(relayfilename, rnb);
 
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
@@ -518,7 +520,7 @@ bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request){
 
 
 
-bool saveRelayConfig(Trelayconf * RConfParam){
+bool saveRelayConfig(Trelayconf * RConfParam, uint8_t rnb){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
@@ -541,9 +543,11 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     json["SUB_TOPIC1"]=RConfParam->v_SUB_TOPIC1;
     json["ACS_Active"]=RConfParam->v_ACS_Active;
 
-    char  relayfilename[20] = "/relay";
-    strcat(relayfilename, "01");
-    strcat(relayfilename, ".json");
+    char  relayfilename[20]; // = "/relay";
+    //strcat(relayfilename, "01");
+    //strcat(relayfilename, ".json");
+
+    mkRelayConfigName(relayfilename, rnb);
 
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");

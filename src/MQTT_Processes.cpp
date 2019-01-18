@@ -185,7 +185,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
               //  MyConfParam.v_ttl = rly->RelayConfParam->v_ttl;
               //  saveConfig(MyConfParam);
-                saveRelayConfig(rly->RelayConfParam);
+                saveRelayConfig(rly->RelayConfParam, 01);
                 mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED,
                     String(rly->RelayConfParam->v_ttl).c_str());
               }
