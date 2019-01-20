@@ -68,6 +68,7 @@ String timerprocessor(const String& var)
 String processor(const String& var)
 {
   auto AppliedRelay = getrelaybynumber(AppliedRelayNumber);
+  
   if(var == F( "MACADDR" ))             return (String(MAC.c_str()) + " - Chip id: " + CID());
   if(var == F( "ssid" ))                return  String(MyConfParam.v_ssid.c_str());
   if(var == F( "pass" ))                return String( MyConfParam.v_pass.c_str());
