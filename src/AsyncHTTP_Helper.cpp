@@ -6,9 +6,12 @@
 #include <TimerClass.h>
 
 extern NodeTimer NTmr;
-extern Relay relay1;
+extern Relay relay0;
 extern float MCelcius;
 extern float ACS_I_Current;
+extern std::vector<void *> relays ; // a list to hold all relays
+
+uint8_t AppliedRelayNumber = 0;
 
 //const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 AsyncWebServer AsyncWeb_server(80);
@@ -64,6 +67,7 @@ String timerprocessor(const String& var)
 
 String processor(const String& var)
 {
+  auto AppliedRelay = getrelaybynumber(AppliedRelayNumber);
   if(var == F( "MACADDR" ))             return (String(MAC.c_str()) + " - Chip id: " + CID());
   if(var == F( "ssid" ))                return  String(MyConfParam.v_ssid.c_str());
   if(var == F( "pass" ))                return String( MyConfParam.v_pass.c_str());
@@ -71,21 +75,21 @@ String processor(const String& var)
   if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
   if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
 
-  if(var == F( "RELAYNB" ))             return String( relay1.RelayConfParam->v_relaynb);
-  if(var == F( "PUB_TOPIC1" ))          return String( relay1.RelayConfParam->v_PUB_TOPIC1.c_str());
-  if(var == F( "TemperatureValue" ))    return String( relay1.RelayConfParam->v_TemperatureValue.c_str());
-  if(var == F( "ACS_Sensor_Model" ))    return String( relay1.RelayConfParam->v_ACS_Sensor_Model.c_str());
-  if(var == F( "ttl" ))                 return String( relay1.RelayConfParam->v_ttl);
-  if(var == F( "STATE_PUB_TOPIC" ))     return String( relay1.RelayConfParam->v_STATE_PUB_TOPIC.c_str());
-  if(var == F( "TTL_PUB_TOPIC" ))       return String( relay1.RelayConfParam->v_ttl_PUB_TOPIC.c_str());
-  if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( relay1.RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str());
-  if(var == F( "i_ttl_PUB_TOPIC" ))     return String( relay1.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str());
-  if(var == F( "ACS_AMPS" ))            return String( relay1.RelayConfParam->v_ACS_AMPS.c_str());
-  if(var == F( "tta" ))                 return String( relay1.RelayConfParam->v_tta);
-  if(var == F( "Max_Current" ))         return String( relay1.RelayConfParam->v_Max_Current);
-  if(var == F( "LWILL_TOPIC" ))         return String( relay1.RelayConfParam->v_LWILL_TOPIC.c_str());
-  if(var == F( "SUB_TOPIC1" ))          return String( relay1.RelayConfParam->v_SUB_TOPIC1.c_str());
-  if(var == F( "ACS_Active" ))          { if (relay1.RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; };
+  if(var == F( "RELAYNB" ))             return String( AppliedRelay->RelayConfParam->v_relaynb);
+  if(var == F( "PUB_TOPIC1" ))          return String( relay0.RelayConfParam->v_PUB_TOPIC1.c_str());
+  if(var == F( "TemperatureValue" ))    return String( relay0.RelayConfParam->v_TemperatureValue.c_str());
+  if(var == F( "ACS_Sensor_Model" ))    return String( relay0.RelayConfParam->v_ACS_Sensor_Model.c_str());
+  if(var == F( "ttl" ))                 return String( relay0.RelayConfParam->v_ttl);
+  if(var == F( "STATE_PUB_TOPIC" ))     return String( relay0.RelayConfParam->v_STATE_PUB_TOPIC.c_str());
+  if(var == F( "TTL_PUB_TOPIC" ))       return String( relay0.RelayConfParam->v_ttl_PUB_TOPIC.c_str());
+  if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( relay0.RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str());
+  if(var == F( "i_ttl_PUB_TOPIC" ))     return String( relay0.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str());
+  if(var == F( "ACS_AMPS" ))            return String( relay0.RelayConfParam->v_ACS_AMPS.c_str());
+  if(var == F( "tta" ))                 return String( relay0.RelayConfParam->v_tta);
+  if(var == F( "Max_Current" ))         return String( relay0.RelayConfParam->v_Max_Current);
+  if(var == F( "LWILL_TOPIC" ))         return String( relay0.RelayConfParam->v_LWILL_TOPIC.c_str());
+  if(var == F( "SUB_TOPIC1" ))          return String( relay0.RelayConfParam->v_SUB_TOPIC1.c_str());
+  if(var == F( "ACS_Active" ))          { if (relay0.RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; };
 
   if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
   if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
@@ -212,22 +216,30 @@ void SetAsyncHTTP(){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/ApplyRelay.html");
 
+        if(request->hasParam("RELAYNB")) {
+            auto tmp = request->getParam("RELAYNB")->value();
+            Serial.print("\n parameter value :=======================> ");
+            Serial.print(tmp);
+            Serial.print("\n");
             saveRelayConfig(request);
-            relay1.loadrelayparams2(01);
+            relay0.loadrelayparams2(tmp.toInt());
 
-            uint16_t packetIdPub2 = mqttClient.publish( relay1.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
+            uint16_t packetIdPub2 = mqttClient.publish( relay0.RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
               [](int i){
                 char buffer [33];
                 itoa (i,buffer,10);
                 return buffer;
-              }(relay1.RelayConfParam->v_ttl));
-            uint16_t packetIdPub3 = mqttClient.publish( relay1.RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
+              }(relay0.RelayConfParam->v_ttl));
+
+            uint16_t packetIdPub3 = mqttClient.publish( relay0.RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
             [](int i){
               char buffer [33];
               itoa (i,buffer,10);
               return buffer;
-            }(relay1.RelayConfParam->v_ttl));
-      });
+            }(relay0.RelayConfParam->v_ttl));
+        }
+      }
+    );
 
 
     AsyncWeb_server.on("/Input_Relays_Map", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -297,6 +309,7 @@ void SetAsyncHTTP(){
 
   AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        AppliedRelayNumber = 0;
         request->send(SPIFFS, "/Config.html", String(), false, processor);
     });
 

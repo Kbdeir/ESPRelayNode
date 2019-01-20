@@ -129,7 +129,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n v_IN0_INPUTMODE:")); Serial.print(ConfParam.v_IN0_INPUTMODE);
   Serial.print(F("\n v_IN1_INPUTMODE:")); Serial.print(ConfParam.v_IN1_INPUTMODE);
   Serial.print(F("\n v_IN2_INPUTMODE:")); Serial.print(ConfParam.v_IN2_INPUTMODE);
-  //relay1.loadrelayparams();
+  //relay0.loadrelayparams();
   return SUCCESS;
 }
 

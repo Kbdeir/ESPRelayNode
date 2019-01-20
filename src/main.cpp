@@ -119,7 +119,7 @@ void ticker_ACS712_func (void* obj);
 void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
 
-Relay relay1(
+Relay relay0(
     RelayPin,
     ticker_relay_ttl_off,
     ticker_relay_ttl_periodic_callback,
@@ -661,7 +661,7 @@ InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-//  if (!relay1.loadrelayparams2()) relay1.loadrelayparams2();
+//  if (!relay0.loadrelayparams2()) relay0.loadrelayparams2();
 
   //Inputsnsr14.SetInputSensorPin(InputPin14);
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
@@ -723,9 +723,9 @@ void Wifi_connect() {
                     setSyncProvider(getNtpTime);
 
                     trials = 0;
-                    relay1.stop_ttl_timer();
-                    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
-                    ACS_Calibrate_Start(relay1,sensor);
+                    relay0.stop_ttl_timer();
+                    relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
+                    ACS_Calibrate_Start(relay0,sensor);
 
                     //relay2.stop_ttl_timer();
                     //relay2.setRelayTTT_Timer_Interval(relay2.RelayConfParam->v_ttl.toInt()*1000);
@@ -791,7 +791,7 @@ void setup() {
       ESP.restart();
     };
 
-    while (relay1.loadrelayparams2(01) != true){
+    while (relay0.loadrelayparams2(01) != true){
       delay(2000);
       ESP.restart();
     };
@@ -818,32 +818,32 @@ void setup() {
     Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
     Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
 
-    //Inputsnsr13.addrelay(&relay1);
+    //Inputsnsr13.addrelay(&relay0);
 
     inputs.push_back(&Inputsnsr13);
     inputs.push_back(&Inputsnsr12);
     inputs.push_back(&Inputsnsr14);
 
     /*
-    InputSensor * t;
-    t = static_cast<InputSensor *>(inputs.at(0));
-    t->addrelay(&relay1);
-    t = static_cast<InputSensor *>(inputs.at(1));
-    t->addrelay(&relay1);
+      InputSensor * t;
+      t = static_cast<InputSensor *>(inputs.at(0));
+      t->addrelay(&relay0);
+      t = static_cast<InputSensor *>(inputs.at(1));
+      t->addrelay(&relay0);
     */
 
-    relay1.attachLoopfunc(relayloopservicefunc);
-    relays.push_back(&relay1);
+    relay0.attachLoopfunc(relayloopservicefunc);
+    relays.push_back(&relay0);
 
-  //  applyIRMAp(0,0);
-  //  applyIRMAp(1,0);
+    //  applyIRMAp(0,0);
+    //  applyIRMAp(1,0);
 
   while (loadIRMapConfig(myIRMap) != SUCCESS){
     delay(2000);
     ESP.restart();
   };
 
-    // mrelays[0]=&relay1;
+    // mrelays[0]=&relay0;
     // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
     /*
     relay2.attachSwithchButton(SwitchButtonPin2, onchangeSwitchInterruptSvc, buttonclick);
@@ -865,7 +865,7 @@ void loop() {
 
  	blinkled();
   tiker_MQTT_CONNECT.update(nullptr);
-  relay1.watch();
+  relay0.watch();
   //relay2.watch();
 
   Inputsnsr14.watch();
@@ -903,14 +903,14 @@ void loop() {
     }
   }
 
-if (relay1.RelayConfParam->v_TemperatureValue != "0") {
+if (relay0.RelayConfParam->v_TemperatureValue != "0") {
   if (millis() - lastMillis5000 > 5000) {
     lastMillis5000 = millis();
     tempsensor.getCurrentTemp(0);
     Serial.print("\n Temperature: ");
     Serial.print(tempsensor.getCurrentTemp(0));
     float rtmp = roundf(MCelcius);
-    mqttClient.publish(relay1.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
+    mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
           char tmp[10];
           itoa(rtmp,tmp,10);
           return tmp; //
