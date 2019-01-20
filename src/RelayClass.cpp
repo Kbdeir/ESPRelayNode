@@ -92,77 +92,11 @@ int Relay::getIdNumber()
    { return IDRelayTag;}
 
 
+boolean Relay::loadrelayparams(uint8_t rnb){
 
-boolean Relay::loadrelayparams(){
+  char rfilename[20];
+  mkRelayConfigName(rfilename, rnb);
 
-    if(SPIFFS.begin()) { Serial.println(F("SPIFFS Initialize....ok")); }
-       else {Serial.println(F("SPIFFS Initialization...failed")); }
-
-    const char* filename = "/config.json";
-
-    if (! SPIFFS.exists(filename)) {
-         Serial.println(F("config file does not exist! ... building and rebooting...."));
-         while (!saveDefaultConfig()){};
-         return false;
-     }
-
-    File configFile = SPIFFS.open(filename, "r");
-       if (!configFile) {
-         Serial.println(F("Failed to open config file"));
-         saveDefaultConfig();
-         return false;
-    }
-
-    size_t size = configFile.size();
-    if (size > buffer_size) {
-         Serial.println(F("Config file size is too large, rebuilding."));
-         saveDefaultConfig();
-         return false;
-    }
-
-       // Allocate a buffer to store contents of the file.
-    std::unique_ptr<char[]> buf(new char[size]);
-
-       // We don't use String here because ArduinoJson library requires the input
-       // buffer to be mutable. If you don't use ArduinoJson, you may as well
-       // use configFile.readString instead.
-    configFile.readBytes(buf.get(), size);
-
-    StaticJsonBuffer<buffer_size> jsonBuffer;
-    JsonObject& json = jsonBuffer.parseObject(buf.get());
-
-    if (!json.success()) {
-         Serial.println(F("Failed to parse config file"));
-         saveDefaultConfig();
-         return false;
-    }
-
-     RelayConfParam->v_PUB_TOPIC1 = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String("/none");
-     RelayConfParam->v_TemperatureValue = (json["TemperatureValue"].as<String>()!="") ? json["TemperatureValue"].as<String>() : String("/none");
-     RelayConfParam->v_ttl_PUB_TOPIC  = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String("/none");
-     RelayConfParam->v_i_ttl_PUB_TOPIC = (json["i_ttl_PUB_TOPIC"].as<String>()!="") ? json["i_ttl_PUB_TOPIC"].as<String>() : String("/none");
-     RelayConfParam->v_ACS_AMPS  = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String("/none");
-     RelayConfParam->v_CURR_TTL_PUB_TOPIC  = (json["CURR_TTL_PUB_TOPIC"].as<String>()!="") ? json["CURR_TTL_PUB_TOPIC"].as<String>() : String("/none");
-     RelayConfParam->v_STATE_PUB_TOPIC = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String("/none");
-     RelayConfParam->v_ACS_Sensor_Model = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String("10");
-     RelayConfParam->v_ttl = (json["ttl"].as<String>()!="") ? json["ttl"].as<uint32_t>() : 0;
-     RelayConfParam->v_tta = (json["tta"].as<String>()!="") ? json["tta"].as<uint32_t>() : 0;
-     RelayConfParam->v_Max_Current = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<uint8_t>() : 10;
-     RelayConfParam->v_LWILL_TOPIC = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String("/none");
-     RelayConfParam->v_SUB_TOPIC1 = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String("/none");
-     RelayConfParam->v_ACS_Active = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<uint8_t>() == 1 : false;
-
-     RelayConfParam->v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
-     RelayConfParam->v_IN1_INPUTMODE       =  json["I1MODE"].as<uint8_t>();
-     RelayConfParam->v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
-     return true;
-}
-
-boolean Relay::loadrelayparams2(){
-
-  char  rfilename[20] = "/relay";
-  strcat(rfilename, "01");
-  strcat(rfilename, ".json");
 
     if(SPIFFS.begin()) { Serial.println(F("SPIFFS Initialize....ok")); }
        else {Serial.println(F("SPIFFS Initialization...failed")); }
@@ -171,21 +105,21 @@ boolean Relay::loadrelayparams2(){
 
     if (!(SPIFFS.exists(rfilename))) {
          Serial.println(F("Relay config file does not exist! ... building and rebooting...."));
-         saveRelayDefaultConfig();
+         saveRelayDefaultConfig(rnb);
          return false;
      }
 
     File configFile = SPIFFS.open(rfilename, "r");
        if (!configFile) {
          Serial.println(F("Failed to open relay config file"));
-         saveRelayDefaultConfig();
+         saveRelayDefaultConfig(rnb);
          return false;
     }
 
     size_t size = configFile.size();
     if (size > buffer_size) {
          Serial.println(F("Relay Config file size is too large, rebuilding."));
-         saveRelayDefaultConfig();
+         saveRelayDefaultConfig(rnb);
          return false;
     }
 
@@ -202,12 +136,12 @@ boolean Relay::loadrelayparams2(){
 
     if (!json.success()) {
          Serial.println(F("Failed to parse relay config file"));
-         saveRelayDefaultConfig();
+         saveRelayDefaultConfig(rnb);
          return false;
     }
-
+     RelayConfParam->v_relaynb            = (json["RELAYNB"].as<String>()!="") ? json["RELAYNB"].as<uint8_t>() : 0;
      RelayConfParam->v_PUB_TOPIC1         = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String("/none");
- RelayConfParam->v_TemperatureValue         = (json["TemperatureValue"].as<String>()!="") ? json["TemperatureValue"].as<String>() : String("/none");     
+     RelayConfParam->v_TemperatureValue   = (json["TemperatureValue"].as<String>()!="") ? json["TemperatureValue"].as<String>() : String("/none");
      RelayConfParam->v_ttl_PUB_TOPIC      = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String("/ttlpubnone");
      RelayConfParam->v_i_ttl_PUB_TOPIC    = (json["i_ttl_PUB_TOPIC"].as<String>()!="") ? json["i_ttl_PUB_TOPIC"].as<String>() : String("/ittlnone");
      RelayConfParam->v_ACS_AMPS           = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String("/none");
@@ -321,4 +255,11 @@ Relay * getrelaybynumber(uint8_t nb){
       return rly;
     } else { return nullptr;}
   }   else { return nullptr;}
+}
+
+
+void mkRelayConfigName(char name[], uint8_t rnb){
+  strcpy(name,"/relay");
+  strcat(name, String(rnb).c_str());
+  strcat(name,".json");
 }

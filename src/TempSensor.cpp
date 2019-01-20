@@ -1,29 +1,36 @@
 #include <TempSensor.h>
 
+float MCelcius;
+
+TempSensor::TempSensor() {
+}
+
 TempSensor::TempSensor(uint8_t _pin) {
-	pin = _pin;
-  oneWire = new OneWire (ONE_WIRE_BUS);
-  sensors = new DallasTemperature(oneWire);
+  pin = _pin;
   Celcius=0;
   Fahrenheit=0;
+  oneWire = new OneWire (pin);
+  this->sensors = new DallasTemperature(oneWire );
+  pinMode(pin, INPUT_PULLUP);
+}
+
+
+void TempSensor::tempbegin(uint8_t _pin) {
+
 }
 
 
 
-
-float TempSensor::getCurrentTemp(){
-  sensors->requestTemperatures();
-  Celcius=sensors->getTempCByIndex(0);
-  Fahrenheit=sensors->toFahrenheit(Celcius);
-  Serial.print("\n C  ");
-  Serial.print(Celcius);
-  Serial.print(" F  ");
-  Serial.println(Fahrenheit);
-
+float TempSensor::getCurrentTemp(uint8_t index){
+  if (this->sensors) {
+    this->sensors->requestTemperatures();
+    Celcius=this->sensors->getTempCByIndex(0);
+    MCelcius = Celcius;
+  }
 	return Celcius;
 }
 
 TempSensor::~TempSensor(){
-      delete oneWire ;
-      delete sensors;
+      delete this->oneWire ;
+      delete this->sensors;
 }

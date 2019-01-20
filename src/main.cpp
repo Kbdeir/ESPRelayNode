@@ -1,4 +1,4 @@
-
+// RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF
 #include <Arduino.h>
 #include <string.h>
@@ -89,6 +89,7 @@ int wifimode      = WIFI_CLT_MODE;
 const int led     = 02;
 String MAC;
 unsigned long lastMillis = 0;
+unsigned long lastMillis5000 = 0;
 uint32_t trials   = 0;
 int  WFstatus;
 int UpCount       = 0;
@@ -107,7 +108,9 @@ const int LAMP2_COIL  = 2;
 float old_acs_value   = 0;
 float ACS_I_Current   = 0;
 
-TempSensor ts(12);
+static TempSensor tempsensor(14);
+extern float MCelcius;
+
 ACS712 sensor(ACS712_20A, A0);
 
 void ticker_relay_ttl_off (void* obj) ;
@@ -116,7 +119,7 @@ void ticker_ACS712_func (void* obj);
 void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
 
-Relay relay1(
+Relay relay0(
     RelayPin,
     ticker_relay_ttl_off,
     ticker_relay_ttl_periodic_callback,
@@ -147,7 +150,7 @@ void ticker_ACS712_mqtt (void* relaySender) {
         // Serial.printf("%6.*lf", 2, variance );
         if (true) {//(variance > 0.05){
            mqttClient.publish(rly->RelayConfParam->v_ACS_AMPS.c_str(), 2, true, String(ACS_I_Current).c_str());
-        //  Serial.println(String("I = ") + ACS_I_Current + " A");
+          Serial.println(String("\n I = ") + ACS_I_Current + " A");
         }
         old_acs_value = ACS_I_Current;
   }
@@ -232,6 +235,7 @@ void process_Input(void * inputSender, void * obj){
       InputSensor * snsr;
       snsr = static_cast<InputSensor *>(inputSender);
     if (snsr->fclickmode == INPUT_NORMAL) {
+      Serial.print(snsr->mqtt_topic.c_str());
       mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
     }
     if (snsr->fclickmode == INPUT_TOGGLE) {
@@ -649,23 +653,20 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 }
 
 
+
 InputSensor Inputsnsr14(Relay2Pin,process_Input,INPUT_NONE);
-
 //InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
-
-
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-//  if (!relay1.loadrelayparams2()) relay1.loadrelayparams2();
 
+  //Inputsnsr14.SetInputSensorPin(InputPin14);
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
   Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
-  //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
   WiFi.disconnect();
@@ -716,14 +717,14 @@ void Wifi_connect() {
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.toString().c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("TTL"), String(MyConfParam.v_ttl).c_str());
                     MDNS.addServiceTxt(F("http"), F("tcp"),F("Max Allowed Current"), String(MyConfParam.v_Max_Current).c_str());
-*/
+                */
                     //setSyncInterval(10);
                     setSyncProvider(getNtpTime);
 
                     trials = 0;
-                    relay1.stop_ttl_timer();
-                    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
-                    ACS_Calibrate_Start(relay1,sensor);
+                    relay0.stop_ttl_timer();
+                    relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
+                    ACS_Calibrate_Start(relay0,sensor);
 
                     //relay2.stop_ttl_timer();
                     //relay2.setRelayTTT_Timer_Interval(relay2.RelayConfParam->v_ttl.toInt()*1000);
@@ -789,8 +790,7 @@ void setup() {
       ESP.restart();
     };
 
-
-    while (relay1.loadrelayparams2() != true){
+    while (relay0.loadrelayparams(0) != true){
       delay(2000);
       ESP.restart();
     };
@@ -816,32 +816,33 @@ void setup() {
 
     Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
     Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
-    //Inputsnsr13.addrelay(&relay1);
+
+    //Inputsnsr13.addrelay(&relay0);
 
     inputs.push_back(&Inputsnsr13);
     inputs.push_back(&Inputsnsr12);
     inputs.push_back(&Inputsnsr14);
 
     /*
-    InputSensor * t;
-    t = static_cast<InputSensor *>(inputs.at(0));
-    t->addrelay(&relay1);
-    t = static_cast<InputSensor *>(inputs.at(1));
-    t->addrelay(&relay1);
+      InputSensor * t;
+      t = static_cast<InputSensor *>(inputs.at(0));
+      t->addrelay(&relay0);
+      t = static_cast<InputSensor *>(inputs.at(1));
+      t->addrelay(&relay0);
     */
 
-    relay1.attachLoopfunc(relayloopservicefunc);
-    relays.push_back(&relay1);
+    relay0.attachLoopfunc(relayloopservicefunc);
+    relays.push_back(&relay0);
 
-  //  applyIRMAp(0,0);
-  //  applyIRMAp(1,0);
+    //  applyIRMAp(0,0);
+    //  applyIRMAp(1,0);
 
   while (loadIRMapConfig(myIRMap) != SUCCESS){
     delay(2000);
     ESP.restart();
   };
 
-    // mrelays[0]=&relay1;
+    // mrelays[0]=&relay0;
     // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
     /*
     relay2.attachSwithchButton(SwitchButtonPin2, onchangeSwitchInterruptSvc, buttonclick);
@@ -850,6 +851,8 @@ void setup() {
     */
     //mrelays[1]=&relay2;
     // attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
+
+
 }
 
 
@@ -861,8 +864,13 @@ void loop() {
 
  	blinkled();
   tiker_MQTT_CONNECT.update(nullptr);
-  relay1.watch();
-  //relay2.watch();
+
+  for (void* it : relays)  {
+    Relay * rtemp = static_cast<Relay *>(it);
+    if (rtemp) {
+        rtemp->watch();
+    }
+  }
 
   Inputsnsr14.watch();
   Inputsnsr12.watch();
@@ -888,10 +896,7 @@ void loop() {
     CalendarNotInitiated = false;
   }
 
-
   if (millis() - lastMillis > 1000) {
-
-    mqttClient.publish(relay1.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, String(ts.getCurrentTemp()).c_str());
     lastMillis = millis();
     if (wifimode == WIFI_AP_MODE) {
   		APModetimer_run_value++;
@@ -901,5 +906,24 @@ void loop() {
       }
     }
   }
+
+if (relay0.RelayConfParam->v_TemperatureValue != "0") {
+  if (millis() - lastMillis5000 > 5000) {
+    lastMillis5000 = millis();
+    tempsensor.getCurrentTemp(0);
+    Serial.print("\n Temperature: ");
+    Serial.print(tempsensor.getCurrentTemp(0));
+    float rtmp = roundf(MCelcius);
+    mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
+          char tmp[10];
+          itoa(rtmp,tmp,10);
+          return tmp; //
+        // return String(round(MCelcius)).c_str();
+        }()
+      );
+  }
+}
+
+
 
 }

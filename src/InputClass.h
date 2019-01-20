@@ -34,6 +34,8 @@ class InputSensor{
       input_mode clickmode
     );
 
+    void SetInputSensorPin(uint8_t p);
+
     ~InputSensor();
     void addrelay(Relay * rly);
     void watch();

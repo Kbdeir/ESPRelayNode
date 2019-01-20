@@ -23,6 +23,17 @@ InputSensor::InputSensor(uint8_t p,
   fon_callback = on_callback;
 }
 
+
+void InputSensor::SetInputSensorPin(uint8_t p) {
+  if (Input_debouncer) {
+    pin = p;
+    pinMode ( pin, INPUT_PULLUP);
+    Input_debouncer->attach(pin,INPUT_PULLUP);
+    Input_debouncer->interval(25); // interval in ms
+    rchangedflag = false;
+  }
+}
+
 InputSensor::~InputSensor() {
       delete Input_debouncer;
     }
@@ -32,9 +43,11 @@ void InputSensor::addrelay(Relay * rly) {
 };
 
 void InputSensor::watch() {
+
   Input_debouncer->update();
   //  if (attachedrelay == nullptr) {
   if (attachedrelays.size() == 0) {
+
      if (fclickmode==INPUT_NORMAL) {
        if (Input_debouncer->fell() || Input_debouncer->rose()) {
           if (fon_callback) fon_callback(this, nullptr);
@@ -53,6 +66,7 @@ void InputSensor::watch() {
    //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
      rtemp = static_cast<Relay *>(it);
      if (rtemp) {
+
        if (fclickmode==INPUT_COPY_TO_RELAY) {
          if (Input_debouncer->fell() || Input_debouncer->rose()) {
            if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}

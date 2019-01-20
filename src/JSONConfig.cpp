@@ -129,7 +129,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n v_IN0_INPUTMODE:")); Serial.print(ConfParam.v_IN0_INPUTMODE);
   Serial.print(F("\n v_IN1_INPUTMODE:")); Serial.print(ConfParam.v_IN1_INPUTMODE);
   Serial.print(F("\n v_IN2_INPUTMODE:")); Serial.print(ConfParam.v_IN2_INPUTMODE);
-  //relay1.loadrelayparams();
+  //relay0.loadrelayparams();
   return SUCCESS;
 }
 
@@ -430,13 +430,14 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 
 
 
-bool saveRelayDefaultConfig(){
+bool saveRelayDefaultConfig(uint8_t rnb){
 
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
   Serial.print("\n Initializing default relay parameters");
 
+  json["RELAYNB"]             = rnb;
   json["PhyLoc"]              ="Not configured yet";
   json["PUB_TOPIC1"]          ="/home/Controller" + CID() + "/Coils/C1" ;
   json["STATE_PUB_TOPIC"]     ="/home/Controller" + CID() + "/Coils/State/C1";
@@ -457,13 +458,15 @@ bool saveRelayDefaultConfig(){
   json["I1MODE"]=1;
   json["I2MODE"]=1;
 
-  char  relayfilename[20] = "/relay";
-  strcat(relayfilename, "01");
-  strcat(relayfilename, ".json");
+  char  relayfilename[20];// = "/relay";
+  //strcat(relayfilename, "01");
+  //strcat(relayfilename, ".json");
+
+  mkRelayConfigName(relayfilename, rnb);
 
   SPIFFS.remove(relayfilename);
   File configFile = SPIFFS.open(relayfilename, "w");
-  Serial.println(F("\n opened file /relay01.json for writing."));
+  //Serial.println(F("\n opened file /relay01.json for writing."));
 
   if (!configFile) {
     Serial.println(F("\n Failed to write default relay config file"));
@@ -475,13 +478,10 @@ bool saveRelayDefaultConfig(){
     configFile.close();
     return true;
 }
-
-
 }
 
 
-
-bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request){
+bool saveRelayConfig(AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
@@ -495,9 +495,11 @@ bool saveRelayConfig(Trelayconf * RConfParam, AsyncWebServerRequest *request){
 
     if(request->hasParam("ACS_Active")) json["ACS_Active"]  =  1;
 
-    char  relayfilename[20] = "/relay";
-    strcat(relayfilename, "01");
-    strcat(relayfilename, ".json");
+    char  relayfilename[20]; // = "/relay";
+    //strcat(relayfilename, "01");
+    //strcat(relayfilename, ".json");
+
+    mkRelayConfigName(relayfilename, json["RELAYNB"]);
 
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
@@ -520,6 +522,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
+    json["RELAYNB"]=RConfParam->v_relaynb;
     json["PhyLoc"]=RConfParam->v_PhyLoc;
     json["PUB_TOPIC1"]=RConfParam->v_PUB_TOPIC1;
     json["TemperatureValue"]=RConfParam->v_TemperatureValue;
@@ -539,9 +542,11 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     json["SUB_TOPIC1"]=RConfParam->v_SUB_TOPIC1;
     json["ACS_Active"]=RConfParam->v_ACS_Active;
 
-    char  relayfilename[20] = "/relay";
-    strcat(relayfilename, "01");
-    strcat(relayfilename, ".json");
+    char  relayfilename[20]; // = "/relay";
+    //strcat(relayfilename, "01");
+    //strcat(relayfilename, ".json");
+
+    mkRelayConfigName(relayfilename, RConfParam->v_relaynb);
 
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
