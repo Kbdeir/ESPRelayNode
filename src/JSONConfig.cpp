@@ -70,22 +70,6 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
       ConfParam.v_MQTT_BROKER.fromString(json["MQTT_BROKER"].as<String>());} else { ConfParam.v_MQTT_BROKER.fromString("192.168.1.1");}
   ConfParam.v_MQTT_B_PRT          = (json["MQTT_B_PRT"].as<String>()!="") ? json["MQTT_B_PRT"].as<uint16_t>() : 1883;
 
-  /*
-  ConfParam.v_PUB_TOPIC1          = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String(F("/none"));
-  ConfParam.v_ttl_PUB_TOPIC       = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_i_ttl_PUB_TOPIC     = (json["i_ttl_PUB_TOPIC"].as<String>()!="") ? json["i_ttl_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_ACS_AMPS            = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String(F("/none"));
-  ConfParam.v_CURR_TTL_PUB_TOPIC  = (json["CURR_TTL_PUB_TOPIC"].as<String>()!="") ? json["CURR_TTL_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_STATE_PUB_TOPIC     = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_ACS_Sensor_Model    = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String(F("10"));
-  ConfParam.v_ttl                 = (json["ttl"].as<String>()!="") ? json["ttl"].as<uint32_t>() : 0;
-  ConfParam.v_tta                 = (json["tta"].as<String>()!="") ? json["tta"].as<uint32_t>() : 0;
-  ConfParam.v_Max_Current         = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<uint8_t>() : 10;
-  ConfParam.v_LWILL_TOPIC         = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String(F("/none"));
-  ConfParam.v_SUB_TOPIC1          = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String(F("/none"));
-  ConfParam.v_ACS_Active          = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<uint8_t>() == 1 : false;
-  */
-
   ConfParam.v_Update_now          = (json["Update_now"].as<String>()!="") ? json["Update_now"].as<uint8_t>() == 1 : false;
   ConfParam.v_TOGGLE_BTN_PUB_TOPIC= (json["TOGGLE_BTN_PUB_TOPIC"].as<String>()!="") ? json["TOGGLE_BTN_PUB_TOPIC"].as<String>() : String(F("/none"));
   ConfParam.v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
@@ -110,19 +94,6 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n MQTT_Active:")); Serial.print(ConfParam.v_MQTT_Active);
   Serial.print(F("\n MQTT_BROKER:")); Serial.print(ConfParam.v_MQTT_BROKER);
   Serial.print(F("\n MQTT_B_PRT:")); Serial.print(ConfParam.v_MQTT_B_PRT);
-  /*
-  Serial.print(F("\n PUB_TOPIC1:")); Serial.print(ConfParam.v_PUB_TOPIC1);
-  Serial.print(F("\n ttl:")); Serial.print(ConfParam.v_STATE_PUB_TOPIC);
-  Serial.print(F("\n Input TTL Topic:")); Serial.print(ConfParam.v_i_ttl_PUB_TOPIC);
-  Serial.print(F("\n ACS_AMPS:")); Serial.print(ConfParam.v_ACS_AMPS);
-  Serial.print(F("\n LWILL_TOPIC:")); Serial.print(ConfParam.v_LWILL_TOPIC);
-  Serial.print(F("\n SUB_TOPIC1:")); Serial.print(ConfParam.v_SUB_TOPIC1);
-  Serial.print(F("\n ACS_Active:")); Serial.print(ConfParam.v_ACS_Active);
-  Serial.print(F("\n ASC_Sensor_Model:")); Serial.print(ConfParam.v_ACS_Sensor_Model);
-  Serial.print(F("\n Max_Current:")); Serial.print(ConfParam.v_Max_Current);
-  Serial.print(F("\n ttl :")); Serial.print(ConfParam.v_ttl);
-  Serial.print(F("\n tta:")); Serial.print(ConfParam.v_tta);
-  */
   Serial.print(F("\n FRM_PRT:")); Serial.print(ConfParam.v_FRM_PRT);
   Serial.print(F("\n ntptz:")); Serial.print(ConfParam.v_ntptz);
   Serial.print(F("\n Update_now:")); Serial.print(ConfParam.v_Update_now);
@@ -143,36 +114,16 @@ bool saveConfig(TConfigParams &ConfParam){
     json["MQTT_BROKER"]=ConfParam.v_MQTT_BROKER.toString();
     json["MQTT_B_PRT"]=ConfParam.v_MQTT_B_PRT;
     json["FRM_IP"]= MyConfParam.v_FRM_IP.toString();
-
     json["FRM_PRT"]=ConfParam.v_FRM_PRT;
-    /*
-    json["PUB_TOPIC1"]=ConfParam.v_PUB_TOPIC1;
-    json["ACS_Sensor_Model"] = ConfParam.v_ACS_Sensor_Model;
-    json["ttl"]=ConfParam.v_ttl;
-    json["ttl_PUB_TOPIC"]=ConfParam.v_ttl_PUB_TOPIC;
-    json["i_ttl_PUB_TOPIC"]=ConfParam.v_i_ttl_PUB_TOPIC;
-    json["ACS_AMPS"]=ConfParam.v_ACS_AMPS;
-    json["CURR_TTL_PUB_TOPIC"]=ConfParam.v_CURR_TTL_PUB_TOPIC;
-    json["STATE_PUB_TOPIC"]=ConfParam.v_STATE_PUB_TOPIC;
-    json["tta"]=ConfParam.v_tta;
-    json["Max_Current"]=ConfParam.v_Max_Current;
-    json["LWILL_TOPIC"]=ConfParam.v_LWILL_TOPIC;
-    json["SUB_TOPIC1"]=ConfParam.v_SUB_TOPIC1;
-    json["ACS_Active"]=ConfParam.v_ACS_Active;
-    */
-
     json["I12_STS_PTP"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
     json["I14_STS_PTP"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
     json["TOGGLE_BTN_PUB_TOPIC"]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
     json["I0MODE"]=ConfParam.v_IN0_INPUTMODE;
     json["I1MODE"]=ConfParam.v_IN1_INPUTMODE;
     json["I2MODE"]=ConfParam.v_IN2_INPUTMODE;
-
-
     json["timeserver"]=ConfParam.v_timeserver.toString();
     json["MQTT_Active"]=ConfParam.v_MQTT_Active;
     json["ntptz"]=ConfParam.v_ntptz;
-
     json["Update_now"]=ConfParam.v_Update_now;
 
     File configFile = SPIFFS.open(filename, "w");
@@ -249,7 +200,7 @@ bool saveDefaultConfig(){
   json["tta"]=0;
   json["ACS_Active"]=0;
   json["tta"]="0";
-  json["ACS_Sensor_Model"] = "10";
+  json["ACS_Sensor_Model"] = "30";
   json["Max_Current"]=10;
 
   json["TOGGLE_BTN_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/C1" ;
@@ -451,7 +402,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
   json["tta"]                 = 0;
   json["ACS_Active"]          = 0;
   json["tta"]                 = "0";
-  json["ACS_Sensor_Model"]    = "10";
+  json["ACS_Sensor_Model"]    = "30";
   json["Max_Current"]         = 10;
 
   json["I0MODE"]=1;
