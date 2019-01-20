@@ -662,13 +662,11 @@ InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 
 void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
-//  if (!relay0.loadrelayparams2()) relay0.loadrelayparams2();
 
   //Inputsnsr14.SetInputSensorPin(InputPin14);
   Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
   Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
-  //relay2.loadrelayparams();
 
   WiFi.softAPdisconnect();
   WiFi.disconnect();
@@ -792,7 +790,7 @@ void setup() {
       ESP.restart();
     };
 
-    while (relay0.loadrelayparams2(01) != true){
+    while (relay0.loadrelayparams(0) != true){
       delay(2000);
       ESP.restart();
     };
@@ -873,9 +871,6 @@ void loop() {
         rtemp->watch();
     }
   }
-
-  //relay0.watch();
-  //relay2.watch();
 
   Inputsnsr14.watch();
   Inputsnsr12.watch();
