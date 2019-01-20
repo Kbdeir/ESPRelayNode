@@ -865,7 +865,15 @@ void loop() {
 
  	blinkled();
   tiker_MQTT_CONNECT.update(nullptr);
-  relay0.watch();
+
+  for (void* it : relays)  {
+    Relay * rtemp = static_cast<Relay *>(it);
+    if (rtemp) {
+        rtemp->watch();
+    }
+  }
+
+  //relay0.watch();
   //relay2.watch();
 
   Inputsnsr14.watch();

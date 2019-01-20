@@ -478,10 +478,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
     configFile.close();
     return true;
 }
-
-
 }
-
 
 
 bool saveRelayConfig(AsyncWebServerRequest *request){
