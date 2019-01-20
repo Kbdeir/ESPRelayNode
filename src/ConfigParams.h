@@ -48,7 +48,7 @@ typedef struct IPAdr {
 }IPAdr;
 
 typedef struct Trelayconf {
-  uint8_t relaynb;
+  uint8_t v_relaynb;
   String v_PhyLoc ;
   String v_PUB_TOPIC1 ;
   String v_STATE_PUB_TOPIC ;

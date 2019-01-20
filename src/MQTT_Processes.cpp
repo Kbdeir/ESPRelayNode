@@ -55,7 +55,7 @@ void onMqttConnect(bool sessionPresent) {
   Serial.print(F("Session present: "));
   Serial.println(sessionPresent);
 
-	//uint16_t packetIdSub = mqttClient.subscribe(relay1.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
+	//uint16_t packetIdSub = mqttClient.subscribe(relay0.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
   Relay * rtemp = nullptr;
   for (void* it : relays)  {
     rtemp = static_cast<Relay *>(it);
