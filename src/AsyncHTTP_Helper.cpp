@@ -76,23 +76,23 @@ String processor(const String& var)
   if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
   if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
 
-if (AppliedRelay) {
-  if(var == F( "RELAYNB" ))             return String( AppliedRelay->RelayConfParam->v_relaynb);
-  if(var == F( "PUB_TOPIC1" ))          return String( AppliedRelay->RelayConfParam->v_PUB_TOPIC1.c_str());
-  if(var == F( "TemperatureValue" ))    return String( AppliedRelay->RelayConfParam->v_TemperatureValue.c_str());
-  if(var == F( "ACS_Sensor_Model" ))    return String( AppliedRelay->RelayConfParam->v_ACS_Sensor_Model.c_str());
-  if(var == F( "ttl" ))                 return String( AppliedRelay->RelayConfParam->v_ttl);
-  if(var == F( "STATE_PUB_TOPIC" ))     return String( AppliedRelay->RelayConfParam->v_STATE_PUB_TOPIC.c_str());
-  if(var == F( "TTL_PUB_TOPIC" ))       return String( AppliedRelay->RelayConfParam->v_ttl_PUB_TOPIC.c_str());
-  if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( AppliedRelay->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str());
-  if(var == F( "i_ttl_PUB_TOPIC" ))     return String( AppliedRelay->RelayConfParam->v_i_ttl_PUB_TOPIC.c_str());
-  if(var == F( "ACS_AMPS" ))            return String( AppliedRelay->RelayConfParam->v_ACS_AMPS.c_str());
-  if(var == F( "tta" ))                 return String( AppliedRelay->RelayConfParam->v_tta);
-  if(var == F( "Max_Current" ))         return String( AppliedRelay->RelayConfParam->v_Max_Current);
-  if(var == F( "LWILL_TOPIC" ))         return String( AppliedRelay->RelayConfParam->v_LWILL_TOPIC.c_str());
-  if(var == F( "SUB_TOPIC1" ))          return String( AppliedRelay->RelayConfParam->v_SUB_TOPIC1.c_str());
-  if(var == F( "ACS_Active" ))          { if (AppliedRelay->RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; };
-}
+  if (AppliedRelay) {
+    if(var == F( "RELAYNB" ))             return String( AppliedRelay->RelayConfParam->v_relaynb);
+    if(var == F( "PUB_TOPIC1" ))          return String( AppliedRelay->RelayConfParam->v_PUB_TOPIC1.c_str());
+    if(var == F( "TemperatureValue" ))    return String( AppliedRelay->RelayConfParam->v_TemperatureValue.c_str());
+    if(var == F( "ACS_Sensor_Model" ))    return String( AppliedRelay->RelayConfParam->v_ACS_Sensor_Model.c_str());
+    if(var == F( "ttl" ))                 return String( AppliedRelay->RelayConfParam->v_ttl);
+    if(var == F( "STATE_PUB_TOPIC" ))     return String( AppliedRelay->RelayConfParam->v_STATE_PUB_TOPIC.c_str());
+    if(var == F( "TTL_PUB_TOPIC" ))       return String( AppliedRelay->RelayConfParam->v_ttl_PUB_TOPIC.c_str());
+    if(var == F( "CURR_TTL_PUB_TOPIC" ))  return String( AppliedRelay->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str());
+    if(var == F( "i_ttl_PUB_TOPIC" ))     return String( AppliedRelay->RelayConfParam->v_i_ttl_PUB_TOPIC.c_str());
+    if(var == F( "ACS_AMPS" ))            return String( AppliedRelay->RelayConfParam->v_ACS_AMPS.c_str());
+    if(var == F( "tta" ))                 return String( AppliedRelay->RelayConfParam->v_tta);
+    if(var == F( "Max_Current" ))         return String( AppliedRelay->RelayConfParam->v_Max_Current);
+    if(var == F( "LWILL_TOPIC" ))         return String( AppliedRelay->RelayConfParam->v_LWILL_TOPIC.c_str());
+    if(var == F( "SUB_TOPIC1" ))          return String( AppliedRelay->RelayConfParam->v_SUB_TOPIC1.c_str());
+    if(var == F( "ACS_Active" ))          { if (AppliedRelay->RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; };
+  }
 
   if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
   if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
@@ -220,10 +220,10 @@ void SetAsyncHTTP(){
       request->send(SPIFFS, "/ApplyRelay.html");
 
         if(request->hasParam("RELAYNB")) {
-            auto tmp = request->getParam("RELAYNB")->value();
-            saveRelayConfig(request);
-            Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
-          if (rtmp) {rtmp->loadrelayparams2(tmp.toInt());
+          auto tmp = request->getParam("RELAYNB")->value();
+          saveRelayConfig(request);
+          Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
+          if (rtmp) {rtmp->loadrelayparams(tmp.toInt());
 
             uint16_t packetIdPub2 = mqttClient.publish( rtmp->RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
               [](int i){
@@ -233,11 +233,11 @@ void SetAsyncHTTP(){
               }(rtmp->RelayConfParam->v_ttl));
 
             uint16_t packetIdPub3 = mqttClient.publish( rtmp->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
-            [](int i){
-              char buffer [33];
-              itoa (i,buffer,10);
-              return buffer;
-            }(rtmp->RelayConfParam->v_ttl));
+              [](int i){
+                char buffer [33];
+                itoa (i,buffer,10);
+                return buffer;
+              }(rtmp->RelayConfParam->v_ttl));
 
           }
         }
@@ -313,8 +313,8 @@ void SetAsyncHTTP(){
   AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         AppliedRelayNumber = 0;
-        if (request->hasParam("RELAYNB")) {
-            String t = request->getParam("RELAYNB")->value();
+        if (request->hasParam("GETRELAYNB")) {
+            String t = request->getParam("GETRELAYNB")->value();
             AppliedRelayNumber = t.toInt();
         }
         request->send(SPIFFS, "/Config.html", String(), false, processor);
