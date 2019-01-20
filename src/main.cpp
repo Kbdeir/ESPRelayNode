@@ -416,7 +416,7 @@ void chronosInit() {
   Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second());
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
-  uint8_t tcounter = 1;
+  uint8_t tcounter = 0;
   while(tcounter <= MAX_NUMBER_OF_TIMERS){ [&tcounter]() {
 
         config_read_error_t res = loadNodeTimer(
