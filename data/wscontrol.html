@@ -34,44 +34,125 @@ a:hover
    color: #0000FF;
    text-decoration: underline;
 }
-#btnON
+#wb_Form5
 {
-   border: 1px #D2691E solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
-   border-radius: 4px;
-   background-color: #D2691E;
+   background-color: #C0C0C0;
    background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-size: 13px;
-   -moz-box-shadow: 2px 3px 9px #000000;
-   -webkit-box-shadow: 2px 3px 9px #000000;
-   box-shadow: 2px 3px 9px #000000;
+   border: 1px #CCCCCC solid;
 }
-#btnOFF
+#GETRELAYNB
 {
-   border: 1px #D2691E solid;
+   border: 1px #CCCCCC solid;
    -moz-border-radius: 4px;
    -webkit-border-radius: 4px;
    border-radius: 4px;
-   background-color: #D2691E;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 32px;
+   padding: 4px 4px 4px 4px;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   box-sizing: border-box;
+}
+#GETRELAYNB:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Button11
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
    background-image: none;
    color: #FFFFFF;
    font-family: Arial;
    font-weight: normal;
-   font-size: 13px;
-   -moz-box-shadow: 2px 3px 9px #000000;
-   -webkit-box-shadow: 2px 3px 9px #000000;
-   box-shadow: 2px 3px 9px #000000;
+   font-size: 64px;
+   -moz-box-shadow: 5px 5px 10px #000000;
+   -webkit-box-shadow: 5px 5px 10px #000000;
+   box-shadow: 5px 5px 10px #000000;
+}
+#Button12
+{
+   border: 1px #2E6DA4 solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 64px;
+   -moz-box-shadow: 5px 5px 10px #000000;
+   -webkit-box-shadow: 5px 5px 10px #000000;
+   box-shadow: 5px 5px 10px #000000;
+}
+#Editbox34
+{
+   border: 0px #FF4500 dotted;
+   -moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+   border-radius: 5px;
+   background-color: #FF4500;
+   background-image: none;
+   color :#D3D3D3;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 27px;
+   padding: 4px 4px 4px 4px;
+   text-align: center;
+   vertical-align: middle;
+}
+#Editbox34:focus
+{
+   border-color: #66AFE9;
+   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text1 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px #000000 solid;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text1 div
+{
+   text-align: left;
 }
 </style>
 </head>
 <body 
 >
-<input type="button" id="btnON" onclick="sendON();return false;" name="" value="ON" style="position:absolute;left:76px;top:56px;width:88px;height:32px;z-index:0;">
-<input type="button" id="btnOFF" onclick="sendOFF();return false;" name="" value="OFF" style="position:absolute;left:180px;top:56px;width:88px;height:32px;z-index:1;">
+<div id="wb_Form5" style="position:absolute;left:28px;top:20px;width:614px;height:746px;z-index:5;">
+<form name="Form2" method="get" action="/wscontrol.html" enctype="multipart/form-data" id="Form5">
+<select name="GETRELAYNB" size="1" id="GETRELAYNB" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:159px;top:25px;width:88px;height:48px;z-index:0;">
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+</select>
+<div id="wb_Text1" style="position:absolute;left:57px;top:31px;width:92px;height:36px;z-index:1;text-align:left;">
+<span style="color:#000000;font-family:Arial;font-size:32px;">Relay</span></div>
+<input type="submit" id="Button11" name="RELAYACTION" value="ON" style="position:absolute;left:57px;top:95px;width:500px;height:300px;z-index:2;">
+<input type="submit" id="Button12" name="RELAYACTION" value="OFF" style="position:absolute;left:57px;top:411px;width:500px;height:300px;z-index:3;">
+<input type="text" id="Editbox34" style="position:absolute;left:279px;top:17px;width:270px;height:56px;line-height:56px;z-index:4;" name="RSTATE0" value="%RSTATE0%" readonly disabled>
+</form>
+</div>
 <script>
 /*
 var rainbowEnable = false;

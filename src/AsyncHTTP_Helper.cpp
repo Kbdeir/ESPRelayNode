@@ -239,7 +239,23 @@ void SetAsyncHTTP(){
 
       AsyncWeb_server.on("/wscontrol.html", HTTP_GET, [](AsyncWebServerRequest *request){
           if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-          request->send(SPIFFS, "/wscontrol.html");
+          AppliedRelayNumber = 0;
+          if (request->hasParam("GETRELAYNB")) {
+              String t = request->getParam("GETRELAYNB")->value();
+              AppliedRelayNumber = t.toInt();
+          }
+          if (request->hasParam("RELAYACTION")) {
+            String msg = request->getParam("RELAYACTION")->value();
+            if (msg == "ON") {
+              Relay * rtmp =  getrelaybynumber(0);
+              rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+            }
+            if (msg == "OFF") {
+              Relay * rtmp =  getrelaybynumber(0);
+              rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+            }
+          }          
+          request->send(SPIFFS, "/wscontrol.html", String(), false, processor);
           });
 
   AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
