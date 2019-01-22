@@ -155,7 +155,6 @@ boolean Relay::loadrelayparams(uint8_t rnb){
      RelayConfParam->v_SUB_TOPIC1         = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String("/inone");
      RelayConfParam->v_ACS_Active         = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<uint8_t>() == 1 : false;
 
-
      RelayConfParam->v_IN0_INPUTMODE       =  MyConfParam.v_IN0_INPUTMODE; //json["I0MODE"].as<uint8_t>();
      RelayConfParam->v_IN1_INPUTMODE       =  MyConfParam.v_IN1_INPUTMODE; //json["I1MODE"].as<uint8_t>();
      RelayConfParam->v_IN2_INPUTMODE       =  MyConfParam.v_IN2_INPUTMODE; //json["I2MODE"].as<uint8_t>();

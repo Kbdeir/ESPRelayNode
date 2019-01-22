@@ -57,7 +57,7 @@ void onMqttConnect(bool sessionPresent) {
 
 	//uint16_t packetIdSub = mqttClient.subscribe(relay0.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
   Relay * rtemp = nullptr;
-  for (void* it : relays)  {
+  for (auto it : relays)  {
     rtemp = static_cast<Relay *>(it);
     if (rtemp) {
         uint16_t packetIdSub = mqttClient.subscribe(rtemp->RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
@@ -66,9 +66,8 @@ void onMqttConnect(bool sessionPresent) {
 
 
 	Serial.print(F("Subscribing at QoS 2, packetId: "));
-  //Serial.println(packetIdSub);
-
-  //mqttpostinitstatusOfInputs(NULL);
+  // Serial.println(packetIdSub);
+  // mqttpostinitstatusOfInputs(NULL);
   [](){
     if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
       mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
@@ -127,7 +126,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
   //Relay * it = NULL;
   //for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
-  for (void* it : relays)  {
+  for (auto it : relays)  {
     rtemp = static_cast<Relay *>(it);
     if (rtemp) {
       if ((rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) ||
@@ -151,48 +150,43 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       }
     }*/
 
-          if (rly) {
-            if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
-              if (temp == ON) {
-                  rly->mdigitalWrite(rly->getRelayPin(),HIGH);
-              } else if (temp == OFF) {
-                  rly->mdigitalWrite(rly->getRelayPin(),LOW);
-              } else if (temp = TOG) {
-                  rly->mdigitalWrite(rly->getRelayPin(),!rly->readrelay());
-              }
-            }
-            else
-            {
-              // sync mqtt state to actual pin state
-              if (digitalRead(rly->getRelayPin()) == HIGH) {
-                  if (temp == OFF) {
-                    mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
-                  }
-              }
-              if (digitalRead(rly->getRelayPin()) == LOW) {
-                  if (temp == ON) {
-                    mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
-                  }
-              }
-            }
-
-            if (tp == rly->RelayConfParam->v_i_ttl_PUB_TOPIC) {
-
-              if (isValidNumber(pld)) {
-                //String ttl = pld.substring(0,len);
-                rly->RelayConfParam->v_ttl = pld.substring(0,len).toInt();
-                rly->ticker_relay_ttl->interval(rly->RelayConfParam->v_ttl*1000);
-
-              //  MyConfParam.v_ttl = rly->RelayConfParam->v_ttl;
-              //  saveConfig(MyConfParam);
-                saveRelayConfig(rly->RelayConfParam);
-                mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED,
-                    String(rly->RelayConfParam->v_ttl).c_str());
-              }
-            }
+  if (rly) {
+    if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
+      if (temp == ON) {
+          rly->mdigitalWrite(rly->getRelayPin(),HIGH);
+      } else if (temp == OFF) {
+          rly->mdigitalWrite(rly->getRelayPin(),LOW);
+      } else if (temp = TOG) {
+          rly->mdigitalWrite(rly->getRelayPin(),!rly->readrelay());
+      }
+    }
+    else
+    {
+      // sync mqtt state to actual pin state
+      if (digitalRead(rly->getRelayPin()) == HIGH) {
+          if (temp == OFF) {
+            mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
           }
+      }
+      if (digitalRead(rly->getRelayPin()) == LOW) {
+          if (temp == ON) {
+            mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
+          }
+      }
+    }
 
+    if (tp == rly->RelayConfParam->v_i_ttl_PUB_TOPIC) {
+      if (isValidNumber(pld)) {
+        //String ttl = pld.substring(0,len);
+        rly->RelayConfParam->v_ttl = pld.substring(0,len).toInt();
+        rly->ticker_relay_ttl->interval(rly->RelayConfParam->v_ttl*1000);
+        saveRelayConfig(rly->RelayConfParam);
+        mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED,
+            String(rly->RelayConfParam->v_ttl).c_str());
+      }
+    }
   }
+}
 
 
 void onMqttPublish(uint16_t packetId) {

@@ -706,7 +706,7 @@ void Wifi_connect() {
                       Serial.println(F("waiting for sync"));
                     #endif
 
-                    if (!MDNS.begin((APssid+MyConfParam.v_PhyLoc).c_str())) {
+                    if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
                       Serial.println(F("Error setting up MDNS responder!"));
                     }
                     Serial.println(F("mDNS responder started"));
@@ -857,6 +857,13 @@ void setup() {
 
 void loop() {
 
+  if (restartRequired){
+    Serial.printf("Restarting ESP\n\r");
+    restartRequired = false;
+    delay(2500);
+    ESP.restart();
+  }
+
   if  (WiFi.status() != WL_CONNECTED)  {
     if (APModetimer_run_value == 0) Wifi_connect();
   }
@@ -864,7 +871,7 @@ void loop() {
  	blinkled();
   tiker_MQTT_CONNECT.update(nullptr);
 
-  for (void* it : relays)  {
+  for (auto it : relays)  {
     Relay * rtemp = static_cast<Relay *>(it);
     if (rtemp) {
         rtemp->watch();
@@ -874,13 +881,6 @@ void loop() {
   Inputsnsr14.watch();
   Inputsnsr12.watch();
   Inputsnsr13.watch();
-
-  if (restartRequired){
-    Serial.printf("Restarting ESP\n\r");
-    restartRequired = false;
-    delay(2500);
-    ESP.restart();
-  }
 
   if (timeStatus() != timeNotSet) {
     if (now() != prevDisplay) {                   //update the display only if time has changed
@@ -906,22 +906,22 @@ void loop() {
     }
   }
 
-if (relay0.RelayConfParam->v_TemperatureValue != "0") {
-  if (millis() - lastMillis5000 > 5000) {
-    lastMillis5000 = millis();
-    tempsensor.getCurrentTemp(0);
-    Serial.print("\n Temperature: ");
-    Serial.print(tempsensor.getCurrentTemp(0));
-    float rtmp = roundf(MCelcius);
-    mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
-          char tmp[10];
-          itoa(rtmp,tmp,10);
-          return tmp; //
-        // return String(round(MCelcius)).c_str();
-        }()
-      );
+  if (relay0.RelayConfParam->v_TemperatureValue != "0") {
+    if (millis() - lastMillis5000 > 5000) {
+      lastMillis5000 = millis();
+      tempsensor.getCurrentTemp(0);
+      Serial.print("\n Temperature: ");
+      Serial.print(tempsensor.getCurrentTemp(0));
+      float rtmp = roundf(MCelcius);
+      mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
+            char tmp[10];
+            itoa(rtmp,tmp,10);
+            return tmp; //
+          // return String(round(MCelcius)).c_str();
+          }()
+        );
+    }
   }
-}
 
 
 

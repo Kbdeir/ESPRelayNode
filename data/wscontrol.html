@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Page</title>
+<meta name="generator" content="WYSIWYG Web Builder 11 - http://www.wysiwygwebbuilder.com">
+<style>
+body
+{
+   background-color: #FFFFFF;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   line-height: 1.1875;
+   margin: 0;
+   padding: 0;
+}
+a
+{
+   color: #0000FF;
+   text-decoration: underline;
+}
+a:visited
+{
+   color: #800080;
+}
+a:active
+{
+   color: #FF0000;
+}
+a:hover
+{
+   color: #0000FF;
+   text-decoration: underline;
+}
+#btnON
+{
+   border: 1px #D2691E solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #D2691E;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   -moz-box-shadow: 2px 3px 9px #000000;
+   -webkit-box-shadow: 2px 3px 9px #000000;
+   box-shadow: 2px 3px 9px #000000;
+}
+#btnOFF
+{
+   border: 1px #D2691E solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #D2691E;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   -moz-box-shadow: 2px 3px 9px #000000;
+   -webkit-box-shadow: 2px 3px 9px #000000;
+   box-shadow: 2px 3px 9px #000000;
+}
+</style>
+</head>
+<body 
+>
+<input type="button" id="btnON" onclick="sendON();return false;" name="" value="ON" style="position:absolute;left:76px;top:56px;width:88px;height:32px;z-index:0;">
+<input type="button" id="btnOFF" onclick="sendOFF();return false;" name="" value="OFF" style="position:absolute;left:180px;top:56px;width:88px;height:32px;z-index:1;">
+<script>
+/*
+var rainbowEnable = false;
+var connection = new WebSocket('ws://192.168.20.18/test', ['arduino']);
+connection.onopen = function () {
+  connection.send('Connect ' + new Date());
+};
+connection.onerror = function (error) {
+  console.log('WebSocket Error ', error);
+};
+connection.onmessage = function (e) {
+  console.log('Server: ', e.data);
+};
+connection.onclose = function () {
+  console.log('WebSocket connection closed');
+};
+
+        connection.onmessage = function (messageEvent) {
+            var wsMsg = messageEvent.data;
+            console.log("WebSocket MESSAGE: " + wsMsg);
+
+            if (wsMsg.includes("on") > 0) {
+             console.log("Processing MESSAGE: on" );
+             document.getElementById("btnON").disabled=true;
+             document.getElementById("btnOFF").disabled=false;
+            };
+
+            if (wsMsg.includes("off") > 0) {
+             console.log("Processing MESSAGE: off");
+             document.getElementById("btnON").disabled = false;
+             document.getElementById("btnOFF").disabled = true;
+            };
+        };
+
+
+function sendON () {
+  connection.send('on');
+}
+
+function sendOFF() {
+  connection.send('off');
+}
+
+*/
+
+</script>
+</body>
+</html>

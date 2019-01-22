@@ -56,8 +56,6 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
     return JSONCONFIG_CORRUPTED;
   }
 
-  // ACS_AMPS v_InputPin12_STATE_PUB_TOPIC
-
   ConfParam.v_ssid                = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ssid"));
   ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("passpass12"));
   ConfParam.v_PhyLoc              = (json["PhyLoc"].as<String>()!="") ? json["PhyLoc"].as<String>() : String(F("Not configured yet"));
@@ -213,8 +211,7 @@ bool saveDefaultConfig(){
   json["FRM_IP"]="192.168.1.1";
   json["FRM_PRT"]=83;
   json["Update_now"]=0;
-  //json["GPIO12_TOG"]="0";
-  //json["Copy_IO"]="0";
+
 
   SPIFFS.remove("/config.json");
   File configFile = SPIFFS.open("/config.json", "w");
@@ -268,6 +265,7 @@ bool saveDefaultIRMapConfig(){
     configFile.close();
   return true;
 }
+
 
 bool saveIRMapConfig(AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
@@ -378,11 +376,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 
 
 
-
-
-
 bool saveRelayDefaultConfig(uint8_t rnb){
-
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
@@ -409,10 +403,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
   json["I1MODE"]=1;
   json["I2MODE"]=1;
 
-  char  relayfilename[20];// = "/relay";
-  //strcat(relayfilename, "01");
-  //strcat(relayfilename, ".json");
-
+  char  relayfilename[20];
   mkRelayConfigName(relayfilename, rnb);
 
   SPIFFS.remove(relayfilename);
@@ -446,10 +437,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
 
     if(request->hasParam("ACS_Active")) json["ACS_Active"]  =  1;
 
-    char  relayfilename[20]; // = "/relay";
-    //strcat(relayfilename, "01");
-    //strcat(relayfilename, ".json");
-
+    char  relayfilename[20];
     mkRelayConfigName(relayfilename, json["RELAYNB"]);
 
     SPIFFS.remove(relayfilename);
@@ -493,10 +481,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     json["SUB_TOPIC1"]=RConfParam->v_SUB_TOPIC1;
     json["ACS_Active"]=RConfParam->v_ACS_Active;
 
-    char  relayfilename[20]; // = "/relay";
-    //strcat(relayfilename, "01");
-    //strcat(relayfilename, ".json");
-
+    char  relayfilename[20];
     mkRelayConfigName(relayfilename, RConfParam->v_relaynb);
 
     SPIFFS.remove(relayfilename);

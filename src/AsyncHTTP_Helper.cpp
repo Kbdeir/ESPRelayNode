@@ -15,6 +15,7 @@ uint8_t AppliedRelayNumber = 0;
 
 //const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 AsyncWebServer AsyncWeb_server(80);
+//AsyncWebSocket ws("/test");
 
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
 //File cf;
@@ -154,6 +155,37 @@ String IRMAPprocessor(const String& var)
   return String();
 }
 
+/*
+void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+  if(type == WS_EVT_CONNECT){
+    Serial.println("Websocket client connection received");
+  } else if(type == WS_EVT_DISCONNECT){
+    Serial.println("Client disconnected");
+  } else if(type == WS_EVT_DATA){
+    Serial.println("Data received: ");
+    for(int i=0; i < len; i++) {
+          Serial.print((char) data[i]);
+    }
+    Serial.println();
+    String msg = "";
+
+    for(size_t i=0; i < len; i++) {
+      msg += (char) data[i];
+    }
+
+    if (msg == "on") {
+      client->text("on command executed");
+      Relay * rtmp =  getrelaybynumber(0);
+      rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+    }
+    if (msg == "off") {
+      client->text("off command executed");
+      Relay * rtmp =  getrelaybynumber(0);
+      rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+    }
+  }
+}
+*/
 
 
 void SetAsyncHTTP(){
@@ -163,6 +195,9 @@ void SetAsyncHTTP(){
   #else
     AsyncWeb_server.addHandler(new SPIFFSEditor("user","pass"));
   #endif
+
+  //ws.onEvent(onWsEvent);
+  //AsyncWeb_server.addHandler(&ws);
 
   AsyncWeb_server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", String(ESP.getFreeHeap()));
@@ -202,6 +237,10 @@ void SetAsyncHTTP(){
             CalendarNotInitiated = true;
       });
 
+      AsyncWeb_server.on("/wscontrol.html", HTTP_GET, [](AsyncWebServerRequest *request){
+          if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+          request->send(SPIFFS, "/wscontrol.html");
+          });
 
   AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
     if (!request->authenticate("user", "pass")) return request->requestAuthentication();
@@ -316,6 +355,17 @@ void SetAsyncHTTP(){
         if (request->hasParam("GETRELAYNB")) {
             String t = request->getParam("GETRELAYNB")->value();
             AppliedRelayNumber = t.toInt();
+        }
+        if (request->hasParam("RELAYACTION")) {
+          String msg = request->getParam("RELAYACTION")->value();
+          if (msg == "ON") {
+            Relay * rtmp =  getrelaybynumber(0);
+            rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+          }
+          if (msg == "OFF") {
+            Relay * rtmp =  getrelaybynumber(0);
+            rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+          }
         }
         request->send(SPIFFS, "/Config.html", String(), false, processor);
     });
