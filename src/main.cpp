@@ -794,8 +794,9 @@ void setup() {
     Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
     //Inputsnsr14.SetInputSensorPin(InputPin14);
 
-    inputs.push_back(&Inputsnsr12);
+    // Add inputs to vector. the order is important. 
     inputs.push_back(&Inputsnsr13);
+    inputs.push_back(&Inputsnsr12);
     inputs.push_back(&Inputsnsr14);
 
 
