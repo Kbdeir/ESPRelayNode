@@ -15,6 +15,7 @@ uint8_t AppliedRelayNumber = 0;
 
 //const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 AsyncWebServer AsyncWeb_server(80);
+//AsyncWebSocket ws("/test");
 
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
 //File cf;
@@ -154,6 +155,37 @@ String IRMAPprocessor(const String& var)
   return String();
 }
 
+/*
+void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+  if(type == WS_EVT_CONNECT){
+    Serial.println("Websocket client connection received");
+  } else if(type == WS_EVT_DISCONNECT){
+    Serial.println("Client disconnected");
+  } else if(type == WS_EVT_DATA){
+    Serial.println("Data received: ");
+    for(int i=0; i < len; i++) {
+          Serial.print((char) data[i]);
+    }
+    Serial.println();
+    String msg = "";
+
+    for(size_t i=0; i < len; i++) {
+      msg += (char) data[i];
+    }
+
+    if (msg == "on") {
+      client->text("on command executed");
+      Relay * rtmp =  getrelaybynumber(0);
+      rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+    }
+    if (msg == "off") {
+      client->text("off command executed");
+      Relay * rtmp =  getrelaybynumber(0);
+      rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+    }
+  }
+}
+*/
 
 
 void SetAsyncHTTP(){
@@ -164,49 +196,76 @@ void SetAsyncHTTP(){
     AsyncWeb_server.addHandler(new SPIFFSEditor("user","pass"));
   #endif
 
-  AsyncWeb_server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(200, "text/plain", String(ESP.getFreeHeap()));
-  });
+  //ws.onEvent(onWsEvent);
+  //AsyncWeb_server.addHandler(&ws);
 
-  AsyncWeb_server.on("/JConfig", HTTP_GET, [](AsyncWebServerRequest *request){
-    if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-    request->send(SPIFFS, "/config.json");
-      // int args = request->args();
+    AsyncWeb_server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "text/plain", String(ESP.getFreeHeap()));
     });
 
-  AsyncWeb_server.on("/Timer1", HTTP_GET, [](AsyncWebServerRequest *request){
+
+    AsyncWeb_server.on("/JConfig", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-        if (request->hasParam("GetTimer")) {
-          AsyncWebParameter * Para = request->getParam("GetTimer");
-          String tmp = Para->value();
-          char  timerfilename[20] = "";
-          strcpy(timerfilename, "/timer");
-          strcat(timerfilename, tmp.c_str());
-          strcat(timerfilename, ".json");
-          if (loadNodeTimer(timerfilename,NTmr)== SUCCESS) {
-                request->send(SPIFFS, "/Timer1.html", String(), false, timerprocessor);
-          } else {
-                request->send(SPIFFS, "/Timer1.html");
-          };
-      } else {
-        request->send(SPIFFS, "/Timer1.html");
-      }
-      // int args = request->args();
+      request->send(SPIFFS, "/config.json");
+        // int args = request->args();
     });
 
 
-  AsyncWeb_server.on("/savetimer.html", HTTP_GET, [](AsyncWebServerRequest *request){
+    AsyncWeb_server.on("/Timer1", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+          if (request->hasParam("GetTimer")) {
+            AsyncWebParameter * Para = request->getParam("GetTimer");
+            String tmp = Para->value();
+            char  timerfilename[20] = "";
+            strcpy(timerfilename, "/timer");
+            strcat(timerfilename, tmp.c_str());
+            strcat(timerfilename, ".json");
+            if (loadNodeTimer(timerfilename,NTmr)== SUCCESS) {
+                  request->send(SPIFFS, "/Timer1.html", String(), false, timerprocessor);
+            } else {
+                  request->send(SPIFFS, "/Timer1.html");
+            };
+        } else {
+          request->send(SPIFFS, "/Timer1.html");
+        }
+        // int args = request->args();
+    });
+
+
+    AsyncWeb_server.on("/savetimer.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/savetimer.html");
             saveNodeTimer(request);
             CalendarNotInitiated = true;
-      });
+    });
 
 
-  AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
-    if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-    request->send(SPIFFS, "/Apply.html");
-      // int args = request->args();
+    AsyncWeb_server.on("/wscontrol.html", HTTP_GET, [](AsyncWebServerRequest *request){
+          if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+          AppliedRelayNumber = 0;
+          if (request->hasParam("GETRELAYNB")) {
+              String t = request->getParam("GETRELAYNB")->value();
+              AppliedRelayNumber = t.toInt();
+          }
+          if (request->hasParam("RELAYACTION")) {
+            String msg = request->getParam("RELAYACTION")->value();
+            if (msg == "ON") {
+              Relay * rtmp =  getrelaybynumber(0);
+              rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+            }
+            if (msg == "OFF") {
+              Relay * rtmp =  getrelaybynumber(0);
+              rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+            }
+          }
+          request->send(SPIFFS, "/wscontrol.html", String(), false, processor);
+    });
+
+
+    AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/Apply.html");
+        // int args = request->args();
           #ifdef USEPREF
           SaveParams(MyConfParam,preferences,request);
           #endif
@@ -238,9 +297,9 @@ void SetAsyncHTTP(){
                 itoa (i,buffer,10);
                 return buffer;
               }(rtmp->RelayConfParam->v_ttl));
-
           }
         }
+
       }
     );
 
@@ -258,16 +317,8 @@ void SetAsyncHTTP(){
           loadIRMapConfig(myIRMap);
     });
 
-    /*
-      AsyncWeb_server.on("/updatepage", HTTP_GET, [](AsyncWebServerRequest *request){
-      AsyncWebServerResponse *response = request->beginResponse(200, "text/html", serverIndex);
-      response->addHeader("Connection", "close");
-      response->addHeader("Access-Control-Allow-Origin", "*");
-      request->send(response);
-    });
-    */
 
-  AsyncWeb_server.on("/update", HTTP_POST, [](AsyncWebServerRequest *request){
+    AsyncWeb_server.on("/update", HTTP_POST, [](AsyncWebServerRequest *request){
       // the request handler is triggered after the upload has finished...
       // create the response, add header, and send response
       AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", (Update.hasError())?"FAIL":"OK... Update Successful");
@@ -276,46 +327,56 @@ void SetAsyncHTTP(){
       restartRequired = true;  // Tell the main loop to restart the ESP
       request->send(response);
         },[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final){
-                            //Upload handler chunks in data
+        //Upload handler chunks in data
+          if(!index){ // if index == 0 then this is the first frame of data
+            Serial.printf("\n UploadStart: %s\n", filename.c_str());
+            // Serial.setDebugOutput(true);
 
-                            if(!index){ // if index == 0 then this is the first frame of data
-                              Serial.printf("\n UploadStart: %s\n", filename.c_str());
-                              // Serial.setDebugOutput(true);
+            #ifdef ESP32
+                Update.begin();
+            #else
+              //   calculate sketch space required for the update
+                uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
+                if(!Update.begin(maxSketchSpace)){//start with max available size
+                  Update.printError(Serial);
+                }
+                Update.runAsync(true); // tell the updaterClass to run in async mode
+            #endif
+          }
 
-                              #ifdef ESP32
-                                  Update.begin();
-                              #else
-                                //   calculate sketch space required for the update
-                                  uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
-                                  if(!Update.begin(maxSketchSpace)){//start with max available size
-                                    Update.printError(Serial);
-                                  }
-                                  Update.runAsync(true); // tell the updaterClass to run in async mode
-                              #endif
-                            }
+          //Write chunked data to the free sketch space
+          if(Update.write(data, len) != len){
+              Update.printError(Serial);
+          }
 
-                            //Write chunked data to the free sketch space
-                            if(Update.write(data, len) != len){
-                                Update.printError(Serial);
-                            }
+          if(final){ // if the final flag is set then this is the last frame of data
+            if(Update.end(true)){ //true to set the size to the current progress
+                Serial.print(F("Update Success... \nRebooting..."));
+                Serial.print(index+len);
+              } else {
+                Update.printError(Serial);
+              }
+              // Serial.setDebugOutput(false);
+          }
+    });
 
-                            if(final){ // if the final flag is set then this is the last frame of data
-                              if(Update.end(true)){ //true to set the size to the current progress
-                                  Serial.print(F("Update Success... \nRebooting..."));
-                                  Serial.print(index+len);
-                                } else {
-                                  Update.printError(Serial);
-                                }
-                                // Serial.setDebugOutput(false);
-                            }
-                          });
-
-  AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         AppliedRelayNumber = 0;
         if (request->hasParam("GETRELAYNB")) {
             String t = request->getParam("GETRELAYNB")->value();
             AppliedRelayNumber = t.toInt();
+        }
+        if (request->hasParam("RELAYACTION")) {
+          String msg = request->getParam("RELAYACTION")->value();
+          if (msg == "ON") {
+            Relay * rtmp =  getrelaybynumber(0);
+            rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+          }
+          if (msg == "OFF") {
+            Relay * rtmp =  getrelaybynumber(0);
+            rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+          }
         }
         request->send(SPIFFS, "/Config.html", String(), false, processor);
     });
@@ -328,7 +389,7 @@ void SetAsyncHTTP(){
           });
           */
 
-	AsyncWeb_server.on("/restart.html", HTTP_GET, [](AsyncWebServerRequest *request){
+	  AsyncWeb_server.on("/restart.html", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
 	      request->send(SPIFFS, "/Reset.html");
 				Serial.println(F("rebooting.."));

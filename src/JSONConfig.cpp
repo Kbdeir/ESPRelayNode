@@ -56,20 +56,23 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
     return JSONCONFIG_CORRUPTED;
   }
 
-  // ACS_AMPS v_InputPin12_STATE_PUB_TOPIC
-
   ConfParam.v_ssid                = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ssid"));
   ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("passpass12"));
   ConfParam.v_PhyLoc              = (json["PhyLoc"].as<String>()!="") ? json["PhyLoc"].as<String>() : String(F("Not configured yet"));
   //ConfParam.v_MQTT_BROKER         = (json["MQTT_BROKER"].as<String>()!="") ? json["MQTT_BROKER"].as<String>() : String(F("192.168.1.1"));
+
   if (json["timeserver"].as<String>()!="") {
-      ConfParam.v_timeserver.fromString(json["timeserver"].as<String>());} else { ConfParam.v_timeserver.fromString("192.168.1.1");}
+      ConfParam.v_timeserver.fromString(json["timeserver"].as<String>());} else
+      { ConfParam.v_timeserver.fromString("192.168.1.1");}
+
   ConfParam.v_MQTT_Active         = (json["MQTT_Active"].as<String>()!="") ? json["MQTT_Active"].as<uint8_t>() ==1 : false;
   ConfParam.v_ntptz               = (json["ntptz"].as<String>()!="") ? json["ntptz"].as<signed char>() : 2;
-  if (json["MQTT_BROKER"].as<String>()!="") {
-      ConfParam.v_MQTT_BROKER.fromString(json["MQTT_BROKER"].as<String>());} else { ConfParam.v_MQTT_BROKER.fromString("192.168.1.1");}
-  ConfParam.v_MQTT_B_PRT          = (json["MQTT_B_PRT"].as<String>()!="") ? json["MQTT_B_PRT"].as<uint16_t>() : 1883;
 
+  if (json["MQTT_BROKER"].as<String>()!="") {
+      ConfParam.v_MQTT_BROKER.fromString(json["MQTT_BROKER"].as<String>());} else
+      { ConfParam.v_MQTT_BROKER.fromString("192.168.1.1");}
+
+  ConfParam.v_MQTT_B_PRT          = (json["MQTT_B_PRT"].as<String>()!="") ? json["MQTT_B_PRT"].as<uint16_t>() : 1883;
   ConfParam.v_Update_now          = (json["Update_now"].as<String>()!="") ? json["Update_now"].as<uint8_t>() == 1 : false;
   ConfParam.v_TOGGLE_BTN_PUB_TOPIC= (json["TOGGLE_BTN_PUB_TOPIC"].as<String>()!="") ? json["TOGGLE_BTN_PUB_TOPIC"].as<String>() : String(F("/none"));
   ConfParam.v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
@@ -82,7 +85,8 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   //ConfParam.v_FRM_IP              = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
 
   if (json["FRM_IP"].as<String>()!="") {
-      ConfParam.v_FRM_IP.fromString(json["FRM_IP"].as<String>());} else { ConfParam.v_FRM_IP.fromString("192.168.1.1");}
+      ConfParam.v_FRM_IP.fromString(json["FRM_IP"].as<String>());} else
+      { ConfParam.v_FRM_IP.fromString("192.168.1.1");}
 
 
   ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<uint16_t>() : 83;
@@ -184,10 +188,8 @@ bool saveDefaultConfig(){
   json["ntptz"]=2;
   json["PIC_Active"]=0;
   json["MQTT_Active"]=0;
-
   json["MQTT_BROKER"]="192.168.1.1";
   json["MQTT_B_PRT"]=1883;
-
   json["PUB_TOPIC1"]="/home/Controller" + CID() + "/Coils/C1" ;
   json["STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/State/C1";
   json["ttl_PUB_TOPIC"]="/home/Controller" + CID() + "/sts/VTTL";
@@ -202,19 +204,16 @@ bool saveDefaultConfig(){
   json["tta"]="0";
   json["ACS_Sensor_Model"] = "30";
   json["Max_Current"]=10;
-
   json["TOGGLE_BTN_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/C1" ;
   json["I12_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN1";
   json["I14_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN2";
   json["I0MODE"]=1;
   json["I1MODE"]=1;
   json["I2MODE"]=1;
-
   json["FRM_IP"]="192.168.1.1";
   json["FRM_PRT"]=83;
   json["Update_now"]=0;
-  //json["GPIO12_TOG"]="0";
-  //json["Copy_IO"]="0";
+
 
   SPIFFS.remove("/config.json");
   File configFile = SPIFFS.open("/config.json", "w");
@@ -268,6 +267,7 @@ bool saveDefaultIRMapConfig(){
     configFile.close();
   return true;
 }
+
 
 bool saveIRMapConfig(AsyncWebServerRequest *request){
     StaticJsonBuffer<buffer_size> jsonBuffer;
@@ -378,11 +378,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 
 
 
-
-
-
 bool saveRelayDefaultConfig(uint8_t rnb){
-
     StaticJsonBuffer<buffer_size> jsonBuffer;
     JsonObject& json = jsonBuffer.createObject();
 
@@ -404,15 +400,11 @@ bool saveRelayDefaultConfig(uint8_t rnb){
   json["tta"]                 = "0";
   json["ACS_Sensor_Model"]    = "30";
   json["Max_Current"]         = 10;
-
   json["I0MODE"]=1;
   json["I1MODE"]=1;
   json["I2MODE"]=1;
 
-  char  relayfilename[20];// = "/relay";
-  //strcat(relayfilename, "01");
-  //strcat(relayfilename, ".json");
-
+  char  relayfilename[20];
   mkRelayConfigName(relayfilename, rnb);
 
   SPIFFS.remove(relayfilename);
@@ -446,10 +438,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
 
     if(request->hasParam("ACS_Active")) json["ACS_Active"]  =  1;
 
-    char  relayfilename[20]; // = "/relay";
-    //strcat(relayfilename, "01");
-    //strcat(relayfilename, ".json");
-
+    char  relayfilename[20];
     mkRelayConfigName(relayfilename, json["RELAYNB"]);
 
     SPIFFS.remove(relayfilename);
@@ -493,10 +482,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     json["SUB_TOPIC1"]=RConfParam->v_SUB_TOPIC1;
     json["ACS_Active"]=RConfParam->v_ACS_Active;
 
-    char  relayfilename[20]; // = "/relay";
-    //strcat(relayfilename, "01");
-    //strcat(relayfilename, ".json");
-
+    char  relayfilename[20];
     mkRelayConfigName(relayfilename, RConfParam->v_relaynb);
 
     SPIFFS.remove(relayfilename);
