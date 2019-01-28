@@ -60,7 +60,7 @@ void InputSensor::watch() {
    } else {
 
    Relay * rtemp = nullptr;
-   for (void* it : attachedrelays)  {
+   for (void* it : attachedrelays) {
    //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
      rtemp = static_cast<Relay *>(it);
      if (rtemp) {
@@ -81,6 +81,10 @@ void InputSensor::watch() {
 }
 
 
+void InputSensor::clearAttachedRelays() {
+  attachedrelays.clear();
+}
+
 InputSensor * getinputbynumber(uint8_t nb) {
   if (nb < inputs.size()) {
     InputSensor * inp = static_cast<InputSensor *>(inputs.at(nb));
@@ -99,8 +103,19 @@ void applyIRMap(int8_t Inpn, int8_t rlyn) {
       t = static_cast<InputSensor *>(inputs.at(Inpn));
       r = static_cast<Relay *>(relays.at(rlyn));
       if ((t != nullptr) && (r !=nullptr)) {
-        t->addrelay(r);
+        if ((t->fclickmode==INPUT_COPY_TO_RELAY) || (t->fclickmode==INPUT_RELAY_TOGGLE)) {
+          t->addrelay(r);
+        }
       }
     }
   }
+}
+
+
+void clearIRMap() {
+      InputSensor * itemp = nullptr;
+      for (auto it = inputs.begin(); it != inputs.end(); ++it)  {
+        itemp = static_cast<InputSensor *>(*it);
+        itemp->clearAttachedRelays();
+      }
 }

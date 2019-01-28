@@ -722,6 +722,26 @@ void Wifi_connect() {
     }
 }
 
+void setupInputs(){
+  Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr12.post_mqtt = true;
+  Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
+  Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+
+  Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr13.post_mqtt = true;
+  Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;
+  Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
+
+  Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr14.post_mqtt = true;
+  Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
+  Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
+  //Inputsnsr14.SetInputSensorPin(InputPin14);
+}
 
 void setup() {
     pinMode ( led, OUTPUT );
@@ -775,26 +795,9 @@ void setup() {
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 
-    Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr12.post_mqtt = true;
-    Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
-    Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+    setupInputs();
 
-    Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr13.post_mqtt = true;
-    Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;
-    Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
-
-    Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr14.post_mqtt = true;
-    Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
-    Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
-    //Inputsnsr14.SetInputSensorPin(InputPin14);
-
-    // Add inputs to vector. the order is important. 
+    // Add inputs to vector. the order is important.
     inputs.push_back(&Inputsnsr13);
     inputs.push_back(&Inputsnsr12);
     inputs.push_back(&Inputsnsr14);

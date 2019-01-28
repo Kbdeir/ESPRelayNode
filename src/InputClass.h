@@ -28,6 +28,7 @@ class InputSensor{
     fnptr_d onInputChange_RelayServiceRoutine;
     fnptr_d onInputClick_RelayServiceRoutine;
 
+
     InputSensor(
       uint8_t p,
       fnptr_d on_callback,
@@ -40,6 +41,7 @@ class InputSensor{
     void addrelay(Relay * rly);
     void watch();
     InputSensor * getinputbynumber(uint8_t nb);
+    void clearAttachedRelays();
 };
 
 

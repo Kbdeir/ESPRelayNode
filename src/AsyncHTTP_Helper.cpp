@@ -9,6 +9,9 @@ extern NodeTimer NTmr;
 //extern Relay relay0;
 extern float MCelcius;
 extern float ACS_I_Current;
+
+extern void setupInputs();
+extern void clearIRMap();
 //extern std::vector<void *> relays ; // a list to hold all relays
 
 uint8_t AppliedRelayNumber = 0;
@@ -271,6 +274,9 @@ void SetAsyncHTTP(){
           #endif
           saveConfig(MyConfParam, request);
           loadConfig(MyConfParam);
+          setupInputs();
+          clearIRMap();
+          loadIRMapConfig(myIRMap);
     });
 
 
