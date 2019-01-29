@@ -92,34 +92,33 @@ int Relay::getIdNumber()
    { return IDRelayTag;}
 
 
-boolean Relay::loadrelayparams(uint8_t rnb){
+boolean Relay::loadrelayparams() {   //uint8_t rnb){
 
   char rfilename[20];
-  mkRelayConfigName(rfilename, rnb);
-
+  mkRelayConfigName(rfilename, this->RelayConfParam->v_relaynb);
 
     if(SPIFFS.begin()) { Serial.println(F("SPIFFS Initialize....ok")); }
-       else {Serial.println(F("SPIFFS Initialization...failed")); }
+      else {Serial.println(F("SPIFFS Initialization...failed")); }
 
-  //  const char* filename = "/config.json";
+      //  const char* filename = "/config.json";
 
     if (!(SPIFFS.exists(rfilename))) {
          Serial.println(F("Relay config file does not exist! ... building and rebooting...."));
-         saveRelayDefaultConfig(rnb);
+         saveRelayDefaultConfig(this->RelayConfParam->v_relaynb);
          return false;
      }
 
     File configFile = SPIFFS.open(rfilename, "r");
        if (!configFile) {
          Serial.println(F("Failed to open relay config file"));
-         saveRelayDefaultConfig(rnb);
+         saveRelayDefaultConfig(this->RelayConfParam->v_relaynb);
          return false;
     }
 
     size_t size = configFile.size();
     if (size > buffer_size) {
          Serial.println(F("Relay Config file size is too large, rebuilding."));
-         saveRelayDefaultConfig(rnb);
+         saveRelayDefaultConfig(this->RelayConfParam->v_relaynb);
          return false;
     }
 
@@ -136,7 +135,7 @@ boolean Relay::loadrelayparams(uint8_t rnb){
 
     if (!json.success()) {
          Serial.println(F("Failed to parse relay config file"));
-         saveRelayDefaultConfig(rnb);
+         saveRelayDefaultConfig(this->RelayConfParam->v_relaynb);
          return false;
     }
      RelayConfParam->v_relaynb            = (json["RELAYNB"].as<String>()!="") ? json["RELAYNB"].as<uint8_t>() : 0;

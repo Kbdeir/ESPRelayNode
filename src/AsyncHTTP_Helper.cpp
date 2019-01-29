@@ -9,6 +9,9 @@ extern NodeTimer NTmr;
 //extern Relay relay0;
 extern float MCelcius;
 extern float ACS_I_Current;
+
+extern void setupInputs();
+extern void clearIRMap();
 //extern std::vector<void *> relays ; // a list to hold all relays
 
 uint8_t AppliedRelayNumber = 0;
@@ -262,6 +265,27 @@ void SetAsyncHTTP(){
     });
 
 
+    AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        AppliedRelayNumber = 0;
+        if (request->hasParam("GETRELAYNB")) {
+            String t = request->getParam("GETRELAYNB")->value();
+            AppliedRelayNumber = t.toInt();
+        }
+        if (request->hasParam("RELAYACTION")) {
+          String msg = request->getParam("RELAYACTION")->value();
+          if (msg == "ON") {
+            Relay * rtmp =  getrelaybynumber(0);
+            rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+          }
+          if (msg == "OFF") {
+            Relay * rtmp =  getrelaybynumber(0);
+            rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+          }
+        }
+        request->send(SPIFFS, "/Config.html", String(), false, processor);
+    });
+
     AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/Apply.html");
@@ -271,6 +295,9 @@ void SetAsyncHTTP(){
           #endif
           saveConfig(MyConfParam, request);
           loadConfig(MyConfParam);
+          setupInputs();
+          clearIRMap();
+          loadIRMapConfig(myIRMap);
     });
 
 
@@ -282,7 +309,8 @@ void SetAsyncHTTP(){
           auto tmp = request->getParam("RELAYNB")->value();
           saveRelayConfig(request);
           Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
-          if (rtmp) {rtmp->loadrelayparams(tmp.toInt());
+          //if (rtmp) {rtmp->loadrelayparams(tmp.toInt());
+          if (rtmp) {rtmp->loadrelayparams();
 
             uint16_t packetIdPub2 = mqttClient.publish( rtmp->RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
               [](int i){
@@ -360,26 +388,7 @@ void SetAsyncHTTP(){
           }
     });
 
-    AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-        AppliedRelayNumber = 0;
-        if (request->hasParam("GETRELAYNB")) {
-            String t = request->getParam("GETRELAYNB")->value();
-            AppliedRelayNumber = t.toInt();
-        }
-        if (request->hasParam("RELAYACTION")) {
-          String msg = request->getParam("RELAYACTION")->value();
-          if (msg == "ON") {
-            Relay * rtmp =  getrelaybynumber(0);
-            rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
-          }
-          if (msg == "OFF") {
-            Relay * rtmp =  getrelaybynumber(0);
-            rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-          }
-        }
-        request->send(SPIFFS, "/Config.html", String(), false, processor);
-    });
+
 
       /*AsyncWeb_server.on("/firmware.html", HTTP_GET, [](AsyncWebServerRequest *request){
           if (!request->authenticate("user", "pass")) return request->requestAuthentication();

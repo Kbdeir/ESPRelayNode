@@ -122,7 +122,6 @@ int8_t R10;
 
   extern TConfigParams MyConfParam;
   extern TIRMap myIRMap;
-
   extern String  MAC;
   String CID();
   void relayon(void* obj);

@@ -129,7 +129,9 @@ Relay relay0(
     relayon
   );
 
-  /*Relay relay2(
+  /*
+
+  Relay relay1(
       Relay2Pin,
       ticker_relay_ttl_off,
       ticker_relay_ttl_periodic_callback,
@@ -723,6 +725,26 @@ void Wifi_connect() {
     }
 }
 
+void setupInputs(){
+  Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr12.post_mqtt = true;
+  Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
+  Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+
+  Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr13.post_mqtt = true;
+  Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;
+  Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
+
+  Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr14.post_mqtt = true;
+  Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
+  Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
+  //Inputsnsr14.SetInputSensorPin(InputPin14);
+}
 
 void setup() {
     pinMode ( led, OUTPUT );
@@ -758,10 +780,7 @@ void setup() {
       ESP.restart();
     };
 
-    while (relay0.loadrelayparams(0) != true){
-      delay(2000);
-      ESP.restart();
-    };
+
 
     WiFi.mode(WIFI_AP_STA);
 
@@ -776,36 +795,33 @@ void setup() {
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 
-    Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr12.post_mqtt = true;
-    Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
-    Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
-
-    Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr13.post_mqtt = true;
-    Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;
-    Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
-
-    Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr14.post_mqtt = true;
-    Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
-    Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
-    //Inputsnsr14.SetInputSensorPin(InputPin14);
-
-    // Add inputs to vector. the order is important. 
+    setupInputs();
+    // Add inputs to vector. the order is important.
     inputs.push_back(&Inputsnsr13);
     inputs.push_back(&Inputsnsr12);
     inputs.push_back(&Inputsnsr14);
 
-
+    //while (relay0.loadrelayparams(0) != true){
+    while (relay0.loadrelayparams() != true){
+      delay(2000);
+      ESP.restart();
+    };
     relay0.attachLoopfunc(relayloopservicefunc);
     relay0.stop_ttl_timer();
     relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
 
+/*
+    while (relay1.loadrelayparams(1) != true){
+      delay(2000);
+      ESP.restart();
+    };
+    relay1.attachLoopfunc(relayloopservicefunc);
+    relay1.stop_ttl_timer();
+    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
+*/
+
     relays.push_back(&relay0);
+//  relays.push_back(&relay1);
 
     while (loadIRMapConfig(myIRMap) != SUCCESS){
       delay(2000);

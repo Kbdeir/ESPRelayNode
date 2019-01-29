@@ -105,6 +105,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n v_IN1_INPUTMODE:")); Serial.print(ConfParam.v_IN1_INPUTMODE);
   Serial.print(F("\n v_IN2_INPUTMODE:")); Serial.print(ConfParam.v_IN2_INPUTMODE);
   //relay0.loadrelayparams();
+
   return SUCCESS;
 }
 
@@ -373,6 +374,8 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
     applyIRMap(myIRMap.I8 , myIRMap.R8);
     applyIRMap(myIRMap.I9 , myIRMap.R9);
     applyIRMap(myIRMap.I10 , myIRMap.R10);
+
+
     return SUCCESS;
 }
 
