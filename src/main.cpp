@@ -129,7 +129,9 @@ Relay relay0(
     relayon
   );
 
-  /*Relay relay2(
+  /*
+
+  Relay relay1(
       Relay2Pin,
       ticker_relay_ttl_off,
       ticker_relay_ttl_periodic_callback,
@@ -777,10 +779,7 @@ void setup() {
       ESP.restart();
     };
 
-    while (relay0.loadrelayparams(0) != true){
-      delay(2000);
-      ESP.restart();
-    };
+
 
     WiFi.mode(WIFI_AP_STA);
 
@@ -796,18 +795,32 @@ void setup() {
     mb.addCoil(LAMP2_COIL);
 
     setupInputs();
-
     // Add inputs to vector. the order is important.
     inputs.push_back(&Inputsnsr13);
     inputs.push_back(&Inputsnsr12);
     inputs.push_back(&Inputsnsr14);
 
-
+    //while (relay0.loadrelayparams(0) != true){
+    while (relay0.loadrelayparams() != true){
+      delay(2000);
+      ESP.restart();
+    };
     relay0.attachLoopfunc(relayloopservicefunc);
     relay0.stop_ttl_timer();
     relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
 
+/*
+    while (relay1.loadrelayparams(1) != true){
+      delay(2000);
+      ESP.restart();
+    };
+    relay1.attachLoopfunc(relayloopservicefunc);
+    relay1.stop_ttl_timer();
+    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
+*/
+
     relays.push_back(&relay0);
+//  relays.push_back(&relay1);
 
     while (loadIRMapConfig(myIRMap) != SUCCESS){
       delay(2000);
