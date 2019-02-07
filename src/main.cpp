@@ -75,6 +75,7 @@ const char * EventNames[] = {
 #define WIFI_AP_MODE 1
 #define WIFI_CLT_MODE 0
 #define DEFAULT_BOUNCE_TIME 100
+#define CAL_MAX_NUM_EVENTS_TO_HOLD 10 // above 15 the system freezes, check why
 
 #ifdef ESP32
     #ifdef USEPREF
@@ -409,7 +410,7 @@ static void handleNewClient(void* arg, AsyncClient* client) {
 }
 //-------------------------------------------------------------------------------------------------------------
 
-DefineCalendarType(Calendar, 10);
+DefineCalendarType(Calendar, CAL_MAX_NUM_EVENTS_TO_HOLD);
 Calendar MyCalendar;
 
 void chronosInit() {
@@ -593,15 +594,16 @@ void chronosInit() {
   LINES(2);
 }
 
+
 void chronosevaluatetimers(Calendar MyCalendar) {
   if (ftimesynced){
   // create an array of Event::Occurrence objects, to hold replies from the calendar
-  Chronos::Event::Occurrence occurrenceList[10];
+  Chronos::Event::Occurrence occurrenceList[CAL_MAX_NUM_EVENTS_TO_HOLD];
   // listOngoing: get events that are happening at specified datetime.  Called with
   // listOngoing(MAX_NUMBER_OF_EVENTS, INTO_THIS_ARRAY, AT_DATETIME)
   // It will return the number of events set in the INTO_THIS_ARRAY array.
   Chronos::DateTime nowTime(Chronos::DateTime::now());
-  int numOngoing = MyCalendar.listOngoing(10, occurrenceList, nowTime);
+  int numOngoing = MyCalendar.listOngoing(CAL_MAX_NUM_EVENTS_TO_HOLD, occurrenceList, nowTime);
   if (numOngoing) {
     // At least one event is happening at "nowTime"...
     LINE();
@@ -753,7 +755,7 @@ void setup() {
     Serial.begin(115200);
 
     /*
-       You only need to format SPIFFS the first time you run a
+       only need to format SPIFFS the first time we run a
        test or else use the SPIFFS plugin to create a partition
        https://github.com/me-no-dev/arduino-esp32fs-plugin
     */
@@ -778,8 +780,6 @@ void setup() {
       delay(2000);
       ESP.restart();
     };
-
-
 
     WiFi.mode(WIFI_AP_STA);
 

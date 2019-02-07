@@ -452,7 +452,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
     }
 
     json.printTo(configFile);
-      Serial.println(F("\n Saved relay config"));
+  //    Serial.println(F("\n Saved relay config"));
       configFile.flush();
       configFile.close();
     return true;
@@ -496,7 +496,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     }
 
     json.printTo(configFile);
-      Serial.println(F("\n Saved relay config"));
+  //    Serial.println(F("\n Saved relay config"));
       configFile.flush();
       configFile.close();
     return true;

@@ -26,14 +26,14 @@ typedef struct TWeekdays {
   boolean Sunday;
   boolean AllWeek;
   void clear() {
-            Monday    = false;
-            Tuesday   = false;
-            Wednesday = false;
-            Thursday  = false;
-            Friday    = false;
-            Saturday  = false;
-            Sunday    = false;
-            AllWeek   = false;
+            this->Monday    = false;
+            this->Tuesday   = false;
+            this->Wednesday = false;
+            this->Thursday  = false;
+            this->Friday    = false;
+            this->Saturday  = false;
+            this->Sunday    = false;
+            this->AllWeek   = false;
           }
 
 } TWeekdays; // this is in preparation for separate relay configuations
@@ -57,7 +57,7 @@ typedef struct TWeekdays {
     boolean enabled;
     uint8_t relay;
 
-    char* Testchar;
+    //char* Testchar;
 
     NodeTimer(uint8_t para_id
       //,unsigned int para_mark,
