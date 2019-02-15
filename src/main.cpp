@@ -146,8 +146,7 @@ Relay relay0(
 
 void ticker_ACS712_mqtt (void* relaySender) {
   if (relaySender != nullptr) {
-  Relay * rly;
-  rly = static_cast<Relay *>(relaySender);
+  Relay * rly = static_cast<Relay *>(relaySender);
     if (rly->RelayConfParam->v_ACS_Active) {
         float variance =(abs(ACS_I_Current-old_acs_value));
         // Serial.printf("%6.*lf", 2, variance );
@@ -163,8 +162,7 @@ void ticker_ACS712_mqtt (void* relaySender) {
 
 void ticker_ACS712_func (void* relaySender) {
   if (relaySender != nullptr) {
-  Relay * rly;
-  rly = static_cast<Relay *>(relaySender);
+  Relay * rly = static_cast<Relay *>(relaySender);
     if (rly->RelayConfParam->v_ACS_Active) {
         ACS_I_Current = sensor.getCurrentAC();
         // Serial.println(String("I = ") + ACS_I_Current + " A");
@@ -180,8 +178,7 @@ void ticker_relay_ttl_periodic_callback(void* relaySender){
   Serial.print(F("\n TTL Countdown: "));
   //uint32_t t = ticker_relay_ttl.periodscounter();
   if (relaySender != nullptr) {
-    Relay * rly;
-    rly = static_cast<Relay *>(relaySender);
+    Relay * rly = static_cast<Relay *>(relaySender);
     uint32_t t = rly->getRelayTTLperiodscounter();
     if (digitalRead(rly->getRelayPin() == HIGH)) {
       mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, String(rly->RelayConfParam->v_ttl).c_str());
@@ -193,16 +190,14 @@ void ticker_relay_ttl_periodic_callback(void* relaySender){
 
 void ticker_relay_ttl_off (void* relaySender) {
   if (relaySender != nullptr) {
-    Relay * rly;
-    rly = static_cast<Relay *>(relaySender);
+    Relay * rly = static_cast<Relay *>(relaySender);
     rly->mdigitalWrite(rly->getRelayPin(),LOW);
   }
 }
 
 
 void onRelaychangeInterruptSvc(void* relaySender){
-  Relay * rly;
-  rly = static_cast<Relay *>(relaySender);
+  Relay * rly = static_cast<Relay *>(relaySender);
 
   if (rly->rchangedflag ) {
       rly->rchangedflag = false;
@@ -235,8 +230,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
 void process_Input(void * inputSender, void * obj){
   Serial.print("\n process_Input");
   if (inputSender != nullptr) {
-      InputSensor * snsr;
-      snsr = static_cast<InputSensor *>(inputSender);
+      InputSensor * snsr = static_cast<InputSensor *>(inputSender);
     if (snsr->fclickmode == INPUT_NORMAL) {
       mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
     }
@@ -249,10 +243,8 @@ void process_Input(void * inputSender, void * obj){
 
 void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
   Serial.print("\n onchangeSwitchInterruptSvc");
-  Relay * rly;
-  rly = static_cast<Relay *>(relaySender);
-  InputSensor * input;
-  input = static_cast<InputSensor *>(inputSender);
+  Relay * rly = static_cast<Relay *>(relaySender);
+  InputSensor * input = static_cast<InputSensor *>(inputSender);
   //if (rly->r_in_mode == INPUT_NORMAL) {} v_InputPin12_STATE_PUB_TOPIC
   Serial.print("\n onchangeSwitchInterruptSvc");
   //if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
@@ -266,8 +258,7 @@ void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
 void buttonclick(void* relaySender, void* inputSender) {
   Serial.print("\n buttonclick");
   if (relaySender){
-    Relay * rly;
-    rly = static_cast<Relay *>(relaySender);
+    Relay * rly = static_cast<Relay *>(relaySender);
     InputSensor * input;
     input = static_cast<InputSensor *>(inputSender);
       if (rly->readrelay() == HIGH) {
@@ -285,8 +276,7 @@ void buttonclick(void* relaySender, void* inputSender) {
 
 void relayloopservicefunc(void* relaySender){
 if (relaySender){
-  Relay * rly;
-  rly = static_cast<Relay *>(relaySender);
+  Relay * rly = static_cast<Relay *>(relaySender);
     if (rly->TTLstate() != RUNNING_) {
       if (digitalRead(rly->getRelayPin()) == HIGH) {
         if (rly->RelayConfParam->v_ttl > 0 ) rly->start_ttl_timer(); // ticker_relay_ttl.start();

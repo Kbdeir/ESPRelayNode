@@ -1,5 +1,7 @@
-#ifndef _TIMERCONG_H__
-#define _TIMERCONG_H__
+#pragma once
+
+//#ifndef _TIMERCONG_H__
+//#define _TIMERCONG_H__
 
 #include "Arduino.h"
 #include <ConfigParams.h>
@@ -82,4 +84,4 @@ bool saveNodeTimer(AsyncWebServerRequest *request);
 config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer);
 NodeTimer * gettimerbypin(uint8_t pn);
 
-#endif
+//#endif

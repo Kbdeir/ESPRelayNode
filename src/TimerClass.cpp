@@ -1,3 +1,4 @@
+
 #include <TimerClass.h>
 #define buffer_size  1500
 
@@ -117,6 +118,7 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   // We don't use String here because ArduinoJson library requires the input
   // buffer to be mutable. If you don't use ArduinoJson, you may as well
   // use configFile.readString instead.
+
   configFile.readBytes(buf.get(), size);
 
   StaticJsonBuffer<buffer_size> jsonBuffer;

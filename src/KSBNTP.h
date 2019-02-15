@@ -1,6 +1,8 @@
 
-#ifndef KSBNTP_H_
-#define KSBNTP_H_
+//#ifndef KSBNTP_H_
+//#define KSBNTP_H_
+
+#pragma once
 
 #include <TimeLib.h>
 #include <ConfigParams.h>
@@ -25,4 +27,4 @@ time_t getNtpTime();
 void sendNTPpacket(IPAddress &address);
 
 
-#endif
+//#endif

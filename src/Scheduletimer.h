@@ -1,6 +1,7 @@
 
-#ifndef Schedule_timer_H
-#define Schedule_timer_H
+//#ifndef Schedule_timer_H
+//#define Schedule_timer_H
+#pragma once
 
 #include "Arduino.h"
 
@@ -53,4 +54,4 @@ public:
 
 
 
-#endif
+//#endif

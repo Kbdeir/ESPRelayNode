@@ -99,7 +99,7 @@ InputSensor * getinputbynumber(uint8_t nb) {
 void applyIRMap(int8_t Inpn, int8_t rlyn) {
   if ((Inpn > -1) && (rlyn > -1)) {
     InputSensor * t = nullptr;
-    Relay  * r = nullptr;
+    Relay * r = nullptr;
     if ((Inpn <= inputs.size()-1) && (rlyn <= relays.size()-1)) {
       t = static_cast<InputSensor *>(inputs.at(Inpn));
       r = static_cast<Relay *>(relays.at(rlyn));
