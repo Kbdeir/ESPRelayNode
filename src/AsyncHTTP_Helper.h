@@ -1,5 +1,7 @@
-#ifndef __HTTP_
-#define __HTTP_
+//#ifndef __HTTP_
+//#define __HTTP_
+#pragma once
+
 
 
 #include <Arduino.h>
@@ -22,4 +24,4 @@ extern bool restartRequired;
 void SetAsyncHTTP();
 
 
-#endif
+//#endif

@@ -2,6 +2,8 @@
     Modbus.h - Header for Modbus Base Library
     Copyright (C) 2014 Andr� Sarmento Barbosa
 */
+
+
 #include "Arduino.h"
 
 #ifndef MODBUS_H

@@ -1,3 +1,4 @@
+
 #include <TimerClass.h>
 #define buffer_size  1500
 
@@ -15,7 +16,7 @@ NodeTimer::NodeTimer(uint8_t para_id) {
     enabled = true;
     Mark_Hours = 0;
     Mark_Minutes = 0;
-    Testchar = new char[22]; //"Hello there I am char";
+    // Testchar = new char[22]; //"Hello there I am char";
 }
 
 NodeTimer::NodeTimer(uint8_t para_id,
@@ -37,13 +38,13 @@ NodeTimer::NodeTimer(uint8_t para_id,
     spantimeto    = para_spantimeto;
     Mark_Hours    = 0;
     Mark_Minutes  = 0;
-    Testchar = new char[22]; //"Hello there I am char";
+    //Testchar = new char[22]; //"Hello there I am char";
     relay =  para_relay;
 }
 
 NodeTimer::~NodeTimer(){
     delete weekdays;
-    delete[] Testchar;
+    // delete[] Testchar;
 }
 
 void NodeTimer::watch(){
@@ -64,13 +65,13 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
     json[request->argName(i)] =  request->arg(i) ;
   }
 
-  request->hasParam("CSunday")    ? json["CSunday"]    =  "1"   : json["CSunday"]   =  "0" ;
-  request->hasParam("CMonday")    ? json["CMonday"]    =  "1"   : json["CMonday"]   =  "0" ;
-  request->hasParam("CTuesday")   ? json["CTuesday"]   =  "1"   : json["CTuesday"]  =  "0" ;
-  request->hasParam("CWednesday") ? json["CWednesday"] =  "1"   : json["CWednesday"]=  "0" ;
-  request->hasParam("CThursday")  ? json["CThursday"]  =  "1"   : json["CThursday"] =  "0" ;
-  request->hasParam("CFriday")    ? json["CFriday"]    =  "1"   : json["CFriday"]   =  "0" ;
-  request->hasParam("CSaturday")  ? json["CSaturday"]  =  "1"   : json["CSaturday"] =  "0" ;
+  request->hasParam("CSunday")    ? json["Su"]    =  "1"   : json["Su"]   =  "0" ;
+  request->hasParam("CMonday")    ? json["Mo"]    =  "1"   : json["Mo"]   =  "0" ;
+  request->hasParam("CTuesday")   ? json["Tu"]    =  "1"   : json["Tu"]   =  "0" ;
+  request->hasParam("CWednesday") ? json["We"]    =  "1"   : json["We"]   =  "0" ;
+  request->hasParam("CThursday")  ? json["Th"]    =  "1"   : json["Th"]   =  "0" ;
+  request->hasParam("CFriday")    ? json["Fr"]    =  "1"   : json["Fr"]   =  "0" ;
+  request->hasParam("CSaturday")  ? json["Sa"]    =  "1"   : json["Sa"]   =  "0" ;
   request->hasParam("CEnabled")   ? json["CEnabled"]   =  "1"   : json["CEnabled"]   = "0" ;
 
   char  timerfilename[20] = "/timer";
@@ -117,6 +118,7 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   // We don't use String here because ArduinoJson library requires the input
   // buffer to be mutable. If you don't use ArduinoJson, you may as well
   // use configFile.readString instead.
+
   configFile.readBytes(buf.get(), size);
 
   StaticJsonBuffer<buffer_size> jsonBuffer;
@@ -134,18 +136,18 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.spanDateto  = (json["DTo"].as<String>()!="")  ? json["DTo"].as<String>() : String("01-01-2100");
   para_NodeTimer.spantimefrom = (json["TFrom"].as<String>()!="") ? json["TFrom"].as<String>() : String("00:00");
   para_NodeTimer.spantimeto  = (json["TTo"].as<String>()!="")  ? json["TTo"].as<String>() : String("00:00");
-  para_NodeTimer.weekdays->Sunday = json["CSunday"];
-  para_NodeTimer.weekdays->Monday = json["CMonday"];
-  para_NodeTimer.weekdays->Tuesday = json["CTuesday"];
-  para_NodeTimer.weekdays->Wednesday = json["CWednesday"];
-  para_NodeTimer.weekdays->Thursday = json["CThursday"];
-  para_NodeTimer.weekdays->Friday = json["CFriday"];
-  para_NodeTimer.weekdays->Saturday = json["CSaturday"];
+  para_NodeTimer.weekdays->Sunday     = json["Su"];
+  para_NodeTimer.weekdays->Monday     = json["Mo"];
+  para_NodeTimer.weekdays->Tuesday    = json["Tu"];
+  para_NodeTimer.weekdays->Wednesday  = json["We"];
+  para_NodeTimer.weekdays->Thursday   = json["Th"];
+  para_NodeTimer.weekdays->Friday     = json["Fr"];
+  para_NodeTimer.weekdays->Saturday   = json["Sa"];
   para_NodeTimer.Mark_Hours = (json["Mark_Hours"].as<String>()!="") ? json["Mark_Hours"].as<uint16_t>() : 0;
   para_NodeTimer.Mark_Minutes = (json["Mark_Minutes"].as<String>()!="") ? json["Mark_Minutes"].as<uint16_t>() : 0;
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
   para_NodeTimer.secondsspan = 0;
   para_NodeTimer.relay = (json["TRelay"].as<String>()!="") ? json["TRelay"].as<uint8_t>() : 0;
-  strcpy(para_NodeTimer.Testchar,json["Testchar"] | "NA");
+  //strcpy(para_NodeTimer.Testchar,json["Testchar"] | "NA");
   return SUCCESS;
 }

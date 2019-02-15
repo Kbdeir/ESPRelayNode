@@ -19,8 +19,7 @@ String CID(){
 
 void relayon(void* obj){
   if (obj != NULL) {
-    Relay * rly;
-    rly = static_cast<Relay *>(obj);
+    Relay * rly = static_cast<Relay *>(obj);
     rly->mdigitalWrite(rly->getRelayPin(), HIGH);
     rly->ticker_relay_tta->stop();
   }

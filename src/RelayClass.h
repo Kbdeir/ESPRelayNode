@@ -1,5 +1,7 @@
-#ifndef _RELAYSCONG_H__
-#define _RELAYSCONG_H__
+//#ifndef _RELAYSCONG_H__
+//#define _RELAYSCONG_H__
+
+#pragma once
 //#include <InputClass.h>
 #include "Arduino.h"
 #include <ConfigParams.h>
@@ -97,4 +99,4 @@ class Relay
   Relay * getrelaybynumber(uint8_t pn);
 
   void mkRelayConfigName(char name[], uint8_t rnb);
-#endif
+//#endif

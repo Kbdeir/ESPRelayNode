@@ -56,8 +56,8 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
     return JSONCONFIG_CORRUPTED;
   }
 
-  ConfParam.v_ssid                = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ssid"));
-  ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("passpass12"));
+  ConfParam.v_ssid                = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ksba"));
+  ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("samsam12"));
   ConfParam.v_PhyLoc              = (json["PhyLoc"].as<String>()!="") ? json["PhyLoc"].as<String>() : String(F("Not configured yet"));
   //ConfParam.v_MQTT_BROKER         = (json["MQTT_BROKER"].as<String>()!="") ? json["MQTT_BROKER"].as<String>() : String(F("192.168.1.1"));
 
@@ -452,7 +452,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
     }
 
     json.printTo(configFile);
-      Serial.println(F("\n Saved relay config"));
+  //    Serial.println(F("\n Saved relay config"));
       configFile.flush();
       configFile.close();
     return true;
@@ -496,7 +496,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     }
 
     json.printTo(configFile);
-      Serial.println(F("\n Saved relay config"));
+  //    Serial.println(F("\n Saved relay config"));
       configFile.flush();
       configFile.close();
     return true;
