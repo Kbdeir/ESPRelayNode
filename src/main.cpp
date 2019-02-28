@@ -98,10 +98,10 @@ WiFiClient net;
 String APssid     = (String("Node-") +  CID()+"-");
 const char* APpassword = "12345678";
 int ledState      = LOW;             					// ledState used to set the LED
-unsigned long previousMillis = 0;         // will store last time LED was updated
+unsigned long previousMillis = 0;             // will store last time LED was updated
 long blinkInterval = 1000;           		      // blinkInterval at which to blink (milliseconds)
-long APModetimer  = 60*5;
-long APModetimer_run_value = 0;
+long APModetimer  = 60*5;                     // max allowed time in AP mode, reset if exceeded
+long APModetimer_run_value = 0;               // timer value to track the AP mode rining-timer value. reset board if it exceeds APModetimer
 AsyncServer* MBserver = new AsyncServer(502); // start listening on tcp port 7050
 ModbusIP mb;
 const int LAMP1_COIL  = 1;
@@ -131,7 +131,6 @@ Relay relay0(
   );
 
   /*
-
   Relay relay1(
       Relay2Pin,
       ticker_relay_ttl_off,
