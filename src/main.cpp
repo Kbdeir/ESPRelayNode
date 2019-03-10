@@ -1,5 +1,8 @@
 // RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF
+
+#define SR04
+
 #include <Arduino.h>
 #include <string.h>
 #include <Modbus.h>
@@ -83,11 +86,23 @@ const char * EventNames[] = {
     #endif
 #endif
 
+#ifdef SR04
+      // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
+      // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+      int trigPin = 13;    // Trigger
+      int echoPin = 12;    // Echo
+      long duration, cm, inches;
+
+      #include <hcsr04.h>
+      #define TRIG_PIN 13
+      #define ECHO_PIN 12
+#endif
+
 
 long timezone     = 1;
 byte daysavetime  = 1;
 int wifimode      = WIFI_CLT_MODE;
-const int led     = 02;
+
 String MAC;
 unsigned long lastMillis = 0;
 unsigned long lastMillis5000 = 0;
@@ -109,7 +124,7 @@ const int LAMP2_COIL  = 2;
 float old_acs_value   = 0;
 float ACS_I_Current   = 0;
 
-static TempSensor tempsensor(14);
+static TempSensor tempsensor(TempSensorPin);
 extern float MCelcius;
 
 ACS712 sensor(ACS712_20A, A0);
@@ -119,6 +134,19 @@ void ticker_relay_ttl_periodic_callback(void* obj);
 void ticker_ACS712_func (void* obj);
 void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
+
+int getpinMode(uint8_t pin)
+{
+  if (pin >= NUM_DIGITAL_PINS) return (-1);
+
+  uint8_t bit = digitalPinToBitMask(pin);
+  uint8_t port = digitalPinToPort(pin);
+  volatile uint32_t *reg = portModeRegister(port);
+  if (*reg & bit) return (OUTPUT);
+
+  volatile uint32_t *out = portOutputRegister(port);
+  return ((*out & bit) ? INPUT_PULLUP : INPUT);
+}
 
 Relay relay0(
     RelayPin,
@@ -241,14 +269,11 @@ void process_Input(void * inputSender, void * obj){
 
 
 void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
-  Serial.print("\n onchangeSwitchInterruptSvc");
   Relay * rly = static_cast<Relay *>(relaySender);
   InputSensor * input = static_cast<InputSensor *>(inputSender);
-  //if (rly->r_in_mode == INPUT_NORMAL) {} v_InputPin12_STATE_PUB_TOPIC
-  Serial.print("\n onchangeSwitchInterruptSvc");
-  //if (rly->r_in_mode == INPUT_COPY_TO_RELAY) {
+  // Serial.print("\n onchangeSwitchInterruptSvc");
+  Serial.print("\n "); Serial.print(digitalRead(input->pin));
   rly->mdigitalWrite(rly->getRelayPin(),digitalRead(input->pin)); //rly->getRelaySwithbtnState());
-  //}
   mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,digitalRead(input->pin) == HIGH ? ON : OFF);
 }
 
@@ -646,10 +671,16 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 
 
 
-
+//inputs
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
 InputSensor Inputsnsr14(Relay2Pin,process_Input,INPUT_NONE); // just moved to make room for connecting the ds18 temp sensor to  InputPin14
+
+#ifdef HWver03
+InputSensor Inputsnsr02(InputPin02,process_Input,INPUT_NONE);
+#endif
+
+
 //InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 
 void Wifi_connect() {
@@ -716,6 +747,15 @@ void Wifi_connect() {
 }
 
 void setupInputs(){
+
+#ifdef HWver03
+  Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr02.post_mqtt = true;
+  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
+  Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+#endif
+
   Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
   Inputsnsr12.post_mqtt = true;
@@ -741,6 +781,9 @@ void setup() {
     pinMode ( ConfigInputPin, INPUT_PULLUP );
     pinMode ( InputPin12, INPUT_PULLUP );
     pinMode ( InputPin14, INPUT_PULLUP );
+    #ifdef HWver03
+    pinMode ( InputPin02, INPUT_PULLUP );
+    #endif
     Serial.begin(115200);
 
     /*
@@ -788,6 +831,9 @@ void setup() {
     inputs.push_back(&Inputsnsr13);
     inputs.push_back(&Inputsnsr12);
     inputs.push_back(&Inputsnsr14);
+    #ifdef HWver03
+    inputs.push_back(&Inputsnsr02);
+    #endif
 
     //while (relay0.loadrelayparams(0) != true){
     while (relay0.loadrelayparams() != true){
@@ -856,6 +902,9 @@ void loop() {
   Inputsnsr14.watch();
   Inputsnsr12.watch();
   Inputsnsr13.watch();
+  #ifdef HWver03
+  Inputsnsr02.watch();
+  #endif
 
   if (timeStatus() != timeNotSet) {
     if (now() != prevDisplay) {                   //update the display only if time has changed
@@ -872,6 +921,61 @@ void loop() {
 
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
+
+
+    #ifdef SR04
+    if (MyConfParam.v_Sonar_distance != "0") {
+          pinMode(TRIG_PIN, INPUT_PULLUP);
+          pinMode(ECHO_PIN, INPUT_PULLUP);
+          //HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
+          //Serial.println(hcsr04.distanceInMillimeters());
+          int trigPin = 14;    // Trigger
+          int echoPin = 12;    // Echo
+          long duration, cm, inches;
+          // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
+          // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
+          pinMode(trigPin, OUTPUT);
+          digitalWrite(trigPin, LOW);
+          delayMicroseconds(5);
+          digitalWrite(trigPin, HIGH);
+          delayMicroseconds(15);
+          digitalWrite(trigPin, LOW);
+          // Read the signal from the sensor: a HIGH pulse whose
+          // duration is the time (in microseconds) from the sending
+          // of the ping to the reception of its echo off of an object.
+          pinMode(echoPin, INPUT);
+          duration = pulseIn(echoPin, HIGH);
+          pinMode(TRIG_PIN, INPUT_PULLUP);
+          pinMode(ECHO_PIN, INPUT_PULLUP);
+
+          cm = (duration/2) / 29.1;     // Divide by 29.1 or multiply by 0.0343
+          if (cm > MyConfParam.v_Sonar_distance_max) { cm = -1; }
+          inches = (duration/2) / 74;   // Divide by 74 or multiply by 0.0135
+          Serial.print(inches);
+          Serial.print("in, ");
+          Serial.print(cm);
+          Serial.print("cm");
+          Serial.println();
+
+          mqttClient.publish(MyConfParam.v_Sonar_distance.c_str(), QOS2, RETAINED, [cm](){
+                char tmp[10];
+                itoa(cm,tmp,10);
+                return tmp; //
+              }()
+            );
+            /*
+
+            mqttClient.publish((MyConfParam.v_Sonar_distance+"_rem").c_str(), QOS2, RETAINED, [cm](){
+                  char tmp[10];
+                  itoa(MyConfParam.v_Sonar_distance_max - cm,tmp,10);
+                  return tmp; //
+                }()
+              );
+              */
+    }
+    #endif
+
+
     if (wifimode == WIFI_AP_MODE) {
   		APModetimer_run_value++;
   		if (APModetimer_run_value == APModetimer) {

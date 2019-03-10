@@ -8,6 +8,7 @@
 extern std::vector<void *> relays ; // a list to hold all relays
 extern InputSensor Inputsnsr14;
 extern InputSensor Inputsnsr12;
+extern InputSensor Inputsnsr02;
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -69,6 +70,12 @@ void onMqttConnect(bool sessionPresent) {
   // Serial.println(packetIdSub);
   // mqttpostinitstatusOfInputs(NULL);
   [](){
+    #ifdef HWver03
+    if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
+      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+        digitalRead(InputPin02) == HIGH ?  ON : OFF);
+    }
+    #endif
     if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
       mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
         digitalRead(InputPin12) == HIGH ?  ON : OFF);

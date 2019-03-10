@@ -44,40 +44,39 @@ void InputSensor::addrelay(Relay * rly) {
 
 
 void InputSensor::watch() {
-    Input_debouncer->update();
-    //  if (attachedrelay == nullptr) {
+    this->Input_debouncer->update();
     if (attachedrelays.size() == 0) {
        if (fclickmode==INPUT_NORMAL) {
-         if (Input_debouncer->fell() || Input_debouncer->rose()) {
+          if (Input_debouncer->fell() || Input_debouncer->rose()) {
             if (fon_callback) fon_callback(this, nullptr);
           }
         }
         if (fclickmode==INPUT_TOGGLE) {
-        if (Input_debouncer->fell()) {
-           if (fon_callback) fon_callback(this,nullptr);
-         }
-       }
-
-     } else {
-     Relay * rtemp = nullptr;
-     for (void* it : attachedrelays) {
-     //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
-       rtemp = static_cast<Relay *>(it);
-       if (rtemp) {
-         if (fclickmode==INPUT_COPY_TO_RELAY) {
-           if (Input_debouncer->fell() || Input_debouncer->rose()) {
-             if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}
-            }
-          }
-          if (fclickmode==INPUT_RELAY_TOGGLE) {
           if (Input_debouncer->fell()) {
-            if (onInputClick_RelayServiceRoutine != nullptr) {onInputClick_RelayServiceRoutine(rtemp,this);}
+           if (fon_callback) fon_callback(this,nullptr);
+          }
+       }
+     }
+     else
+     {
+       Relay * rtemp = nullptr;
+       for (void* it : attachedrelays) {
+       //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
+         rtemp = static_cast<Relay *>(it);
+         if (rtemp) {
+           if (fclickmode==INPUT_COPY_TO_RELAY) {
+              if (Input_debouncer->fell() || Input_debouncer->rose()) {
+               if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}
+              }
+            }
+            if (fclickmode==INPUT_RELAY_TOGGLE) {
+             if (Input_debouncer->fell()) {
+              if (onInputClick_RelayServiceRoutine != nullptr) {onInputClick_RelayServiceRoutine(rtemp,this);}
+             }
            }
          }
        }
      }
-   }
-
 }
 
 
