@@ -27,7 +27,7 @@ Relay::Relay(uint8_t p,
   RelayConfParam = new Trelayconf;
 
   lockupdate = false;
-  freeinterval = 200;
+  freeinterval = 100; // was 200
   r_in_mode = 1;
   timerpaused = false;
   hastimerrunning = false;

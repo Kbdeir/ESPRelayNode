@@ -28,6 +28,8 @@ class InputSensor{
     fnptr_d onInputChange_RelayServiceRoutine;
     fnptr_d onInputClick_RelayServiceRoutine;
 
+    fnptr_d onInputLOOP_RelayServiceRoutine;
+
 
     InputSensor(
       uint8_t p,

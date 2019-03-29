@@ -1,7 +1,7 @@
 // RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF
 
-#define SR04
+#define SR04 // utrasonic code
 
 #include <Arduino.h>
 #include <string.h>
@@ -687,7 +687,7 @@ void Wifi_connect() {
   Serial.println(F("Starting WiFi"));
   WiFi.softAPdisconnect();
   WiFi.disconnect();
-  WiFi.mode(WIFI_AP_STA);
+  WiFi.mode(WIFI_STA);
 
   delay(100);
 
@@ -740,6 +740,7 @@ void Wifi_connect() {
     } // if (digitalRead(ConfigInputPin) == HIGH)
 
     if (digitalRead(ConfigInputPin) == LOW){
+      WiFi.mode(WIFI_AP_STA);
     	if ((WiFi.status() != WL_CONNECTED))	{
     		startsoftAP();
     	}
@@ -929,8 +930,8 @@ void loop() {
           pinMode(ECHO_PIN, INPUT_PULLUP);
           //HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
           //Serial.println(hcsr04.distanceInMillimeters());
-          int trigPin = 14;    // Trigger
-          int echoPin = 12;    // Echo
+          int trigPin = TRIG_PIN;    // Trigger
+          int echoPin = ECHO_PIN;    // Echo
           long duration, cm, inches;
           // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
           // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
