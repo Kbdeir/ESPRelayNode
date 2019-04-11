@@ -94,7 +94,7 @@ const char * EventNames[] = {
       long duration, cm, inches;
 
       #include <hcsr04.h>
-      #define TRIG_PIN 13
+      #define TRIG_PIN 14
       #define ECHO_PIN 12
 #endif
 
