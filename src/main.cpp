@@ -1,7 +1,7 @@
 // RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF
 
-#define SR04 // utrasonic code
+// #define SR04 // utrasonic sensor  code 
 
 #include <Arduino.h>
 #include <string.h>

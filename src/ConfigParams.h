@@ -17,7 +17,7 @@
 #ifndef _CONFIGS_H__
 #define _CONFIGS_H__
 
-#define HWver03
+//#define HWver03 // new board design
 
 #include <Arduino.h>
 #include <Scheduletimer.h>
