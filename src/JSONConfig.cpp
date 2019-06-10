@@ -91,6 +91,9 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
 
   ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<uint16_t>() : 83;
 
+  ConfParam.v_Sonar_distance      = (json["Sonar_distance"].as<String>()!="") ? json["Sonar_distance"].as<String>() : String(F("/sdnone"));
+  ConfParam.v_Sonar_distance_max  =  json["Sonar_distance_max"].as<uint8_t>();
+
   Serial.print(F("\n will connect to: ")); Serial.print(ConfParam.v_ssid);
   Serial.print(F("\n with pass: ")); Serial.print(ConfParam.v_pass);
   Serial.print(F("\n PhyLoc:")); Serial.print(ConfParam.v_PhyLoc);
@@ -104,6 +107,9 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n v_IN0_INPUTMODE:")); Serial.print(ConfParam.v_IN0_INPUTMODE);
   Serial.print(F("\n v_IN1_INPUTMODE:")); Serial.print(ConfParam.v_IN1_INPUTMODE);
   Serial.print(F("\n v_IN2_INPUTMODE:")); Serial.print(ConfParam.v_IN2_INPUTMODE);
+
+  Serial.print(F("\n v_Sonar_distance:")); Serial.print(ConfParam.v_Sonar_distance);
+  Serial.print(F("\n v_Sonar_distance_max:")); Serial.print(ConfParam.v_Sonar_distance_max);
   //relay0.loadrelayparams();
 
   return SUCCESS;
@@ -130,6 +136,9 @@ bool saveConfig(TConfigParams &ConfParam){
     json["MQTT_Active"]=ConfParam.v_MQTT_Active;
     json["ntptz"]=ConfParam.v_ntptz;
     json["Update_now"]=ConfParam.v_Update_now;
+
+    json["Sonar_distance"]=ConfParam.v_Sonar_distance;
+    json["Sonar_distance_max"]=ConfParam.v_Sonar_distance_max;
 
     File configFile = SPIFFS.open(filename, "w");
     if (!configFile) {

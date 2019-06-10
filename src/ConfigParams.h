@@ -17,20 +17,31 @@
 #ifndef _CONFIGS_H__
 #define _CONFIGS_H__
 
+//#define HWver03 // new board design
+
 #include <Arduino.h>
 #include <Scheduletimer.h>
 #include <IPAddress.h>
 
+//
+
+#ifdef HWver03
+  #define led         16
+  #define InputPin02  02
+#else
+  #define led         02
+#endif
 
 #define RelayPin 05
 #define Relay2Pin 16
 
-#define ConfigInputPin 13
-#define SwitchButtonPin 12  // revert to 12 when done testing
-#define SwitchButtonPin2 13 // revert to 12 when done testing
-
 #define InputPin12 12
+#define SwitchButtonPin2 13 // revert to 12 when done testing
+#define ConfigInputPin 13
 #define InputPin14 14
+
+#define TempSensorPin 14
+
 
 #define RETAINED true
 #define NOT_RETAINED false
@@ -93,6 +104,9 @@ typedef struct TConfigParams {
   uint8_t v_IN0_INPUTMODE;
   uint8_t v_IN1_INPUTMODE;
   uint8_t v_IN2_INPUTMODE;
+
+  String v_Sonar_distance ;
+  uint8_t v_Sonar_distance_max;
 
 } TConfigParams;
 

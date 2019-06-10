@@ -13,6 +13,8 @@ InputSensor::InputSensor(uint8_t p,
   onInputChange_RelayServiceRoutine = nullptr;
   onInputClick_RelayServiceRoutine = nullptr;
 
+  onInputLOOP_RelayServiceRoutine = nullptr;
+
   Input_debouncer = new Bounce();
   Input_debouncer->attach(pin,INPUT_PULLUP);
   Input_debouncer->interval(25); // interval in ms
@@ -44,40 +46,48 @@ void InputSensor::addrelay(Relay * rly) {
 
 
 void InputSensor::watch() {
-    Input_debouncer->update();
-    //  if (attachedrelay == nullptr) {
+    this->Input_debouncer->update();
     if (attachedrelays.size() == 0) {
        if (fclickmode==INPUT_NORMAL) {
-         if (Input_debouncer->fell() || Input_debouncer->rose()) {
+          if (Input_debouncer->fell() || Input_debouncer->rose()) {
             if (fon_callback) fon_callback(this, nullptr);
           }
         }
         if (fclickmode==INPUT_TOGGLE) {
-        if (Input_debouncer->fell()) {
-           if (fon_callback) fon_callback(this,nullptr);
-         }
-       }
-
-     } else {
-     Relay * rtemp = nullptr;
-     for (void* it : attachedrelays) {
-     //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
-       rtemp = static_cast<Relay *>(it);
-       if (rtemp) {
-         if (fclickmode==INPUT_COPY_TO_RELAY) {
-           if (Input_debouncer->fell() || Input_debouncer->rose()) {
-             if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}
-            }
-          }
-          if (fclickmode==INPUT_RELAY_TOGGLE) {
           if (Input_debouncer->fell()) {
-            if (onInputClick_RelayServiceRoutine != nullptr) {onInputClick_RelayServiceRoutine(rtemp,this);}
+           if (fon_callback) fon_callback(this,nullptr);
+          }
+       }
+     }
+     else
+     {
+       Relay * rtemp = nullptr;
+       for (void* it : attachedrelays) {
+       //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
+         rtemp = static_cast<Relay *>(it);
+         if (rtemp) {
+           if (fclickmode==INPUT_COPY_TO_RELAY) {
+              if (Input_debouncer->fell() || Input_debouncer->rose()) {
+               if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}
+              }
+              /*
+              this will tie the relay to the physical input, mqtt is ignored if physical input is different then mqtt mesage
+              if (digitalRead(rtemp->getRelayPin()) != digitalRead(this->pin)) {
+                digitalWrite(rtemp->getRelayPin(), digitalRead(this->pin));
+              }
+              */
+            }
+
+            if (fclickmode==INPUT_RELAY_TOGGLE) {
+             if (Input_debouncer->fell()) {
+              if (onInputClick_RelayServiceRoutine != nullptr) {onInputClick_RelayServiceRoutine(rtemp,this);}
+             }
            }
+
+
          }
        }
      }
-   }
-
 }
 
 

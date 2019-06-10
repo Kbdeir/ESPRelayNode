@@ -128,6 +128,9 @@ String processor(const String& var)
     } else return "NA";
   }();
 
+  if(var == F( "Sonar_distance" ))      return String( MyConfParam.v_Sonar_distance.c_str());
+  if(var == F( "Sonar_distance_max" ))  return String( MyConfParam.v_Sonar_distance_max);
+
   return String();
 }
 
