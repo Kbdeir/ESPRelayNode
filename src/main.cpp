@@ -750,9 +750,15 @@ void Wifi_connect() {
 
 void setupInputs(){
 
- // InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
+  Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
+  Inputsnsr12.initialize(InputPin12,process_Input,INPUT_NONE);
+  Inputsnsr13.initialize(SwitchButtonPin2,process_Input,INPUT_NONE);  
+
+
+  
 
 #ifdef HWver03
+  Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
   Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
   Inputsnsr02.post_mqtt = true;
