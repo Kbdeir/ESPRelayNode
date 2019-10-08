@@ -750,6 +750,8 @@ void Wifi_connect() {
 
 void setupInputs(){
 
+ // InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
+
 #ifdef HWver03
   Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
