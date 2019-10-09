@@ -263,6 +263,7 @@ void process_Input(void * inputSender, void * obj){
   if (inputSender != nullptr) {
       InputSensor * snsr = static_cast<InputSensor *>(inputSender);
     if (snsr->fclickmode == INPUT_NORMAL) {
+      Serial.print(snsr->mqtt_topic.c_str());
       mqttClient.publish( snsr->mqtt_topic.c_str(), QOS2, RETAINED, digitalRead(snsr->pin) == HIGH ?  ON : OFF);
     }
     if (snsr->fclickmode == INPUT_TOGGLE) {
