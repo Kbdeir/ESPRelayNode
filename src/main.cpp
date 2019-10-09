@@ -234,7 +234,11 @@ void onRelaychangeInterruptSvc(void* relaySender){
         if (rly->RelayConfParam->v_ttl > 0 ) {
           rly->start_ttl_timer();
         }
+        //Serial.print(F("\n\n Topic: "));
+        //Serial.print(rly->RelayConfParam->v_PUB_TOPIC1.c_str());
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
+        //Serial.print(F("\n\n Topic2: "));
+        //Serial.print(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str());        
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
       }
 
@@ -832,7 +836,7 @@ void setup() {
 		mqttClient.onMessage(onMqttMessage);
 		mqttClient.onPublish(onMqttPublish);
 		mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
-
+  
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 
