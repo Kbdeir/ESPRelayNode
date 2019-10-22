@@ -225,6 +225,7 @@ void ticker_relay_ttl_off (void* relaySender) {
 
 void onRelaychangeInterruptSvc(void* relaySender){
   Relay * rly = static_cast<Relay *>(relaySender);
+  uint16_t pack = 0;
 
   if (rly->rchangedflag ) {
       rly->rchangedflag = false;
