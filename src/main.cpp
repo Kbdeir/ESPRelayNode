@@ -1,7 +1,7 @@
 // RMDJN-FT29R-WDVKH-QYDWK-KQC6M
-// #define USEPREF
+// #define USEPREF n
 
-// #define SR04 // utrasonic sensor  code 
+#define SR04 // utrasonic sensor  code 
 
 #include <Arduino.h>
 #include <string.h>
@@ -675,7 +675,8 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 //inputs
 InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
 InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
-InputSensor Inputsnsr14(Relay2Pin,process_Input,INPUT_NONE); // just moved to make room for connecting the ds18 temp sensor to  InputPin14
+//InputSensor Inputsnsr14(Relay2Pin,process_Input,INPUT_NONE); // just moved to make room for connecting the ds18 temp sensor to  InputPin14
+InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 
 #ifdef HWver03
 InputSensor Inputsnsr02(InputPin02,process_Input,INPUT_NONE);
@@ -750,11 +751,19 @@ void Wifi_connect() {
 
 void setupInputs(){
 
+  Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
+  Inputsnsr12.initialize(InputPin12,process_Input,INPUT_NONE);
+  Inputsnsr13.initialize(SwitchButtonPin2,process_Input,INPUT_NONE);  
+
+
+  
+
 #ifdef HWver03
+  Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
   Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
   Inputsnsr02.post_mqtt = true;
-  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
+  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12
   Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
 #endif
 
@@ -824,7 +833,7 @@ void setup() {
 		mqttClient.onMessage(onMqttMessage);
 		mqttClient.onPublish(onMqttPublish);
 		mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
-
+  
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 

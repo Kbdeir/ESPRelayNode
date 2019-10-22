@@ -41,6 +41,11 @@ class InputSensor{
 
     ~InputSensor();
     void addrelay(Relay * rly);
+    void initialize(
+        uint8_t p,
+        fnptr_d on_callback,
+        input_mode clickmode          
+        );
     void watch();
     InputSensor * getinputbynumber(uint8_t nb);
     void clearAttachedRelays();

@@ -71,7 +71,7 @@ String timerprocessor(const String& var)
 
 String processor(const String& var)
 {
-  auto AppliedRelay = getrelaybynumber(AppliedRelayNumber);
+  Relay * AppliedRelay = getrelaybynumber(AppliedRelayNumber);
 
   if(var == F( "MACADDR" ))             return (String(MAC.c_str()) + " - Chip id: " + CID());
   if(var == F( "ssid" ))                return  String(MyConfParam.v_ssid.c_str());
@@ -80,7 +80,7 @@ String processor(const String& var)
   if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
   if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
 
-  if (AppliedRelay) {
+  if (AppliedRelay != nullptr) {
     if(var == F( "RELAYNB" ))             return String( AppliedRelay->RelayConfParam->v_relaynb);
     if(var == F( "PUB_TOPIC1" ))          return String( AppliedRelay->RelayConfParam->v_PUB_TOPIC1.c_str());
     if(var == F( "TemperatureValue" ))    return String( AppliedRelay->RelayConfParam->v_TemperatureValue.c_str());
@@ -127,6 +127,7 @@ String processor(const String& var)
       return (getrelaybynumber(1)->readrelay() == HIGH) ? "ON" : "OFF";
     } else return "NA";
   }();
+  
 
   if(var == F( "Sonar_distance" ))      return String( MyConfParam.v_Sonar_distance.c_str());
   if(var == F( "Sonar_distance_max" ))  return String( MyConfParam.v_Sonar_distance_max);
@@ -252,7 +253,7 @@ void SetAsyncHTTP(){
           if (request->hasParam("GETRELAYNB")) {
               String t = request->getParam("GETRELAYNB")->value();
               AppliedRelayNumber = t.toInt();
-          }
+          
           if (request->hasParam("RELAYACTION")) {
             String msg = request->getParam("RELAYACTION")->value();
             if (msg == "ON") {
@@ -264,6 +265,7 @@ void SetAsyncHTTP(){
               rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
             }
           }
+          }
           request->send(SPIFFS, "/wscontrol.html", String(), false, processor);
     });
 
@@ -271,22 +273,28 @@ void SetAsyncHTTP(){
     AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         AppliedRelayNumber = 0;
+
         if (request->hasParam("GETRELAYNB")) {
             String t = request->getParam("GETRELAYNB")->value();
             AppliedRelayNumber = t.toInt();
+            Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
+            if (rtmp != nullptr ) {
+              if (request->hasParam("RELAYACTION")) {
+                String msg = request->getParam("RELAYACTION")->value();
+                if (msg == "ON") {
+                  rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+                }
+                if (msg == "OFF") {
+                  rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+                }
+              }
+            }
+          //request->send(200, "text/plain", "Done");    
+        } else {
+          //request->send(SPIFFS, "/Config.html", String(), false, processor);
         }
-        if (request->hasParam("RELAYACTION")) {
-          String msg = request->getParam("RELAYACTION")->value();
-          if (msg == "ON") {
-            Relay * rtmp =  getrelaybynumber(0);
-            rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
-          }
-          if (msg == "OFF") {
-            Relay * rtmp =  getrelaybynumber(0);
-            rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-          }
-        }
-        request->send(SPIFFS, "/Config.html", String(), false, processor);
+         request->send(SPIFFS, "/Config.html", String(), false, processor);
+
     });
 
     AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){

@@ -6,7 +6,7 @@ extern std::vector<void *> relays ; // a list to hold all relays
 InputSensor::InputSensor(uint8_t p,
             fnptr_d on_callback,input_mode clickmode
           ) {
-
+/*
   pin = p;
   fclickmode =  clickmode;
   pinMode ( pin, INPUT_PULLUP);
@@ -23,6 +23,7 @@ InputSensor::InputSensor(uint8_t p,
   mqtt_topic="/none";
   post_mqtt = false;
   fon_callback = on_callback;
+  */
 }
 
 
@@ -44,6 +45,24 @@ void InputSensor::addrelay(Relay * rly) {
     attachedrelays.push_back(rly);
 };
 
+void InputSensor::initialize(uint8_t p, fnptr_d on_callback, input_mode clickmode ) {
+    pin = p;
+    fclickmode =  clickmode;
+    pinMode ( pin, INPUT_PULLUP);
+    onInputChange_RelayServiceRoutine = nullptr;
+    onInputClick_RelayServiceRoutine = nullptr;
+
+    onInputLOOP_RelayServiceRoutine = nullptr;
+
+    Input_debouncer = new Bounce();
+    Input_debouncer->attach(pin,INPUT_PULLUP);
+    Input_debouncer->interval(25); // interval in ms
+
+    rchangedflag = false;
+    mqtt_topic="/none";
+    post_mqtt = false;
+    fon_callback = on_callback;
+};
 
 void InputSensor::watch() {
     this->Input_debouncer->update();
