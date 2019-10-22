@@ -289,11 +289,11 @@ void SetAsyncHTTP(){
                 }
               }
             }
-          request->send(200, "text/plain", "Done");    
+          //request->send(200, "text/plain", "Done");    
         } else {
-          request->send(SPIFFS, "/Config.html", String(), false, processor);
+          //request->send(SPIFFS, "/Config.html", String(), false, processor);
         }
-         //request->send(SPIFFS, "/Config.html", String(), false, processor);
+         request->send(SPIFFS, "/Config.html", String(), false, processor);
 
     });
 
