@@ -237,7 +237,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
       }
-
+ 
       if (digitalRead(rly->getRelayPin()) == LOW) {
         Serial.print(F("\n\n An interrupt *OFF* has occurred."));
         rly->stop_ttl_timer();
