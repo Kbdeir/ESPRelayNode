@@ -223,8 +223,9 @@ void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
         if (rl!=nullptr) {
          if (rl->hastimerrunning) { rl->timerpaused = (v==LOW); }
         }
+              if (fonchangeInterruptService) fonchangeInterruptService(this);
       }
-      if (fonchangeInterruptService) fonchangeInterruptService(this);
+     // if (fonchangeInterruptService) fonchangeInterruptService(this);
     }
 }
 

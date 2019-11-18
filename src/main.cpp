@@ -757,14 +757,13 @@ void setupInputs(){
   Inputsnsr13.initialize(SwitchButtonPin2,process_Input,INPUT_NONE);  
 
 
-  
-
 #ifdef HWver03
+  
   Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
   Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
   Inputsnsr02.post_mqtt = true;
-  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12
+  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
   Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
 #endif
 
@@ -840,11 +839,11 @@ void setup() {
 
     setupInputs();
     // Add inputs to vector. the order is important.
-    inputs.push_back(&Inputsnsr13);
-    inputs.push_back(&Inputsnsr12);
-    inputs.push_back(&Inputsnsr14);
+    inputs.push_back(&Inputsnsr13); // this is input 0, CONF pin on board
+    inputs.push_back(&Inputsnsr12); // this is input 1, second input on the board
+    inputs.push_back(&Inputsnsr14); // this is input 2, first input on the board
     #ifdef HWver03
-    inputs.push_back(&Inputsnsr02);
+    inputs.push_back(&Inputsnsr02); // this is input 3, third pin on board
     #endif
 
     //while (relay0.loadrelayparams(0) != true){
@@ -934,7 +933,6 @@ void loop() {
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
 
-
     #ifdef SR04
     if (MyConfParam.v_Sonar_distance != "0") {
           pinMode(TRIG_PIN, INPUT_PULLUP);
@@ -1013,7 +1011,5 @@ void loop() {
         );
     }
   }
-
-
 
 }
