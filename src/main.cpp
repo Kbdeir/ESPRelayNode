@@ -743,6 +743,7 @@ void Wifi_connect() {
     } // if (digitalRead(ConfigInputPin) == HIGH)
 
     if (digitalRead(ConfigInputPin) == LOW){
+      Serial.println(F("Starting AP_STA mode"));
       WiFi.mode(WIFI_AP_STA);
     	if ((WiFi.status() != WL_CONNECTED))	{
     		startsoftAP();
@@ -934,7 +935,7 @@ void loop() {
     lastMillis = millis();
 
     #ifdef SR04
-    if (MyConfParam.v_Sonar_distance != "0") {
+    if (MyConfParam. v_Sonar_distance != "0") {
           pinMode(TRIG_PIN, INPUT_PULLUP);
           pinMode(ECHO_PIN, INPUT_PULLUP);
           //HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
