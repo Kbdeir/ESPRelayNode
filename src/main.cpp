@@ -894,6 +894,7 @@ void setup() {
 
 void loop() {
   MDNS.update();
+  // test
 
   if (restartRequired){
     Serial.printf("Restarting ESP\n\r");
