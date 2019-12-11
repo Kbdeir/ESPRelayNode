@@ -290,10 +290,12 @@ void SetAsyncHTTP(){
               }
             }
           //request->send(200, "text/plain", "Done");    
+            request->redirect("/RelayCmdApplied.html");
         } else {
-          //request->send(SPIFFS, "/Config.html", String(), false, processor);
+          request->send(SPIFFS, "/Config.html", String(), false, processor);
         }
-         request->send(SPIFFS, "/Config.html", String(), false, processor);
+        // request->send(SPIFFS, "/Config.html", String(), false, processor);
+         
 
     });
 
@@ -310,6 +312,11 @@ void SetAsyncHTTP(){
           clearIRMap();
           loadIRMapConfig(myIRMap);
     });
+
+    AsyncWeb_server.on("/RelayCmdApplied.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/RelayCmdApplied.html");
+    });    
 
 
     AsyncWeb_server.on("/ApplyRelay.html", HTTP_GET, [](AsyncWebServerRequest *request){

@@ -90,7 +90,7 @@ void InputSensor::watch() {
                if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}
               }
               /*
-              this will tie the relay to the physical input, mqtt is ignored if physical input is different then mqtt mesage
+              this will tie the relay to the physical input, mqtt is ignored if physical input is different from mqtt message
               if (digitalRead(rtemp->getRelayPin()) != digitalRead(this->pin)) {
                 digitalWrite(rtemp->getRelayPin(), digitalRead(this->pin));
               }

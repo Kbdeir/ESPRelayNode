@@ -20,12 +20,15 @@
 #include <TempSensor.h>
 
 
+
+
 //#include <RelaysArray.h>
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
 extern std::vector<void *> inputs ; // a list to hold all relays
 
 extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
+
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -725,12 +728,13 @@ void Wifi_connect() {
               Serial.println(F("waiting for sync"));
             #endif
 
+            Serial.println(F("starting mdns"));
             if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
               Serial.println(F("Error setting up MDNS responder!"));
             }
-            Serial.println(F("mDNS responder started"));
-            MDNS.addService(F("http"), F("tcp"), 80); // Announce esp tcp service on port 8080
-            MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.toString().c_str());
+            Serial.println("mDNS responder started");
+            MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
+            MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
 
             trials = 0;
             setSyncProvider(getNtpTime);
@@ -743,6 +747,7 @@ void Wifi_connect() {
     } // if (digitalRead(ConfigInputPin) == HIGH)
 
     if (digitalRead(ConfigInputPin) == LOW){
+      Serial.println(F("Starting AP_STA mode"));
       WiFi.mode(WIFI_AP_STA);
     	if ((WiFi.status() != WL_CONNECTED))	{
     		startsoftAP();
@@ -757,14 +762,13 @@ void setupInputs(){
   Inputsnsr13.initialize(SwitchButtonPin2,process_Input,INPUT_NONE);  
 
 
-  
-
 #ifdef HWver03
+  
   Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
   Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
   Inputsnsr02.post_mqtt = true;
-  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12
+  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
   Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
 #endif
 
@@ -840,11 +844,11 @@ void setup() {
 
     setupInputs();
     // Add inputs to vector. the order is important.
-    inputs.push_back(&Inputsnsr13);
-    inputs.push_back(&Inputsnsr12);
-    inputs.push_back(&Inputsnsr14);
+    inputs.push_back(&Inputsnsr13); // this is input 0, CONF pin on board
+    inputs.push_back(&Inputsnsr12); // this is input 1, second input on the board
+    inputs.push_back(&Inputsnsr14); // this is input 2, first input on the board
     #ifdef HWver03
-    inputs.push_back(&Inputsnsr02);
+    inputs.push_back(&Inputsnsr02); // this is input 3, third pin on board
     #endif
 
     //while (relay0.loadrelayparams(0) != true){
@@ -889,6 +893,7 @@ void setup() {
 
 
 void loop() {
+  MDNS.update();
 
   if (restartRequired){
     Serial.printf("Restarting ESP\n\r");
@@ -934,9 +939,8 @@ void loop() {
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
 
-
     #ifdef SR04
-    if (MyConfParam.v_Sonar_distance != "0") {
+    if (MyConfParam. v_Sonar_distance != "0") {
           pinMode(TRIG_PIN, INPUT_PULLUP);
           pinMode(ECHO_PIN, INPUT_PULLUP);
           //HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
@@ -1013,7 +1017,5 @@ void loop() {
         );
     }
   }
-
-
 
 }
