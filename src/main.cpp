@@ -20,12 +20,15 @@
 #include <TempSensor.h>
 
 
+
+
 //#include <RelaysArray.h>
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
 extern std::vector<void *> inputs ; // a list to hold all relays
 
 extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
+
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -725,12 +728,13 @@ void Wifi_connect() {
               Serial.println(F("waiting for sync"));
             #endif
 
+            Serial.println(F("starting mdns"));
             if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
               Serial.println(F("Error setting up MDNS responder!"));
             }
-            Serial.println(F("mDNS responder started"));
-            MDNS.addService(F("http"), F("tcp"), 80); // Announce esp tcp service on port 8080
-            MDNS.addServiceTxt(F("http"), F("tcp"),F("MQTT server"), MyConfParam.v_MQTT_BROKER.toString().c_str());
+            Serial.println("mDNS responder started");
+            MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
+            MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
 
             trials = 0;
             setSyncProvider(getNtpTime);
@@ -889,6 +893,7 @@ void setup() {
 
 
 void loop() {
+  MDNS.update();
 
   if (restartRequired){
     Serial.printf("Restarting ESP\n\r");
