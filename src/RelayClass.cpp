@@ -42,7 +42,7 @@ Relay::Relay(uint8_t p,
   fgeneralinLoopFunc = NULL;
 
   ticker_relay_ttl = new Schedule_timer(fttlcallback,0,0,MILLIS_,fttlupdatecallback, SECONDS_);
-  ticker_ACS712 = new Schedule_timer (fticker_ACS712_func,100,0,MILLIS_);
+  ticker_ACS712 = new Schedule_timer (fticker_ACS712_func,250,0,MILLIS_);
   ticker_ACS_MQTT = new Schedule_timer (fticker_ACS712_mqtt_func,1000,0,MILLIS_);
   ticker_relay_tta = new Schedule_timer(fttacallback,0,0,MILLIS_);
   rchangedflag = false;

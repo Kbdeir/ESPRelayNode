@@ -120,10 +120,10 @@ unsigned long previousMillis = 0;             // will store last time LED was up
 long blinkInterval = 1000;           		      // blinkInterval at which to blink (milliseconds)
 long APModetimer  = 60*5;                     // max allowed time in AP mode, reset if exceeded
 long APModetimer_run_value = 0;               // timer value to track the AP mode rining-timer value. reset board if it exceeds APModetimer
-AsyncServer* MBserver = new AsyncServer(502); // start listening on tcp port 7050
+AsyncServer* MBserver = new AsyncServer(502); // start listening on tcp port 502
 ModbusIP mb;
-const int LAMP1_COIL  = 1;
-const int LAMP2_COIL  = 2;
+const int LAMP1_COIL  = 0;
+const int LAMP2_COIL  = 1;
 float old_acs_value   = 0;
 float ACS_I_Current   = 0;
 
@@ -195,9 +195,11 @@ void ticker_ACS712_func (void* relaySender) {
   Relay * rly = static_cast<Relay *>(relaySender);
     if (rly->RelayConfParam->v_ACS_Active) {
         ACS_I_Current = sensor.getCurrentAC();
-        // Serial.println(String("I = ") + ACS_I_Current + " A");
+        //Serial.println(String("ACS_I_Current = ") + ACS_I_Current + " A");
+        //Serial.println(String("RelayConfParam->v_Max_Current = ") + rly->RelayConfParam->v_Max_Current);
         if (ACS_I_Current > rly->RelayConfParam->v_Max_Current) {
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
+            Serial.println("ACS_I_Current > RelayConfParam->v_Max_Current");
         }
     }
   }
@@ -735,6 +737,8 @@ void Wifi_connect() {
             Serial.println("mDNS responder started");
             MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
             MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
+            MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
+            
 
             trials = 0;
             setSyncProvider(getNtpTime);
