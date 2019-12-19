@@ -41,9 +41,9 @@
 #define InputPin14 14
 
 #ifdef HWver03
-#define SwitchButtonPin2 12 // revert to 12 when done testing
+  #define SwitchButtonPin2 12 // revert to 12 when done testing
 #else
-#define SwitchButtonPin2 13 // revert to 12 when done testing
+  #define SwitchButtonPin2 13 // revert to 12 when done testing
 #endif
 
 #define TempSensorPin 14
