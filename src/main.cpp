@@ -742,8 +742,8 @@ void Wifi_connect() {
 
             trials = 0;
             setSyncProvider(getNtpTime);
-            //connectToMqtt();
-            tiker_MQTT_CONNECT.start();
+            //connectToMqtt();           // replaced by a call to tiker_MQTT_CONNECT timer
+            tiker_MQTT_CONNECT.start();  // timer will retry to connect every 5s. 
         		MBserver->begin();
         		MBserver->onClient(&handleNewClient, MBserver);
 
