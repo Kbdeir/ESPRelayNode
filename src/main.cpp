@@ -1,7 +1,7 @@
 // RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF n
 
-#define SR04 // utrasonic sensor  code 
+//#define SR04 // utrasonic sensor  code 
 
 #include <Arduino.h>
 #include <string.h>
@@ -742,7 +742,8 @@ void Wifi_connect() {
 
             trials = 0;
             setSyncProvider(getNtpTime);
-            connectToMqtt();
+            //connectToMqtt();
+            tiker_MQTT_CONNECT.start();
         		MBserver->begin();
         		MBserver->onClient(&handleNewClient, MBserver);
 
@@ -898,6 +899,7 @@ void setup() {
 
 void loop() {
   MDNS.update();
+      pinMode ( ConfigInputPin, INPUT_PULLUP );
 
   if (restartRequired){
     Serial.printf("Restarting ESP\n\r");
@@ -998,6 +1000,8 @@ void loop() {
 
     if (wifimode == WIFI_AP_MODE) {
   		APModetimer_run_value++;
+      Serial.print("\n ApMode will restart after: ");
+      Serial.print(APModetimer_run_value);
   		if (APModetimer_run_value == APModetimer) {
         APModetimer_run_value = 0;
         ESP.restart();

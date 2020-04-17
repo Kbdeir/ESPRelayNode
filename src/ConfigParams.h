@@ -37,7 +37,7 @@
 
 #define InputPin12 12
 
-#define ConfigInputPin 13
+#define ConfigInputPin 13 // was 13. should return to 13
 #define InputPin14 14
 
 #ifdef HWver03
