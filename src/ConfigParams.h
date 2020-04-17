@@ -47,6 +47,7 @@
 #endif
 
 #define TempSensorPin 14
+#define SecondTempSensorPin 12
 
 
 #define RETAINED true

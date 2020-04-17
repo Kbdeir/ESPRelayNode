@@ -19,7 +19,7 @@ extern InputSensor Inputsnsr02;
 AsyncMqttClient mqttClient;
 
 void connectToMqtt() {
-  Serial.println(F("Connecting MQTT..."));
+  Serial.println(F("\n[MQTT] Connecting"));
   mqttClient.setCleanSession(true);
   mqttClient.connect();
 }
@@ -52,8 +52,8 @@ void mqttpostinitstatusOfInputs(void* sender){
 
 void onMqttConnect(bool sessionPresent) {
   tiker_MQTT_CONNECT.stop();
-  Serial.println(F("Connected to MQTT."));
-  Serial.print(F("Session present: "));
+  Serial.println(F("\n[MQTT] Connected to MQTT."));
+  Serial.print(F("[MQTT] Session present: "));
   Serial.println(sessionPresent);
 
 	//uint16_t packetIdSub = mqttClient.subscribe(relay0.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
@@ -66,7 +66,7 @@ void onMqttConnect(bool sessionPresent) {
   }
 
 
-	Serial.print(F("Subscribing at QoS 2, packetId: "));
+	Serial.print(F("[MQTT] Subscribing at QoS 2, packetId: "));
   // Serial.println(packetIdSub);
   // mqttpostinitstatusOfInputs(NULL);
   [](){
@@ -88,14 +88,14 @@ void onMqttConnect(bool sessionPresent) {
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-  Serial.println(F("Disconnected from MQTT."));
+  Serial.println(F("\n[MQTT] Disconnected"));
   if (WiFi.isConnected()) {
     tiker_MQTT_CONNECT.start(); // recoonect to mqtt server
   }
 }
 
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
-  Serial.println(F("Subscribe acknowledged."));
+  Serial.println(F("\n[MQTT] Subscribe ack"));
   Serial.print(F("  packetId: "));
   Serial.println(packetId);
   Serial.print(F("  qos: "));
@@ -103,14 +103,14 @@ void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
 }
 
 void onMqttUnsubscribe(uint16_t packetId) {
-  Serial.println(F("Unsubscribe acknowledged."));
+  Serial.println(F("\n[MQTT] Unsubscribe ack"));
   Serial.print(F("  packetId: "));
   Serial.println(packetId);
 }
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
 
-  Serial.print(F("\n Publish received."));
+  Serial.print(F("\n[MQTT] Received"));
   Serial.print(F("  topic: "));
   Serial.print(topic);
 	Serial.print(F("  payload: "));
@@ -197,7 +197,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
 
 void onMqttPublish(uint16_t packetId) {
-  Serial.print(F("\n Publish acknowledged."));
+  Serial.print(F("\n[MQTT] Publish ack"));
   Serial.print(F("  packetId: "));
   Serial.print(packetId);
 }

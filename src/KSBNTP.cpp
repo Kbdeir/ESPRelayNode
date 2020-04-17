@@ -35,8 +35,11 @@ time_t getNtpTime()
 {
   IPAddress ntpServerIP; // NTP server's ip address
 
+  if (WiFi.status() == WL_CONNECTED) {
+
+
   while (Udp.parsePacket() > 0) ; // discard any previously received packets
-  Serial.println(F("Transmit NTP Request"));
+  Serial.println(F("[NTP ] Transmit NTP Request"));
   // get a random server from the pool
   // WiFi.hostByName(ntpServerName, ntpServerIP);
   //ntpServerIP.fromString(MyConfParam.v_timeserver);
@@ -54,9 +57,10 @@ time_t getNtpTime()
   sendNTPpacket(ntpServerIP);
   uint32_t beginWait = millis();
   while ((millis() - beginWait < 3000) && !ftimesynced) {
+    ESP.wdtFeed();
     int size = Udp.parsePacket();
     if (size >= NTP_PACKET_SIZE) {
-      Serial.println(F("Receive NTP Response"));
+      Serial.println(F("[NTP ] Received NTP Response"));
       Udp.read(packetBuffer, NTP_PACKET_SIZE);  // read packet into the buffer
       unsigned long secsSince1900;
       // convert four bytes starting at location 40 to a long integer
@@ -71,10 +75,11 @@ time_t getNtpTime()
       return secsSince1900 - 2208988800UL + timeZone * SECS_PER_HOUR;
     }
   }
-  Serial.println(F("No NTP Response :-("));
+  Serial.println(F("[NTP ] No NTP Response :-("));
   setSyncInterval(10); // if failed to get time, try after 10 seconds
 
   return 0; // return 0 if unable to get the time
+  }
 }
 
 // send an NTP request to the time server at the given address

@@ -127,8 +127,11 @@ const int LAMP2_COIL  = 1;
 float old_acs_value   = 0;
 float ACS_I_Current   = 0;
 
+
 static TempSensor tempsensor(TempSensorPin);
+static TempSensor TempSensorSecond(SecondTempSensorPin);
 extern float MCelcius;
+extern float MCelcius_SecondTempSensor;
 
 ACS712 sensor(ACS712_20A, A0);
 
@@ -137,6 +140,8 @@ void ticker_relay_ttl_periodic_callback(void* obj);
 void ticker_ACS712_func (void* obj);
 void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
+
+WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
 
 int getpinMode(uint8_t pin)
 {
@@ -236,7 +241,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
       rly->rchangedflag = false;
 
       if (rly->readrelay() == HIGH) {
-        Serial.print(F("\n\n An interrupt *ON* has occurred."));
+        Serial.print(F("\n\n[INFO] interrupt *ON* occurred."));
         if (rly->RelayConfParam->v_ttl > 0 ) {
           rly->start_ttl_timer();
         }
@@ -245,7 +250,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
       }
 
       if (digitalRead(rly->getRelayPin()) == LOW) {
-        Serial.print(F("\n\n An interrupt *OFF* has occurred."));
+        Serial.print(F("\n\n[INFO] interrupt *OFF* occurred."));
         rly->stop_ttl_timer();
         if (rly->RelayConfParam->v_ttl > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
@@ -359,6 +364,17 @@ void blinkled(){
 	}
 }
 
+void blinkledtimed(void* obj){
+		if (ledState == LOW) {
+			ledState = HIGH;
+		} else {
+			ledState = LOW;
+		}
+		digitalWrite(led, ledState);
+}
+// Schedule_timer LedBlinker(blinkledtimed,500,0,MILLIS_);
+
+
 
 void startsoftAP(){
   delay(1000);
@@ -449,9 +465,8 @@ void chronosInit() {
             strcpy(timerfilename, "/timer");
             strcat(timerfilename, String(tcounter).c_str());
             strcat(timerfilename, ".json");
-            Serial.print (F("\n--------------------------"));
+            Serial.print (F("\n[[TIMERS ]"));
             Serial.print  (timerfilename);
-            Serial.print("\n");
             return timerfilename;
           }()
         ,NTmr);
@@ -606,13 +621,12 @@ void chronosInit() {
   } // while loop
 
   LINE();
-  PRINTLN(F("**** presumably got NTP time **** :"));
+  PRINT(F("[NTP ] Presumably got NTP time,"));
+  PRINT(F(" right \"now\" it's: "));
   Chronos::DateTime::now().printTo(SERIAL_DEVICE);
-  LINE();
   Chronos::DateTime nowTime(Chronos::DateTime::now());
-  PRINT(F("Right \"now\" it's: "));
-  nowTime.printTo(SERIAL_DEVICE);
-  LINES(2);
+   //nowTime.printTo(SERIAL_DEVICE);
+  LINE();
 }
 
 
@@ -630,7 +644,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
     LINE();
     //PRINTLN(F("**** Some things are going on this very minute! ****"));
     for (int i = 0; i < numOngoing; i++) {
-      PRINT(F("**** Running Event: "));
+      PRINT(F("[INFO] Running Event: "));
       PRINT((int )occurrenceList[i].id);
       PRINT('\t');
       PRINT(EventNames[occurrenceList[i].id]);
@@ -648,7 +662,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
           if ((nowTime > occurrenceList[i].start + 1)) {
             rly->hastimerrunning = true;
             LINE();
-            PRINTLN(F(" *** truning relay ON... event is Starting - TimerPaused value: *** "));
+            PRINTLN(F("[INFO] truning relay ON... event is Starting - TimerPaused value"));
             PRINT(rly->timerpaused);
             if (!digitalRead(rly->getRelayPin())){
               if (!rly->timerpaused) {
@@ -660,7 +674,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
             LINE();
             rly->lockupdate = false;
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
-            PRINTLN(F(" *** truning relay OFF... event is done - TimerPaused value: ***"));
+            PRINTLN(F("[INFO] truning relay OFF... event is done - TimerPaused value"));
             PRINT(rly->timerpaused);
             rly->timerpaused = false;
             rly->hastimerrunning = false;
@@ -691,68 +705,71 @@ InputSensor Inputsnsr02(InputPin02,process_Input,INPUT_NONE);
 
 //InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 
-void Wifi_connect() {
-  Serial.println(F("Starting WiFi"));
-  WiFi.softAPdisconnect();
-  WiFi.disconnect();
-  WiFi.mode(WIFI_STA);
-
-  delay(100);
-
-    if (digitalRead(ConfigInputPin) == HIGH) {
-        //WiFi.begin( getSsid.c_str() , getPass.c_str() ); // try to connect with saved SSID & PASS
-        WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
-        Serial.print("\n ssid: "); Serial.print(MyConfParam.v_ssid.c_str());
-        Serial.print("\n pass: "); Serial.print(MyConfParam.v_pass.c_str());Serial.print("\n ");
-        //  WiFi.begin( "ksbb" , "samsam12" ); // try to connect with saved SSID & PASS
-        trials = 0;
-      	blinkInterval = 50;
-        while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials*2)){
-        //  while ((WiFi.waitForConnectResult() != WL_CONNECTED) & (trials < MaxWifiTrials)){
-            delay(50);
-        		blinkled();
-            trials++;
-            Serial.print(F("-"));
-        }
-        if  (WiFi.status() == WL_CONNECTED)   {
+void thingsTODO_on_WIFI_Connected() {
             Serial.println(F("WiFi Connected."));
             IP_info();
             SetAsyncHTTP();
         		blinkInterval = 1000;
-            Serial.print(F("IP number assigned by DHCP is "));
+            Serial.print(F("\n[WIFI]IP number assigned by DHCP is "));
             Serial.println(WiFi.localIP());
-            Serial.println(F("Starting UDP"));
+            Serial.println(F("\n[INFO] Starting UDP"));
             Udp.begin(localPort);
 
             #ifdef ESP8266
-              Serial.print(F("Local port: "));
+              Serial.print(F("\n[INFO] Local port: "));
               Serial.println(Udp.localPort());
-              Serial.println(F("waiting for sync"));
+              Serial.println(F("[INFO] waiting for sync"));
             #endif
 
-            Serial.println(F("starting mdns"));
+            Serial.println(F("[INFO] starting mdns"));
             if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
-              Serial.println(F("Error setting up MDNS responder!"));
+              Serial.println(F("[INFO] Error setting up MDNS responder!"));
             }
-            Serial.println("mDNS responder started");
+            Serial.println("[INFO] mDNS responder started");
             MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
             MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
             MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
             
-
-            trials = 0;
             setSyncProvider(getNtpTime);
             //connectToMqtt();           // replaced by a call to tiker_MQTT_CONNECT timer
             tiker_MQTT_CONNECT.start();  // timer will retry to connect every 5s. 
         		MBserver->begin();
         		MBserver->onClient(&handleNewClient, MBserver);
 
+}
+
+void Wifi_connect() {
+
+  Serial.println(F("[INFO] Starting WiFi"));
+ // WiFi.softAPdisconnect();
+ // WiFi.disconnect();
+  WiFi.mode(WIFI_STA);
+
+  delay(100);
+
+    if (digitalRead(ConfigInputPin) == HIGH) {
+        WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+        Serial.print("\n[WIFI] ssid: "); Serial.print(MyConfParam.v_ssid.c_str());
+        Serial.print("\n[WIFI] pass: "); Serial.print(MyConfParam.v_pass.c_str());Serial.print("\n ");
+        trials = 0;
+      	blinkInterval = 50;
+        // LedBlinker.update(nullptr);
+        /* while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials*2)){
+        //  while ((WiFi.waitForConnectResult() != WL_CONNECTED) & (trials < MaxWifiTrials)){
+            delay(50);
+        		blinkled();
+            trials++;
+            Serial.print(F("-"));
+        }*/
+        if  (WiFi.status() == WL_CONNECTED)   {
+            thingsTODO_on_WIFI_Connected();
+            trials = 0;
             APModetimer_run_value = 0;
         }  // wifi is connected
     } // if (digitalRead(ConfigInputPin) == HIGH)
 
     if (digitalRead(ConfigInputPin) == LOW){
-      Serial.println(F("Starting AP_STA mode"));
+      Serial.println(F("[WIFI] Starting AP_STA mode"));
       WiFi.mode(WIFI_AP_STA);
     	if ((WiFi.status() != WL_CONNECTED))	{
     		startsoftAP();
@@ -797,7 +814,9 @@ void setupInputs(){
   //Inputsnsr14.SetInputSensorPin(InputPin14);
 }
 
+
 void setup() {
+
     pinMode ( led, OUTPUT );
     pinMode ( ConfigInputPin, INPUT_PULLUP );
     pinMode ( InputPin12, INPUT_PULLUP );
@@ -806,6 +825,8 @@ void setup() {
     pinMode ( InputPin02, INPUT_PULLUP );
     #endif
     Serial.begin(115200);
+
+    // LedBlinker.start();
 
     /*
        only need to format SPIFFS the first time we run a
@@ -834,7 +855,25 @@ void setup() {
       ESP.restart();
     };
 
-    WiFi.mode(WIFI_AP_STA);
+    gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
+    {
+      Serial.print("\n[WIFI] Station connected, IP: ");
+      Serial.println(WiFi.localIP());
+      thingsTODO_on_WIFI_Connected();
+    });
+
+    disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
+    {
+      Serial.println("\n[WIFI] Station disconnected");
+      // Wifi_connect();
+    });
+
+    
+    WiFi.mode(WIFI_STA);
+    if (digitalRead(ConfigInputPin) == LOW){
+      WiFi.mode(WIFI_AP_STA);
+    }
+    WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
 
 		mqttClient.onConnect(onMqttConnect);
 		mqttClient.onDisconnect(onMqttDisconnect);
@@ -902,18 +941,19 @@ void loop() {
       pinMode ( ConfigInputPin, INPUT_PULLUP );
 
   if (restartRequired){
-    Serial.printf("Restarting ESP\n\r");
+    Serial.printf("\n[SYSTEM] Restarting ESP\n\r");
     restartRequired = false;
     delay(2500);
     ESP.restart();
   }
 
-  if  (WiFi.status() != WL_CONNECTED)  {
-    if (APModetimer_run_value == 0) Wifi_connect();
-  }
+ // if  (WiFi.status() != WL_CONNECTED)  {
+    //if (APModetimer_run_value == 0) Wifi_connect();
+ // }
 
  	blinkled();
   tiker_MQTT_CONNECT.update(nullptr);
+  // LedBlinker.update(nullptr);
 
   for (auto it : relays)  {
     Relay * rtemp = static_cast<Relay *>(it);
@@ -997,11 +1037,10 @@ void loop() {
     }
     #endif
 
-
     if (wifimode == WIFI_AP_MODE) {
   		APModetimer_run_value++;
-      Serial.print("\n ApMode will restart after: ");
-      Serial.print(APModetimer_run_value);
+      Serial.print("\n[WIFI] ApMode will restart after (seconds): ");
+      Serial.print(APModetimer-APModetimer_run_value);
   		if (APModetimer_run_value == APModetimer) {
         APModetimer_run_value = 0;
         ESP.restart();
@@ -1013,9 +1052,14 @@ void loop() {
     if (millis() - lastMillis5000 > 5000) {
       lastMillis5000 = millis();
       tempsensor.getCurrentTemp(0);
-      Serial.print("\n Temperature: ");
+      TempSensorSecond.getCurrentTemp(0);
+      Serial.print("\n[INFO] Temperature: ");
       Serial.print(tempsensor.getCurrentTemp(0));
-      float rtmp = roundf(MCelcius);
+      Serial.print("\n[INFO] Temperature_Sensor2: ");
+      Serial.print(TempSensorSecond.getCurrentTemp(0)); 
+
+      //float rtmp = roundf(MCelcius);
+      float rtmp = roundf(tempsensor.Celcius);
       mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];
             itoa(rtmp,tmp,10);
@@ -1023,6 +1067,17 @@ void loop() {
           // return String(round(MCelcius)).c_str();
           }()
         );
+
+      rtmp = roundf(TempSensorSecond.Celcius);
+      mqttClient.publish((relay0.RelayConfParam->v_TemperatureValue + "_2").c_str(), QOS2, RETAINED, [rtmp](){
+            char tmp[10];
+            itoa(rtmp,tmp,10);
+            return tmp; //
+          // return String(round(MCelcius)).c_str();
+          }()
+        );
+
+
     }
   }
 
