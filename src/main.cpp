@@ -19,7 +19,7 @@
 #include <TimerClass.h>
 #include <TempSensor.h>
 
-
+// #define SolarHeaterControllerMode // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
 
 
 //#include <RelaysArray.h>
@@ -307,6 +307,31 @@ void buttonclick(void* relaySender, void* inputSender) {
       }
     mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
   }
+}
+
+void TempertatureSensorEvent(int rlynb, float TSolarPanel, float TSolarTank) {
+  Serial.print("\n[INFO] TempertatureSensorEvent");
+  Relay * rtmp =  getrelaybynumber(0);
+  
+  //mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
+  if (TSolarPanel > 50) {
+    Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL > 50");
+    if ((TSolarPanel - TSolarTank) > 5) {
+      rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp > 5");
+    }
+    if ((TSolarPanel - TSolarTank) < 5) {
+      rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp < 5");
+    }    
+  }
+
+  if (TSolarPanel < 50) {
+      rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL < 50");
+   }
+    
+  
 }
 
 
@@ -1053,13 +1078,13 @@ void loop() {
       lastMillis5000 = millis();
       tempsensor.getCurrentTemp(0);
       TempSensorSecond.getCurrentTemp(0);
+
+      float rtmp = roundf(tempsensor.Celcius);
+      float TSolarTank = rtmp;
+
       Serial.print("\n[INFO] Temperature: ");
       Serial.print(tempsensor.getCurrentTemp(0));
-      Serial.print("\n[INFO] Temperature_Sensor2: ");
-      Serial.print(TempSensorSecond.getCurrentTemp(0)); 
 
-      //float rtmp = roundf(MCelcius);
-      float rtmp = roundf(tempsensor.Celcius);
       mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];
             itoa(rtmp,tmp,10);
@@ -1069,6 +1094,10 @@ void loop() {
         );
 
       rtmp = roundf(TempSensorSecond.Celcius);
+      float TSolarPanel = rtmp;
+      Serial.print("\n[INFO] Temperature_Sensor2: ");
+      Serial.print(TempSensorSecond.getCurrentTemp(0)); 
+
       mqttClient.publish((relay0.RelayConfParam->v_TemperatureValue + "_2").c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];
             itoa(rtmp,tmp,10);
@@ -1077,6 +1106,10 @@ void loop() {
           }()
         );
 
+      #ifdef SolarHeaterControllerMode
+            TempertatureSensorEvent(0,TSolarPanel,TSolarTank);
+      #else
+      #endif
 
     }
   }
