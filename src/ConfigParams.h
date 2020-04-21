@@ -17,7 +17,9 @@
 #ifndef _CONFIGS_H__
 #define _CONFIGS_H__
 
-#define HWver03 // new board design
+
+
+
 
 #include <Arduino.h>
 #include <Scheduletimer.h>
@@ -27,9 +29,9 @@
 
 #ifdef HWver03
   #define led         16
-  #define InputPin02  02
+  #define InputPin02  02 
 #else
-  #define led         02
+  #define led         02 
 #endif
 
 #define RelayPin 05

@@ -1,7 +1,10 @@
 // RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF n
 
-//#define SR04 // utrasonic sensor  code 
+//#define SR04                    // utrasonic sensor code 
+#define SolarHeaterControllerMode // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
+#define HWver03                   // new board design
+
 
 #include <Arduino.h>
 #include <string.h>
@@ -18,8 +21,7 @@
 #include <InputClass.h>
 #include <TimerClass.h>
 #include <TempSensor.h>
-
-// #define SolarHeaterControllerMode // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
+#include <TempConfig.h>
 
 
 //#include <RelaysArray.h>
@@ -60,6 +62,7 @@ time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
 
 NodeTimer NTmr(4);
+TempConfig PTempConfig(1);
 
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
@@ -314,22 +317,28 @@ void TempertatureSensorEvent(int rlynb, float TSolarPanel, float TSolarTank) {
   Relay * rtmp =  getrelaybynumber(0);
   
   //mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
-  if (TSolarPanel > 50) {
-    Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL > 50");
-    if ((TSolarPanel - TSolarTank) > 5) {
+  if ((PTempConfig.spanTempfrom != 0) && (PTempConfig.spanBuffer != 0)) {
+  if (TSolarPanel > PTempConfig.spanTempfrom) {
+    Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL > ");
+    Serial.print (PTempConfig.spanTempfrom);
+    if ((TSolarPanel - TSolarTank) > PTempConfig.spanBuffer) {
       rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
-      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp > 5");
+      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp > ");
+      Serial.print (PTempConfig.spanBuffer);
     }
     if ((TSolarPanel - TSolarTank) < 5) {
       rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp < 5");
+      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp < ");
+      Serial.print (PTempConfig.spanBuffer);
     }    
   }
 
-  if (TSolarPanel < 50) {
+  if (TSolarPanel < PTempConfig.spanTempfrom) {
       rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL < 50");
+      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL < ");
+      Serial.print (PTempConfig.spanTempfrom);
    }
+  }
     
   
 }
@@ -946,6 +955,10 @@ void setup() {
       delay(2000);
       ESP.restart();
     };
+
+    if (relay0.RelayConfParam->v_TemperatureValue != "0") {
+        config_read_error_t res = loadTempConfig("/tempconfig.json",PTempConfig);      
+    }
 
     ACS_Calibrate_Start(relay0,sensor);
 

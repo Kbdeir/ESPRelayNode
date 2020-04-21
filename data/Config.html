@@ -1673,11 +1673,24 @@ a:hover
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
+#Button4
+{
+   border: 1px #D2691E solid;
+   -moz-border-radius: 4px;
+   -webkit-border-radius: 4px;
+   border-radius: 4px;
+   background-color: #D2691E;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+}
 </style>
     
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:3px;top:106px;width:529px;height:756px;z-index:84;">
+<div id="wb_Form1" style="position:absolute;left:3px;top:106px;width:529px;height:756px;z-index:85;">
 <form name="Form1" method="get" action="Apply.html" enctype="text/plain" id="Form1" onsubmit="return ValidateForm1(this)">
 <div id="wb_Text1" style="position:absolute;left:116px;top:77px;width:54px;height:16px;text-align:right;z-index:0;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">SSID</span></div>
@@ -1750,11 +1763,11 @@ a:hover
 <input type="text" id="Editbox12" style="position:absolute;left:185px;top:574px;width:291px;height:18px;line-height:18px;z-index:38;" name="Sonar_distance" value="%Sonar_distance%">
 </form>
 </div>
-<div id="wb_Text21" style="position:absolute;left:3px;top:22px;width:529px;height:82px;text-align:center;z-index:85;">
+<div id="wb_Text21" style="position:absolute;left:3px;top:22px;width:529px;height:82px;text-align:center;z-index:86;">
 <span style="color:#DCDCDC;font-family:Arial;font-size:24px;letter-spacing:2.07px;line-height:41px;">NODE CONFIGURATION</span><span style="color:#FFFFFF;font-family:Arial;font-size:24px;letter-spacing:4.07px;line-height:41px;"><br></span></div>
-<div id="wb_Text22" style="position:absolute;left:27px;top:68px;width:504px;height:25px;text-align:center;z-index:86;">
+<div id="wb_Text22" style="position:absolute;left:27px;top:68px;width:504px;height:25px;text-align:center;z-index:87;">
 <span style="color:#FFFFFF;font-family:Arial;font-size:17px;line-height:19px;">Node ID: %NODEID% - MAC : %MACADDR%</span></div>
-<div id="wb_Form2" style="position:absolute;left:4px;top:872px;width:528px;height:128px;z-index:87;">
+<div id="wb_Form2" style="position:absolute;left:4px;top:872px;width:528px;height:128px;z-index:88;">
 <form name="Form2" method="post" action="/update" enctype="multipart/form-data" id="Form2">
 <div id="wb_Text26" style="position:absolute;left:12px;top:24px;width:336px;height:16px;z-index:39;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">2. Upload firmware: Select firmware file to upload</span></div>
@@ -1762,9 +1775,9 @@ a:hover
 <input type="submit" id="Button5" name="firmwareload" value="Update" style="position:absolute;left:367px;top:49px;width:126px;height:25px;z-index:41;">
 </form>
 </div>
-<div id="wb_Text30" style="position:absolute;left:726px;top:32px;width:340px;height:16px;text-align:right;z-index:88;">
+<div id="wb_Text30" style="position:absolute;left:726px;top:32px;width:340px;height:16px;text-align:right;z-index:89;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
-<div id="wb_Form3" style="position:absolute;visibility:hidden;left:562px;top:965px;width:482px;height:158px;z-index:89;">
+<div id="wb_Form3" style="position:absolute;visibility:hidden;left:562px;top:965px;width:482px;height:158px;z-index:90;">
 <form name="Form2" method="post" action="/upload" enctype="multipart/form-data" id="Form3">
 <div id="wb_Text32" style="position:absolute;left:12px;top:24px;width:336px;height:16px;z-index:42;text-align:left;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Upload file:</span></div>
@@ -1772,8 +1785,8 @@ a:hover
 <input type="submit" id="Button6" name="UploadHTML" value="Upload" style="position:absolute;left:347px;top:51px;width:126px;height:25px;z-index:44;">
 </form>
 </div>
-<label for="" id="Label1" onclick="window.location.href='edit';return false;" style="position:absolute;left:556px;top:50px;width:149px;height:20px;line-height:20px;z-index:90;">File System Browser</label>
-<div id="wb_Form4" style="position:absolute;left:551px;top:165px;width:516px;height:735px;z-index:91;">
+<label for="" id="Label1" onclick="window.location.href='edit';return false;" style="position:absolute;left:556px;top:50px;width:149px;height:20px;line-height:20px;z-index:91;">File System Browser</label>
+<div id="wb_Form4" style="position:absolute;left:551px;top:165px;width:516px;height:735px;z-index:92;">
 <form name="Relay2Conf" method="get" action="ApplyRelay.html" enctype="text/plain" id="Form4" onsubmit="return ValidateRelay2Conf(this)">
 <input type="text" id="RelayNb2" style="position:absolute;left:443px;top:9px;width:20px;visibility:hidden;height:18px;line-height:18px;z-index:45;" name="RelayNB" value="2">
 <input type="submit" id="Button7" name="Submit" value="save" style="position:absolute;left:34px;top:673px;width:96px;height:25px;z-index:46;">
@@ -1808,7 +1821,7 @@ a:hover
 <div id="wb_Text25" style="position:absolute;left:100px;top:583px;width:128px;height:16px;text-align:right;z-index:66;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Measure Current</span></div>
 <input type="text" id="Editbox34" style="position:absolute;left:374px;top:5px;width:112px;height:18px;line-height:18px;z-index:67;" name="RSTATE0" value="%RSTATE0%" readonly disabled>
-<input type="text" id="TemperatureValue_edt" style="position:absolute;left:189px;top:368px;width:291px;height:18px;line-height:18px;z-index:68;" name="TemperatureValue" value="%TemperatureValue%">
+<input type="text" id="TemperatureValue_edt" style="position:absolute;left:189px;top:368px;width:253px;height:18px;line-height:18px;z-index:68;" name="TemperatureValue" value="%TemperatureValue%">
 <div id="wb_Text5" style="position:absolute;left:0px;top:372px;width:180px;height:16px;text-align:right;z-index:69;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Temperature Value Topic</span></div>
 <div id="wb_Text39" style="position:absolute;left:4px;top:547px;width:224px;height:16px;text-align:right;z-index:70;">
@@ -1830,26 +1843,27 @@ a:hover
 <div id="wb_Text10" style="position:absolute;left:0px;top:27px;width:180px;height:16px;text-align:right;z-index:78;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Relay Number</span></div>
 <input type="text" id="Editbox23" style="position:absolute;left:189px;top:59px;width:291px;height:18px;line-height:18px;z-index:79;" name="PUB_TOPIC1" value="%PUB_TOPIC1%">
+<input type="submit" id="Button4" onclick="window.location.href='./AdvancedTemperatureConf.html';return false;" name="AdvTempConf" value="..." style="position:absolute;left:460px;top:370px;width:28px;height:30px;z-index:80;">
 </form>
 </div>
-<input type="submit" id="Button8" onclick="window.location.href='Timer1';return false;" name="" value="Timer configuration" style="position:absolute;left:551px;top:922px;width:509px;height:32px;z-index:92;">
-<label for="" id="Label2" onclick="window.location.href='/heap';return false;" style="position:absolute;left:860px;top:51px;width:195px;height:18px;line-height:18px;z-index:93;">System heap: %heap%</label>
-<div id="wb_Text52" style="position:absolute;left:3px;top:412px;width:176px;height:32px;text-align:right;z-index:94;">
+<input type="submit" id="Button8" onclick="window.location.href='Timer1';return false;" name="" value="Timer configuration" style="position:absolute;left:551px;top:922px;width:509px;height:32px;z-index:93;">
+<label for="" id="Label2" onclick="window.location.href='/heap';return false;" style="position:absolute;left:860px;top:51px;width:195px;height:18px;line-height:18px;z-index:94;">System heap: %heap%</label>
+<div id="wb_Text52" style="position:absolute;left:3px;top:412px;width:176px;height:32px;text-align:right;z-index:95;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Toggle BTN Publish Topic<br>Input 0</span></div>
-<input type="submit" id="Button9" onclick="window.location.href='Input_Relays_Map';return false;" name="" value="Input to Relays Map" style="position:absolute;left:551px;top:970px;width:509px;height:32px;z-index:95;">
-<div id="wb_Text9" style="position:absolute;left:726px;top:85px;width:340px;height:16px;text-align:right;z-index:96;">
+<input type="submit" id="Button9" onclick="window.location.href='Input_Relays_Map';return false;" name="" value="Input to Relays Map" style="position:absolute;left:551px;top:970px;width:509px;height:32px;z-index:96;">
+<div id="wb_Text9" style="position:absolute;left:726px;top:85px;width:340px;height:16px;text-align:right;z-index:97;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Ambiant Temperature: %ATEMP% C</span></div>
-<div id="wb_Form5" style="position:absolute;left:551px;top:114px;width:516px;height:49px;z-index:97;">
+<div id="wb_Form5" style="position:absolute;left:551px;top:114px;width:516px;height:49px;z-index:98;">
 <form name="Form2" method="get" action="/" enctype="multipart/form-data" id="Form5">
-<input type="submit" id="Button10" name="GETRELAYNBBTN" value="Click to display relay configuration: " style="position:absolute;left:17px;top:12px;width:235px;height:25px;z-index:80;">
-<select name="GETRELAYNB" size="1" id="GETRELAYNB" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:268px;top:10px;width:65px;height:28px;z-index:81;">
+<input type="submit" id="Button10" name="GETRELAYNBBTN" value="Click to display relay configuration: " style="position:absolute;left:17px;top:12px;width:235px;height:25px;z-index:81;">
+<select name="GETRELAYNB" size="1" id="GETRELAYNB" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:268px;top:10px;width:65px;height:28px;z-index:82;">
 <option value="0">0</option>
 <option value="1">1</option>
 <option value="2">2</option>
 <option value="3">3</option>
 </select>
-<input type="submit" id="Button11" name="RELAYACTION" value="ON" style="position:absolute;left:353px;top:12px;width:65px;height:25px;z-index:82;">
-<input type="submit" id="Button12" name="RELAYACTION" value="OFF" style="position:absolute;left:429px;top:12px;width:65px;height:25px;z-index:83;">
+<input type="submit" id="Button11" name="RELAYACTION" value="ON" style="position:absolute;left:353px;top:12px;width:65px;height:25px;z-index:83;">
+<input type="submit" id="Button12" name="RELAYACTION" value="OFF" style="position:absolute;left:429px;top:12px;width:65px;height:25px;z-index:84;">
 </form>
 </div>
 <script>
