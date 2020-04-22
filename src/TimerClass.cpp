@@ -96,19 +96,19 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
 config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
 
   if (! SPIFFS.exists(filename)) {
-    Serial.println(F("timer file does not exist!"));
+    Serial.println(F("\n[TIMERS] timer file does not exist!"));
     return FILE_NOT_FOUND;
   }
 
   File configFile = SPIFFS.open(filename, "r");
   if (!configFile) {
-    Serial.println(F("Failed to open timer file"));
+    Serial.println(F("\n[TIMERS] Failed to open timer file"));
     return ERROR_OPENING_FILE;
   }
 
   size_t size = configFile.size();
   if (size > buffer_size) {
-    Serial.println(F("timer file size is too large, rebuilding."));
+    Serial.println(F("\n[TIMERS] timer file size is too large, rebuilding."));
     return ERROR_OPENING_FILE;
   }
 

@@ -17,7 +17,9 @@
 #ifndef _CONFIGS_H__
 #define _CONFIGS_H__
 
-//#define HWver03 // new board design
+
+
+
 
 #include <Arduino.h>
 #include <Scheduletimer.h>
@@ -27,20 +29,27 @@
 
 #ifdef HWver03
   #define led         16
-  #define InputPin02  02
+  #define InputPin02  02 
 #else
-  #define led         02
+  #define led         02 
 #endif
 
 #define RelayPin 05
 #define Relay2Pin 16
 
 #define InputPin12 12
-#define SwitchButtonPin2 12 // revert to 12 when done testing
-#define ConfigInputPin 13
+
+#define ConfigInputPin 13 // was 13. should return to 13
 #define InputPin14 14
 
+#ifdef HWver03
+  #define SwitchButtonPin2 12 // revert to 12 when done testing
+#else
+  #define SwitchButtonPin2 13 // revert to 12 when done testing
+#endif
+
 #define TempSensorPin 14
+#define SecondTempSensorPin 12
 
 
 #define RETAINED true

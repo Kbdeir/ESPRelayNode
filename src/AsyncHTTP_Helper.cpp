@@ -4,8 +4,11 @@
 #include <MQTT_Processes.h>
 #include <RelayClass.h>
 #include <TimerClass.h>
+#include <TempConfig.h>
+
 
 extern NodeTimer NTmr;
+extern TempConfig PTempConfig;
 //extern Relay relay0;
 extern float MCelcius;
 extern float ACS_I_Current;
@@ -22,6 +25,19 @@ AsyncWebServer AsyncWeb_server(80);
 
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
 //File cf;
+
+String TempConfProcessor(const String& var)
+{
+
+  if(var == F( "TNBT" ))                return String(PTempConfig.id);
+  if(var == F( "TRelay" ))              return String(PTempConfig.relay);
+  if(var == F( "spanTempfrom" ))        return String(PTempConfig.spanTempfrom);
+  if(var == F( "spanTempto" ))          return String(PTempConfig.spanTempto);
+  if(var == F( "spanBuffer" ))          return String(PTempConfig.spanBuffer);  
+  if(var == F( "CEnabled" ))            { if (PTempConfig.enabled)             return "1\" checked=\"\""; };
+
+  return String();
+}
 
 String timerprocessor(const String& var)
 {
@@ -238,6 +254,19 @@ void SetAsyncHTTP(){
         // int args = request->args();
     });
 
+
+    AsyncWeb_server.on("/AdvancedTemperatureConf.html", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        config_read_error_t res = loadTempConfig("/tempconfig.json",PTempConfig); 
+        request->send(SPIFFS, "/AdvancedTemperatureConf.html", String(), false, TempConfProcessor);
+      });
+
+    AsyncWeb_server.on("/AdvancedTempSave.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/AdvancedTempSave.html");
+            saveTempConfig(request);
+            config_read_error_t res = loadTempConfig("/tempconfig.json",PTempConfig);  
+    });
 
     AsyncWeb_server.on("/savetimer.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();

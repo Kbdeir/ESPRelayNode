@@ -67,7 +67,7 @@ void onMqttConnect(bool sessionPresent) {
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-  Serial.println("Disconnected from MQTT.");
+  Serial.println("\n Disconnected from MQTT.");
 
   if (reason == AsyncMqttClientDisconnectReason::TLS_BAD_FINGERPRINT) {
     Serial.println("Bad server fingerprint.");
