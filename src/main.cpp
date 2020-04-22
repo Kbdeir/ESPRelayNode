@@ -318,26 +318,26 @@ void TempertatureSensorEvent(int rlynb, float TSolarPanel, float TSolarTank) {
   
   //mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
   if ((PTempConfig.spanTempfrom != 0) && (PTempConfig.spanBuffer != 0)) {
-  if (TSolarPanel > PTempConfig.spanTempfrom) {
-    Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL > ");
-    Serial.print (PTempConfig.spanTempfrom);
-    if ((TSolarPanel - TSolarTank) > PTempConfig.spanBuffer) {
-      rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
-      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp > ");
-      Serial.print (PTempConfig.spanBuffer);
-    }
-    if ((TSolarPanel - TSolarTank) < 5) {
-      rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp < ");
-      Serial.print (PTempConfig.spanBuffer);
-    }    
-  }
-
-  if (TSolarPanel < PTempConfig.spanTempfrom) {
-      rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL < ");
+    if (TSolarPanel > PTempConfig.spanTempfrom) {
+      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL > ");
       Serial.print (PTempConfig.spanTempfrom);
-   }
+      if ((TSolarPanel - TSolarTank) > PTempConfig.spanBuffer) {
+        rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+        Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp > ");
+        Serial.print (PTempConfig.spanBuffer);
+      }
+      if ((TSolarPanel - TSolarTank) < PTempConfig.spanBuffer) {
+        rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+        Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp < ");
+        Serial.print (PTempConfig.spanBuffer);
+      }    
+    }
+
+    if (TSolarPanel < PTempConfig.spanTempfrom) {
+        rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+        Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL < ");
+        Serial.print (PTempConfig.spanTempfrom);
+    }
   }
     
   
@@ -772,6 +772,9 @@ void thingsTODO_on_WIFI_Connected() {
 
 }
 
+
+
+
 void Wifi_connect() {
 
   Serial.println(F("[INFO] Starting WiFi"));
@@ -894,12 +897,23 @@ void setup() {
       Serial.print("\n[WIFI] Station connected, IP: ");
       Serial.println(WiFi.localIP());
       thingsTODO_on_WIFI_Connected();
+      blinkInterval = 1000;
     });
 
     disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
     {
       Serial.println("\n[WIFI] Station disconnected");
       // Wifi_connect();
+      blinkInterval = 50;
+      
+      if (digitalRead(ConfigInputPin) == LOW){
+        Serial.println(F("[WIFI] Starting AP_STA mode"));
+        WiFi.mode(WIFI_AP_STA);
+        if ((WiFi.status() != WL_CONNECTED))	{
+          startsoftAP();
+        }
+      }      
+      
     });
 
     

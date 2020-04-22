@@ -1,6 +1,6 @@
 
 #include <TempConfig.h>
-#define buffer_size  1500
+#define buffer_size  500
 
 
 TempConfig::TempConfig(uint8_t para_id) {
@@ -47,8 +47,8 @@ bool saveTempConfig(AsyncWebServerRequest *request){
 
   request->hasParam("CEnabled")   ? json["CEnabled"]   =  "1"   : json["CEnabled"]   = "0" ;
 
-  char  timerfilename[20] = "/tempconfig";
-  strcat(timerfilename, ".json");
+  char  timerfilename[20] = "/tempconfig.json";
+  //strcat(timerfilename, ".json");
 
   File configFile = SPIFFS.open(timerfilename, "w");
   if (!configFile) {
