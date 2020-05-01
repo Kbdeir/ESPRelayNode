@@ -1,9 +1,10 @@
 // RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF n
 
-//#define SR04                    // utrasonic sensor code 
-#define SolarHeaterControllerMode // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
 #define HWver03                   // new board design
+// #define SR04                    // utrasonic sensor code 
+// #define SolarHeaterControllerMode // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
+// #define StepperMode
 
 
 #include <Arduino.h>
@@ -22,6 +23,10 @@
 #include <TimerClass.h>
 #include <TempSensor.h>
 #include <TempConfig.h>
+
+//#include <AH_EasyDriver.h>
+#include <AccelStepper.h>
+#include <SimpleTimer.h>
 
 
 //#include <RelaysArray.h>
@@ -104,6 +109,26 @@ const char * EventNames[] = {
       #define ECHO_PIN 12
 #endif
 
+#ifdef StepperMode
+  //AH_EasyDriver(int RES, int DIR, int STEP, int MS1, int MS2, int SLP);
+  //AH_EasyDriver shadeStepper(200,14,12,14,12,12,02);    // init w/o "enable" and "reset" functions
+  //AH_EasyDriver shadeStepper(200,14,12,4,5,6,7,8);
+
+  #define dirPin 14
+  #define stepPin 12
+  #define motorInterfaceType 1
+  AccelStepper shadeStepper = AccelStepper(motorInterfaceType, stepPin, dirPin);
+  //AH_EasyDriver shadeStepper(200,dirPin,stepPin);   // Initialisation
+
+  SimpleTimer timer;
+  //Global Variables
+  const int stepsPerRevolution = 200; 
+  bool steperrun = false;
+  int currentPosition = 0;
+  int newPosition = 0;  
+  const int unrolled = 13; //number of full rotations from fully rolled to fully unrolled
+#endif
+
 
 long timezone     = 1;
 byte daysavetime  = 1;
@@ -145,6 +170,10 @@ void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
 
 WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
+
+
+
+
 
 int getpinMode(uint8_t pin)
 {
@@ -725,17 +754,17 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 }
 
 
+ #ifndef StepperMode
+  //inputs
+  InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
+  InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
+  //InputSensor Inputsnsr14(Relay2Pin,process_Input,INPUT_NONE); // just moved to make room for connecting the ds18 temp sensor to  InputPin14
+  InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 
-//inputs
-InputSensor Inputsnsr12(InputPin12,process_Input,INPUT_NONE);
-InputSensor Inputsnsr13(SwitchButtonPin2,process_Input,INPUT_NONE);
-//InputSensor Inputsnsr14(Relay2Pin,process_Input,INPUT_NONE); // just moved to make room for connecting the ds18 temp sensor to  InputPin14
-InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
-
-#ifdef HWver03
-InputSensor Inputsnsr02(InputPin02,process_Input,INPUT_NONE);
+  #ifdef HWver03
+  InputSensor Inputsnsr02(InputPin02,process_Input,INPUT_NONE);
+  #endif
 #endif
-
 
 //InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 
@@ -816,6 +845,8 @@ void Wifi_connect() {
 
 void setupInputs(){
 
+   #ifndef StepperMode
+
   Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
   Inputsnsr12.initialize(InputPin12,process_Input,INPUT_NONE);
   Inputsnsr13.initialize(SwitchButtonPin2,process_Input,INPUT_NONE);  
@@ -849,18 +880,81 @@ void setupInputs(){
   Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
   Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
   //Inputsnsr14.SetInputSensorPin(InputPin14);
+
+  #endif
 }
 
 
+/*
+#ifdef StepperMode
+
+void processStepper()
+{
+  if (newPosition > currentPosition)
+  {
+    shadeStepper.sleepON();
+    shadeStepper.move(4144, BACKWARD);
+    currentPosition++;
+  }
+  if (newPosition < currentPosition)
+  {
+    shadeStepper.sleepON();
+    shadeStepper.move(4144, FORWARD);
+    currentPosition--;
+  }
+  if (newPosition == currentPosition)
+  {
+    if (currentPosition == 0 || currentPosition == unrolled)
+    {
+      shadeStepper.sleepOFF();
+    }
+  }
+
+              Serial.print(F("\n[INFO] NEW Position: "));
+              Serial.println(newPosition);
+              Serial.print(F("\n[INFO] Current Position: "));
+              Serial.println(currentPosition);
+              
+}
+
+
+void checkIn()
+{
+ // char topic[40];
+//  strcpy(topic, "checkIn/");
+ // strcat(topic, mqtt_client_id);
+ // client.publish(topic, "OK"); 
+}
+#endif
+*/
+
 void setup() {
+
+#ifdef StepperMode
+
+  //AH_EasyDriver(int RES, int DIR, int STEP, int MS1, int MS2, int SLP);
+//  shadeStepper.setMicrostepping(0);            // 0 -> Full Step                                
+//  shadeStepper.setSpeedRPM(100);               // set speed in RPM, rotations per minute
+//  shadeStepper.sleepOFF();                     // set Sleep mode OFF  
+//  timer.setInterval(800, processStepper);   
+//  timer.setInterval(90000, checkIn);
+
+ shadeStepper.setMaxSpeed(1000);
+ shadeStepper.setAcceleration(200);
+ shadeStepper.setSpeed(50);     
+
+#endif
 
     pinMode ( led, OUTPUT );
     pinMode ( ConfigInputPin, INPUT_PULLUP );
+
+#ifndef StepperMode
     pinMode ( InputPin12, INPUT_PULLUP );
     pinMode ( InputPin14, INPUT_PULLUP );
     #ifdef HWver03
     pinMode ( InputPin02, INPUT_PULLUP );
     #endif
+#endif    
     Serial.begin(115200);
 
     // LedBlinker.start();
@@ -934,14 +1028,16 @@ void setup() {
     mb.addCoil(LAMP1_COIL);
     mb.addCoil(LAMP2_COIL);
 
+#ifndef StepperMode
     setupInputs();
-    // Add inputs to vector. the order is important.
+     // Add inputs to vector. the order is important.
     inputs.push_back(&Inputsnsr13); // this is input 0, CONF pin on board
     inputs.push_back(&Inputsnsr12); // this is input 1, second input on the board
     inputs.push_back(&Inputsnsr14); // this is input 2, first input on the board
     #ifdef HWver03
     inputs.push_back(&Inputsnsr02); // this is input 3, third pin on board
     #endif
+#endif    
 
     //while (relay0.loadrelayparams(0) != true){
     while (relay0.loadrelayparams() != true){
@@ -985,12 +1081,25 @@ void setup() {
     */
     //mrelays[1]=&relay2;
     // attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
+
+
+
+ #ifdef StepperMode
+ #define stepperenablepin InputPin02
+    pinMode(dirPin, OUTPUT);   
+    pinMode(stepPin,  OUTPUT);  
+    #ifdef HWver03
+    pinMode ( stepperenablepin, OUTPUT );
+    #endif    
+    digitalWrite(stepPin, LOW); 
+ #endif
 }
 
 
 void loop() {
+
   MDNS.update();
-      pinMode ( ConfigInputPin, INPUT_PULLUP );
+  pinMode ( ConfigInputPin, INPUT_PULLUP );
 
   if (restartRequired){
     Serial.printf("\n[SYSTEM] Restarting ESP\n\r");
@@ -1004,6 +1113,7 @@ void loop() {
  // }
 
  	blinkled();
+
   tiker_MQTT_CONNECT.update(nullptr);
   // LedBlinker.update(nullptr);
 
@@ -1014,11 +1124,13 @@ void loop() {
     }
   }
 
-  Inputsnsr14.watch();
-  Inputsnsr12.watch();
-  Inputsnsr13.watch();
-  #ifdef HWver03
-  Inputsnsr02.watch();
+  #ifndef StepperMode
+    Inputsnsr14.watch();
+    Inputsnsr12.watch();
+    Inputsnsr13.watch();
+    #ifdef HWver03
+    Inputsnsr02.watch();
+    #endif
   #endif
 
   if (timeStatus() != timeNotSet) {
@@ -1034,6 +1146,8 @@ void loop() {
     CalendarNotInitiated = false;
   }
 
+
+ #ifndef StepperMode
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
 
@@ -1099,7 +1213,9 @@ void loop() {
       }
     }
   }
+  #endif
 
+ #ifndef StepperMode
   if (relay0.RelayConfParam->v_TemperatureValue != "0") {
     if (millis() - lastMillis5000 > 5000) {
       lastMillis5000 = millis();
@@ -1140,5 +1256,25 @@ void loop() {
 
     }
   }
+ #endif 
+
+#ifdef StepperMode
+  //shadeStepper.move(1600);               // move 1600 steps
+  //shadeStepper.move(-1600);              // move 1600 steps
+  //shadeStepper.revolve(2.0);             // revolve 2 times
+  //shadeStepper.rotate(180.0);            // rotate 180° 
+  if (steperrun) {
+      shadeStepper.setSpeed(400);
+      digitalWrite(stepperenablepin,false);
+      while(shadeStepper.currentPosition() != 800)
+      {
+        shadeStepper.runSpeed();
+        ESP.wdtFeed();
+      }
+       steperrun = ! steperrun;
+       digitalWrite(stepperenablepin,true);
+       shadeStepper.stop();
+  }
+#endif  
 
 }

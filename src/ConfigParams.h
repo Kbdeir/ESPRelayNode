@@ -63,6 +63,8 @@
 
 const uint16_t MaxWifiTrials = 500;
 
+
+
 typedef struct IPAdr {
   uint8_t bytes[4];
 }IPAdr;

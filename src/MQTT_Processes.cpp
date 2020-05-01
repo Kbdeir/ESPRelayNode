@@ -6,9 +6,14 @@
 
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
+
+//#define StepperMode
+
+#ifndef StepperMode
 extern InputSensor Inputsnsr14;
 extern InputSensor Inputsnsr12;
 extern InputSensor Inputsnsr02;
+#endif 
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -69,22 +74,28 @@ void onMqttConnect(bool sessionPresent) {
 	Serial.print(F("[MQTT] Subscribing at QoS 2, packetId: "));
   // Serial.println(packetIdSub);
   // mqttpostinitstatusOfInputs(NULL);
-  [](){
-    #ifdef HWver03
-    if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
-      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
-        digitalRead(InputPin02) == HIGH ?  ON : OFF);
-    }
-    #endif
-    if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
-      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
-        digitalRead(InputPin12) == HIGH ?  ON : OFF);
-    }
-    if (Inputsnsr14.fclickmode == INPUT_NORMAL) {
-      mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
-        digitalRead(InputPin14) == HIGH ?  ON : OFF);
-    }
-  }();
+
+  #ifndef StepperMode
+
+      [](){
+        #ifdef HWver03
+        if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
+          mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+            digitalRead(InputPin02) == HIGH ?  ON : OFF);
+        }
+        #endif
+    
+        if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
+          mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+            digitalRead(InputPin12) == HIGH ?  ON : OFF);
+        }
+        if (Inputsnsr14.fclickmode == INPUT_NORMAL) {
+          mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+            digitalRead(InputPin14) == HIGH ?  ON : OFF);
+        }
+      }();
+
+  #endif
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
