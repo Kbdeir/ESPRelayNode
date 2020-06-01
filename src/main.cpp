@@ -3,8 +3,14 @@
 
 #define HWver03                   // new board design
 // #define SR04                    // utrasonic sensor code 
-// #define SolarHeaterControllerMode // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
+ #define SolarHeaterControllerMode // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
 // #define StepperMode
+//#define DEBUG_DISABLED
+#ifndef DEBUG_DISABLED
+  #include <RemoteDebug.h>
+  #define HOST_NAME "remotedebug"
+  RemoteDebug Debug;
+#endif 
 
 
 #include <Arduino.h>
@@ -24,9 +30,14 @@
 #include <TempSensor.h>
 #include <TempConfig.h>
 
+
+
 //#include <AH_EasyDriver.h>
 #include <AccelStepper.h>
 #include <SimpleTimer.h>
+
+
+
 
 
 //#include <RelaysArray.h>
@@ -435,7 +446,23 @@ void blinkledtimed(void* obj){
 		}
 		digitalWrite(led, ledState);
 }
-// Schedule_timer LedBlinker(blinkledtimed,500,0,MILLIS_);
+
+
+
+void tiker_WIFI_CONNECT_func (void* obj) {
+
+  Serial.print("[WIFI] WIFI timer activated>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        
+        if (digitalRead(ConfigInputPin) == LOW){
+          //Wifireconnecttimer.stop();
+          WiFi.mode(WIFI_AP_STA);
+        } else {
+        WiFi.mode(WIFI_STA);
+        WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+        }
+}
+Schedule_timer Wifireconnecttimer(tiker_WIFI_CONNECT_func,1000,0,MILLIS_);
+
 
 
 
@@ -795,6 +822,9 @@ void thingsTODO_on_WIFI_Connected() {
             
             setSyncProvider(getNtpTime);
             //connectToMqtt();           // replaced by a call to tiker_MQTT_CONNECT timer
+            #ifndef DEBUG_DISABLED  
+            debugV("* Starting MQTT connection timer, 5 seconds period"); 
+            #endif
             tiker_MQTT_CONNECT.start();  // timer will retry to connect every 5s. 
         		MBserver->begin();
         		MBserver->onClient(&handleNewClient, MBserver);
@@ -930,173 +960,198 @@ void checkIn()
 
 void setup() {
 
-#ifdef StepperMode
 
-  //AH_EasyDriver(int RES, int DIR, int STEP, int MS1, int MS2, int SLP);
-//  shadeStepper.setMicrostepping(0);            // 0 -> Full Step                                
-//  shadeStepper.setSpeedRPM(100);               // set speed in RPM, rotations per minute
-//  shadeStepper.sleepOFF();                     // set Sleep mode OFF  
-//  timer.setInterval(800, processStepper);   
-//  timer.setInterval(90000, checkIn);
+Wifireconnecttimer.start();
 
- shadeStepper.setMaxSpeed(1000);
- shadeStepper.setAcceleration(200);
- shadeStepper.setSpeed(50);     
+    #ifdef StepperMode
+      //  AH_EasyDriver(int RES, int DIR, int STEP, int MS1, int MS2, int SLP);
+      //  shadeStepper.setMicrostepping(0);            // 0 -> Full Step                                
+      //  shadeStepper.setSpeedRPM(100);               // set speed in RPM, rotations per minute
+      //  shadeStepper.sleepOFF();                     // set Sleep mode OFF  
+      //  timer.setInterval(800, processStepper);   
+      //  timer.setInterval(90000, checkIn);
 
-#endif
+      shadeStepper.setMaxSpeed(1000);
+      shadeStepper.setAcceleration(200);
+      shadeStepper.setSpeed(50);     
+    #endif
 
     pinMode ( led, OUTPUT );
     pinMode ( ConfigInputPin, INPUT_PULLUP );
 
-#ifndef StepperMode
-    pinMode ( InputPin12, INPUT_PULLUP );
-    pinMode ( InputPin14, INPUT_PULLUP );
-    #ifdef HWver03
-    pinMode ( InputPin02, INPUT_PULLUP );
-    #endif
-#endif    
+    #ifndef StepperMode
+        pinMode ( InputPin12, INPUT_PULLUP );
+        pinMode ( InputPin14, INPUT_PULLUP );
+        #ifdef HWver03
+        pinMode ( InputPin02, INPUT_PULLUP );
+        #endif
+    #endif    
+
     Serial.begin(115200);
 
-    // LedBlinker.start();
+        // LedBlinker.start();
 
-    /*
-       only need to format SPIFFS the first time we run a
-       test or else use the SPIFFS plugin to create a partition
-       https://github.com/me-no-dev/arduino-esp32fs-plugin
-    */
+        /*
+          only need to format SPIFFS the first time we run a
+          test or else use the SPIFFS plugin to create a partition
+          https://github.com/me-no-dev/arduino-esp32fs-plugin
+        */
 
-    #ifdef ESP32
-		if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
-		   Serial.println(F("SPIFFS Mount Failed"));
-	 	   return;
-		}
-  	listDir(SPIFFS, "/", 0);
-    #else
-    /*  if(SPIFFS.format()) { Serial.println("File System Formated"); }
-        else { Serial.println("File System Formatting Error"); } */
-    #endif
-    //wifimode = WIFI_CLT_MODE;
+        #ifdef ESP32
+          if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
+            Serial.println(F("SPIFFS Mount Failed"));
+            return;
+          }
+          listDir(SPIFFS, "/", 0);
+        #else
+        /*  if(SPIFFS.format()) { Serial.println("File System Formated"); }
+            else { Serial.println("File System Formatting Error"); } */
+        #endif
+        //wifimode = WIFI_CLT_MODE;
 
-    #ifdef USEPREF
-      ReadParams(MyConfParam, preferences);
-    #endif
+        #ifdef USEPREF
+          ReadParams(MyConfParam, preferences);
+        #endif
 
-    while (loadConfig(MyConfParam) != SUCCESS){
-      delay(2000);
-      ESP.restart();
-    };
+        while (loadConfig(MyConfParam) != SUCCESS){
+          delay(2000);
+          ESP.restart();
+        };
 
-    gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
-    {
-      Serial.print("\n[WIFI] Station connected, IP: ");
-      Serial.println(WiFi.localIP());
-      thingsTODO_on_WIFI_Connected();
-      blinkInterval = 1000;
-    });
+        gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
+        {
+          Serial.print("\n[WIFI] Station connected, IP: ");
+          Serial.println(WiFi.localIP());
+          thingsTODO_on_WIFI_Connected();
+          blinkInterval = 1000;
+          // Wifireconnecttimer.stop();
+        });
 
-    disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
-    {
-      Serial.println("\n[WIFI] Station disconnected");
-      // Wifi_connect();
-      blinkInterval = 50;
-      
-      if (digitalRead(ConfigInputPin) == LOW){
-        Serial.println(F("[WIFI] Starting AP_STA mode"));
-        WiFi.mode(WIFI_AP_STA);
-        if ((WiFi.status() != WL_CONNECTED))	{
-          startsoftAP();
+
+
+        disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
+        {
+          Serial.println("\n[WIFI] Station disconnected");
+          // Wifi_connect();
+          if (blinkInterval > 50) {
+          // Wifireconnecttimer.start();
+          Serial.println(F("[WIFI] Starting reconnection timer >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"));
+          }
+          blinkInterval = 50;
+
+          if (digitalRead(ConfigInputPin) == LOW){
+            // Wifireconnecttimer.stop();
+            Serial.println(F("[WIFI] Starting AP_STA mode"));
+            WiFi.mode(WIFI_AP_STA);
+            if ((WiFi.status() != WL_CONNECTED))	{
+              startsoftAP();
+            }
+          }      
+        });
+
+        
+        WiFi.mode(WIFI_STA);
+        if (digitalRead(ConfigInputPin) == LOW){
+          WiFi.mode(WIFI_AP_STA);
         }
-      }      
+        WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+
+        mqttClient.onConnect(onMqttConnect);
+        mqttClient.onDisconnect(onMqttDisconnect);
+        mqttClient.onSubscribe(onMqttSubscribe);
+        mqttClient.onUnsubscribe(onMqttUnsubscribe);
+        mqttClient.onMessage(onMqttMessage);
+        mqttClient.onPublish(onMqttPublish);
+        mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
       
-    });
+        mb.addCoil(LAMP1_COIL);
+        mb.addCoil(LAMP2_COIL);
 
-    
-    WiFi.mode(WIFI_STA);
-    if (digitalRead(ConfigInputPin) == LOW){
-      WiFi.mode(WIFI_AP_STA);
-    }
-    WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+        #ifndef DEBUG_DISABLED
+	      Debug.begin(HOST_NAME); // Initialize the WiFi server
+        Debug.setResetCmdEnabled(true); // Enable the reset command
+      	Debug.showProfiler(true); // Profiler (Good to measure times, to optimize codes)
+      	Debug.showColors(true); // Colors
+        #endif
 
-		mqttClient.onConnect(onMqttConnect);
-		mqttClient.onDisconnect(onMqttDisconnect);
-		mqttClient.onSubscribe(onMqttSubscribe);
-		mqttClient.onUnsubscribe(onMqttUnsubscribe);
-		mqttClient.onMessage(onMqttMessage);
-		mqttClient.onPublish(onMqttPublish);
-		mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
-  
-    mb.addCoil(LAMP1_COIL);
-    mb.addCoil(LAMP2_COIL);
-
-#ifndef StepperMode
-    setupInputs();
-     // Add inputs to vector. the order is important.
-    inputs.push_back(&Inputsnsr13); // this is input 0, CONF pin on board
-    inputs.push_back(&Inputsnsr12); // this is input 1, second input on the board
-    inputs.push_back(&Inputsnsr14); // this is input 2, first input on the board
-    #ifdef HWver03
-    inputs.push_back(&Inputsnsr02); // this is input 3, third pin on board
-    #endif
-#endif    
-
-    //while (relay0.loadrelayparams(0) != true){
-    while (relay0.loadrelayparams() != true){
-      delay(2000);
-      ESP.restart();
-    };
-    relay0.attachLoopfunc(relayloopservicefunc);
-    relay0.stop_ttl_timer();
-    relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
-
-/*
-    while (relay1.loadrelayparams(1) != true){
-      delay(2000);
-      ESP.restart();
-    };
-    relay1.attachLoopfunc(relayloopservicefunc);
-    relay1.stop_ttl_timer();
-    relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
-*/
-
-    relays.push_back(&relay0);
-//  relays.push_back(&relay1);
-
-    while (loadIRMapConfig(myIRMap) != SUCCESS){
-      delay(2000);
-      ESP.restart();
-    };
-
-    if (relay0.RelayConfParam->v_TemperatureValue != "0") {
-        config_read_error_t res = loadTempConfig("/tempconfig.json",PTempConfig);      
-    }
-
-    ACS_Calibrate_Start(relay0,sensor);
-
-    // mrelays[0]=&relay0;
-    // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
-    /*
-    relay2.attachSwithchButton(SwitchButtonPin2, onchangeSwitchInterruptSvc, buttonclick);
-    relay2.attachLoopfunc(relayloopservicefunc);
-    relays.push_back(&relay2);
-    */
-    //mrelays[1]=&relay2;
-    // attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
-
-
-
- #ifdef StepperMode
- #define stepperenablepin InputPin02
-    pinMode(dirPin, OUTPUT);   
-    pinMode(stepPin,  OUTPUT);  
-    #ifdef HWver03
-    pinMode ( stepperenablepin, OUTPUT );
+    #ifndef StepperMode
+        setupInputs();
+        // Add inputs to vector. the order is important.
+        inputs.push_back(&Inputsnsr13); // this is input 0, CONF pin on board
+        inputs.push_back(&Inputsnsr12); // this is input 1, second input on the board
+        inputs.push_back(&Inputsnsr14); // this is input 2, first input on the board
+        #ifdef HWver03
+        inputs.push_back(&Inputsnsr02); // this is input 3, third pin on board
+        #endif
     #endif    
-    digitalWrite(stepPin, LOW); 
- #endif
+
+        //while (relay0.loadrelayparams(0) != true){
+        while (relay0.loadrelayparams() != true){
+          delay(2000);
+          ESP.restart();
+        };
+        relay0.attachLoopfunc(relayloopservicefunc);
+        relay0.stop_ttl_timer();
+        relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
+
+    /*
+        while (relay1.loadrelayparams(1) != true){
+          delay(2000);
+          ESP.restart();
+        };
+        relay1.attachLoopfunc(relayloopservicefunc);
+        relay1.stop_ttl_timer();
+        relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
+    */
+
+        relays.push_back(&relay0);
+    //  relays.push_back(&relay1);
+
+        while (loadIRMapConfig(myIRMap) != SUCCESS){
+          delay(2000);
+          ESP.restart();
+        };
+
+        if (relay0.RelayConfParam->v_TemperatureValue != "0") {
+            config_read_error_t res = loadTempConfig("/tempconfig.json",PTempConfig);      
+        }
+
+        ACS_Calibrate_Start(relay0,sensor);
+
+        // mrelays[0]=&relay0;
+        // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
+        /*
+        relay2.attachSwithchButton(SwitchButtonPin2, onchangeSwitchInterruptSvc, buttonclick);
+        relay2.attachLoopfunc(relayloopservicefunc);
+        relays.push_back(&relay2);
+        */
+        //mrelays[1]=&relay2;
+        // attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
+
+
+
+    #ifdef StepperMode
+    #define stepperenablepin InputPin02
+        pinMode(dirPin, OUTPUT);   
+        pinMode(stepPin,  OUTPUT);  
+        #ifdef HWver03
+        pinMode ( stepperenablepin, OUTPUT );
+        #endif    
+        digitalWrite(stepPin, LOW); 
+    #endif
 }
 
 
+
+
+
+
 void loop() {
+
+#ifndef DEBUG_DISABLED
+Debug.handle();
+yield();
+#endif
 
   MDNS.update();
   pinMode ( ConfigInputPin, INPUT_PULLUP );
@@ -1150,7 +1205,7 @@ void loop() {
  #ifndef StepperMode
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
-
+			
     #ifdef SR04
     if (MyConfParam. v_Sonar_distance != "0") {
           pinMode(TRIG_PIN, INPUT_PULLUP);
@@ -1201,7 +1256,7 @@ void loop() {
               );
               */
     }
-    #endif
+    #endif 
 
     if (wifimode == WIFI_AP_MODE) {
   		APModetimer_run_value++;
@@ -1227,6 +1282,11 @@ void loop() {
 
       Serial.print("\n[INFO] Temperature: ");
       Serial.print(tempsensor.getCurrentTemp(0));
+      #ifndef DEBUG_DISABLED
+      debugV("[INFO] TempSensor1 %.2f C ", TSolarTank);
+      #endif
+
+      
 
       mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];
@@ -1240,6 +1300,9 @@ void loop() {
       float TSolarPanel = rtmp;
       Serial.print("\n[INFO] Temperature_Sensor2: ");
       Serial.print(TempSensorSecond.getCurrentTemp(0)); 
+      #ifndef DEBUG_DISABLED
+      debugV("[INFO] TempSensor2 %.2f C ", TSolarPanel);
+      #endif
 
       mqttClient.publish((relay0.RelayConfParam->v_TemperatureValue + "_2").c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];

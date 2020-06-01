@@ -91,7 +91,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
 
   ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<uint16_t>() : 83;
 
-  ConfParam.v_Sonar_distance      = (json["Sonar_distance"].as<String>()!="") ? json["Sonar_distance"].as<String>() : String(F("/sdnone"));
+  ConfParam.v_Sonar_distance      = (json["Sonar_distance"].as<String>()!="") ? json["Sonar_distance"].as<String>() : String(F("0"));
   ConfParam.v_Sonar_distance_max  =  json["Sonar_distance_max"].as<uint8_t>();
 
   Serial.print(F("\n will connect to: ")); Serial.print(ConfParam.v_ssid);
@@ -214,12 +214,12 @@ bool saveDefaultConfig(){
   json["tta"]="0";
   json["ACS_Sensor_Model"] = "30";
   json["Max_Current"]=10;
-  json["TOGGLE_BTN_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/C1" ;
+  json["TOGGLE_BTN_PUB_TOPIC"]="/home/Controller" + CID() + "/INS/sts/IN0" ;
   json["I12_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN1";
   json["I14_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN2";
-  json["I0MODE"]=1;
-  json["I1MODE"]=1;
-  json["I2MODE"]=1;
+  json["I0MODE"]=2;
+  json["I1MODE"]=2;
+  json["I2MODE"]=2;
   json["FRM_IP"]="192.168.1.1";
   json["FRM_PRT"]=83;
   json["Update_now"]=0;

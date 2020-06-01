@@ -1,7 +1,16 @@
+
+
 #include <MQTT_Processes.h>
 #include <JSONConfig.h>
 #include <RelayClass.h>
 #include <InputClass.h>
+
+//#define DEBUG_DISABLED
+#ifndef DEBUG_DISABLED
+#include <RemoteDebug.h>
+extern RemoteDebug Debug;
+#endif 
+
 //#include <RelaysArray.h>
 
 //extern void *  mrelays[3];
@@ -25,12 +34,23 @@ AsyncMqttClient mqttClient;
 
 void connectToMqtt() {
   Serial.println(F("\n[MQTT] Connecting"));
+  #ifndef DEBUG_DISABLED
+  debugV("[MQTT] Connecting");
+  #endif 
   mqttClient.setCleanSession(true);
   mqttClient.connect();
 }
 
 void tiker_MQTT_CONNECT_func (void* obj) {
+  Serial.print("[MQTT] waiting for WIFI ");
+  #ifndef DEBUG_DISABLED
+  debugV("[MQTT] waiting for WIFI ");
+  #endif
   if  (WiFi.status() == WL_CONNECTED)  {
+    Serial.print("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
+    #ifndef DEBUG_DISABLED
+    debugV("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
+    #endif
     connectToMqtt();
   }
 }
@@ -57,8 +77,11 @@ void mqttpostinitstatusOfInputs(void* sender){
 
 void onMqttConnect(bool sessionPresent) {
   tiker_MQTT_CONNECT.stop();
-  Serial.println(F("\n[MQTT] Connected to MQTT."));
+  Serial.println(F("[MQTT] Connected to MQTT."));
   Serial.print(F("[MQTT] Session present: "));
+  #ifndef DEBUG_DISABLED
+  debugV("[MQTT] Connected to MQTT");
+  #endif
   Serial.println(sessionPresent);
 
 	//uint16_t packetIdSub = mqttClient.subscribe(relay0.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
@@ -134,6 +157,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Serial.print(properties.retain);
   Serial.print(F("  len: "));
   Serial.print(len);
+
+  #ifndef DEBUG_DISABLED
+  debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
+  #endif
 
   String temp = String(payload).substring(0,len);
   String pld = String(payload);
