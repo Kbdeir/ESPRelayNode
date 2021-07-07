@@ -5,7 +5,7 @@
 #include <RelayClass.h>
 #include <InputClass.h>
 
-//#define DEBUG_DISABLED
+#define DEBUG_DISABLED
 #ifndef DEBUG_DISABLED
 #include <RemoteDebug.h>
 extern RemoteDebug Debug;

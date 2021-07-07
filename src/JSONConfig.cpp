@@ -63,7 +63,13 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
 
   if (json["timeserver"].as<String>()!="") {
       ConfParam.v_timeserver.fromString(json["timeserver"].as<String>());} else
-      { ConfParam.v_timeserver.fromString("192.168.1.1");}
+      { ConfParam.v_timeserver.fromString("192.168.50.1");}
+
+  if (json["Pingserver"].as<String>()!="") {
+      ConfParam.v_Pingserver.fromString(json["Pingserver"].as<String>());} else
+      { ConfParam.v_Pingserver.fromString("192.168.50.1");}      
+
+      
 
   ConfParam.v_MQTT_Active         = (json["MQTT_Active"].as<String>()!="") ? json["MQTT_Active"].as<uint8_t>() ==1 : false;
   ConfParam.v_ntptz               = (json["ntptz"].as<String>()!="") ? json["ntptz"].as<signed char>() : 2;
@@ -92,12 +98,15 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<uint16_t>() : 83;
 
   ConfParam.v_Sonar_distance      = (json["Sonar_distance"].as<String>()!="") ? json["Sonar_distance"].as<String>() : String(F("0"));
-  ConfParam.v_Sonar_distance_max  =  json["Sonar_distance_max"].as<uint8_t>();
+  ConfParam.v_Sonar_distance_max  =  json["Sonar_distance_max"].as<uint16_t>();
+
+  ConfParam.v_Reboot_on_WIFI_Disconnection  =  json["Reboot_on_WIFI_Disconnection"].as<uint16_t>();  
 
   Serial.print(F("\n will connect to: ")); Serial.print(ConfParam.v_ssid);
   Serial.print(F("\n with pass: ")); Serial.print(ConfParam.v_pass);
   Serial.print(F("\n PhyLoc:")); Serial.print(ConfParam.v_PhyLoc);
   Serial.print(F("\n timeserver:")); Serial.print(ConfParam.v_timeserver);
+  Serial.print(F("\n Pingserver:")); Serial.print(ConfParam.v_Pingserver);  
   Serial.print(F("\n MQTT_Active:")); Serial.print(ConfParam.v_MQTT_Active);
   Serial.print(F("\n MQTT_BROKER:")); Serial.print(ConfParam.v_MQTT_BROKER);
   Serial.print(F("\n MQTT_B_PRT:")); Serial.print(ConfParam.v_MQTT_B_PRT);
@@ -109,7 +118,8 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   Serial.print(F("\n v_IN2_INPUTMODE:")); Serial.print(ConfParam.v_IN2_INPUTMODE);
 
   Serial.print(F("\n v_Sonar_distance:")); Serial.print(ConfParam.v_Sonar_distance);
-  Serial.print(F("\n v_Sonar_distance_max:")); Serial.print(ConfParam.v_Sonar_distance_max);
+  Serial.print(F("\n v_Sonar_distance_max:")); Serial.print(ConfParam.v_Sonar_distance_max); 
+  Serial.print(F("\n Reboot_on_WIFI_Disconnection:")); Serial.print(ConfParam.v_Reboot_on_WIFI_Disconnection);   
   //relay0.loadrelayparams();
 
   return SUCCESS;
@@ -132,13 +142,15 @@ bool saveConfig(TConfigParams &ConfParam){
     json["I0MODE"]=ConfParam.v_IN0_INPUTMODE;
     json["I1MODE"]=ConfParam.v_IN1_INPUTMODE;
     json["I2MODE"]=ConfParam.v_IN2_INPUTMODE;
-    json["timeserver"]=ConfParam.v_timeserver.toString();
+    json["timeserver"]=ConfParam.v_timeserver.toString(); 
+    json["Pingserver"]=ConfParam.v_Pingserver.toString();     
     json["MQTT_Active"]=ConfParam.v_MQTT_Active;
     json["ntptz"]=ConfParam.v_ntptz;
     json["Update_now"]=ConfParam.v_Update_now;
 
     json["Sonar_distance"]=ConfParam.v_Sonar_distance;
-    json["Sonar_distance_max"]=ConfParam.v_Sonar_distance_max;
+    json["Sonar_distance_max"]=ConfParam.v_Sonar_distance_max; 
+    json["Reboot_on_WIFI_Disconnection"]=ConfParam.v_Reboot_on_WIFI_Disconnection;     
 
     File configFile = SPIFFS.open(filename, "w");
     if (!configFile) {
@@ -224,14 +236,14 @@ bool saveDefaultConfig(){
   json["FRM_PRT"]=83;
   json["Update_now"]=0;
 
-
+ESP.wdtFeed();
   SPIFFS.remove("/config.json");
   File configFile = SPIFFS.open("/config.json", "w");
   if (!configFile) {
     Serial.println(F("\n Failed to write default config file"));
     return false;
   }
-
+ESP.wdtFeed();
   json.printTo(configFile);
     Serial.println(F("\n Saved default config"));
     configFile.flush();
@@ -265,12 +277,14 @@ bool saveDefaultIRMapConfig(){
   json["I10"]="-1";
   json["R10"]="-1";
 
+ESP.wdtFeed();
   File configFile = SPIFFS.open(IRMapfilename, "w");
   if (!configFile) {
     Serial.println(F("Failed to write default config file"));
     return false;
   }
 
+ESP.wdtFeed();
   json.printTo(configFile);
     Serial.println(F("Saved default IRMap config"));
     configFile.flush();
@@ -418,7 +432,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
 
   char  relayfilename[20];
   mkRelayConfigName(relayfilename, rnb);
-
+ESP.wdtFeed();
   SPIFFS.remove(relayfilename);
   File configFile = SPIFFS.open(relayfilename, "w");
   //Serial.println(F("\n opened file /relay01.json for writing."));

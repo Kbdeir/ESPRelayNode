@@ -31,7 +31,8 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
   		ConfParam.v_ttl =  preferences.getString("ttl");
   		ConfParam.v_tta =  preferences.getString("tta");
   		ConfParam.v_Max_Current =  preferences.getString("Max_Current");
-  		ConfParam.v_timeserver =  preferences.getString("timeserver");
+  		ConfParam.v_timeserver =  preferences.getString("timeserver"); 
+  		ConfParam.v_Pingserver =  preferences.getString("Pingserver");       
   		//ConfParam.v_PIC_Active =  preferences.getString("PIC_Active");
   		ConfParam.v_MQTT_Active =  preferences.getString("MQTT_Active");
   		ConfParam.v_myppp =  preferences.getString("myppp");
@@ -116,6 +117,7 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
   		ConfParam.v_tta =  preferences.getString("tta");
   		ConfParam.v_Max_Current =  preferences.getString("Max_Current");
   		ConfParam.v_timeserver =  preferences.getString("timeserver");
+  		ConfParam.v_Pingserver =  preferences.getString("Pingserver");      
   		//ConfParam.v_PIC_Active =  preferences.getString("PIC_Active");
   		ConfParam.v_MQTT_Active =  preferences.getString("MQTT_Active");
   		//ConfParam.v_myppp =  preferences.getString("myppp");

@@ -1,7 +1,5 @@
 #include <TempSensor.h>
 
-float MCelcius;
-
 TempSensor::TempSensor() {
 }
 
@@ -25,7 +23,7 @@ float TempSensor::getCurrentTemp(uint8_t index){
   if (this->sensors) {
     this->sensors->requestTemperatures();
     Celcius=this->sensors->getTempCByIndex(0);
-    MCelcius = Celcius;
+  //  MCelcius = Celcius;
   }
 	return Celcius;
 }

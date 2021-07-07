@@ -1,11 +1,11 @@
 // RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF n
 
-#define HWver03                   // new board design
-// #define SR04                    // utrasonic sensor code 
- #define SolarHeaterControllerMode // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
+ #define HWver03                      // new board design
+// #define SR04                       // utrasonic sensor code 
+// #define SolarHeaterControllerMode  // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
 // #define StepperMode
-//#define DEBUG_DISABLED
+#define DEBUG_DISABLED
 #ifndef DEBUG_DISABLED
   #include <RemoteDebug.h>
   #define HOST_NAME "remotedebug"
@@ -29,15 +29,11 @@
 #include <TimerClass.h>
 #include <TempSensor.h>
 #include <TempConfig.h>
-
-
+#include <Pinger.h>
 
 //#include <AH_EasyDriver.h>
 #include <AccelStepper.h>
 #include <SimpleTimer.h>
-
-
-
 
 
 //#include <RelaysArray.h>
@@ -46,6 +42,11 @@ extern std::vector<void *> relays ; // a list to hold all relays
 extern std::vector<void *> inputs ; // a list to hold all relays
 
 extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
+
+extern "C"
+{
+  #include <lwip/icmp.h> // needed for icmp packet definitions
+}
 
 
 #ifdef ESP32
@@ -79,6 +80,8 @@ time_t prevDisplay = 0; // when the digital clock was displayed
 
 NodeTimer NTmr(4);
 TempConfig PTempConfig(1);
+
+Pinger pinger;
 
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
@@ -147,7 +150,10 @@ int wifimode      = WIFI_CLT_MODE;
 
 String MAC;
 unsigned long lastMillis = 0;
+unsigned long lastMillis_1 = 0;
 unsigned long lastMillis5000 = 0;
+int restartRequired_counter = 0;
+
 uint32_t trials   = 0;
 int  WFstatus;
 int UpCount       = 0;
@@ -165,6 +171,9 @@ const int LAMP1_COIL  = 0;
 const int LAMP2_COIL  = 1;
 float old_acs_value   = 0;
 float ACS_I_Current   = 0;
+
+float MCelcius;
+float MCelcius2;
 
 
 static TempSensor tempsensor(TempSensorPin);
@@ -186,7 +195,7 @@ WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
 
 
 
-int getpinMode(uint8_t pin)
+int getpinMode(uint8_t pin) 
 {
   if (pin >= NUM_DIGITAL_PINS) return (-1);
 
@@ -247,7 +256,7 @@ void ticker_ACS712_func (void* relaySender) {
         //Serial.println(String("RelayConfParam->v_Max_Current = ") + rly->RelayConfParam->v_Max_Current);
         if (ACS_I_Current > rly->RelayConfParam->v_Max_Current) {
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
-            Serial.println("ACS_I_Current > RelayConfParam->v_Max_Current");
+            Serial.println(F("ACS_I_Current > RelayConfParam->v_Max_Current"));
         }
     }
   }
@@ -448,22 +457,21 @@ void blinkledtimed(void* obj){
 }
 
 
+extern Schedule_timer Wifireconnecttimer;
 
 void tiker_WIFI_CONNECT_func (void* obj) {
-
-  Serial.print("[WIFI] WIFI timer activated>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        
-        if (digitalRead(ConfigInputPin) == LOW){
-          //Wifireconnecttimer.stop();
+        Serial.print("\n[WIFI] WIFI timer active");
+        // Access Point mode configuration jumper is set
+        if (digitalRead(ConfigInputPin) == LOW){                                
+          Wifireconnecttimer.stop();
           WiFi.mode(WIFI_AP_STA);
         } else {
-        WiFi.mode(WIFI_STA);
-        WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+          // Station mode, try to connect with saved SSID & PASS
+          WiFi.mode(WIFI_STA);
+          WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); 
         }
 }
-Schedule_timer Wifireconnecttimer(tiker_WIFI_CONNECT_func,1000,0,MILLIS_);
-
-
+Schedule_timer Wifireconnecttimer(tiker_WIFI_CONNECT_func,10000,0,MILLIS_);
 
 
 void startsoftAP(){
@@ -815,7 +823,7 @@ void thingsTODO_on_WIFI_Connected() {
             if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
               Serial.println(F("[INFO] Error setting up MDNS responder!"));
             }
-            Serial.println("[INFO] mDNS responder started");
+            Serial.println(F("[INFO] mDNS responder started"));
             MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
             MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
             MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
@@ -958,10 +966,90 @@ void checkIn()
 #endif
 */
 
+  
+
 void setup() {
 
 
-Wifireconnecttimer.start();
+  pinger.OnReceive([](const PingerResponse& response)
+  {
+    if (response.ReceivedResponse)
+    {
+      Serial.printf(
+        "Reply from %s: bytes=%d time=%lums TTL=%d\n",
+        response.DestIPAddress.toString().c_str(),
+        response.EchoMessageSize - sizeof(struct icmp_echo_hdr),
+        response.ResponseTime,
+        response.TimeToLive);
+        restartRequired_counter = 0;
+    }
+    else
+    {
+      Serial.printf("Request timed out.\n");
+      if (MyConfParam.v_Reboot_on_WIFI_Disconnection > 0) {      
+        restartRequired_counter++;
+        Serial.printf("\n\nPinging failure count: %i \n\n", restartRequired_counter);
+        if (restartRequired_counter > MyConfParam.v_Reboot_on_WIFI_Disconnection)  {restartRequired = true;}     
+      } 
+    }
+
+    // Return true to continue the ping sequence.
+    // If current event returns false, the ping sequence is interrupted.
+    return true;
+  });
+  
+  pinger.OnEnd([](const PingerResponse& response)
+  {
+    // Evaluate lost packet percentage
+    float loss = 100;
+    if(response.TotalReceivedResponses > 0)
+    {
+      loss = (response.TotalSentRequests - response.TotalReceivedResponses) * 100 / response.TotalSentRequests;
+    }
+    
+    // Print packet trip data
+    Serial.printf(
+      "Ping statistics for %s:\n",
+      response.DestIPAddress.toString().c_str());
+    Serial.printf(
+      "    Packets: Sent = %lu, Received = %lu, Lost = %lu (%.2f%% loss),\n",
+      response.TotalSentRequests,
+      response.TotalReceivedResponses,
+      response.TotalSentRequests - response.TotalReceivedResponses,
+      loss);
+
+    // Print time information
+    if(response.TotalReceivedResponses > 0)
+    {
+      Serial.printf("Approximate round trip times in milli-seconds:\n");
+      Serial.printf(
+        "    Minimum = %lums, Maximum = %lums, Average = %.2fms\n",
+        response.MinResponseTime,
+        response.MaxResponseTime,
+        response.AvgResponseTime);
+    }
+    
+    // Print host data
+    Serial.printf("Destination host data:\n");
+    Serial.printf(
+      "    IP address: %s\n",
+      response.DestIPAddress.toString().c_str());
+    if(response.DestMacAddress != nullptr)
+    {
+      Serial.printf(
+        "    MAC address: " MACSTR "\n",
+        MAC2STR(response.DestMacAddress->addr));
+    }
+    if(response.DestHostname != "")
+    {
+      Serial.printf(
+        "    DNS name: %s\n",
+        response.DestHostname.c_str());
+    }
+
+    return true;
+  });
+
 
     #ifdef StepperMode
       //  AH_EasyDriver(int RES, int DIR, int STEP, int MS1, int MS2, int SLP);
@@ -1020,27 +1108,27 @@ Wifireconnecttimer.start();
 
         gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
         {
-          Serial.print("\n[WIFI] Station connected, IP: ");
+          Serial.print(F("\n[WIFI] Station connected, IP: "));
           Serial.println(WiFi.localIP());
           thingsTODO_on_WIFI_Connected();
           blinkInterval = 1000;
-          // Wifireconnecttimer.stop();
+          Wifireconnecttimer.stop();
         });
 
 
 
         disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
         {
-          Serial.println("\n[WIFI] Station disconnected");
+          Serial.println(F("\n[WIFI] Station disconnected ZZZ"));
           // Wifi_connect();
           if (blinkInterval > 50) {
-          // Wifireconnecttimer.start();
-          Serial.println(F("[WIFI] Starting reconnection timer >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"));
+            Wifireconnecttimer.start();
+            Serial.println(F("[WIFI] Starting reconnection timer"));
           }
           blinkInterval = 50;
 
           if (digitalRead(ConfigInputPin) == LOW){
-            // Wifireconnecttimer.stop();
+            Wifireconnecttimer.stop();
             Serial.println(F("[WIFI] Starting AP_STA mode"));
             WiFi.mode(WIFI_AP_STA);
             if ((WiFi.status() != WL_CONNECTED))	{
@@ -1063,6 +1151,7 @@ Wifireconnecttimer.start();
         mqttClient.onMessage(onMqttMessage);
         mqttClient.onPublish(onMqttPublish);
         mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
+        mqttClient.setKeepAlive(5000);
       
         mb.addCoil(LAMP1_COIL);
         mb.addCoil(LAMP2_COIL);
@@ -1157,11 +1246,14 @@ yield();
   pinMode ( ConfigInputPin, INPUT_PULLUP );
 
   if (restartRequired){
-    Serial.printf("\n[SYSTEM] Restarting ESP\n\r");
+    Serial.println(F("\n[SYSTEM] Restarting ESP\n\r"));
     restartRequired = false;
     delay(2500);
     ESP.restart();
   }
+
+
+
 
  // if  (WiFi.status() != WL_CONNECTED)  {
     //if (APModetimer_run_value == 0) Wifi_connect();
@@ -1170,6 +1262,7 @@ yield();
  	blinkled();
 
   tiker_MQTT_CONNECT.update(nullptr);
+  Wifireconnecttimer.update(nullptr);
   // LedBlinker.update(nullptr);
 
   for (auto it : relays)  {
@@ -1203,9 +1296,23 @@ yield();
 
 
  #ifndef StepperMode
+
+  if (millis() - lastMillis_1 > 10000) {
+    lastMillis_1 = millis();
+    // Ping invalid ip
+    // Serial.printf("\n\nPinging default configured gateway with IP %s\n", WiFi.gatewayIP().toString().c_str());
+    Serial.printf("\n\nPinging default configured gateway with IP %s\n", MyConfParam.v_Pingserver.toString().c_str());
+    // if(pinger.Ping(IPAddress(192,168,20,1),1) == false)
+    if(pinger.Ping(MyConfParam.v_Pingserver,1) == false)
+    //if(pinger.Ping(WiFi.gatewayIP(),1) == false)
+    {
+      Serial.println("Error during ping command.");
+    } 
+  }
+
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
-			
+		
     #ifdef SR04
     if (MyConfParam. v_Sonar_distance != "0") {
           pinMode(TRIG_PIN, INPUT_PULLUP);
@@ -1260,7 +1367,7 @@ yield();
 
     if (wifimode == WIFI_AP_MODE) {
   		APModetimer_run_value++;
-      Serial.print("\n[WIFI] ApMode will restart after (seconds): ");
+      Serial.print(F("\n[WIFI] ApMode will restart after (seconds): "));
       Serial.print(APModetimer-APModetimer_run_value);
   		if (APModetimer_run_value == APModetimer) {
         APModetimer_run_value = 0;
@@ -1273,9 +1380,12 @@ yield();
  #ifndef StepperMode
   if (relay0.RelayConfParam->v_TemperatureValue != "0") {
     if (millis() - lastMillis5000 > 5000) {
+  //    pinMode(TempSensorPin,  INPUT_PULLUP );  
       lastMillis5000 = millis();
       tempsensor.getCurrentTemp(0);
+      MCelcius = tempsensor.Celcius;
       TempSensorSecond.getCurrentTemp(0);
+      MCelcius2 = TempSensorSecond.Celcius;
 
       float rtmp = roundf(tempsensor.Celcius);
       float TSolarTank = rtmp;
@@ -1287,7 +1397,6 @@ yield();
       #endif
 
       
-
       mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];
             itoa(rtmp,tmp,10);
@@ -1298,7 +1407,7 @@ yield();
 
       rtmp = roundf(TempSensorSecond.Celcius);
       float TSolarPanel = rtmp;
-      Serial.print("\n[INFO] Temperature_Sensor2: ");
+      Serial.print(F("\n[INFO] Temperature_Sensor2: "));
       Serial.print(TempSensorSecond.getCurrentTemp(0)); 
       #ifndef DEBUG_DISABLED
       debugV("[INFO] TempSensor2 %.2f C ", TSolarPanel);

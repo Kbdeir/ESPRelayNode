@@ -103,6 +103,7 @@ typedef struct TConfigParams {
   uint8_t v_MQTT_Active ;
   IPAddress v_MQTT_BROKER ;
   uint16_t v_MQTT_B_PRT ;
+  IPAddress v_Pingserver ;
 
   IPAddress v_FRM_IP ;
   uint16_t v_FRM_PRT ;
@@ -117,7 +118,8 @@ typedef struct TConfigParams {
   uint8_t v_IN2_INPUTMODE;
 
   String v_Sonar_distance ;
-  uint8_t v_Sonar_distance_max;
+  uint16_t v_Sonar_distance_max;
+  uint16_t v_Reboot_on_WIFI_Disconnection;  
 
 } TConfigParams;
 
