@@ -1,7 +1,7 @@
 
 #ifndef JSONCONFIG_H
 #define JSONCONFIG_H
-
+#define ARDUINOJSON_ENABLE_NAN 1
   #include <ArduinoJson.h>
   #include "FS.h"
   #ifdef ESP32

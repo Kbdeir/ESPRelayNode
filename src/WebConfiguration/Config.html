@@ -812,21 +812,6 @@ input:focus, textarea:focus, select:focus
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
-#Label1
-{
-   border: 0px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: transparent;
-   background-image: none;
-   color :#0000CD;
-   font-family: Arial;
-   font-weight: normal;
-   font-size: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-   vertical-align: top;
-}
 #Editbox18
 {
    border: 1px solid #CCCCCC;
@@ -1618,8 +1603,8 @@ input:focus, textarea:focus, select:focus
 }
 #Editbox25:focus
 {
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   border-color: #0000CD;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(0,0,205,0.60);
    outline: 0;
 }
 #wb_Text19 
@@ -1635,18 +1620,31 @@ input:focus, textarea:focus, select:focus
 {
    text-align: right;
 }
+#wb_Text24 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text24 div
+{
+   text-align: left;
+}
 </style>
     
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:4px;top:106px;width:529px;height:894px;z-index:87;">
-<form name="Form1" method="get" action="Apply.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
-<div id="wb_Text1" style="position:absolute;left:116px;top:77px;width:54px;height:16px;text-align:right;z-index:0;">
+<div id="wb_Form1" style="position:absolute;left:4px;top:106px;width:529px;height:846px;z-index:87;">
+<form name="Form1" method="get" action="Apply.html" enctype="multipart/form-data" id="Form1" onsubmit="return submitForm1()">
+<div id="wb_Text1" style="position:absolute;left:116px;top:77px;width:54px;height:15px;text-align:right;z-index:0;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">SSID</span></div>
 <input type="text" id="Editbox1" style="position:absolute;left:184px;top:69px;width:126px;height:18px;z-index:1;" name="ssid" value="%ssid%" spellcheck="false">
 <div id="wb_Text7" style="position:absolute;left:41px;top:156px;width:129px;height:18px;text-align:right;z-index:2;">
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Time Server IP</strong></span></div>
-<div id="wb_Text2" style="position:absolute;left:104px;top:109px;width:67px;height:16px;text-align:right;z-index:3;">
+<div id="wb_Text2" style="position:absolute;left:104px;top:109px;width:67px;height:15px;text-align:right;z-index:3;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Password</span></div>
 <div id="wb_Text4" style="position:absolute;left:333px;top:158px;width:75px;height:15px;text-align:right;z-index:4;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Time Zone</span></div>
@@ -1666,14 +1664,14 @@ input:focus, textarea:focus, select:focus
 </select>
 <div id="wb_Text8" style="position:absolute;left:379px;top:370px;width:37px;height:15px;z-index:12;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Port</span></div>
-<input type="submit" id="Button1" name="Submit" value="save" style="position:absolute;left:56px;top:830px;width:96px;height:25px;z-index:13;">
-<input type="text" id="Editbox3" style="position:absolute;left:180px;top:151px;width:126px;height:18px;z-index:14;" name="timeserver" value="%timeserver%" spellcheck="false">
+<input type="submit" id="Button1" name="Submit" value="save" style="position:absolute;left:59px;top:795px;width:96px;height:25px;z-index:13;">
+<input type="text" id="Editbox3" style="position:absolute;left:185px;top:151px;width:126px;height:18px;z-index:14;" name="timeserver" value="%timeserver%" spellcheck="false">
 <input type="checkbox" id="Checkbox2" name="MQTT_Active" value="%MQTT_Active%" style="position:absolute;left:185px;top:334px;z-index:15;">
 <input type="number" id="Editbox15" style="position:absolute;left:423px;top:151px;width:52px;height:18px;z-index:16;" name="ntptz" value="%ntptz%" spellcheck="false">
-<input type="submit" id="Button3" onclick="window.location.href='restart.html';return false;" name="restart" value="restart" style="position:absolute;left:216px;top:830px;width:96px;height:25px;z-index:17;">
-<div id="wb_Text20" style="position:absolute;left:36px;top:45px;width:136px;height:16px;text-align:right;z-index:18;">
+<input type="submit" id="Button3" onclick="window.location.href='restart.html';return false;" name="restart" value="restart" style="position:absolute;left:219px;top:795px;width:96px;height:25px;z-index:17;">
+<div id="wb_Text20" style="position:absolute;left:36px;top:45px;width:136px;height:15px;text-align:right;z-index:18;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Physical location tag</span></div>
-<input type="submit" id="Button2" onclick="window.close();return false;" name="cancelbtn" value="cancel" style="position:absolute;left:368px;top:830px;width:96px;height:25px;z-index:19;">
+<input type="submit" id="Button2" onclick="window.close();return false;" name="cancelbtn" value="cancel" style="position:absolute;left:371px;top:795px;width:96px;height:25px;z-index:19;">
 <div id="wb_Text17" style="position:absolute;left:45px;top:703px;width:128px;height:15px;text-align:right;z-index:20;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Sonar distance topic</span></div>
 <div id="wb_Text18" style="position:absolute;left:30px;top:732px;width:146px;height:30px;text-align:right;z-index:21;">
@@ -1703,10 +1701,10 @@ input:focus, textarea:focus, select:focus
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Sonar Configuration - Water Level</strong></span></div>
 <div id="wb_Text14" style="position:absolute;left:23px;top:408px;width:248px;height:21px;z-index:34;">
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Inputs Configuration</strong></span></div>
-<div id="wb_Text15" style="position:absolute;left:23px;top:7px;width:236px;height:22px;z-index:35;">
+<div id="wb_Text15" style="position:absolute;left:23px;top:7px;width:236px;height:21px;z-index:35;">
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Wifi Configuration</strong></span></div>
 <input type="text" id="Editbox12" style="position:absolute;left:182px;top:696px;width:291px;height:18px;z-index:36;" name="Sonar_distance" value="%Sonar_distance%" spellcheck="false">
-<input type="number" id="Editbox24" style="position:absolute;left:422px;top:203px;width:52px;height:18px;z-index:37;" name="Reboot_on_WIFI_Disconnection" value="%Reboot_on_WIFI_Disconnection%" spellcheck="false">
+<input type="number" id="Editbox24" style="position:absolute;left:422px;top:203px;width:52px;height:18px;z-index:37;" name="RWD" value="%RWD%" spellcheck="false">
 <input type="text" id="Editbox25" style="position:absolute;left:210px;top:244px;width:99px;height:18px;z-index:38;" name="Pingserver" value="%Pingserver%" spellcheck="false">
 <div id="wb_Text19" style="position:absolute;left:37px;top:243px;width:157px;height:30px;text-align:right;z-index:39;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Ping Server IP<br>Defaults to 192.168.50.1</span></div>
@@ -1718,7 +1716,7 @@ input:focus, textarea:focus, select:focus
 <span style="color:#DCDCDC;font-family:Arial;font-size:24px;letter-spacing:2.07px;line-height:41px;">NODE CONFIGURATION</span><span style="color:#FFFFFF;font-family:Arial;font-size:24px;letter-spacing:4.07px;line-height:41px;"><br></span></div>
 <div id="wb_Text22" style="position:absolute;left:27px;top:68px;width:504px;height:25px;text-align:center;z-index:89;">
 <span style="color:#FFFFFF;font-family:Arial;font-size:17px;line-height:19px;">Node ID: %NODEID% - MAC : %MACADDR%</span></div>
-<div id="wb_Form2" style="position:absolute;left:4px;top:1021px;width:528px;height:128px;z-index:90;">
+<div id="wb_Form2" style="position:absolute;left:4px;top:962px;width:529px;height:128px;z-index:90;">
 <form name="Form2" method="post" action="/update" enctype="multipart/form-data" id="Form2">
 <div id="wb_Text26" style="position:absolute;left:12px;top:24px;width:336px;height:49px;z-index:41;">
 <span style="color:#000000;font-family:Arial;font-size:17px;"><strong>Firmware update<br></strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><br>Select firmware file to upload</span></div>
@@ -1726,7 +1724,7 @@ input:focus, textarea:focus, select:focus
 <input type="submit" id="Button5" name="firmwareload" value="Upload & Update" style="position:absolute;left:353px;top:89px;width:126px;height:25px;z-index:43;">
 </form>
 </div>
-<div id="wb_Text30" style="position:absolute;left:726px;top:32px;width:340px;height:16px;text-align:right;z-index:91;">
+<div id="wb_Text30" style="position:absolute;left:726px;top:32px;width:340px;height:15px;text-align:right;z-index:91;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
 <div id="wb_Form3" style="position:absolute;visibility:hidden;left:562px;top:965px;width:482px;height:158px;z-index:92;">
 <form name="Form2" method="post" action="/upload" enctype="multipart/form-data" id="Form3">
@@ -1736,22 +1734,21 @@ input:focus, textarea:focus, select:focus
 <input type="submit" id="Button6" name="UploadHTML" value="Upload" style="position:absolute;left:347px;top:51px;width:126px;height:25px;z-index:46;">
 </form>
 </div>
-<label for="" id="Label1" onclick="window.location.href='edit';return false;" style="position:absolute;left:556px;top:50px;width:149px;height:20px;line-height:20px;z-index:93;">File System Browser</label>
-<div id="wb_Text29" style="position:absolute;left:4px;top:627px;width:175px;height:15px;text-align:right;z-index:94;">
+<div id="wb_Text29" style="position:absolute;left:4px;top:627px;width:175px;height:15px;text-align:right;z-index:93;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 1&nbsp; publish topic</span></div>
-<div id="wb_Text35" style="position:absolute;left:3px;top:702px;width:175px;height:15px;text-align:right;z-index:95;">
+<div id="wb_Text35" style="position:absolute;left:3px;top:702px;width:175px;height:15px;text-align:right;z-index:94;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 2&nbsp; publish topic</span></div>
-<div id="wb_Form4" style="position:absolute;left:551px;top:165px;width:516px;height:735px;z-index:96;">
+<div id="wb_Form4" style="position:absolute;left:551px;top:167px;width:516px;height:693px;z-index:95;">
 <form name="Relay2Conf" method="get" action="ApplyRelay.html" enctype="text/plain" id="Form4" onsubmit="return submitRelay2Conf()">
 <input type="text" id="RelayNb2" style="position:absolute;left:443px;top:9px;width:20px;visibility:hidden;height:18px;z-index:47;" name="RelayNB" value="2" spellcheck="false">
-<input type="submit" id="Button7" name="Submit" value="save" style="position:absolute;left:34px;top:673px;width:96px;height:25px;z-index:48;">
+<input type="submit" id="Button7" name="Submit" value="save" style="position:absolute;left:34px;top:644px;width:96px;height:25px;z-index:48;">
 <div id="wb_Text38" style="position:absolute;left:35px;top:301px;width:145px;height:16px;text-align:right;z-index:49;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Last Will Topic</span></div>
 <div id="wb_Text42" style="position:absolute;left:16px;top:184px;width:164px;height:16px;text-align:right;z-index:50;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Current TTL Publish Topic</span></div>
 <div id="wb_Text44" style="position:absolute;left:10px;top:264px;width:170px;height:16px;text-align:right;z-index:51;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Amps Sensor Publish Topic</span></div>
-<div id="wb_Text45" style="position:absolute;left:32px;top:439px;width:192px;height:16px;text-align:right;z-index:52;">
+<div id="wb_Text45" style="position:absolute;left:38px;top:431px;width:192px;height:15px;text-align:right;z-index:52;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Time to Live (TTL) in seconds</span></div>
 <input type="text" id="Editbox6" style="position:absolute;left:189px;top:19px;width:34px;height:21px;z-index:53;" name="RELAYNB" value="%RELAYNB%" spellcheck="false">
 <input type="text" id="Editbox16" style="position:absolute;left:189px;top:98px;width:291px;height:18px;z-index:54;" name="STATE_PUB_TOPIC" value="%STATE_PUB_TOPIC%" spellcheck="false">
@@ -1763,29 +1760,29 @@ input:focus, textarea:focus, select:focus
 <div id="wb_Text11" style="position:absolute;left:0px;top:332px;width:180px;height:16px;text-align:right;z-index:60;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Subscribtion Topic</span></div>
 <input type="text" id="Editbox8" style="position:absolute;left:189px;top:332px;width:291px;height:18px;z-index:61;" name="SUB_TOPIC1" value="%SUB_TOPIC1%" spellcheck="false">
-<input type="number" id="Editbox9" style="position:absolute;left:232px;top:435px;width:72px;height:18px;z-index:62;" name="ttl" value="%ttl%" spellcheck="false">
-<input type="number" id="Editbox10" style="position:absolute;left:232px;top:471px;width:72px;height:18px;z-index:63;" name="tta" value="%tta%" spellcheck="false">
-<input type="number" id="Editbox11" style="position:absolute;left:232px;top:507px;width:72px;height:18px;z-index:64;" name="Max_Current" value="%Max_Current%" maxlength="2" spellcheck="false">
-<select name="ACSmultiple" size="1" id="ACSmultiple" onchange="myFunction(this);return false;" style="position:absolute;left:232px;top:543px;width:96px;height:28px;z-index:65;" autocomplete="off">
+<input type="number" id="Editbox9" style="position:absolute;left:236px;top:424px;width:72px;height:18px;z-index:62;" name="ttl" value="%ttl%" spellcheck="false">
+<input type="number" id="Editbox10" style="position:absolute;left:236px;top:459px;width:72px;height:18px;z-index:63;" name="tta" value="%tta%" spellcheck="false">
+<input type="number" id="Editbox11" style="position:absolute;left:236px;top:496px;width:72px;height:18px;z-index:64;" name="Max_Current" value="%Max_Current%" maxlength="2" spellcheck="false">
+<select name="ACSmultiple" size="1" id="ACSmultiple" onchange="myFunction(this);return false;" style="position:absolute;left:236px;top:532px;width:96px;height:28px;z-index:65;" autocomplete="off">
 <option value="5">5 Amps</option>
 <option value="20">20 Amps</option>
 <option selected value="30">30 Amps</option>
 </select>
-<input type="text" id="ACS_Sensor_Model" style="position:absolute;left:336px;top:543px;width:44px;height:18px;z-index:66;" name="ACS_Sensor_Model" value="%ACS_Sensor_Model%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="checkbox" id="Checkbox7" name="ACS_Active" value="%ACS_Active%" style="position:absolute;left:232px;top:583px;z-index:67;">
-<div id="wb_Text25" style="position:absolute;left:100px;top:583px;width:128px;height:16px;text-align:right;z-index:68;">
+<input type="text" id="ACS_Sensor_Model" style="position:absolute;left:340px;top:532px;width:44px;height:18px;z-index:66;" name="ACS_Sensor_Model" value="%ACS_Sensor_Model%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<input type="checkbox" id="Checkbox7" name="ACS_Active" value="%ACS_Active%" style="position:absolute;left:236px;top:572px;z-index:67;">
+<div id="wb_Text25" style="position:absolute;left:102px;top:575px;width:128px;height:15px;text-align:right;z-index:68;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Measure Current</span></div>
 <input type="text" id="Editbox34" style="position:absolute;left:374px;top:5px;width:112px;height:18px;z-index:69;" name="RSTATE0" value="%RSTATE0%" readonly disabled spellcheck="false">
 <input type="text" id="TemperatureValue_edt" style="position:absolute;left:189px;top:368px;width:253px;height:18px;z-index:70;" name="TemperatureValue" value="%TemperatureValue%" spellcheck="false">
 <div id="wb_Text5" style="position:absolute;left:0px;top:372px;width:180px;height:16px;text-align:right;z-index:71;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Temperature Value Topic</span></div>
-<div id="wb_Text39" style="position:absolute;left:4px;top:547px;width:224px;height:16px;text-align:right;z-index:72;">
+<div id="wb_Text39" style="position:absolute;left:8px;top:536px;width:224px;height:15px;text-align:right;z-index:72;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Select ACS Sensor Model</span></div>
-<div id="wb_ACS_text" style="position:absolute;left:268px;top:583px;width:220px;height:16px;text-align:center;z-index:73;">
+<div id="wb_ACS_text" style="position:absolute;left:268px;top:574px;width:220px;height:15px;text-align:center;z-index:73;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Current consumption: %ACS% Amps</span></div>
-<div id="wb_Text36" style="position:absolute;left:4px;top:503px;width:224px;height:32px;text-align:right;z-index:74;">
+<div id="wb_Text36" style="position:absolute;left:8px;top:495px;width:224px;height:30px;text-align:right;z-index:74;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Maximum current allowed before coild shutdown</span></div>
-<div id="wb_Text46" style="position:absolute;left:0px;top:475px;width:224px;height:16px;text-align:right;z-index:75;">
+<div id="wb_Text46" style="position:absolute;left:6px;top:466px;width:224px;height:15px;text-align:right;z-index:75;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Time to Activate (TTA) in seconds</span></div>
 <div id="wb_Text43" style="position:absolute;left:10px;top:222px;width:170px;height:16px;text-align:right;z-index:76;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Stored TTL Update Topic</span></div>
@@ -1801,14 +1798,14 @@ input:focus, textarea:focus, select:focus
 <input type="submit" id="Button4" onclick="window.location.href='./AdvancedTemperatureConf.html';return false;" name="AdvTempConf" value="..." style="position:absolute;left:460px;top:370px;width:28px;height:30px;z-index:82;">
 </form>
 </div>
-<input type="submit" id="Button8" onclick="window.location.href='Timer1';return false;" name="" value="Timer configuration" style="position:absolute;left:551px;top:922px;width:509px;height:32px;z-index:97;">
-<label for="" id="Label2" onclick="window.location.href='/heap';return false;" style="position:absolute;left:860px;top:51px;width:195px;height:18px;line-height:18px;z-index:98;">System heap: %heap%</label>
-<div id="wb_Text52" style="position:absolute;left:3px;top:550px;width:176px;height:30px;text-align:right;z-index:99;">
+<input type="submit" id="Button8" onclick="window.location.href='Timer1';return false;" name="" value="Timer configuration" style="position:absolute;left:556px;top:882px;width:509px;height:32px;z-index:96;">
+<label for="" id="Label2" onclick="window.location.href='/heap';return false;" style="position:absolute;left:866px;top:51px;width:195px;height:18px;line-height:18px;z-index:97;">System heap: %heap%</label>
+<div id="wb_Text52" style="position:absolute;left:3px;top:550px;width:176px;height:30px;text-align:right;z-index:98;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Toggle BTN Publish Topic<br>Input 0</span></div>
-<input type="submit" id="Button9" onclick="window.location.href='Input_Relays_Map';return false;" name="" value="Input to Relays Map" style="position:absolute;left:551px;top:970px;width:509px;height:32px;z-index:100;">
-<div id="wb_Text9" style="position:absolute;left:726px;top:85px;width:340px;height:16px;text-align:right;z-index:101;">
+<input type="submit" id="Button9" onclick="window.location.href='Input_Relays_Map';return false;" name="" value="Input to Relays Map" style="position:absolute;left:556px;top:930px;width:509px;height:32px;z-index:99;">
+<div id="wb_Text9" style="position:absolute;left:726px;top:86px;width:340px;height:15px;text-align:right;z-index:100;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Ambiant Temperature: %ATEMP% C</span></div>
-<div id="wb_Form5" style="position:absolute;left:551px;top:114px;width:516px;height:49px;z-index:102;">
+<div id="wb_Form5" style="position:absolute;left:551px;top:114px;width:516px;height:49px;z-index:101;">
 <form name="Form2" method="get" action="/" enctype="multipart/form-data" id="Form5">
 <input type="submit" id="Button10" name="GETRELAYNBBTN" value="Click to display relay configuration: " style="position:absolute;left:17px;top:12px;width:235px;height:25px;z-index:83;">
 <select name="GETRELAYNB" size="1" id="GETRELAYNB" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:268px;top:10px;width:65px;height:28px;z-index:84;" autocomplete="off">
@@ -1821,6 +1818,8 @@ input:focus, textarea:focus, select:focus
 <input type="submit" id="Button12" name="RELAYACTION" value="OFF" style="position:absolute;left:429px;top:12px;width:65px;height:25px;z-index:86;">
 </form>
 </div>
+<div id="wb_Text24" style="position:absolute;left:562px;top:86px;width:129px;height:15px;z-index:102;" onclick="window.location.href='edit';return false;">
+<span style="color:#4169E1;font-family:Arial;font-size:13px;">Configuration files</span></div>
 <script>
 function submitForm1()
 {

@@ -50,7 +50,7 @@ String TempConfProcessor(const String& var)
 
 String timerprocessor(const String& var)
 {
-
+  if(var == F( "systemtime" ))          return digitalClockDisplay();
   if(var == F( "TNBT" ))                return  String(NTmr.id);
   if(var == F( "TRelay" ))              return  String(NTmr.relay);
   if(var == F( "Dfrom" ))               return  String(NTmr.spanDatefrom.c_str());
@@ -102,7 +102,7 @@ String processor(const String& var)
   if(var == F( "ssid" ))                return  String(MyConfParam.v_ssid.c_str());
   if(var == F( "pass" ))                return String( MyConfParam.v_pass.c_str());
 
-  if(var == F( "Reboot_on_WIFI_Disconnection" ))  return String( MyConfParam.v_Reboot_on_WIFI_Disconnection);
+  if(var == F( "RWD" ))  return String( MyConfParam.v_Reboot_on_WIFI_Disconnection);
 
   if(var == F( "PhyLoc" ))              return String( MyConfParam.v_PhyLoc.c_str());
   if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
@@ -128,13 +128,13 @@ String processor(const String& var)
 
   if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
   if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
-  if(var == F( "I12_STS_PTP" ))         return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
-  if(var == F( "I14_STS_PTP" ))         return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I12_STS_PTP"))          return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I14_STS_PTP"))          return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
   if(var == F( "timeserver" ))          return MyConfParam.v_timeserver.toString() ;
   if(var == F( "Pingserver" ))          return MyConfParam.v_Pingserver.toString() ;
   if(var == F( "ntptz" ))               return String( MyConfParam.v_ntptz);
-  if(var == F( "MQTT_Active" ))         { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
-  if(var == F( "Update_now" ))          { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
+  if(var == F( "MQTT_Active"))         { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
+  if(var == F( "Update_now" ))         { if (MyConfParam.v_Update_now)  return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))          return digitalClockDisplay();
   if(var == F( "heap" ))                return String(ESP.getFreeHeap());
 
@@ -336,11 +336,11 @@ void SetAsyncHTTP(){
               }
             }
           //request->send(200, "text/plain", "Done");    
-            request->redirect("/RelayCmdApplied.html");
+          //request->redirect("/RelayCmdApplied.html");
         } else {
-          request->send(SPIFFS, "/Config.html", String(), false, processor);
+          //request->send(SPIFFS, "/Config.html", String(), false, processor);
         }
-        // request->send(SPIFFS, "/Config.html", String(), false, processor);
+        request->send(SPIFFS, "/Config.html", String(), false, processor);
          
 
     });

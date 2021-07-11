@@ -1,4 +1,3 @@
-// RMDJN-FT29R-WDVKH-QYDWK-KQC6M
 // #define USEPREF n
 
  #define HWver03                      // new board design
@@ -29,7 +28,9 @@
 #include <TimerClass.h>
 #include <TempSensor.h>
 #include <TempConfig.h>
-#include <Pinger.h>
+
+
+
 
 //#include <AH_EasyDriver.h>
 #include <AccelStepper.h>
@@ -48,7 +49,9 @@ extern "C"
   #include <lwip/icmp.h> // needed for icmp packet definitions
 }
 
+#include "AsyncPing.h"
 
+ 
 #ifdef ESP32
   #include <WiFi.h>
   #include <ESPmDNS.h>
@@ -81,7 +84,8 @@ time_t prevDisplay = 0; // when the digital clock was displayed
 NodeTimer NTmr(4);
 TempConfig PTempConfig(1);
 
-Pinger pinger;
+AsyncPing Pings[1]; 
+IPAddress addr;
 
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
@@ -555,20 +559,17 @@ void chronosInit() {
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
   uint8_t tcounter = 0;
-  while(tcounter <= MAX_NUMBER_OF_TIMERS){ [&tcounter]() {
 
-        config_read_error_t res = loadNodeTimer(
-          [tcounter](){
-            char  timerfilename[30] = "";
-            strcpy(timerfilename, "/timer");
-            strcat(timerfilename, String(tcounter).c_str());
-            strcat(timerfilename, ".json");
-            Serial.print (F("\n[[TIMERS ]"));
-            Serial.print  (timerfilename);
-            return timerfilename;
-          }()
-        ,NTmr);
-
+  while(tcounter <= MAX_NUMBER_OF_TIMERS) { [&tcounter]() 
+    {
+            ESP.wdtFeed();
+        char  timerfilename[30] = "";
+        strcpy(timerfilename, "/timer");
+        strcat(timerfilename, String(tcounter).c_str());
+        strcat(timerfilename, ".json");
+        Serial.print (F("\n[[TIMERS ]"));
+        config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
+       
         tcounter++;
 
         if ((res == SUCCESS) && NTmr.enabled) {
@@ -587,7 +588,8 @@ void chronosInit() {
           Chronos::DateTime next(TYear, TMonth, TDay, THour, TMinute, 0);
           Chronos::Span::Absolute timeDiff = next-previous;
 
-        /*  PRINTLN(F("\nFrom timer values: "));
+          /*  
+          PRINTLN(F("\nFrom timer values: "));
           PRINT(NTmr.spanDatefrom); PRINT(" "); PRINT(NTmr.spantimefrom);
           PRINT(" = ");
           PRINT(Year);
@@ -714,8 +716,8 @@ void chronosInit() {
                       );
           }
 
-      } // if SUCCESS
-    }();
+        } // if SUCCESS
+    } (); // anonym. func.
   } // while loop
 
   LINE();
@@ -760,7 +762,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
           if ((nowTime > occurrenceList[i].start + 1)) {
             rly->hastimerrunning = true;
             LINE();
-            PRINTLN(F("[INFO] truning relay ON... event is Starting - TimerPaused value"));
+            PRINTLN(F("[INFO] turning relay [ON]... event is Starting - TimerPaused value"));
             PRINT(rly->timerpaused);
             if (!digitalRead(rly->getRelayPin())){
               if (!rly->timerpaused) {
@@ -819,6 +821,7 @@ void thingsTODO_on_WIFI_Connected() {
               Serial.println(F("[INFO] waiting for sync"));
             #endif
 
+
             Serial.println(F("[INFO] starting mdns"));
             if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
               Serial.println(F("[INFO] Error setting up MDNS responder!"));
@@ -832,10 +835,11 @@ void thingsTODO_on_WIFI_Connected() {
             //connectToMqtt();           // replaced by a call to tiker_MQTT_CONNECT timer
             #ifndef DEBUG_DISABLED  
             debugV("* Starting MQTT connection timer, 5 seconds period"); 
-            #endif
+            #endif 
             tiker_MQTT_CONNECT.start();  // timer will retry to connect every 5s. 
         		MBserver->begin();
         		MBserver->onClient(&handleNewClient, MBserver);
+            
 
 }
 
@@ -970,85 +974,31 @@ void checkIn()
 
 void setup() {
 
-
-  pinger.OnReceive([](const PingerResponse& response)
-  {
-    if (response.ReceivedResponse)
-    {
-      Serial.printf(
-        "Reply from %s: bytes=%d time=%lums TTL=%d\n",
-        response.DestIPAddress.toString().c_str(),
-        response.EchoMessageSize - sizeof(struct icmp_echo_hdr),
-        response.ResponseTime,
-        response.TimeToLive);
-        restartRequired_counter = 0;
-    }
-    else
-    {
-      Serial.printf("Request timed out.\n");
-      if (MyConfParam.v_Reboot_on_WIFI_Disconnection > 0) {      
-        restartRequired_counter++;
-        Serial.printf("\n\nPinging failure count: %i \n\n", restartRequired_counter);
-        if (restartRequired_counter > MyConfParam.v_Reboot_on_WIFI_Disconnection)  {restartRequired = true;}     
-      } 
-    }
-
-    // Return true to continue the ping sequence.
-    // If current event returns false, the ping sequence is interrupted.
-    return true;
-  });
-  
-  pinger.OnEnd([](const PingerResponse& response)
-  {
-    // Evaluate lost packet percentage
-    float loss = 100;
-    if(response.TotalReceivedResponses > 0)
-    {
-      loss = (response.TotalSentRequests - response.TotalReceivedResponses) * 100 / response.TotalSentRequests;
-    }
-    
-    // Print packet trip data
-    Serial.printf(
-      "Ping statistics for %s:\n",
-      response.DestIPAddress.toString().c_str());
-    Serial.printf(
-      "    Packets: Sent = %lu, Received = %lu, Lost = %lu (%.2f%% loss),\n",
-      response.TotalSentRequests,
-      response.TotalReceivedResponses,
-      response.TotalSentRequests - response.TotalReceivedResponses,
-      loss);
-
-    // Print time information
-    if(response.TotalReceivedResponses > 0)
-    {
-      Serial.printf("Approximate round trip times in milli-seconds:\n");
-      Serial.printf(
-        "    Minimum = %lums, Maximum = %lums, Average = %.2fms\n",
-        response.MinResponseTime,
-        response.MaxResponseTime,
-        response.AvgResponseTime);
-    }
-    
-    // Print host data
-    Serial.printf("Destination host data:\n");
-    Serial.printf(
-      "    IP address: %s\n",
-      response.DestIPAddress.toString().c_str());
-    if(response.DestMacAddress != nullptr)
-    {
-      Serial.printf(
-        "    MAC address: " MACSTR "\n",
-        MAC2STR(response.DestMacAddress->addr));
-    }
-    if(response.DestHostname != "")
-    {
-      Serial.printf(
-        "    DNS name: %s\n",
-        response.DestHostname.c_str());
-    }
-
-    return true;
-  });
+      Pings[0].on(true,[](const AsyncPingResponse& response){
+        IPAddress addr(response.addr); //to prevent with no const toString() in 2.3.0
+        if (response.answer)
+          Serial.printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%d ms\n", response.size, addr.toString().c_str(), response.icmp_seq, response.ttl, response.time);
+        else
+          Serial.printf("no answer yet for %s icmp_seq=%d\n", addr.toString().c_str(), response.icmp_seq);
+        return false; //do not stop
+      });
+      Pings[0].on(false,[](const AsyncPingResponse& response){
+        IPAddress addr(response.addr); //to prevent with no const toString() in 2.3.0
+        Serial.printf("total answer from %s sent %d recevied %d time %d ms\n",addr.toString().c_str(),response.total_sent,response.total_recv,response.total_time);
+         if (response.total_recv > 0) {
+           restartRequired_counter = 0;
+         }  else
+         {
+              if (MyConfParam.v_Reboot_on_WIFI_Disconnection > 0) {
+              restartRequired_counter++;
+              Serial.printf("\n\nPinging failure count: %i \n\n", restartRequired_counter);
+              if (restartRequired_counter > MyConfParam.v_Reboot_on_WIFI_Disconnection)  {restartRequired = true;}     
+              }
+         }      
+        if (response.mac)
+          Serial.printf("detected eth address " MACSTR "\n",MAC2STR(response.mac->addr));
+        return true;
+      });
 
 
     #ifdef StepperMode
@@ -1101,9 +1051,9 @@ void setup() {
           ReadParams(MyConfParam, preferences);
         #endif
 
-        while (loadConfig(MyConfParam) != SUCCESS){
-          delay(2000);
-          ESP.restart();
+      while (loadConfig(MyConfParam) != SUCCESS){
+        delay(2000);
+        ESP.restart();
         };
 
         gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
@@ -1174,8 +1124,9 @@ void setup() {
         #endif
     #endif    
 
+        // ESP.wdtDisable();
         //while (relay0.loadrelayparams(0) != true){
-        while (relay0.loadrelayparams() != true){
+       while (relay0.loadrelayparams() != true){
           delay(2000);
           ESP.restart();
         };
@@ -1183,7 +1134,8 @@ void setup() {
         relay0.stop_ttl_timer();
         relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
 
-    /*
+    
+        /*
         while (relay1.loadrelayparams(1) != true){
           delay(2000);
           ESP.restart();
@@ -1191,10 +1143,10 @@ void setup() {
         relay1.attachLoopfunc(relayloopservicefunc);
         relay1.stop_ttl_timer();
         relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
-    */
+        */
 
         relays.push_back(&relay0);
-    //  relays.push_back(&relay1);
+        //relays.push_back(&relay1);
 
         while (loadIRMapConfig(myIRMap) != SUCCESS){
           delay(2000);
@@ -1205,7 +1157,7 @@ void setup() {
             config_read_error_t res = loadTempConfig("/tempconfig.json",PTempConfig);      
         }
 
-        ACS_Calibrate_Start(relay0,sensor);
+       ACS_Calibrate_Start(relay0,sensor);
 
         // mrelays[0]=&relay0;
         // attachInterrupt(digitalPinToInterrupt(relay2.getRelayPin()), handleInterrupt2, RISING );
@@ -1233,8 +1185,6 @@ void setup() {
 
 
 
-
-
 void loop() {
 
 #ifndef DEBUG_DISABLED
@@ -1242,6 +1192,7 @@ Debug.handle();
 yield();
 #endif
 
+  ESP.wdtFeed();
   MDNS.update();
   pinMode ( ConfigInputPin, INPUT_PULLUP );
 
@@ -1299,15 +1250,7 @@ yield();
 
   if (millis() - lastMillis_1 > 10000) {
     lastMillis_1 = millis();
-    // Ping invalid ip
-    // Serial.printf("\n\nPinging default configured gateway with IP %s\n", WiFi.gatewayIP().toString().c_str());
-    Serial.printf("\n\nPinging default configured gateway with IP %s\n", MyConfParam.v_Pingserver.toString().c_str());
-    // if(pinger.Ping(IPAddress(192,168,20,1),1) == false)
-    if(pinger.Ping(MyConfParam.v_Pingserver,1) == false)
-    //if(pinger.Ping(WiFi.gatewayIP(),1) == false)
-    {
-      Serial.println("Error during ping command.");
-    } 
+    Pings[0].begin(MyConfParam.v_Pingserver);
   }
 
   if (millis() - lastMillis > 1000) {

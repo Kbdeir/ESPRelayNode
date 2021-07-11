@@ -100,7 +100,7 @@ boolean Relay::loadrelayparams() {   //uint8_t rnb){
     if(SPIFFS.begin()) { Serial.println(F("SPIFFS Initialize....ok")); }
       else {Serial.println(F("SPIFFS Initialization...failed")); }
 
-      //  const char* filename = "/config.json";
+    // const char* filename = "/config.json";
 
     if (!(SPIFFS.exists(rfilename))) {
          Serial.println(F("Relay config file does not exist! ... building and rebooting...."));
@@ -122,22 +122,18 @@ boolean Relay::loadrelayparams() {   //uint8_t rnb){
          return false;
     }
 
-       // Allocate a buffer to store contents of the file.
-    std::unique_ptr<char[]> buf(new char[size]);
 
-       // We don't use String here because ArduinoJson library requires the input
-       // buffer to be mutable. If you don't use ArduinoJson, you may as well
-       // use configFile.readString instead.
-    configFile.readBytes(buf.get(), size);
+  StaticJsonDocument<buffer_size> json;
+  DeserializationError error = deserializeJson(json, configFile);
+  if (error)
+    Serial.println(F("Failed to read file, using default configuration"));  
 
-    StaticJsonBuffer<buffer_size> jsonBuffer;
-    JsonObject& json = jsonBuffer.parseObject(buf.get());
-
-    if (!json.success()) {
-         Serial.println(F("Failed to parse relay config file"));
-         saveRelayDefaultConfig(this->RelayConfParam->v_relaynb);
+ /* if (!json.success()) {
+       Serial.println(F("Failed to parse relay config file")); 
+         saveRelayDefaultConfig(this->RelayConfParam->v_relaynb); 
          return false;
     }
+    */
      RelayConfParam->v_relaynb            = (json["RELAYNB"].as<String>()!="") ? json["RELAYNB"].as<uint8_t>() : 0;
      RelayConfParam->v_PUB_TOPIC1         = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String("/none");
      RelayConfParam->v_TemperatureValue   = (json["TemperatureValue"].as<String>()!="") ? json["TemperatureValue"].as<String>() : String("0");
@@ -157,7 +153,8 @@ boolean Relay::loadrelayparams() {   //uint8_t rnb){
      RelayConfParam->v_IN0_INPUTMODE       =  MyConfParam.v_IN0_INPUTMODE; //json["I0MODE"].as<uint8_t>();
      RelayConfParam->v_IN1_INPUTMODE       =  MyConfParam.v_IN1_INPUTMODE; //json["I1MODE"].as<uint8_t>();
      RelayConfParam->v_IN2_INPUTMODE       =  MyConfParam.v_IN2_INPUTMODE; //json["I2MODE"].as<uint8_t>();
-
+    
+     configFile.close();
      return true;
 }
 
