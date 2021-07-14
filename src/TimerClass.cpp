@@ -122,7 +122,7 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(json, configFile);
   if (error) {
-    Serial.print(F("Failed to read file, using default configuration\n "));
+    Serial.print(F("Failed to read file, using default timer configuration\n "));
     //saveDefaultConfig();
     return JSONCONFIG_CORRUPTED;
   }
