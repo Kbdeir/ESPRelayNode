@@ -13,43 +13,61 @@
     D10 = GPIO1;
     LED_BUILTIN = GPIO16 (auxiliary constant for the board LED, not a board pin);
 */
+#include <defines.h>
 
 #ifndef _CONFIGS_H__
 #define _CONFIGS_H__
-
-
-
-
 
 #include <Arduino.h>
 #include <Scheduletimer.h>
 #include <IPAddress.h>
 
-//
 
 #ifdef HWver03
   #define led         16
   #define InputPin02  02 
-#else
+#endif
+
+#ifdef HWver02
   #define led         02 
 #endif
 
-#define RelayPin 05
-#define Relay2Pin 16
+  #ifdef HWver03_4R
+    // #define led2      13      
+    #define led       05  
+    #define RelayPin  16
+    #define Relay1Pin 14    
+    #define Relay2Pin 12        
+    #define Relay3Pin 13    
+    //#define Relay2Pin 16
+    //#define InputPin12 12
+    //#define InputPin14 14
+    #define ConfigInputPin 15 
+    #define TempSensorPin   2
+    #define SecondTempSensorPin 4    
+  #endif
 
-#define InputPin12 12
+  #if defined (HWver02)  || defined (HWver03)
+    #define RelayPin 05
+    //#define Relay2Pin 16
+    #define InputPin12 12
+    #define ConfigInputPin 13 // was 13. should return to 13
+    #define InputPin14 14
+  #endif
 
-#define ConfigInputPin 13 // was 13. should return to 13
-#define InputPin14 14
+  #ifdef HWver03
+    #define SwitchButtonPin2 12 // revert to 12 when done testing
+  #endif
 
-#ifdef HWver03
-  #define SwitchButtonPin2 12 // revert to 12 when done testing
-#else
-  #define SwitchButtonPin2 13 // revert to 12 when done testing
-#endif
+  #ifdef HWver02
+    #define SwitchButtonPin2 13 // revert to 12 when done testing
+  #endif
 
-#define TempSensorPin 14
-#define SecondTempSensorPin 12
+  #if defined (HWver02)  || defined (HWver03)
+    #define TempSensorPin 14
+    #define SecondTempSensorPin 12
+  #endif
+
 
 
 #define RETAINED true
@@ -62,6 +80,8 @@
 #define BTN_MODE 1
 
 const uint16_t MaxWifiTrials = 500;
+
+
 
 typedef struct IPAdr {
   uint8_t bytes[4];
@@ -101,6 +121,7 @@ typedef struct TConfigParams {
   uint8_t v_MQTT_Active ;
   IPAddress v_MQTT_BROKER ;
   uint16_t v_MQTT_B_PRT ;
+  IPAddress v_Pingserver ;
 
   IPAddress v_FRM_IP ;
   uint16_t v_FRM_PRT ;
@@ -115,7 +136,8 @@ typedef struct TConfigParams {
   uint8_t v_IN2_INPUTMODE;
 
   String v_Sonar_distance ;
-  uint8_t v_Sonar_distance_max;
+  uint16_t v_Sonar_distance_max;
+  uint16_t v_Reboot_on_WIFI_Disconnection;  
 
 } TConfigParams;
 

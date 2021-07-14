@@ -1,14 +1,31 @@
+#include <defines.h>
+
 #include <MQTT_Processes.h>
 #include <JSONConfig.h>
 #include <RelayClass.h>
 #include <InputClass.h>
+
+#define DEBUG_DISABLED
+#ifndef DEBUG_DISABLED
+#include <RemoteDebug.h>
+extern RemoteDebug Debug;
+#endif 
+
 //#include <RelaysArray.h>
 
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
+
+//#define StepperMode
+
+
+#ifndef StepperMode
 extern InputSensor Inputsnsr14;
 extern InputSensor Inputsnsr12;
 extern InputSensor Inputsnsr02;
+#endif 
+
+
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -20,12 +37,23 @@ AsyncMqttClient mqttClient;
 
 void connectToMqtt() {
   Serial.println(F("\n[MQTT] Connecting"));
+  #ifndef DEBUG_DISABLED
+  debugV("[MQTT] Connecting");
+  #endif 
   mqttClient.setCleanSession(true);
   mqttClient.connect();
 }
 
 void tiker_MQTT_CONNECT_func (void* obj) {
+  Serial.print("[MQTT] waiting for WIFI ");
+  #ifndef DEBUG_DISABLED
+  debugV("[MQTT] waiting for WIFI ");
+  #endif
   if  (WiFi.status() == WL_CONNECTED)  {
+    Serial.print("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
+    #ifndef DEBUG_DISABLED
+    debugV("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
+    #endif
     connectToMqtt();
   }
 }
@@ -52,8 +80,11 @@ void mqttpostinitstatusOfInputs(void* sender){
 
 void onMqttConnect(bool sessionPresent) {
   tiker_MQTT_CONNECT.stop();
-  Serial.println(F("\n[MQTT] Connected to MQTT."));
+  Serial.println(F("[MQTT] Connected to MQTT."));
   Serial.print(F("[MQTT] Session present: "));
+  #ifndef DEBUG_DISABLED
+  debugV("[MQTT] Connected to MQTT");
+  #endif
   Serial.println(sessionPresent);
 
 	//uint16_t packetIdSub = mqttClient.subscribe(relay0.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
@@ -69,22 +100,29 @@ void onMqttConnect(bool sessionPresent) {
 	Serial.print(F("[MQTT] Subscribing at QoS 2, packetId: "));
   // Serial.println(packetIdSub);
   // mqttpostinitstatusOfInputs(NULL);
-  [](){
-    #ifdef HWver03
-    if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
-      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
-        digitalRead(InputPin02) == HIGH ?  ON : OFF);
-    }
-    #endif
-    if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
-      mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
-        digitalRead(InputPin12) == HIGH ?  ON : OFF);
-    }
-    if (Inputsnsr14.fclickmode == INPUT_NORMAL) {
-      mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
-        digitalRead(InputPin14) == HIGH ?  ON : OFF);
-    }
-  }();
+
+  #ifndef StepperMode
+      #if defined (HWver02)  || defined (HWver03)
+        [](){
+          #if defined (HWver03)
+          if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
+            mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+              digitalRead(InputPin02) == HIGH ?  ON : OFF);
+          }
+          #endif
+
+          if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
+            mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+              digitalRead(InputPin12) == HIGH ?  ON : OFF);
+          }
+          if (Inputsnsr14.fclickmode == INPUT_NORMAL) {
+            mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+              digitalRead(InputPin14) == HIGH ?  ON : OFF);
+          }
+
+        }();
+      #endif
+  #endif
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -123,6 +161,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Serial.print(properties.retain);
   Serial.print(F("  len: "));
   Serial.print(len);
+
+  #ifndef DEBUG_DISABLED
+  debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
+  #endif
 
   String temp = String(payload).substring(0,len);
   String pld = String(payload);
@@ -169,7 +211,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }
     else
     {
-      // sync mqtt state to actual pin state
+      // sync mqtt state to the actual pin state
       if (digitalRead(rly->getRelayPin()) == HIGH) {
           if (temp == OFF) {
             mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);

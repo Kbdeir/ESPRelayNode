@@ -15,7 +15,7 @@ typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 
 const int DEFLEN = 20;
-#define buffer_size  1800 // json buffer size
+#define buffer_size  1800
 
 class Relay
 {
@@ -78,7 +78,7 @@ class Relay
     char *getName();
     int getIdNumber();
     //boolean loadrelayparams();
-    boolean loadrelayparams();//uint8_t rnb);
+    boolean loadrelayparams(uint8_t rnb);//;
     void watch();
     void start_ttl_timer();
     void stop_ttl_timer();

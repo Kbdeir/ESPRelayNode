@@ -5,6 +5,7 @@
 #include <RelayClass.h>
 #include <TimerClass.h>
 #include <TempConfig.h>
+#include <AccelStepper.h>
 
 
 extern NodeTimer NTmr;
@@ -16,6 +17,14 @@ extern float ACS_I_Current;
 extern void setupInputs();
 extern void clearIRMap();
 //extern std::vector<void *> relays ; // a list to hold all relays
+
+//extern  int currentPosition;
+//extern  int newPosition;  
+
+#ifdef StepperMode
+extern  AccelStepper shadeStepper;
+extern bool steperrun;
+#endif
 
 uint8_t AppliedRelayNumber = 0;
 
@@ -41,7 +50,7 @@ String TempConfProcessor(const String& var)
 
 String timerprocessor(const String& var)
 {
-
+  if(var == F( "systemtime" ))          return digitalClockDisplay();
   if(var == F( "TNBT" ))                return  String(NTmr.id);
   if(var == F( "TRelay" ))              return  String(NTmr.relay);
   if(var == F( "Dfrom" ))               return  String(NTmr.spanDatefrom.c_str());
@@ -89,9 +98,14 @@ String processor(const String& var)
 {
   Relay * AppliedRelay = getrelaybynumber(AppliedRelayNumber);
 
+  // Serial.println(String("AppliedRelayNumber = ") + AppliedRelayNumber + " \n");
+
   if(var == F( "MACADDR" ))             return (String(MAC.c_str()) + " - Chip id: " + CID());
   if(var == F( "ssid" ))                return  String(MyConfParam.v_ssid.c_str());
   if(var == F( "pass" ))                return String( MyConfParam.v_pass.c_str());
+
+  if(var == F( "RWD" ))  return String( MyConfParam.v_Reboot_on_WIFI_Disconnection);
+
   if(var == F( "PhyLoc" ))              return String( MyConfParam.v_PhyLoc.c_str());
   if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
   if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
@@ -116,12 +130,13 @@ String processor(const String& var)
 
   if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
   if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
-  if(var == F( "I12_STS_PTP" ))         return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
-  if(var == F( "I14_STS_PTP" ))         return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
-  if(var == F( "timeserver" ))          return MyConfParam.v_timeserver.toString() ;//String( MyConfParam.v_timeserver.c_str());
+  if(var == F( "I12_STS_PTP"))          return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I14_STS_PTP"))          return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
+  if(var == F( "timeserver" ))          return MyConfParam.v_timeserver.toString() ;
+  if(var == F( "Pingserver" ))          return MyConfParam.v_Pingserver.toString() ;
   if(var == F( "ntptz" ))               return String( MyConfParam.v_ntptz);
-  if(var == F( "MQTT_Active" ))         { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
-  if(var == F( "Update_now" ))          { if (MyConfParam.v_Update_now) return "1\" checked=\"\""; };
+  if(var == F( "MQTT_Active"))         { if (MyConfParam.v_MQTT_Active) return "1\" checked=\"\""; };
+  if(var == F( "Update_now" ))         { if (MyConfParam.v_Update_now)  return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))          return digitalClockDisplay();
   if(var == F( "heap" ))                return String(ESP.getFreeHeap());
 
@@ -137,10 +152,10 @@ String processor(const String& var)
   if(var == F( "I0MODE" ))              return String( MyConfParam.v_IN0_INPUTMODE);
   if(var == F( "I1MODE" ))              return String( MyConfParam.v_IN1_INPUTMODE);
   if(var == F( "I2MODE" ))              return String( MyConfParam.v_IN2_INPUTMODE);
-  if(var == F( "RSTATE0" ))             return (getrelaybynumber(0)->readrelay() == HIGH) ? "ON" : "OFF";
+  if(var == F( "RSTATE0" ))             return (getrelaybynumber(AppliedRelayNumber)->readrelay() == HIGH) ? "ON" : "OFF";
   if(var == F( "RSTATE1" ))             return [](){
-    if (getrelaybynumber(1) != nullptr) {
-      return (getrelaybynumber(1)->readrelay() == HIGH) ? "ON" : "OFF";
+    if (getrelaybynumber(AppliedRelayNumber) != nullptr) {
+      return (getrelaybynumber(AppliedRelayNumber)->readrelay() == HIGH) ? "ON" : "OFF";
     } else return "NA";
   }();
   
@@ -286,11 +301,11 @@ void SetAsyncHTTP(){
           if (request->hasParam("RELAYACTION")) {
             String msg = request->getParam("RELAYACTION")->value();
             if (msg == "ON") {
-              Relay * rtmp =  getrelaybynumber(0);
+              Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
               rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
             }
             if (msg == "OFF") {
-              Relay * rtmp =  getrelaybynumber(0);
+              Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
               rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
             }
           }
@@ -306,12 +321,18 @@ void SetAsyncHTTP(){
         if (request->hasParam("GETRELAYNB")) {
             String t = request->getParam("GETRELAYNB")->value();
             AppliedRelayNumber = t.toInt();
+            
             Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
             if (rtmp != nullptr ) {
+
               if (request->hasParam("RELAYACTION")) {
                 String msg = request->getParam("RELAYACTION")->value();
                 if (msg == "ON") {
                   rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+                  #ifdef StepperMode
+                  steperrun = ! steperrun;
+                  shadeStepper.setCurrentPosition(0);
+                  #endif
                 }
                 if (msg == "OFF") {
                   rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
@@ -319,11 +340,11 @@ void SetAsyncHTTP(){
               }
             }
           //request->send(200, "text/plain", "Done");    
-            request->redirect("/RelayCmdApplied.html");
+          //request->redirect("/RelayCmdApplied.html");
         } else {
-          request->send(SPIFFS, "/Config.html", String(), false, processor);
+          //request->send(SPIFFS, "/Config.html", String(), false, processor);
         }
-        // request->send(SPIFFS, "/Config.html", String(), false, processor);
+        request->send(SPIFFS, "/Config.html", String(), false, processor);
          
 
     });
@@ -356,8 +377,8 @@ void SetAsyncHTTP(){
           auto tmp = request->getParam("RELAYNB")->value();
           saveRelayConfig(request);
           Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
-          //if (rtmp) {rtmp->loadrelayparams(tmp.toInt());
-          if (rtmp) {rtmp->loadrelayparams();
+          if (rtmp) {rtmp->loadrelayparams(tmp.toInt());
+          //if (rtmp) {rtmp->loadrelayparams(0);
 
             uint16_t packetIdPub2 = mqttClient.publish( rtmp->RelayConfParam->v_i_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED,
               [](int i){

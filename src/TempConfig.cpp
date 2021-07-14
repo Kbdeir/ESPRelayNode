@@ -1,6 +1,6 @@
 
 #include <TempConfig.h>
-#define buffer_size  500
+#define Tbuffer_size  500
 
 
 TempConfig::TempConfig(uint8_t para_id) {
@@ -36,8 +36,16 @@ void TempConfig::watch(){
 }
 
 bool saveTempConfig(AsyncWebServerRequest *request){
-    StaticJsonBuffer<buffer_size> jsonBuffer;
-    JsonObject& json = jsonBuffer.createObject();
+  StaticJsonDocument<buffer_size> json;
+    char  timerfilename[20] = "/tempconfig.json";
+  //strcat(timerfilename, ".json");
+
+  File configFile = SPIFFS.open(timerfilename, "w");
+  if (!configFile) {
+    Serial.println(F("Failed to open tempconfig file for writing"));
+    return false;
+  }
+
 
   int args = request->args();
   for(int i=0;i<args;i++){
@@ -47,18 +55,12 @@ bool saveTempConfig(AsyncWebServerRequest *request){
 
   request->hasParam("CEnabled")   ? json["CEnabled"]   =  "1"   : json["CEnabled"]   = "0" ;
 
-  char  timerfilename[20] = "/tempconfig.json";
-  //strcat(timerfilename, ".json");
-
-  File configFile = SPIFFS.open(timerfilename, "w");
-  if (!configFile) {
-    Serial.println(F("Failed to open tempconfig file for writing"));
-    return false;
+  // Serialize JSON to file
+  if (serializeJson(json, configFile) == 0) {
+    Serial.println(F("Failed to write to file"));
   }
-
-  json.printTo(configFile);
-  configFile.close();
-
+    configFile.flush();
+    configFile.close();
 
   return true;
 }
@@ -80,24 +82,18 @@ config_read_error_t loadTempConfig(char* filename, TempConfig &para_TempConfig) 
   }
 
   size_t size = configFile.size();
-  if (size > buffer_size) {
+  if (size > Tbuffer_size) {
     Serial.println(F("\n[INFO] tempconfig file size is too large, rebuilding."));
     return ERROR_OPENING_FILE;
   }
 
-  // Allocate a buffer to store contents of the file.
-  std::unique_ptr<char[]> buf(new char[size]);
 
-  // We don't use String here because ArduinoJson library requires the input
-  // buffer to be mutable. If you don't use ArduinoJson, you may as well
-  // use configFile.readString instead.
+  StaticJsonDocument<buffer_size> json;
+  DeserializationError error = deserializeJson(json, configFile);
+  if (error)
+    Serial.println(F("Failed to read file, using default configuration"));  
 
-  configFile.readBytes(buf.get(), size);
-
-  StaticJsonBuffer<buffer_size> jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(buf.get());
-
-  if (!json.success()) {
+  if (error) {
     Serial.println(F("Failed to parse tempconfig file"));
     //saveDefaultConfig();
     return JSONCONFIG_CORRUPTED;
@@ -110,5 +106,9 @@ config_read_error_t loadTempConfig(char* filename, TempConfig &para_TempConfig) 
   para_TempConfig.spanBuffer = (json["spanBuffer"].as<String>()!="") ? json["spanBuffer"].as<uint16_t>() : 0;  
   para_TempConfig.relay = (json["TRelay"].as<String>()!="") ? json["TRelay"].as<uint8_t>() : 0;
   //strcpy(para_TempConfig.Testchar,json["Testchar"] | "NA");
+
+    configFile.flush();
+    configFile.close();
+    
   return SUCCESS;
 }

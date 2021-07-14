@@ -57,7 +57,13 @@ time_t getNtpTime()
   sendNTPpacket(ntpServerIP);
   uint32_t beginWait = millis();
   while ((millis() - beginWait < 3000) && !ftimesynced) {
-    ESP.wdtFeed();
+
+    #ifdef ESP32
+    #else
+        ESP.wdtFeed();
+    #endif    
+
+    
     int size = Udp.parsePacket();
     if (size >= NTP_PACKET_SIZE) {
       Serial.println(F("[NTP ] Received NTP Response"));
@@ -80,6 +86,7 @@ time_t getNtpTime()
 
   return 0; // return 0 if unable to get the time
   }
+  return 0;
 }
 
 // send an NTP request to the time server at the given address
