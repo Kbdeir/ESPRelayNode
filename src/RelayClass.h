@@ -78,7 +78,7 @@ class Relay
     char *getName();
     int getIdNumber();
     //boolean loadrelayparams();
-    boolean loadrelayparams();//uint8_t rnb);
+    boolean loadrelayparams(uint8_t rnb);//;
     void watch();
     void start_ttl_timer();
     void stop_ttl_timer();

@@ -105,15 +105,15 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
 
   if (! SPIFFS.exists(filename)) {
 
-    Serial.println(F("\n[TIMERS] timer file does not exist!"));
-    Serial.println(filename);
-    Serial.println(F("\n -- "));
+    Serial.print(F("\n[TIMERS] timer file does not exist! "));
+    Serial.print(filename);
+    Serial.println(F("\n"));
     return FILE_NOT_FOUND;
   }
 
   File configFile = SPIFFS.open(filename, "r");
   if (!configFile) {
-    Serial.println(F("\n[TIMERS] Failed to open timer file"));
+    Serial.println(F("[TIMERS] Failed to open timer file \n"));
     return ERROR_OPENING_FILE;
   }
 
@@ -122,7 +122,7 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(json, configFile);
   if (error) {
-    Serial.println(F("Failed to read file, using default configuration"));
+    Serial.print(F("Failed to read file, using default configuration\n "));
     //saveDefaultConfig();
     return JSONCONFIG_CORRUPTED;
   }
