@@ -211,7 +211,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }
     else
     {
-      // sync mqtt state to actual pin state
+      // sync mqtt state to the actual pin state
       if (digitalRead(rly->getRelayPin()) == HIGH) {
           if (temp == OFF) {
             mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
