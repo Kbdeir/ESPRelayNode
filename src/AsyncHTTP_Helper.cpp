@@ -149,11 +149,11 @@ String processor(const String& var)
   if(var == F( "ACS" ))                return String(ACS_I_Current);
   //String(MCelcius);
   if(var == F( "TOGGLE_BTN_PUB_TOPIC" ))  return String( MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str());
-  if(var == F( "I0MODE" ))              return String( MyConfParam.v_IN0_INPUTMODE);
-  if(var == F( "I1MODE" ))              return String( MyConfParam.v_IN1_INPUTMODE);
-  if(var == F( "I2MODE" ))              return String( MyConfParam.v_IN2_INPUTMODE);
-  if(var == F( "RSTATE0" ))             return (getrelaybynumber(AppliedRelayNumber)->readrelay() == HIGH) ? "ON" : "OFF";
-  if(var == F( "RSTATE1" ))             return [](){
+  if(var == F( "I0MODE" ))                return String( MyConfParam.v_IN0_INPUTMODE);
+  if(var == F( "I1MODE" ))                return String( MyConfParam.v_IN1_INPUTMODE);
+  if(var == F( "I2MODE" ))                return String( MyConfParam.v_IN2_INPUTMODE);
+  if(var == F( "RSTATE0" ))               return (getrelaybynumber(AppliedRelayNumber)->readrelay() == HIGH) ? "ON" : "OFF";
+  if(var == F( "RSTATE1" ))               return [](){
     if (getrelaybynumber(AppliedRelayNumber) != nullptr) {
       return (getrelaybynumber(AppliedRelayNumber)->readrelay() == HIGH) ? "ON" : "OFF";
     } else return "NA";
@@ -336,7 +336,7 @@ void SetAsyncHTTP(){
                 }
               }
             } else {
-              AppliedRelayNumber = 0; // revert to relay 0 if relay n is not found
+              AppliedRelayNumber = 0; // revert to relay 0 if relay n is not found 
             }
         } 
          request->send(SPIFFS, "/Config.html", String(), false, processor);
