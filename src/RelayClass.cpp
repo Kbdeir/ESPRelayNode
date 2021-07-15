@@ -257,8 +257,12 @@ Relay * getrelaybynumber(uint8_t nb){
     Relay * rly = static_cast<Relay *>(relays.at(nb));
     if (rly) {
       return rly;
-    } else { return nullptr;}
-  }   else { return nullptr;}
+    } else {
+       return nullptr;
+    }
+  } else {
+     return nullptr;
+  }
 }
 
 

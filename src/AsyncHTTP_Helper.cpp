@@ -317,14 +317,11 @@ void SetAsyncHTTP(){
     AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         AppliedRelayNumber = 0;
-
         if (request->hasParam("GETRELAYNB")) {
             String t = request->getParam("GETRELAYNB")->value();
             AppliedRelayNumber = t.toInt();
-            
             Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
             if (rtmp != nullptr ) {
-
               if (request->hasParam("RELAYACTION")) {
                 String msg = request->getParam("RELAYACTION")->value();
                 if (msg == "ON") {
@@ -338,16 +335,13 @@ void SetAsyncHTTP(){
                   rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
                 }
               }
+            } else {
+              AppliedRelayNumber = 0; // revert to relay 0 if relay n is not found
             }
-          //request->send(200, "text/plain", "Done");    
-          //request->redirect("/RelayCmdApplied.html");
-        } else {
-          //request->send(SPIFFS, "/Config.html", String(), false, processor);
-        }
-        request->send(SPIFFS, "/Config.html", String(), false, processor);
-         
-
-    });
+        } 
+         request->send(SPIFFS, "/Config.html", String(), false, processor);
+    }
+    );
 
     AsyncWeb_server.on("/Apply.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
