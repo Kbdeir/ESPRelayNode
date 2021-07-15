@@ -215,8 +215,8 @@ Relay relay0(
     relayon
   );
 
-  
-  Relay relay1(
+ #ifdef HWver03_4R    
+  Relay relay1( 
       Relay1Pin,
       ticker_relay_ttl_off,
       ticker_relay_ttl_periodic_callback,
@@ -245,6 +245,7 @@ Relay relay0(
       onRelaychangeInterruptSvc,
       relayon
     );     
+  #endif  
 
 
 void ticker_ACS712_mqtt (void* relaySender) {
@@ -1159,37 +1160,39 @@ void setup() {
         relay0.stop_ttl_timer();
         relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
    
-        
-        while (relay1.loadrelayparams(1) != true){
-          delay(2000);
-          ESP.restart();
-        };
-        relay1.attachLoopfunc(relayloopservicefunc);
-        relay1.stop_ttl_timer();
-        relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
+        #ifdef HWver03_4R   
+          while (relay1.loadrelayparams(1) != true){
+            delay(2000);
+            ESP.restart();
+          };
+          relay1.attachLoopfunc(relayloopservicefunc);
+          relay1.stop_ttl_timer();
+          relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
 
-        while (relay2.loadrelayparams(2) != true){
-          delay(2000);
-          ESP.restart();
-        };
-        relay2.attachLoopfunc(relayloopservicefunc);
-        relay2.stop_ttl_timer();
-        relay2.setRelayTTT_Timer_Interval(relay2.RelayConfParam->v_ttl*1000);
+          while (relay2.loadrelayparams(2) != true){
+            delay(2000);
+            ESP.restart();
+          };
+          relay2.attachLoopfunc(relayloopservicefunc);
+          relay2.stop_ttl_timer();
+          relay2.setRelayTTT_Timer_Interval(relay2.RelayConfParam->v_ttl*1000);
 
-        
-        while (relay3.loadrelayparams(3) != true){
-          delay(2000);
-          ESP.restart();
-        };
-        relay3.attachLoopfunc(relayloopservicefunc);
-        relay3.stop_ttl_timer();
-        relay3.setRelayTTT_Timer_Interval(relay3.RelayConfParam->v_ttl*1000);                
+          while (relay3.loadrelayparams(3) != true){
+            delay(2000);
+            ESP.restart();
+          };
+          relay3.attachLoopfunc(relayloopservicefunc);
+          relay3.stop_ttl_timer();
+          relay3.setRelayTTT_Timer_Interval(relay3.RelayConfParam->v_ttl*1000);    
+        #endif            
         
 
         relays.push_back(&relay0);
-        relays.push_back(&relay1);
-        relays.push_back(&relay2);
-        relays.push_back(&relay3);        
+        #ifdef HWver03_4R  
+          relays.push_back(&relay1);
+          relays.push_back(&relay2);
+          relays.push_back(&relay3);   
+        #endif     
 
         while (loadIRMapConfig(myIRMap) != SUCCESS){
           delay(2000);
