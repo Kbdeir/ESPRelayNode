@@ -26,5 +26,3 @@ String printDigits(int digits);
 time_t getNtpTime();
 void sendNTPpacket(IPAddress &address);
 
-
-//#endif

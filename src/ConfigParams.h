@@ -1,3 +1,4 @@
+#pragma once
 /*the correct pin mapping is the following [1][2] (NodeMCU on the left and ESP8266 on the right):
 
     D0 = GPIO16;
@@ -33,15 +34,17 @@
 #endif
 
   #ifdef HWver03_4R
-    // #define led2      13      
     #define led       05  
+
     #define RelayPin  16
     #define Relay1Pin 14    
     #define Relay2Pin 12        
-    #define Relay3Pin 13    
-    //#define Relay2Pin 16
-    //#define InputPin12 12
-    //#define InputPin14 14
+    #define Relay3Pin 13 
+
+    #define InputPin02  02 
+    #define InputPin14  00
+    #define InputPin13  04    
+
     #define ConfigInputPin 15 
     #define TempSensorPin   2
     #define SecondTempSensorPin 4    
@@ -80,8 +83,6 @@
 #define BTN_MODE 1
 
 const uint16_t MaxWifiTrials = 500;
-
-
 
 typedef struct IPAdr {
   uint8_t bytes[4];

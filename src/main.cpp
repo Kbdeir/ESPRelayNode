@@ -24,30 +24,33 @@
 #include <TimerClass.h>
 #include <TempSensor.h>
 #include <TempConfig.h>
-
-
+#include "AsyncPing.h"
 
 
 //#include <AH_EasyDriver.h>
 #include <AccelStepper.h>
 #include <SimpleTimer.h>
 
+#ifdef blockingTime
+  #include <KSBNTP.h>
+#else
+  #include <KSBAsyncNTP.h>
+  AsyncUDP Audp;
+#endif
 
 //#include <RelaysArray.h>
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
 extern std::vector<void *> inputs ; // a list to hold all relays
-
 extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
 
 extern "C"
 {
   #include <lwip/icmp.h> // needed for icmp packet definitions
 }
-
-#include "AsyncPing.h"
-
  
+
+
 #ifdef ESP32
   #include <WiFi.h>
   #include <ESPmDNS.h>
@@ -73,14 +76,15 @@ extern "C"
 #include <MQTT_Processes.h>
 #include <AsyncHTTP_Helper.h>
 
-#include <KSBNTP.h>
+
+
 time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
 
 NodeTimer NTmr(4);
 TempConfig PTempConfig(1);
 
-AsyncPing Pings[1]; 
+AsyncPing Pings; //Pings[1]; 
 IPAddress addr;
 
 const char * EventNames[] = {
@@ -335,7 +339,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
 
 
 void process_Input(void * inputSender, void * obj){
-  Serial.print("\n process_Input");
+  Serial.print(F("\n process_Input"));
   if (inputSender != nullptr) {
       InputSensor * snsr = static_cast<InputSensor *>(inputSender);
     if (snsr->fclickmode == INPUT_NORMAL) {
@@ -361,7 +365,7 @@ void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
 
 // this function will be called when button is clicked.
 void buttonclick(void* relaySender, void* inputSender) {
-  Serial.print("\n buttonclick");
+  Serial.print(F("\n buttonclick"));
   if (relaySender){
     Relay * rly = static_cast<Relay *>(relaySender);
     InputSensor * input;
@@ -379,29 +383,29 @@ void buttonclick(void* relaySender, void* inputSender) {
 }
 
 void TempertatureSensorEvent(int rlynb, float TSolarPanel, float TSolarTank) {
-  Serial.print("\n[INFO] TempertatureSensorEvent");
+  Serial.print(F("\n[INFO] TempertatureSensorEvent"));
   Relay * rtmp =  getrelaybynumber(0);
   
   //mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
   if ((PTempConfig.spanTempfrom != 0) && (PTempConfig.spanBuffer != 0)) {
     if (TSolarPanel > PTempConfig.spanTempfrom) {
-      Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL > ");
+      Serial.print(F("\n[INFO] TempertatureSensorEvent SOLAR PANEL > "));
       Serial.print (PTempConfig.spanTempfrom);
       if ((TSolarPanel - TSolarTank) > PTempConfig.spanBuffer) {
         rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
-        Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp > ");
+        Serial.print(F("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp > "));
         Serial.print (PTempConfig.spanBuffer);
       }
       if ((TSolarPanel - TSolarTank) < PTempConfig.spanBuffer) {
         rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-        Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp < ");
+        Serial.print(F("\n[INFO] TempertatureSensorEvent SOLAR PANEL - TankTemp < "));
         Serial.print (PTempConfig.spanBuffer);
       }    
     }
 
     if (TSolarPanel < PTempConfig.spanTempfrom) {
         rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-        Serial.print("\n[INFO] TempertatureSensorEvent SOLAR PANEL < ");
+        Serial.print(F("\n[INFO] TempertatureSensorEvent SOLAR PANEL < "));
         Serial.print (PTempConfig.spanTempfrom);
     }
   }
@@ -480,10 +484,10 @@ void blinkledtimed(void* obj){
 extern Schedule_timer Wifireconnecttimer;
 
 void tiker_WIFI_CONNECT_func (void* obj) {
-        Serial.print("\n[WIFI] WIFI timer active");
+        Serial.print(F("\n[WIFI] WIFI timer active"));
         // Access Point mode configuration jumper is set
         if (digitalRead(ConfigInputPin) == LOW){ 
-                  Serial.print("\n[WIFI] Access Point mode configuration jumper is set");                               
+                  Serial.print(F("\n[WIFI] Access Point mode configuration jumper is set"));                               
           Wifireconnecttimer.stop();
           WiFi.mode(WIFI_AP_STA);
         } else {
@@ -572,14 +576,14 @@ Calendar MyCalendar;
 void chronosInit() {
   MyCalendar.clear();
   PRINTLN(F("Starting up PointsEvents test"));
-  Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second());
+  Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second()); 
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
   uint8_t tcounter = 0;
 
   while(tcounter <= MAX_NUMBER_OF_TIMERS) { [&tcounter]() 
     {
-            ESP.wdtFeed();
+        ESP.wdtFeed();
         char  timerfilename[30] = "";
         strcpy(timerfilename, "/timer");
         strcat(timerfilename, String(tcounter).c_str());
@@ -820,9 +824,18 @@ void chronosevaluatetimers(Calendar MyCalendar) {
   #ifdef HWver03
   InputSensor Inputsnsr02(InputPin02,process_Input,INPUT_NONE);
   #endif
+
+  #ifdef HWver03_4R
+  InputSensor Inputsnsr02(InputPin02,process_Input,INPUT_NONE);
+  InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE); 
+  InputSensor Inputsnsr13(InputPin13,process_Input,INPUT_NONE);   
+  #endif
 #endif
 
 //InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
+
+
+
 
 void thingsTODO_on_WIFI_Connected() {
             Serial.println(F("WiFi Connected."));
@@ -832,12 +845,50 @@ void thingsTODO_on_WIFI_Connected() {
             Serial.print(F("\n[WIFI]IP number assigned by DHCP is "));
             Serial.println(WiFi.localIP());
             Serial.println(F("\n[INFO] Starting UDP"));
-            Udp.begin(localPort);
+
 
             #ifdef ESP8266
-              Serial.print(F("\n[INFO] Local port: "));
-              Serial.println(Udp.localPort());
-              Serial.println(F("[INFO] waiting for sync"));
+
+                // AsyncNTP
+                #ifdef blockingTime
+                            Udp.begin(localPort);
+                #else
+                if (Audp.connect(MyConfParam.v_timeserver, NTP_REQUEST_PORT))
+                {
+                  Serial.println("Timee server connected \n");
+                  Audp.onPacket([](AsyncUDPPacket packet)
+                  {
+                    parsePacket(packet);
+                  });
+                }
+                #endif
+                
+
+               /* if(Audp.listen(1234)) {
+                    Serial.print("UDP Listening on IP: ");
+                    Serial.println(WiFi.localIP());
+                    Audp.onPacket([](AsyncUDPPacket packet) {
+                        Serial.print("UDP Packet Type: ");
+                        Serial.print(packet.isBroadcast()?"Broadcast":packet.isMulticast()?"Multicast":"Unicast");
+                        Serial.print(", From: ");
+                        Serial.print(packet.remoteIP());
+                        Serial.print(":");
+                        Serial.print(packet.remotePort());
+                        Serial.print(", To: ");
+                        Serial.print(packet.localIP());
+                        Serial.print(":");
+                        Serial.print(packet.localPort());
+                        Serial.print(", Length: ");
+                        Serial.print(packet.length());
+                        Serial.print(", Data: ");
+                        Serial.write(packet.data(), packet.length());
+                        Serial.println();
+                        //reply to the client
+                        packet.printf("Got %u bytes of data", packet.length());
+                        parsePacket(packet);
+                    });
+                } */        
+
             #endif
 
 
@@ -850,8 +901,17 @@ void thingsTODO_on_WIFI_Connected() {
             MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
             MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
             
-            setSyncProvider(getNtpTime);
-            //connectToMqtt();           // replaced by a call to tiker_MQTT_CONNECT timer
+            
+            #ifdef blockingTime
+             setSyncProvider(getNtpTime);
+            #else
+             setSyncProvider(timeprovider);
+             setSyncInterval(2); 
+            #endif 
+
+
+
+            // connectToMqtt();           // replaced by a call to tiker_MQTT_CONNECT timer
             #ifndef DEBUG_DISABLED  
             debugV("* Starting MQTT connection timer, 5 seconds period"); 
             #endif 
@@ -907,13 +967,36 @@ void Wifi_connect() {
 
 void setupInputs(){
 
+
+
 #ifndef StepperMode
   #if defined (HWver02)  || defined (HWver03)
   Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
   Inputsnsr12.initialize(InputPin12,process_Input,INPUT_NONE);
   Inputsnsr13.initialize(SwitchButtonPin2,process_Input,INPUT_NONE);  
   #endif
+#ifdef HWver03_4R
+  Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
+  Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr02.post_mqtt = true;
+  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+  Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
 
+  Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
+  Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr14.post_mqtt = true;
+  Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
+  Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);  
+
+  Inputsnsr13.initialize(InputPin13,process_Input,INPUT_NONE);
+  Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+  Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
+  Inputsnsr13.post_mqtt = true;
+  Inputsnsr13.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;  // change this later KSB
+  Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);    
+#endif
   #ifdef HWver03
   Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
   Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
@@ -994,7 +1077,7 @@ void checkIn()
 
 void setup() {
 
-      Pings[0].on(true,[](const AsyncPingResponse& response){
+      Pings.on(true,[](const AsyncPingResponse& response){
         IPAddress addr(response.addr); //to prevent with no const toString() in 2.3.0
         if (response.answer)
           Serial.printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%d ms\n", response.size, addr.toString().c_str(), response.icmp_seq, response.ttl, response.time);
@@ -1002,7 +1085,7 @@ void setup() {
           Serial.printf("no answer yet for %s icmp_seq=%d\n", addr.toString().c_str(), response.icmp_seq);
         return false; //do not stop
       });
-      Pings[0].on(false,[](const AsyncPingResponse& response){
+      Pings.on(false,[](const AsyncPingResponse& response){
         IPAddress addr(response.addr); //to prevent with no const toString() in 2.3.0
         Serial.printf("total answer from %s sent %d recevied %d time %d ms\n",addr.toString().c_str(),response.total_sent,response.total_recv,response.total_time);
          if (response.total_recv > 0) {
@@ -1010,13 +1093,19 @@ void setup() {
          }  else
          {
               if (MyConfParam.v_Reboot_on_WIFI_Disconnection > 0) {
-              restartRequired_counter++;
-              Serial.printf("\n\nPinging failure count: %i \n\n", restartRequired_counter);
-              if (restartRequired_counter > MyConfParam.v_Reboot_on_WIFI_Disconnection)  {restartRequired = true;}     
+                restartRequired_counter++;
+                //Serial.printf("\n\nPinging failure count: %i \n\n", restartRequired_counter);
+                Serial.print(F("\n\nPinging failed count: "));
+                Serial.print(restartRequired_counter);
+                Serial.print("\n\n");
+                if (restartRequired_counter > MyConfParam.v_Reboot_on_WIFI_Disconnection)  {
+                  restartRequired = true;
+                }     
               }
          }      
-        if (response.mac)
-          Serial.printf("detected eth address " MACSTR "\n",MAC2STR(response.mac->addr));
+        if (response.mac) {
+          // Serial.printf("detected eth address " MACSTR "\n",MAC2STR(response.mac->addr));
+        }
         return true;
       });
 
@@ -1113,7 +1202,7 @@ void setup() {
         
         WiFi.mode(WIFI_STA);
         if (digitalRead(ConfigInputPin) == LOW){
-          Serial.print("[WIFI] Sarting WIFI in AP mode");
+          Serial.print(F("[WIFI] Sarting WIFI in AP mode"));
           WiFi.mode(WIFI_AP_STA);
         }
         WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
@@ -1148,6 +1237,12 @@ void setup() {
         #ifdef HWver03
         inputs.push_back(&Inputsnsr02); // this is input 3, third pin on board
         #endif
+
+        #ifdef HWver03_4R // order is important
+        inputs.push_back(&Inputsnsr02); 
+        inputs.push_back(&Inputsnsr14);      
+        inputs.push_back(&Inputsnsr13);          
+        #endif        
     #endif    
 
         // ESP.wdtDisable();
@@ -1187,8 +1282,9 @@ void setup() {
         #endif            
         
 
-        relays.push_back(&relay0);
+        relays.push_back(&relay0); // order is important
         #ifdef HWver03_4R  
+        // order is important
           relays.push_back(&relay1);
           relays.push_back(&relay2);
           relays.push_back(&relay3);   
@@ -1268,13 +1364,20 @@ void loop() {
 
   #ifndef StepperMode
     #if defined (HWver02)  || defined (HWver03)
-    Inputsnsr14.watch();
-    Inputsnsr12.watch();
-    Inputsnsr13.watch();
+      Inputsnsr14.watch();
+      Inputsnsr12.watch();
+      Inputsnsr13.watch();
     #endif
     #ifdef HWver03
-    Inputsnsr02.watch();
+      Inputsnsr02.watch();
     #endif
+
+    #ifdef HWver03_4R
+      Inputsnsr02.watch();
+      Inputsnsr14.watch();     
+      Inputsnsr13.watch();            
+    #endif
+
   #endif
 
   if (timeStatus() != timeNotSet) {
@@ -1295,7 +1398,7 @@ void loop() {
 
   if (millis() - lastMillis_1 > 10000) {
     lastMillis_1 = millis();
-  //  Pings[0].begin(MyConfParam.v_Pingserver);
+    Pings.begin(MyConfParam.v_Pingserver);
   }
 
   if (millis() - lastMillis > 1000) {

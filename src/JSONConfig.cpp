@@ -106,27 +106,27 @@ bool saveConfig(TConfigParams &ConfParam){
       return FAILURE;
     }
 
-    json["ssid"]= ConfParam.v_ssid ;
-    json["pass"]=ConfParam.v_pass;
-    json["PhyLoc"]=ConfParam.v_PhyLoc;
-    json["MQTT_BROKER"]=ConfParam.v_MQTT_BROKER.toString();
-    json["MQTT_B_PRT"]=ConfParam.v_MQTT_B_PRT;
-    json["FRM_IP"]= MyConfParam.v_FRM_IP.toString();
-    json["FRM_PRT"]=ConfParam.v_FRM_PRT;
-    json["I12_STS_PTP"]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
-    json["I14_STS_PTP"]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
-    json["TOGGLE_BTN_PUB_TOPIC"]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
-    json["I0MODE"]=ConfParam.v_IN0_INPUTMODE;
-    json["I1MODE"]=ConfParam.v_IN1_INPUTMODE;
-    json["I2MODE"]=ConfParam.v_IN2_INPUTMODE;
-    json["timeserver"]=ConfParam.v_timeserver.toString(); 
-    json["Pingserver"]=ConfParam.v_Pingserver.toString();     
-    json["MQTT_Active"]=ConfParam.v_MQTT_Active;
-    json["ntptz"]=ConfParam.v_ntptz;
-    json["Update_now"]=ConfParam.v_Update_now;
-    json["Sonar_distance"]=ConfParam.v_Sonar_distance;
-    json["Sonar_distance_max"]=ConfParam.v_Sonar_distance_max; 
-    json["RWD"]=ConfParam.v_Reboot_on_WIFI_Disconnection;    
+    json[F("ssid")]= ConfParam.v_ssid ;
+    json[F("pass")]=ConfParam.v_pass;
+    json[F("PhyLoc")]=ConfParam.v_PhyLoc;
+    json[F("MQTT_BROKER")]=ConfParam.v_MQTT_BROKER.toString();
+    json[F("MQTT_B_PRT")]=ConfParam.v_MQTT_B_PRT;
+    json[F("FRM_IP")]= MyConfParam.v_FRM_IP.toString();
+    json[F("FRM_PRT")]=ConfParam.v_FRM_PRT;
+    json[F("I12_STS_PTP")]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
+    json[F("I14_STS_PTP")]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
+    json[F("TOGGLE_BTN_PUB_TOPIC")]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
+    json[F("I0MODE")]=ConfParam.v_IN0_INPUTMODE;
+    json[F("I1MODE")]=ConfParam.v_IN1_INPUTMODE;
+    json[F("I2MODE")]=ConfParam.v_IN2_INPUTMODE;
+    json[F("timeserver")]=ConfParam.v_timeserver.toString(); 
+    json[F("Pingserver")]=ConfParam.v_Pingserver.toString();     
+    json[F("MQTT_Active")]=ConfParam.v_MQTT_Active;
+    json[F("ntptz")]=ConfParam.v_ntptz;
+    json[F("Update_now")]=ConfParam.v_Update_now;
+    json[F("Sonar_distance")]=ConfParam.v_Sonar_distance;
+    json[F("Sonar_distance_max")]=ConfParam.v_Sonar_distance_max; 
+    json[F("RWD")]=ConfParam.v_Reboot_on_WIFI_Disconnection;    
 
 
     if (serializeJsonPretty(json, configFile) == 0) {
@@ -134,7 +134,7 @@ bool saveConfig(TConfigParams &ConfParam){
       configFile.close();
       return false;
     }
-  configFile.println("\n");
+  configFile.println("\n\n");
   configFile.close();
 
   return true;
@@ -144,7 +144,7 @@ bool saveConfig(TConfigParams &ConfParam){
 bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
 
   StaticJsonDocument<buffer_size> doc;
-  StaticJsonDocument<64> dummy;
+  // StaticJsonDocument<64> dummy;
 
     int args = request->args();
     for(int i=0;i<args;i++){
@@ -173,7 +173,7 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
     configFile.close();
     return false;
   }
-  configFile.println("\n");
+  configFile.println("\n\n");
   configFile.close();
 
   return true;
@@ -185,38 +185,38 @@ bool saveDefaultConfig(){
   StaticJsonDocument<buffer_size> json;
 
   Serial.print("\n writing default parameters");
-  json["ssid"]="ksba";
-  json["pass"]="samsam12";
-  json["PhyLoc"]="Not configured yet";
-  json["timeserver"]="194.97.156.5";
-  json["ntptz"]=2;
-  json["PIC_Active"]=0;
-  json["MQTT_Active"]=0;
-  json["MQTT_BROKER"]="192.168.1.1";
-  json["MQTT_B_PRT"]=1883;
-  json["PUB_TOPIC1"]="/home/Controller" + CID() + "/Coils/C1" ;
-  json["STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/State/C1";
-  json["ttl_PUB_TOPIC"]="/home/Controller" + CID() + "/sts/VTTL";
-  json["i_ttl_PUB_TOPIC"]="/home/Controller" + CID() + "/i/TTL";
-  json["CURR_TTL_PUB_TOPIC"]="/home/Controller" + CID() + "/sts/CURRVTTL";
-  json[""]="/home/Controller" + CID() + "/LWT";
-  json["SUB_TOPIC1"]= "/home/Controller" + CID() +  "/#";
-  json["ACS_AMPS"]="/home/Controller" + CID() + "/Coils/C1/Amps";
-  json["ttl"]=0;
-  json["tta"]=0;
-  json["ACS_Active"]=0;
-  json["tta"]="0";
-  json["ACS_Sensor_Model"] = "30";
-  json["Max_Current"]=10;
-  json["TOGGLE_BTN_PUB_TOPIC"]="/home/Controller" + CID() + "/INS/sts/IN0" ;
-  json["I12_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN1";
-  json["I14_STS_PTP"]="/home/Controller" + CID() + "/INS/sts/IN2";
-  json["I0MODE"]=2;
-  json["I1MODE"]=2;
-  json["I2MODE"]=2;
-  json["FRM_IP"]="192.168.1.1";
-  json["FRM_PRT"]=83;
-  json["Update_now"]=0;
+  json[F("ssid")]="ksba";
+  json[F("pass")]="samsam12";
+  json[F("PhyLoc")]="Not configured yet";
+  json[F("timeserver")]="194.97.156.5";
+  json[F("ntptz")]=2;
+  json[F("PIC_Active")]=0;
+  json[F("MQTT_Active")]=0;
+  json[F("MQTT_BROKER")]="192.168.1.1";
+  json[F("MQTT_B_PRT")]=1883;
+  json[F("PUB_TOPIC1")]="/home/Controller" + CID() + "/Coils/C1" ;
+  json[F("STATE_PUB_TOPIC")]="/home/Controller" + CID() + "/Coils/State/C1";
+  json[F("ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/VTTL";
+  json[F("i_ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/i/TTL";
+  json[F("CURR_TTL_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/CURRVTTL";
+  json[F("")]="/home/Controller" + CID() + "/LWT";
+  json[F("SUB_TOPIC1")]= "/home/Controller" + CID() +  "/#";
+  json[F("ACS_AMPS")]="/home/Controller" + CID() + "/Coils/C1/Amps";
+  json[F("ttl")]=0;
+  json[F("tta")]=0;
+  json[F("ACS_Active")]=0;
+  json[F("tta")]="0";
+  json[F("ACS_Sensor_Model")] = "30";
+  json[F("Max_Current")]=10;
+  json[F("TOGGLE_BTN_PUB_TOPIC")]="/home/Controller" + CID() + "/INS/sts/IN0" ;
+  json[F("I12_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
+  json[F("I14_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";
+  json[F("I0MODE")]=2;
+  json[F("I1MODE")]=2;
+  json[F("I2MODE")]=2;
+  json[F("FRM_IP")]="192.168.1.1";
+  json[F("FRM_PRT")]=83;
+  json[F("Update_now")]=0;
 
 
   ESP.wdtFeed();
@@ -236,7 +236,7 @@ bool saveDefaultConfig(){
     configFile.close();
     return false;    
   }
-  configFile.println("\n");
+  configFile.println("\n\n");
   configFile.close();
 
   return true;
@@ -285,7 +285,7 @@ bool saveDefaultIRMapConfig(){
     configFile.close();
     return FAILURE;    
   }
-    configFile.println("\n");
+    configFile.println("\n\n");
     configFile.close();
 
   return SUCCESS;
@@ -319,7 +319,7 @@ bool saveIRMapConfig(AsyncWebServerRequest *request){
     configFile.close();
     return false;    
   }
-  configFile.println("\n");
+  configFile.println("\n\n");
   configFile.close();
   return true;
 }
@@ -397,36 +397,36 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 bool saveRelayDefaultConfig(uint8_t rnb){
   StaticJsonDocument<buffer_size> json;
 
-   Serial.print("\n Initializing default relay parameters");
+   Serial.print(F("\n Initializing default relay parameters"));
 
  
-    json["RELAYNB"]=rnb;
-    json["PhyLoc"]="NA";
-    json["PUB_TOPIC1"]= "/home/Controller" + CID() + "/Coils/C1";
-    json["STATE_PUB_TOPIC"]="/home/Controller" + CID() + "/Coils/State/C1";
+    json[F("RELAYNB")]=rnb;
+    json[F("PhyLoc")]="NA";
+    json[F("PUB_TOPIC1")]= "/home/Controller" + CID() + "/Coils/C1";
+    json[F("STATE_PUB_TOPIC")]="/home/Controller" + CID() + "/Coils/State/C1";
 
-    json["TemperatureValue"]="0";
-    json["ACS_Sensor_Model"] = "30";
-    json["ttl"] = "0";
-    json["ttl_PUB_TOPIC"]="/home/Controller" + CID() + "/sts/VTTL";
-    json["i_ttl_PUB_TOPIC"]="/home/Controller" + CID() + "/i/TTL";
-    json["ACS_AMPS"]="/home/Controller" + CID() + "/Coils/C1/Amps";
-    json["CURR_TTL_PUB_TOPIC"]="/home/Controller" + CID() + "/sts/CURRVTTL";
+    json[F("TemperatureValue")]="0";
+    json[F("ACS_Sensor_Model")] = "30";
+    json[F("ttl")] = "0";
+    json[F("ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/VTTL";
+    json[F("i_ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/i/TTL";
+    json[F("ACS_AMPS")]="/home/Controller" + CID() + "/Coils/C1/Amps";
+    json[F("CURR_TTL_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/CURRVTTL";
 
-  //  json["I0MODE"]="0";
-  //  json["I1MODE"]="0";
-  //  json["I2MODE"]="0";
+  //  json[F("I0MODE")]="0";
+  //  json[F("I1MODE")]="0";
+  //  json[F("I2MODE")]="0";
 
-    json["tta"]="0";
-    json["Max_Current"]="10";
-    json["LWILL_TOPIC"]="/home/Controller" + CID() + "/LWT";
-    json["SUB_TOPIC1"]="/home/Controller" + CID() +  "/#";
-    json["ACS_Active"]="0";
+    json[F("tta")]="0";
+    json[F("Max_Current")]="10";
+    json[F("LWILL_TOPIC")]="/home/Controller" + CID() + "/LWT";
+    json[F("SUB_TOPIC1")]="/home/Controller" + CID() +  "/#";
+    json[F("ACS_Active")]="0";
 
 
     
     char  relayfilename[20];
-    mkRelayConfigName(relayfilename, json["RELAYNB"]);
+    mkRelayConfigName(relayfilename, json[F("RELAYNB")]);
 
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
@@ -440,7 +440,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
     configFile.close();
     return false;      
   }
-  configFile.println("\n");
+  configFile.println("\n\n");
   configFile.close();
 
   return true;
@@ -476,7 +476,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
     configFile.close();
     return false;    
   }
-  configFile.println("\n");
+  configFile.println("\n\n");
   configFile.close();
 
     return true;
@@ -488,25 +488,25 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
 bool saveRelayConfig(Trelayconf * RConfParam){
   StaticJsonDocument<buffer_size> json;
 
-    json["RELAYNB"]=RConfParam->v_relaynb;
-    json["PhyLoc"]=RConfParam->v_PhyLoc;
-    json["PUB_TOPIC1"]=RConfParam->v_PUB_TOPIC1;
-    json["TemperatureValue"]=RConfParam->v_TemperatureValue;
-    json["ACS_Sensor_Model"] = RConfParam->v_ACS_Sensor_Model;
-    json["ttl"]=RConfParam->v_ttl;
-    json["ttl_PUB_TOPIC"]=RConfParam->v_ttl_PUB_TOPIC;
-    json["i_ttl_PUB_TOPIC"]=RConfParam->v_i_ttl_PUB_TOPIC;
-    json["ACS_AMPS"]=RConfParam->v_ACS_AMPS;
-    json["CURR_TTL_PUB_TOPIC"]=RConfParam->v_CURR_TTL_PUB_TOPIC;
-    json["STATE_PUB_TOPIC"]=RConfParam->v_STATE_PUB_TOPIC;
-    json["I0MODE"]=RConfParam->v_IN0_INPUTMODE;
-    json["I1MODE"]=RConfParam->v_IN1_INPUTMODE;
-    json["I2MODE"]=RConfParam->v_IN2_INPUTMODE;
-    json["tta"]=RConfParam->v_tta;
-    json["Max_Current"]=RConfParam->v_Max_Current;
-    json["LWILL_TOPIC"]=RConfParam->v_LWILL_TOPIC;
-    json["SUB_TOPIC1"]=RConfParam->v_SUB_TOPIC1;
-    json["ACS_Active"]=RConfParam->v_ACS_Active;
+    json[F("RELAYNB")]=RConfParam->v_relaynb;
+    json[F("PhyLoc")]=RConfParam->v_PhyLoc;
+    json[F("PUB_TOPIC1")]=RConfParam->v_PUB_TOPIC1;
+    json[F("TemperatureValue")]=RConfParam->v_TemperatureValue;
+    json[F("ACS_Sensor_Model")] = RConfParam->v_ACS_Sensor_Model;
+    json[F("ttl")]=RConfParam->v_ttl;
+    json[F("ttl_PUB_TOPIC")]=RConfParam->v_ttl_PUB_TOPIC;
+    json[F("i_ttl_PUB_TOPIC")]=RConfParam->v_i_ttl_PUB_TOPIC;
+    json[F("ACS_AMPS")]=RConfParam->v_ACS_AMPS;
+    json[F("CURR_TTL_PUB_TOPIC")]=RConfParam->v_CURR_TTL_PUB_TOPIC;
+    json[F("STATE_PUB_TOPIC")]=RConfParam->v_STATE_PUB_TOPIC;
+    json[F("I0MODE")]=RConfParam->v_IN0_INPUTMODE;
+    json[F("I1MODE")]=RConfParam->v_IN1_INPUTMODE;
+    json[F("I2MODE")]=RConfParam->v_IN2_INPUTMODE;
+    json[F("tta")]=RConfParam->v_tta;
+    json[F("Max_Current")]=RConfParam->v_Max_Current;
+    json[F("LWILL_TOPIC")]=RConfParam->v_LWILL_TOPIC;
+    json[F("SUB_TOPIC1")]=RConfParam->v_SUB_TOPIC1;
+    json[F("ACS_Active")]=RConfParam->v_ACS_Active;
 
     char  relayfilename[20];
     mkRelayConfigName(relayfilename, RConfParam->v_relaynb);
@@ -524,7 +524,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     return false;        
   }
 
-  configFile.println("\n");
+  configFile.println("\n\n");
   /*StaticJsonDocument<64> dummy;
   dummy["end"]="0";
   if (serializeJsonPretty(dummy, configFile) == 0) {

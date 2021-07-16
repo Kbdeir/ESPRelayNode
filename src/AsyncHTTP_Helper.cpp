@@ -1,23 +1,23 @@
 #include <AsyncHTTP_Helper.h>
-#include <KSBNTP.h>
 #include <SPIFFSEditor.h>
 #include <MQTT_Processes.h>
 #include <RelayClass.h>
 #include <TimerClass.h>
 #include <TempConfig.h>
 #include <AccelStepper.h>
+#include <digitalClockDisplay.h>
+#include <ConfigParams.h>
 
-
+extern boolean CalendarNotInitiated ;
 extern NodeTimer NTmr;
 extern TempConfig PTempConfig;
-//extern Relay relay0;
 extern float MCelcius;
 extern float ACS_I_Current;
 
 extern void setupInputs();
 extern void clearIRMap();
-//extern std::vector<void *> relays ; // a list to hold all relays
 
+//extern std::vector<void *> relays ; // a list to hold all relays
 //extern  int currentPosition;
 //extern  int newPosition;  
 

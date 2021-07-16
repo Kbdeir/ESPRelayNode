@@ -86,7 +86,7 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   if (serializeJsonPretty(json, configFile) == 0) {
     Serial.println(F("Failed to write to file"));
   }
-  configFile.println("\n");
+  configFile.println("\n\n");
   /*<64> dummy;
   dummy["end"]="0";
   if (serializeJsonPretty(dummy, configFile) == 0) {
@@ -128,12 +128,12 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   }
 
 
-  para_NodeTimer.id = (json["TNumber"].as<String>()!="") ? json["TNumber"].as<uint8_t>() : 0;
-  para_NodeTimer.enabled = json["CEnabled"].as<uint8_t>() ; //(json["CEnabled"] == "1"); //.as<String>()!="") ? json["CEnabled"].as<uint8_t>() : 0;
-  para_NodeTimer.spanDatefrom = (json["Dfrom"].as<String>()!="") ? json["Dfrom"].as<String>() : String("01-01-1970");
-  para_NodeTimer.spanDateto  = (json["DTo"].as<String>()!="")  ? json["DTo"].as<String>() : String("01-01-2100");
-  para_NodeTimer.spantimefrom = (json["TFrom"].as<String>()!="") ? json["TFrom"].as<String>() : String("00:00");
-  para_NodeTimer.spantimeto  = (json["TTo"].as<String>()!="")  ? json["TTo"].as<String>() : String("00:00");
+  para_NodeTimer.id = (json[F("TNumber")].as<String>()!="") ? json[F("TNumber")].as<uint8_t>() : 0;
+  para_NodeTimer.enabled = json[F("CEnabled")].as<uint8_t>() ; //(json["CEnabled"] == "1"); //.as<String>()!="") ? json["CEnabled"].as<uint8_t>() : 0;
+  para_NodeTimer.spanDatefrom = (json[F("Dfrom")].as<String>()!="") ? json[F("Dfrom")].as<String>() : String(F("01-01-1970"));
+  para_NodeTimer.spanDateto  = (json[F("DTo")].as<String>()!="")  ? json[F("DTo")].as<String>() : String(F("01-01-2100"));
+  para_NodeTimer.spantimefrom = (json[F("TFrom")].as<String>()!="") ? json[F("TFrom")].as<String>() : String(F("00:00"));
+  para_NodeTimer.spantimeto  = (json[F("TTo")].as<String>()!="")  ? json[F("TTo")].as<String>() : String(F("00:00"));
   para_NodeTimer.weekdays->Sunday     = (json["Su"]== "1");
   para_NodeTimer.weekdays->Monday     = (json["Mo"]== "1");
   para_NodeTimer.weekdays->Tuesday    = (json["Tu"]== "1");
@@ -141,11 +141,11 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   para_NodeTimer.weekdays->Thursday   = (json["Th"]== "1");
   para_NodeTimer.weekdays->Friday     = (json["Fr"]== "1");
   para_NodeTimer.weekdays->Saturday   = (json["Sa"]== "1");
-  para_NodeTimer.Mark_Hours = (json["Mark_Hours"].as<String>()!="") ? json["Mark_Hours"].as<uint16_t>() : 0;
-  para_NodeTimer.Mark_Minutes = (json["Mark_Minutes"].as<String>()!="") ? json["Mark_Minutes"].as<uint16_t>() : 0;
+  para_NodeTimer.Mark_Hours = (json[F("Mark_Hours")].as<String>()!="") ? json[F("Mark_Hours")].as<uint16_t>() : 0;
+  para_NodeTimer.Mark_Minutes = (json[F("Mark_Minutes")].as<String>()!="") ? json[F("Mark_Minutes")].as<uint16_t>() : 0;
   para_NodeTimer.TM_type = static_cast<TimerType>(json["TMTYPEedit"].as<uint8_t>()); //default is full span
   para_NodeTimer.secondsspan = 0;
-  para_NodeTimer.relay = (json["TRelay"].as<String>()!="") ? json["TRelay"].as<uint8_t>() : 0;
+  para_NodeTimer.relay = (json[F("TRelay")].as<String>()!="") ? json[F("TRelay")].as<uint8_t>() : 0;
   //strcpy(para_NodeTimer.Testchar,json["Testchar"] | "NA");
 
   configFile.close();

@@ -21,10 +21,10 @@ extern std::vector<void *> relays ; // a list to hold all relays
 
 #ifndef StepperMode
 extern InputSensor Inputsnsr14;
+extern InputSensor Inputsnsr13;
 extern InputSensor Inputsnsr12;
 extern InputSensor Inputsnsr02;
 #endif 
-
 
 
 #ifdef ESP32
@@ -102,15 +102,31 @@ void onMqttConnect(bool sessionPresent) {
   // mqttpostinitstatusOfInputs(NULL);
 
   #ifndef StepperMode
-      #if defined (HWver02)  || defined (HWver03)
+      
         [](){
-          #if defined (HWver03)
+          #if defined (HWver03) 
           if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
             mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
               digitalRead(InputPin02) == HIGH ?  ON : OFF);
           }
           #endif
 
+          #if defined (HWver03_4R)
+            if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+                digitalRead(InputPin02) == HIGH ?  ON : OFF);
+            }
+            if (Inputsnsr14.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+                digitalRead(InputPin14) == HIGH ?  ON : OFF);
+            }          
+            if (Inputsnsr13.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, // ksb change this later
+                digitalRead(InputPin13) == HIGH ?  ON : OFF);
+            }                  
+          #endif
+                    
+          #if defined (HWver02)  || defined (HWver03)
           if (Inputsnsr12.fclickmode == INPUT_NORMAL) {
             mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
               digitalRead(InputPin12) == HIGH ?  ON : OFF);
@@ -119,9 +135,9 @@ void onMqttConnect(bool sessionPresent) {
             mqttClient.publish( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
               digitalRead(InputPin14) == HIGH ?  ON : OFF);
           }
-
+          #endif
         }();
-      #endif
+
   #endif
 }
 

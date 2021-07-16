@@ -49,6 +49,7 @@ void InputSensor::initialize(uint8_t p, fnptr_d on_callback, input_mode clickmod
     pin = p;
     fclickmode =  clickmode;
     pinMode ( pin, INPUT_PULLUP);
+
     onInputChange_RelayServiceRoutine = nullptr;
     onInputClick_RelayServiceRoutine = nullptr;
 
@@ -80,13 +81,14 @@ void InputSensor::watch() {
      }
      else
      {
+
        Relay * rtemp = nullptr;
        for (void* it : attachedrelays) {
        //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
          rtemp = static_cast<Relay *>(it);
          if (rtemp) {
            if (fclickmode==INPUT_COPY_TO_RELAY) {
-              if (Input_debouncer->fell() || Input_debouncer->rose()) {
+              if (this->Input_debouncer->fell() || this->Input_debouncer->rose()) {
                if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}
               }
               /*

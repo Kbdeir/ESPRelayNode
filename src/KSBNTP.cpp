@@ -1,4 +1,3 @@
-
 #include <KSBNTP.h>
 
 
@@ -9,27 +8,6 @@ uint8_t timeZone = 1;     // Central European Time
 unsigned int localPort = 8888;  // local port to listen for UDP packets
 WiFiUDP Udp;
 
-String digitalClockDisplay()
-{
-String t =  String(hour())+":"+printDigits(minute()) +":"+printDigits(second())+" "+String(day())+"-"+String(month())+"-"+String(year());
-//Serial.print(" printing time ");
-//Serial.println(t);
-return t;
-
-}
-
-String printDigits(int digits)
-{
- //  String t;
-  // utility for digital clock display: prints preceding colon and leading 0
-  return digits < 10 ? "0"  + String(digits) : String(digits);
-  /*if (digits < 10) {
-    t = t + "0";
-  }
-  t = t + String(digits);
-return t;*/
-
-}
 
 time_t getNtpTime()
 {
@@ -83,7 +61,6 @@ time_t getNtpTime()
   }
   Serial.println(F("[NTP ] No NTP Response :-("));
   setSyncInterval(10); // if failed to get time, try after 10 seconds
-
   return 0; // return 0 if unable to get the time
   }
   return 0;

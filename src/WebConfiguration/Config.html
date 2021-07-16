@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>NODE CONFIGURATION</title>
-<meta name="generator" content="WYSIWYG Web Builder 15 - http://www.wysiwygwebbuilder.com">
+<meta name="generator" content="WYSIWYG Web Builder 15 Trial Version - http://www.wysiwygwebbuilder.com">
 <style>
 body
 {
@@ -1660,7 +1660,7 @@ input:focus, textarea:focus, select:focus
 <option value="1">Click Mode</option>
 <option value="2">Input Mode</option>
 <option value="3">Toggle Mode - Coil Connected</option>
-<option value="4">Copy to Coil</option>
+<option value="4">Copy Input to Coil</option>
 </select>
 <div id="wb_Text8" style="position:absolute;left:379px;top:370px;width:37px;height:15px;z-index:12;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Port</span></div>
@@ -1820,6 +1820,7 @@ input:focus, textarea:focus, select:focus
 </div>
 <div id="wb_Text24" style="position:absolute;left:562px;top:86px;width:129px;height:15px;z-index:102;" onclick="window.location.href='edit';return false;">
 <span style="color:#4169E1;font-family:Arial;font-size:13px;">Configuration files</span></div>
+<a href="http://www.wysiwygwebbuilder.com" target="_blank"><img src="images/builtwithwwb15.png" alt="WYSIWYG Web Builder" style="position:absolute;left:441px;top:1312px;margin: 0;border-width:0;z-index:250"></a>
 <script>
 function submitForm1()
 {
@@ -2444,9 +2445,8 @@ function submitRelay2Conf()
     </script>
 </body>
 </html><script> 
+document.getElementById("IN0_INPUTMODE_C").value= document.getElementById("I0MODE").value ;
+document.getElementById("IN1_INPUTMODE_C").value = document.getElementById("I1MODE").value ; 
+document.getElementById("IN2_INPUTMODE_C").value = document.getElementById("I2MODE").value ; 
 document.getElementById("ACSmultiple").value=document.getElementById("ACS_Sensor_Model").value ; 
-
-document.getElementById("IN0_INPUTMODE_C").value=document.getElementById("I0MODE").value ;
-document.getElementById("IN1_INPUTMODE_C").value=document.getElementById("I1MODE").value ; 
-document.getElementById("IN2_INPUTMODE_C").value=document.getElementById("I2MODE").value ; 
  </script>
