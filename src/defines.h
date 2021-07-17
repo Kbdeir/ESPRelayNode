@@ -12,6 +12,6 @@
 // #define StepperMode
 //**********************************************************
 
-
+#define AppleHK
 #define DEBUG_DISABLED
 //#define blockingTime
