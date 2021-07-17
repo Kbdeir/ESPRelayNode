@@ -7,6 +7,9 @@
   RemoteDebug Debug;
 #endif 
 
+#ifdef AppleHK
+#include <AppleHKSupport.h>
+#endif
 
 #include <Arduino.h>
 #include <string.h>
@@ -25,6 +28,7 @@
 #include <TempSensor.h>
 #include <TempConfig.h>
 #include "AsyncPing.h"
+
 
 
 //#include <AH_EasyDriver.h>
@@ -76,7 +80,7 @@ extern "C"
 #include <MQTT_Processes.h>
 #include <AsyncHTTP_Helper.h>
 
-
+bool homekitNotInitialised = true;
 
 time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
@@ -320,6 +324,8 @@ void onRelaychangeInterruptSvc(void* relaySender){
         }
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
+                  cha_switch_on.value.bool_value = true;	  //sync the value
+                  homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);         
       }
 
       if (digitalRead(rly->getRelayPin()) == LOW) {
@@ -330,11 +336,17 @@ void onRelaychangeInterruptSvc(void* relaySender){
         }
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
+                  cha_switch_on.value.bool_value = false;	  //sync the value
+                  homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);        
+        
       }
   } else {
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                             digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);
+                      
   }
+
+
 }
 
 
@@ -747,6 +759,13 @@ void chronosInit() {
   Chronos::DateTime::now().printTo(SERIAL_DEVICE);
   Chronos::DateTime nowTime(Chronos::DateTime::now());
    //nowTime.printTo(SERIAL_DEVICE);
+
+ 	//homekit_storage_reset();   
+  if (homekitNotInitialised) {
+    homekitNotInitialised = false;
+  my_homekit_setup();
+  }
+
   LINE();
 }
 
@@ -840,6 +859,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 void thingsTODO_on_WIFI_Connected() {
             Serial.println(F("WiFi Connected."));
             IP_info();
+
             SetAsyncHTTP();
         		blinkInterval = 1000;
             Serial.print(F("\n[WIFI]IP number assigned by DHCP is "));
@@ -851,7 +871,7 @@ void thingsTODO_on_WIFI_Connected() {
 
                 // AsyncNTP
                 #ifdef blockingTime
-                            Udp.begin(localPort);
+                      Udp.begin(localPort);
                 #else
                 if (Audp.connect(MyConfParam.v_timeserver, NTP_REQUEST_PORT))
                 {
@@ -900,7 +920,7 @@ void thingsTODO_on_WIFI_Connected() {
             MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
             MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
             MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
-            
+
             
             #ifdef blockingTime
              setSyncProvider(getNtpTime);
@@ -909,16 +929,12 @@ void thingsTODO_on_WIFI_Connected() {
              setSyncInterval(2); 
             #endif 
 
-
-
-            // connectToMqtt();           // replaced by a call to tiker_MQTT_CONNECT timer
             #ifndef DEBUG_DISABLED  
             debugV("* Starting MQTT connection timer, 5 seconds period"); 
             #endif 
             tiker_MQTT_CONNECT.start();  // timer will retry to connect every 5s. 
         		MBserver->begin();
         		MBserver->onClient(&handleNewClient, MBserver);
-            
 
 }
 
@@ -1245,7 +1261,7 @@ void setup() {
         #endif        
     #endif    
 
-        // ESP.wdtDisable();
+
      //while (relay0.loadrelayparams(0) != true){
        while (relay0.loadrelayparams(0) != true){
           delay(2000);
@@ -1339,7 +1355,7 @@ void loop() {
     pinMode (ConfigInputPin, INPUT_PULLUP );
 
     if (restartRequired){
-      Serial.println(F("\n[SYSTEM] Restarting ESP\n\r"));
+      Serial.println(F("\n[SYSTEM] Restarting \n\r"));
       restartRequired = false;
       delay(2500);
       ESP.restart();
@@ -1348,7 +1364,8 @@ void loop() {
  // if  (WiFi.status() != WL_CONNECTED)  {
     //if (APModetimer_run_value == 0) Wifi_connect();
  // }
-
+	my_homekit_loop();
+  // delay(10);
  	blinkled();
 
   tiker_MQTT_CONNECT.update(nullptr);
@@ -1398,7 +1415,7 @@ void loop() {
 
   if (millis() - lastMillis_1 > 10000) {
     lastMillis_1 = millis();
-    Pings.begin(MyConfParam.v_Pingserver);
+ //    Pings.begin(MyConfParam.v_Pingserver);
   }
 
   if (millis() - lastMillis > 1000) {

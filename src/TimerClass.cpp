@@ -1,6 +1,6 @@
 
 #include <TimerClass.h>
-#define buffer_size  1500
+ #define buffer_size  1500
 
 
 NodeTimer::NodeTimer(uint8_t para_id) {

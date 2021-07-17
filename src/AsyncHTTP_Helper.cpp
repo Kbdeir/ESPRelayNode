@@ -1,3 +1,4 @@
+#include <arduino_homekit_server.h>
 #include <AsyncHTTP_Helper.h>
 #include <SPIFFSEditor.h>
 #include <MQTT_Processes.h>
@@ -7,6 +8,10 @@
 #include <AccelStepper.h>
 #include <digitalClockDisplay.h>
 #include <ConfigParams.h>
+
+
+// extern "C" homekit_characteristic_t cha_switch_on;
+
 
 extern boolean CalendarNotInitiated ;
 extern NodeTimer NTmr;

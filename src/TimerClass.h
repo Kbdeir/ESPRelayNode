@@ -15,7 +15,7 @@ typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 
 #define MAX_NUMBER_OF_TIMERS 4
-#define buffer_size  1500 // json buffer size
+// #define buffer_size  1500 // json buffer size
 typedef enum { TM_FAILURE, TM_FULL_SPAN, TM_DAILY_SPAN, TM_WEEKDAY_SPAN, TM_MONTHLY_SPAN, TM_YEARLY_SPAN } TimerType;
 
 typedef struct TWeekdays {

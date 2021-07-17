@@ -14,14 +14,14 @@ typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 
-const int DEFLEN = 20;
-#define buffer_size  2000
+const int DEFLEN_ = 20;
+#define buffer_size 2000
 
 class Relay
 {
   private:
    uint8_t pin;
-   char RelayTag[DEFLEN];
+   char RelayTag[DEFLEN_];
    int IDRelayTag;
    const char* filename = "/Relayconfig.json";
 
