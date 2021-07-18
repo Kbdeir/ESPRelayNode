@@ -803,9 +803,9 @@ void chronosevaluatetimers(Calendar MyCalendar) {
           }
           if ((nowTime > occurrenceList[i].start + 1)) {
             rly->hastimerrunning = true;
-            LINE();
-            PRINTLN(F("[INFO] turning relay [ON]... event is Starting - TimerPaused value"));
-            PRINT(rly->timerpaused);
+            // LINE();
+            PRINTLN(F("\n[INFO] turning relay [ON]... event is Starting - TimerPaused value"));
+            // PRINT(rly->timerpaused);
             if (!digitalRead(rly->getRelayPin())){
               if (!rly->timerpaused) {
                 rly->mdigitalWrite(rly->getRelayPin(),HIGH);
@@ -816,8 +816,8 @@ void chronosevaluatetimers(Calendar MyCalendar) {
             LINE();
             rly->lockupdate = false;
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
-            PRINTLN(F("[INFO] truning relay OFF... event is done - TimerPaused value"));
-            PRINT(rly->timerpaused);
+            PRINTLN(F("[INFO]truning relay OFF... event is done - TimerPaused value"));
+            // PRINT(rly->timerpaused);
             rly->timerpaused = false;
             rly->hastimerrunning = false;
           }
@@ -877,7 +877,7 @@ void thingsTODO_on_WIFI_Connected() {
                 #else
                 if (Audp.connect(MyConfParam.v_timeserver, NTP_REQUEST_PORT))
                 {
-                  Serial.println("Timee server connected \n");
+                  Serial.println(F("Time server connected \n"));
                   Audp.onPacket([](AsyncUDPPacket packet)
                   {
                     parsePacket(packet);
@@ -1203,13 +1203,13 @@ void setup() {
           // Wifi_connect();
           if (blinkInterval > 50) {
             Wifireconnecttimer.start();
-            Serial.println(F("[WIFI] Starting reconnection timer \n"));
+            Serial.println(F("[WIFI] Starting reconnection timer\n"));
           }
           blinkInterval = 50;
 
           if (digitalRead(ConfigInputPin) == LOW){
             Wifireconnecttimer.stop();
-            Serial.println(F("[WIFI] Starting AP_STA mode \n"));
+            Serial.println(F("[WIFI] Starting AP_STA mode\n"));
             WiFi.mode(WIFI_AP_STA);
             if ((WiFi.status() != WL_CONNECTED))	{
               startsoftAP();
@@ -1220,7 +1220,7 @@ void setup() {
         
         WiFi.mode(WIFI_STA);
         if (digitalRead(ConfigInputPin) == LOW){
-          Serial.print(F("[WIFI] Sarting WIFI in AP mode"));
+          Serial.print(F("\n[WIFI] Sarting WIFI in AP mode \n"));
           WiFi.mode(WIFI_AP_STA);
         }
         WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
@@ -1357,7 +1357,7 @@ void loop() {
     pinMode (ConfigInputPin, INPUT_PULLUP );
 
     if (restartRequired){
-      Serial.println(F("\n[SYSTEM] Restarting \n\r"));
+      Serial.println(F("\n[SYSTEM] Restarting\n\r"));
       restartRequired = false;
       delay(2500);
       ESP.restart();
@@ -1420,7 +1420,7 @@ void loop() {
 
   if (millis() - lastMillis_1 > 10000) {
     lastMillis_1 = millis();
- //    Pings.begin(MyConfParam.v_Pingserver);
+    Pings.begin(MyConfParam.v_Pingserver);
   }
 
   if (millis() - lastMillis > 1000) {
