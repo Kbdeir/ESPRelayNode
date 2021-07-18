@@ -10,9 +10,6 @@
 #include <ConfigParams.h>
 
 
-// extern "C" homekit_characteristic_t cha_switch_on;
-
-
 extern boolean CalendarNotInitiated ;
 extern NodeTimer NTmr;
 extern TempConfig PTempConfig;

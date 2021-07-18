@@ -323,9 +323,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
           rly->start_ttl_timer();
         }
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
-                  cha_switch_on.value.bool_value = true;	  //sync the value
-                  homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);         
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);  
       }
 
       if (digitalRead(rly->getRelayPin()) == LOW) {
@@ -336,16 +334,17 @@ void onRelaychangeInterruptSvc(void* relaySender){
         }
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
-                  cha_switch_on.value.bool_value = false;	  //sync the value
-                  homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);        
-        
       }
+ 
   } else {
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
-                            digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);
-                      
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);                
   }
-
+  #ifdef AppleHK
+    if (PIN_SWITCH == rly->getRelayPin()) {
+    cha_switch_on.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+    homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);    
+    }         
+  #endif
 
 }
 
@@ -760,11 +759,14 @@ void chronosInit() {
   Chronos::DateTime nowTime(Chronos::DateTime::now());
    //nowTime.printTo(SERIAL_DEVICE);
 
- 	//homekit_storage_reset();   
-  if (homekitNotInitialised) {
-    homekitNotInitialised = false;
-  my_homekit_setup();
-  }
+
+  #ifdef AppleHK
+    //homekit_storage_reset();   
+    if (homekitNotInitialised) {
+      homekitNotInitialised = false;
+      my_homekit_setup();
+    }
+  #endif
 
   LINE();
 }
@@ -1364,7 +1366,10 @@ void loop() {
  // if  (WiFi.status() != WL_CONNECTED)  {
     //if (APModetimer_run_value == 0) Wifi_connect();
  // }
-	my_homekit_loop();
+
+  #ifdef AppleHK
+	  my_homekit_loop();
+  #endif   
   // delay(10);
  	blinkled();
 

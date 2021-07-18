@@ -217,26 +217,20 @@ uint8_t Relay::getRelayPin(){
 
 void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
     this->freelockreset();
-    Serial.print("\n *************************  in digital write 0 **************************** \n");
     if (!lockupdate){
-      Serial.print("\n in digital write 1 \n");
       lockupdate = true;
       uint8_t sts = digitalRead(pn);
       rchangedflag = (sts != v);
       if (rchangedflag){
-        Serial.print("\n in digital write 3 \n");
         digitalWrite(pn,v);
         Relay * rl;
         rl = getrelaybypin(pn);
         if (rl!=nullptr) {
-          Serial.print("\n in digital write 4 \n");
-         if (rl->hastimerrunning) { 
-           Serial.print("\n in digital write 5 \n");
+         if (rl->hastimerrunning) {   
            rl->timerpaused = (v==LOW); 
-           }
+         }
         }
               if (fonchangeInterruptService)  {
-                Serial.print("\n in digital write 6 \n");
                 fonchangeInterruptService(this);
               }
       }
