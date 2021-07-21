@@ -763,7 +763,7 @@ void chronosInit() {
 
 
   #ifdef AppleHK
-    //homekit_storage_reset();   
+   // homekit_storage_reset();   
     if (homekitNotInitialised) {
       homekitNotInitialised = false;
       MyConfParam.v_PhyLoc.toCharArray(HAName, 16);
