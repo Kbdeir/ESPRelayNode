@@ -1515,7 +1515,7 @@ void loop() {
       #endif
 
       #ifdef AppleHK
-        cha_temperature.value.float_value = 25;
+        cha_temperature.value.float_value = MCelcius;
         homekit_characteristic_notify(&cha_temperature, cha_temperature.value);
       #endif
       

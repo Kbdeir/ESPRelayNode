@@ -24,9 +24,11 @@ void my_accessory_identify(homekit_value_t _value) {
 homekit_characteristic_t cha_switch_on = HOMEKIT_CHARACTERISTIC_(ON, false);
 homekit_characteristic_t cha_name = HOMEKIT_CHARACTERISTIC_(NAME, HAName_SW);
 
+#ifdef HWver03_4R
 // format: bool; HAP section 9.70; write the .setter function to get the switch-event sent from iOS Home APP.
 homekit_characteristic_t cha_switch_on1 = HOMEKIT_CHARACTERISTIC_(ON, false);
 homekit_characteristic_t cha_name1 = HOMEKIT_CHARACTERISTIC_(NAME, "Switcher2");
+#endif 
 
 // format: float; min 0, max 100, step 0.1, unit celsius
 homekit_characteristic_t cha_temperature_name = HOMEKIT_CHARACTERISTIC_(NAME, "Temperature");
@@ -94,6 +96,9 @@ homekit_accessory_t *accessories[] = {
         NULL
     }),    
 
+
+#ifdef HWver03_4R
+// ksb: you still have to implement the setter and updater functions
     HOMEKIT_ACCESSORY(.id=3, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]) {
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Switcher2"), //"Switch"),
@@ -111,6 +116,7 @@ homekit_accessory_t *accessories[] = {
 		}),
         NULL
     }),    
+ #endif   
 
     HOMEKIT_ACCESSORY(.id=4, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]) {
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
@@ -129,42 +135,7 @@ homekit_accessory_t *accessories[] = {
 		}),
         NULL
     }),   
-    /*
-	HOMEKIT_ACCESSORY(.id=2, .category=homekit_accessory_category_sensor, .services=(homekit_service_t*[]) {
-    	HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
-			HOMEKIT_CHARACTERISTIC(NAME, "Temperature Sensor"),
-			HOMEKIT_CHARACTERISTIC(IDENTIFY, my_accessory_identify),
-			NULL
-		}),
-    	HOMEKIT_SERVICE(TEMPERATURE_SENSOR, .primary=true, .characteristics=(homekit_characteristic_t*[]) {
-			HOMEKIT_CHARACTERISTIC(NAME, "Temperature"),
-			&cha_temperature,
-			NULL
-		}),
-		NULL
-	}),
-    /*
-    HOMEKIT_ACCESSORY(.id=3, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]) {
-        HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
-            HOMEKIT_CHARACTERISTIC(NAME, HAName), //"Switch"),
-            //HOMEKIT_CHARACTERISTIC(MANUFACTURER, "KSB HomeKit"),
-            //HOMEKIT_CHARACTERISTIC(SERIAL_NUMBER, "0123456"),
-            //HOMEKIT_CHARACTERISTIC(MODEL, "ESP8266/ESP32"),
-            //HOMEKIT_CHARACTERISTIC(FIRMWARE_REVISION, "1.0"),
-            HOMEKIT_CHARACTERISTIC(IDENTIFY, my_accessory_identify),
-            NULL
-        }),
-		HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]){
-			&cha_switch_on,
-			&cha_name,
-			NULL
-		}),
-        NULL
-    }),
-*/
-
-
-    NULL
+   NULL
 };
 
 

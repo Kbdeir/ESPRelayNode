@@ -36,6 +36,9 @@
 // access your HomeKit characteristics defined in my_accessory.c
 extern "C" homekit_server_config_t config;
 extern "C" homekit_characteristic_t cha_switch_on;
+#ifdef HWver03_4R
+extern "C" homekit_characteristic_t cha_switch_on1;
+#endif
 
 extern "C" homekit_characteristic_t cha_temperature_name;
 extern "C" homekit_characteristic_t cha_temperature;
@@ -86,7 +89,7 @@ void my_homekit_loop() {
 	if (t > next_heap_millis) {
 		// show heap info every 5 seconds
 		next_heap_millis = t + 5 * 1000;
-		LOG_D("[Homekit] Free heap: %d, HomeKit clients: %d",
+		Serial.printf("\n[Homekit] Free heap: %d, HomeKit clients: %d",
 				ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
 
 	}
