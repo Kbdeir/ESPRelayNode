@@ -53,8 +53,12 @@ extern "C"
   #include <lwip/icmp.h> // needed for icmp packet definitions
 }
 
-char HAName_Bridge[16]  = "MyBridge_____\0";
-char HAName_SW[16]      = "MySwitch_____\0";
+char HAName_Bridge[32]  = "MyBridge_____\0";
+char HAName_SW[32]      = "MySwitch_____\0";
+extern "C"
+{
+  #include <homekit/types.h> // needed for icmp packet definitions
+}
 
 
 #ifdef ESP32
@@ -767,8 +771,8 @@ void chronosInit() {
     if (homekitNotInitialised) {
       homekitNotInitialised = false;
       String s = "Bridge_" + MyConfParam.v_PhyLoc;      
-      s.toCharArray(HAName_Bridge, 16);
-      MyConfParam.v_PhyLoc.toCharArray(HAName_SW, 16);      
+      s.toCharArray(HAName_Bridge, 32);
+      MyConfParam.v_PhyLoc.toCharArray(HAName_SW, 32);      
       my_homekit_setup();
     }
   #endif
@@ -920,6 +924,7 @@ void thingsTODO_on_WIFI_Connected() {
 
 
             Serial.println(F("[INFO] starting mdns"));
+            
             if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
               Serial.println(F("[INFO] Error setting up MDNS responder!"));
             }
@@ -927,7 +932,7 @@ void thingsTODO_on_WIFI_Connected() {
             MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
             MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
             MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
-
+            
             
             #ifdef blockingTime
              setSyncProvider(getNtpTime);
@@ -1514,11 +1519,7 @@ void loop() {
       debugV("[INFO] TempSensor1 %.2f C ", TSolarTank);
       #endif
 
-      #ifdef AppleHK
-        cha_temperature.value.float_value = MCelcius;
-        homekit_characteristic_notify(&cha_temperature, cha_temperature.value);
-      #endif
-      
+     
       mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];
             itoa(rtmp,tmp,10);
@@ -1526,6 +1527,16 @@ void loop() {
           // return String(round(MCelcius)).c_str();
           }()
         );
+
+      #ifdef AppleHK
+      
+        if (MCelcius < 0 ) { MCelcius = 99; }; 
+        float r = random(5,50);
+        //cha_temperature.value =  HOMEKIT_FLOAT(MCelcius);; //MCelcius;
+        cha_temperature.value.float_value = MCelcius;
+        homekit_characteristic_notify(&cha_temperature, HOMEKIT_FLOAT(r)) ;// cha_temperature.value);
+      
+      #endif        
 
       rtmp = roundf(TempSensorSecond.Celcius);
       float TSolarPanel = rtmp;

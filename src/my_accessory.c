@@ -9,8 +9,8 @@
 #include <homekit/homekit.h>
 #include <homekit/characteristics.h>
 
-extern char HAName_Bridge[16];
-extern char HAName_SW[16];
+extern char HAName_Bridge[32];
+extern char HAName_SW[32];
 
 void my_accessory_identify(homekit_value_t _value) {
 	printf("accessory identify\n");
@@ -39,7 +39,7 @@ homekit_characteristic_t cha_temperature = HOMEKIT_CHARACTERISTIC_(CURRENT_TEMPE
 homekit_accessory_t *accessories[] = {
     HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]) {
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
-            HOMEKIT_CHARACTERISTIC(NAME, HAName), //"Switch"),
+            HOMEKIT_CHARACTERISTIC(NAME, HAName_SW), //"Switch"),
             HOMEKIT_CHARACTERISTIC(MANUFACTURER, "KSB HomeKit"),
             HOMEKIT_CHARACTERISTIC(SERIAL_NUMBER, "0123456"),
             HOMEKIT_CHARACTERISTIC(MODEL, "ESP8266/ESP32"),
@@ -57,6 +57,7 @@ homekit_accessory_t *accessories[] = {
     NULL
 };
 */
+
 
 
 homekit_accessory_t *accessories[] = {
@@ -118,7 +119,7 @@ homekit_accessory_t *accessories[] = {
     }),    
  #endif   
 
-    HOMEKIT_ACCESSORY(.id=4, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]) {
+    HOMEKIT_ACCESSORY(.id=3, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]) {
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
             HOMEKIT_CHARACTERISTIC(NAME, "Temperature"), //"Switch"),
             HOMEKIT_CHARACTERISTIC(MANUFACTURER, "KSB HomeKit"),
@@ -137,14 +138,6 @@ homekit_accessory_t *accessories[] = {
     }),   
    NULL
 };
-
-
-
-
-
-
-
-
 
 
 
