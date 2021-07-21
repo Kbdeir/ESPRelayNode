@@ -15,6 +15,7 @@ extern NodeTimer NTmr;
 extern TempConfig PTempConfig;
 extern float MCelcius;
 extern float ACS_I_Current;
+extern bool homekitNotInitialised;
 
 extern void setupInputs();
 extern void clearIRMap();
@@ -358,6 +359,21 @@ void SetAsyncHTTP(){
           clearIRMap();
           loadIRMapConfig(myIRMap);
     });
+
+
+    AsyncWeb_server.on("/ResetHomeKit", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/ResetHomeKit.html");
+        // int args = request->args();
+      #ifdef AppleHK
+          homekit_storage_reset();   
+				  Serial.println(F("HomeKit Web Reset, rebooting.."));
+          restartRequired = true; // main function will take care of restarting
+      #endif
+    });
+
+
+
 
     AsyncWeb_server.on("/RelayCmdApplied.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
