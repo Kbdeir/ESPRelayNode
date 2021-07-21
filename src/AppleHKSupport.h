@@ -37,6 +37,9 @@
 extern "C" homekit_server_config_t config;
 extern "C" homekit_characteristic_t cha_switch_on;
 
+extern "C" homekit_characteristic_t cha_temperature_name;
+extern "C" homekit_characteristic_t cha_temperature;
+
 static uint32_t next_heap_millis = 0;
 
 //Called when the switch value is changed by iOS Home APP

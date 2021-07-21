@@ -53,8 +53,8 @@ extern "C"
   #include <lwip/icmp.h> // needed for icmp packet definitions
 }
 
-char HAName[16] = "MySwitch_____\0";
- 
+char HAName_Bridge[16]  = "MyBridge_____\0";
+char HAName_SW[16]      = "MySwitch_____\0";
 
 
 #ifdef ESP32
@@ -763,10 +763,12 @@ void chronosInit() {
 
 
   #ifdef AppleHK
-   // homekit_storage_reset();   
+  //  homekit_storage_reset();   
     if (homekitNotInitialised) {
       homekitNotInitialised = false;
-      MyConfParam.v_PhyLoc.toCharArray(HAName, 16);
+      String s = "Bridge_" + MyConfParam.v_PhyLoc;      
+      s.toCharArray(HAName_Bridge, 16);
+      MyConfParam.v_PhyLoc.toCharArray(HAName_SW, 16);      
       my_homekit_setup();
     }
   #endif
@@ -1423,7 +1425,7 @@ void loop() {
 
   if (millis() - lastMillis_1 > 10000) {
     lastMillis_1 = millis();
-    Pings.begin(MyConfParam.v_Pingserver,1);
+   // Pings.begin(MyConfParam.v_Pingserver,1);
   }
 
   if (millis() - lastMillis > 1000) {
@@ -1512,6 +1514,10 @@ void loop() {
       debugV("[INFO] TempSensor1 %.2f C ", TSolarTank);
       #endif
 
+      #ifdef AppleHK
+        cha_temperature.value.float_value = 25;
+        homekit_characteristic_notify(&cha_temperature, cha_temperature.value);
+      #endif
       
       mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];
@@ -1528,6 +1534,7 @@ void loop() {
       #ifndef DEBUG_DISABLED
       debugV("[INFO] TempSensor2 %.2f C ", TSolarPanel);
       #endif
+
 
       mqttClient.publish((relay0.RelayConfParam->v_TemperatureValue + "_2").c_str(), QOS2, RETAINED, [rtmp](){
             char tmp[10];
