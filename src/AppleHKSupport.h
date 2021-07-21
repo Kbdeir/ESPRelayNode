@@ -39,31 +39,24 @@ extern "C" homekit_characteristic_t cha_switch_on;
 
 static uint32_t next_heap_millis = 0;
 
-#define PIN_SWITCH 14
-
 //Called when the switch value is changed by iOS Home APP
 void cha_switch_on_setter(const homekit_value_t value) {
 	bool on = value.bool_value;
 	cha_switch_on.value.bool_value = on;	//sync the value
 	LOG_D("Switch: %s", on ? "ON" : "OFF");
-	// digitalWrite(PIN_SWITCH, on ? LOW : HIGH);
-    ///mdigitalWrite(PIN_SWITCH,HIGH);
+
     Relay * rly = nullptr;
     Relay * rtemp = nullptr;
 
-    //Relay * it = NULL;
-    //for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
-
-    rtemp = getrelaybypin(14);
+    rtemp = getrelaybypin(RelayPin);
     if (rtemp) {
         if (on) {
-        rtemp->mdigitalWrite(14,HIGH);
+        rtemp->mdigitalWrite(RelayPin,HIGH);
         } else {
-            rtemp->mdigitalWrite(14,LOW);
+            rtemp->mdigitalWrite(RelayPin,LOW);
         }
     }
- 
-}
+ }
 
 void my_homekit_setup() {
 	// pinMode(PIN_SWITCH, OUTPUT);
@@ -90,7 +83,7 @@ void my_homekit_loop() {
 	if (t > next_heap_millis) {
 		// show heap info every 5 seconds
 		next_heap_millis = t + 5 * 1000;
-		LOG_D("Free heap: %d, HomeKit clients: %d",
+		LOG_D("[Homekit] Free heap: %d, HomeKit clients: %d",
 				ESP.getFreeHeap(), arduino_homekit_connected_clients_count());
 
 	}

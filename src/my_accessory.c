@@ -9,6 +9,8 @@
 #include <homekit/homekit.h>
 #include <homekit/characteristics.h>
 
+extern char HAName[16];
+
 void my_accessory_identify(homekit_value_t _value) {
 	printf("accessory identify\n");
 }
@@ -21,13 +23,15 @@ void my_accessory_identify(homekit_value_t _value) {
 homekit_characteristic_t cha_switch_on = HOMEKIT_CHARACTERISTIC_(ON, false);
 
 // format: string; HAP section 9.62; max length 64
-homekit_characteristic_t cha_name = HOMEKIT_CHARACTERISTIC_(NAME, "Switch");
+
+// MyConfParam.v_PhyLoc.toCharArray(HAName, 16);
+homekit_characteristic_t cha_name = HOMEKIT_CHARACTERISTIC_(NAME, HAName);
 
 homekit_accessory_t *accessories[] = {
     HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]) {
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]) {
-            HOMEKIT_CHARACTERISTIC(NAME, "Switch"),
-            HOMEKIT_CHARACTERISTIC(MANUFACTURER, "Arduino HomeKit"),
+            HOMEKIT_CHARACTERISTIC(NAME, HAName), //"Switch"),
+            HOMEKIT_CHARACTERISTIC(MANUFACTURER, "KSB HomeKit"),
             HOMEKIT_CHARACTERISTIC(SERIAL_NUMBER, "0123456"),
             HOMEKIT_CHARACTERISTIC(MODEL, "ESP8266/ESP32"),
             HOMEKIT_CHARACTERISTIC(FIRMWARE_REVISION, "1.0"),

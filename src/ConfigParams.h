@@ -37,6 +37,7 @@
     #define led       05  
 
     #define RelayPin  16
+    #define HomeKitt_PIN_SWITCH 16 // Homekit is on (Relay0 = RelayPin) pin only
     #define Relay1Pin 14    
     #define Relay2Pin 12        
     #define Relay3Pin 13 
@@ -52,6 +53,7 @@
 
   #if defined (HWver02)  || defined (HWver03)
     #define RelayPin 05
+    #define HomeKitt_PIN_SWITCH 05
     //#define Relay2Pin 16
     #define InputPin12 12
     #define ConfigInputPin 13 // was 13. should return to 13

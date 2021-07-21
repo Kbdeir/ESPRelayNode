@@ -52,6 +52,8 @@ extern "C"
 {
   #include <lwip/icmp.h> // needed for icmp packet definitions
 }
+
+char HAName[16] = "MySwitch_____\0";
  
 
 
@@ -340,7 +342,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);                
   }
   #ifdef AppleHK
-    if (PIN_SWITCH == rly->getRelayPin()) {
+    if (HomeKitt_PIN_SWITCH == rly->getRelayPin()) {
     cha_switch_on.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
     homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);    
     }         
@@ -764,6 +766,7 @@ void chronosInit() {
     //homekit_storage_reset();   
     if (homekitNotInitialised) {
       homekitNotInitialised = false;
+      MyConfParam.v_PhyLoc.toCharArray(HAName, 16);
       my_homekit_setup();
     }
   #endif
@@ -1098,14 +1101,14 @@ void setup() {
       Pings.on(true,[](const AsyncPingResponse& response){
         IPAddress addr(response.addr); //to prevent with no const toString() in 2.3.0
         if (response.answer)
-          Serial.printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%d ms\n", response.size, addr.toString().c_str(), response.icmp_seq, response.ttl, response.time);
+          Serial.printf("[PING   ] %d bytes from %s: icmp_seq=%d ttl=%d time=%d ms\n", response.size, addr.toString().c_str(), response.icmp_seq, response.ttl, response.time);
         else
-          Serial.printf("no answer yet for %s icmp_seq=%d\n", addr.toString().c_str(), response.icmp_seq);
+          Serial.printf("[PING   ] no answer yet for %s icmp_seq=%d\n", addr.toString().c_str(), response.icmp_seq);
         return false; //do not stop
       });
       Pings.on(false,[](const AsyncPingResponse& response){
         IPAddress addr(response.addr); //to prevent with no const toString() in 2.3.0
-        Serial.printf("total answer from %s sent %d recevied %d time %d ms\n",addr.toString().c_str(),response.total_sent,response.total_recv,response.total_time);
+        Serial.printf("[PING   ] total answer from %s sent %d recevied %d time %d ms\n",addr.toString().c_str(),response.total_sent,response.total_recv,response.total_time);
          if (response.total_recv > 0) {
            restartRequired_counter = 0;
          }  else
@@ -1113,7 +1116,7 @@ void setup() {
               if (MyConfParam.v_Reboot_on_WIFI_Disconnection > 0) {
                 restartRequired_counter++;
                 //Serial.printf("\n\nPinging failure count: %i \n\n", restartRequired_counter);
-                Serial.print(F("\n\nPinging failed count: "));
+                Serial.print(F("\n\n[PING   ] Pinging failed count: "));
                 Serial.print(restartRequired_counter);
                 Serial.print("\n\n");
                 if (restartRequired_counter > MyConfParam.v_Reboot_on_WIFI_Disconnection)  {
@@ -1420,7 +1423,7 @@ void loop() {
 
   if (millis() - lastMillis_1 > 10000) {
     lastMillis_1 = millis();
-    Pings.begin(MyConfParam.v_Pingserver);
+    Pings.begin(MyConfParam.v_Pingserver,1);
   }
 
   if (millis() - lastMillis > 1000) {
