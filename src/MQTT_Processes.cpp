@@ -36,7 +36,7 @@ extern InputSensor Inputsnsr02;
 AsyncMqttClient mqttClient;
 
 void connectToMqtt() {
-  Serial.println(F("\n[MQTT] Connecting"));
+  Serial.println(F("\n[MQTT   ] Connecting"));
   #ifndef DEBUG_DISABLED
   debugV("[MQTT] Connecting");
   #endif 
@@ -45,12 +45,12 @@ void connectToMqtt() {
 }
 
 void tiker_MQTT_CONNECT_func (void* obj) {
-  Serial.print("[MQTT] waiting for WIFI ");
+  Serial.print("[MQTT   ] waiting for WIFI ");
   #ifndef DEBUG_DISABLED
   debugV("[MQTT] waiting for WIFI ");
   #endif
   if  (WiFi.status() == WL_CONNECTED)  {
-    Serial.print("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
+    Serial.print("[MQTT   ] WIFI CONNECTED - CONNECTING TO MQTT ");
     #ifndef DEBUG_DISABLED
     debugV("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
     #endif
@@ -80,8 +80,8 @@ void mqttpostinitstatusOfInputs(void* sender){
 
 void onMqttConnect(bool sessionPresent) {
   tiker_MQTT_CONNECT.stop();
-  Serial.println(F("[MQTT] Connected to MQTT."));
-  Serial.print(F("[MQTT] Session present: "));
+  Serial.println(F("[MQTT   ] Connected to MQTT."));
+  Serial.print(F("[MQTT   ] Session present: "));
   #ifndef DEBUG_DISABLED
   debugV("[MQTT] Connected to MQTT");
   #endif
@@ -97,7 +97,7 @@ void onMqttConnect(bool sessionPresent) {
   }
 
 
-	Serial.print(F("[MQTT] Subscribing at QoS 2, packetId: "));
+	Serial.print(F("[MQTT   ] Subscribing at QoS 2, packetId: "));
   // Serial.println(packetIdSub);
   // mqttpostinitstatusOfInputs(NULL);
 
@@ -142,14 +142,14 @@ void onMqttConnect(bool sessionPresent) {
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-  Serial.println(F("\n[MQTT] Disconnected"));
+  Serial.println(F("\n[MQTT   ] Disconnected"));
   if (WiFi.isConnected()) {
     tiker_MQTT_CONNECT.start(); // recoonect to mqtt server
   }
 }
 
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
-  Serial.println(F("\n[MQTT] Subscribe ack"));
+  Serial.print(F("\n[MQTT   ] Subscribe ack"));
   Serial.print(F("  packetId: "));
   Serial.println(packetId);
   Serial.print(F("  qos: "));
@@ -157,14 +157,14 @@ void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
 }
 
 void onMqttUnsubscribe(uint16_t packetId) {
-  Serial.println(F("\n[MQTT] Unsubscribe ack"));
+  Serial.print(F("\n[MQTT   ] Unsubscribe ack"));
   Serial.print(F("  packetId: "));
   Serial.println(packetId);
 }
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
 
-  Serial.print(F("\n[MQTT] Received"));
+  Serial.print(F("\n[MQTT   ] Received"));
   Serial.print(F("  topic: "));
   Serial.print(topic);
 	Serial.print(F("  payload: "));
@@ -182,8 +182,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
   #endif
 
-  String temp = String(payload).substring(0,len);
-  String pld = String(payload);
+
   String tp = String(topic);
 
   Relay * rly = nullptr;
@@ -216,6 +215,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }*/
 
   if (rly) {
+    String temp = String(payload).substring(0,len);
     if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
       if (temp == ON) {
           rly->mdigitalWrite(rly->getRelayPin(),HIGH);
@@ -241,6 +241,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }
 
     if (tp == rly->RelayConfParam->v_i_ttl_PUB_TOPIC) {
+      String pld = String(payload);
       if (isValidNumber(pld)) {
         //String ttl = pld.substring(0,len);
         rly->RelayConfParam->v_ttl = pld.substring(0,len).toInt();
@@ -255,7 +256,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
 
 void onMqttPublish(uint16_t packetId) {
-  Serial.print(F("\n[MQTT] Publish ack"));
+  Serial.print(F("\n[MQTT   ] Publish ack"));
   Serial.print(F("  packetId: "));
   Serial.print(packetId);
 }

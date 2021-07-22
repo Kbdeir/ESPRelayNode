@@ -143,6 +143,7 @@ String processor(const String& var)
   if(var == F( "systemtime" ))          return digitalClockDisplay();
   if(var == F( "heap" ))                return String(ESP.getFreeHeap());
 
+
   if(var == F( "ATEMP" ))               return [](){
     //char tmp[10];
     //itoa(MCelcius,tmp,10);
@@ -437,7 +438,7 @@ void SetAsyncHTTP(){
         },[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final){
         //Upload handler chunks in data
           if(!index){ // if index == 0 then this is the first frame of data
-            Serial.printf("\n UploadStart: %s\n", filename.c_str());
+            Serial.printf("\n >>>>>>>>>>>>>> UploadStart: %s\n", filename.c_str());
             // Serial.setDebugOutput(true);
 
             #ifdef ESP32
@@ -524,6 +525,6 @@ void SetAsyncHTTP(){
                                 }
                               });
         */
-	Serial.println(F("Starting HTTP server"));
+	Serial.print(F("[INFO   ] Starting HTTP server"));
   AsyncWeb_server.begin();
 }

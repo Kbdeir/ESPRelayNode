@@ -70,20 +70,20 @@ bool saveTempConfig(AsyncWebServerRequest *request){
 config_read_error_t loadTempConfig(char* filename, TempConfig &para_TempConfig) {
 
   if (! SPIFFS.exists(filename)) {
-    Serial.println(F("\n[INFO] tempconfig file does not exist!:"));
+    Serial.println(F("\n[INFO   ] tempconfig file does not exist!:"));
     Serial.print(filename);
     return FILE_NOT_FOUND;
   }
 
   File configFile = SPIFFS.open(filename, "r");
   if (!configFile) {
-    Serial.println(F("\n[INFO] Failed to open tempconfig file"));
+    Serial.println(F("\n[INFO   ] Failed to open tempconfig file"));
     return ERROR_OPENING_FILE;
   }
 
   size_t size = configFile.size();
   if (size > Tbuffer_size) {
-    Serial.println(F("\n[INFO] tempconfig file size is too large, rebuilding."));
+    Serial.println(F("\n[INFO   ] tempconfig file size is too large, rebuilding."));
     return ERROR_OPENING_FILE;
   }
 

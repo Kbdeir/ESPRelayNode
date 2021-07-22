@@ -1,17 +1,16 @@
 #include <KSBAsyncNTP.h>
 
 // IPAddress timeWindowsCom = IPAddress(192,168, 20, 1);
-
-char timeServer[]         = "192.168.20.1";  // NTP server
-// const int NTP_PACKET_SIZE_ = 48;       // NTP timestamp is in the first 48 bytes of the message
-byte packetBuffer_[NTP_PACKET_SIZE_];   // buffer to hold incoming and outgoing packets
+// char timeServer[]         = "192.168.20.1";   // NTP server
+// const int NTP_PACKET_SIZE_ = 48;           // NTP timestamp is in the first 48 bytes of the message
+byte packetBuffer_[NTP_PACKET_SIZE_];         // buffer to hold incoming and outgoing packets
 
 time_t epoch_t_;
 
 // send an NTP request to the time server at the given address
 void createNTPpacket(void)
 {
-  Serial.println(F("============= createNTPpacket ============="));
+   Serial.println(F("[NTP    ] Updating NTP time"));
 
   // set all bytes in the buffer to 0
   memset(packetBuffer_, 0, NTP_PACKET_SIZE_);
@@ -65,7 +64,7 @@ void parsePacket(AsyncUDPPacket packet)
     //Serial.println(secsSince1900);
 
     // now convert NTP time into )everyday time:
-    Serial.print(F("Epoch/Unix time = "));
+    Serial.print(F("[NTP    ] Epoch/Unix time = "));
     
     // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
     const unsigned long seventyYears = 2208988800UL;

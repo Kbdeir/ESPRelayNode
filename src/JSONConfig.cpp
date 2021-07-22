@@ -13,24 +13,24 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
 
   if(SPIFFS.begin())
   {
-    Serial.println(F("SPIFFS Initialize....ok"));
+    Serial.println(F("[INFO   ] SPIFFS Initialize....ok"));
   }
   else
   {
-    Serial.println(F("SPIFFS Initialization...failed"));
+    Serial.println(F("[INFO   ] SPIFFS Initialization...failed"));
   }
 
-  Serial.println(F("Opening config.json"));
+  Serial.println(F("[INFO   ] Opening config.json"));
   if (! SPIFFS.exists(filename)) {
-    Serial.println(F("config file does not exist! ... building and rebooting...."));
+    Serial.println(F("[INFO   ] config file does not exist! ... building and rebooting...."));
     saveDefaultConfig();
     return FILE_NOT_FOUND;
   }
 
-  Serial.println(F("Starting config.json parsing"));
+  Serial.println(F("[INFO   ] Starting config.json parsing"));
   File configFile = SPIFFS.open(filename, "r");
   if (!configFile) {
-    Serial.println(F("Failed to open config file"));
+    Serial.println(F("[INFO   ] Failed to open config file"));
     saveDefaultConfig();
     return ERROR_OPENING_FILE;
   }
@@ -40,7 +40,7 @@ config_read_error_t loadConfig(TConfigParams &ConfParam) {
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(json, configFile);
   if (error) {
-    Serial.println(F("Failed to read file, using default configuration"));
+    Serial.println(F("[INFO   ] Failed to read file, using default configuration"));
     saveDefaultConfig();
     return JSONCONFIG_CORRUPTED;    
   }
@@ -102,7 +102,7 @@ bool saveConfig(TConfigParams &ConfParam){
 
     File configFile = SPIFFS.open(filename, "w");
     if (!configFile) {
-      Serial.println(F("Failed to open config file for writing"));
+      Serial.println(F("[INFO   ] Failed to open config file for writing"));
       return FAILURE;
     }
 
@@ -130,7 +130,7 @@ bool saveConfig(TConfigParams &ConfParam){
 
 
     if (serializeJsonPretty(json, configFile) == 0) {
-      Serial.println(F("Failed to write to file"));
+      Serial.println(F("[INFO   ] Failed to write to file"));
       configFile.close();
       return false;
     }
@@ -163,13 +163,13 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
   SPIFFS.remove("/config.json");
   File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {
-    Serial.println(F("Failed to open config file for writing"));
+    Serial.println(F("[INFO   ] Failed to open config file for writing"));
     return false;
   }    
 
 
   if (serializeJsonPretty(doc, configFile) == 0) {
-    Serial.println(F("Failed to write to file"));
+    Serial.println(F("[INFO   ] Failed to write to file"));
     configFile.close();
     return false;
   }
@@ -225,14 +225,14 @@ bool saveDefaultConfig(){
 
   File configFile = SPIFFS.open("/config.json", "w");
   if (!configFile) {
-    Serial.println(F("\n Failed to write default config file"));
+    Serial.println(F("\n[INFO   ] Failed to write default config file"));
     return false;
   }
 
   ESP.wdtFeed();
 
   if (serializeJsonPretty(json, configFile) == 0) {
-    Serial.println(F("Failed to write to file"));
+    Serial.println(F("[INFO   ] Failed to write to file"));
     configFile.close();
     return false;    
   }
@@ -276,12 +276,12 @@ bool saveDefaultIRMapConfig(){
 
   File configFile = SPIFFS.open(IRMapfilename, "w");
   if (!configFile) {
-    Serial.println(F("Failed to write default config file"));
+    Serial.println(F("[INFO   ] Failed to write default config file"));
     return FAILURE;
   }
 
   if (serializeJsonPretty(json, configFile) == 0) {
-    Serial.println(F("Failed to write to file"));
+    Serial.println(F("[INFO   ] Failed to write to file"));
     configFile.close();
     return FAILURE;    
   }
@@ -309,13 +309,13 @@ bool saveIRMapConfig(AsyncWebServerRequest *request){
     SPIFFS.remove(IRMapfilename);
     File configFile = SPIFFS.open(IRMapfilename, "w");
     if (!configFile) {
-      Serial.println(F("Failed to open config file for writing"));
+      Serial.println(F("[INFO   ] Failed to open config file for writing"));
       return false;
     }
 
   // Serialize JSON to file
   if (serializeJsonPretty(json, configFile) == 0) {
-    Serial.println(F("Failed to write to file"));
+    Serial.println(F("[INFO   ] Failed to write to file"));
     configFile.close();
     return false;    
   }
@@ -328,13 +328,13 @@ bool saveIRMapConfig(AsyncWebServerRequest *request){
 config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
     if(SPIFFS.begin())
     { 
-       Serial.println(F("SPIFFS Initialize....ok"));
+       Serial.println(F("[INFO   ] SPIFFS Initialize....ok"));
     }  else {
-      Serial.println(F("SPIFFS Initialization...failed"));
+      Serial.println(F("[INFO   ] SPIFFS Initialization...failed"));
     }
 
     if (! SPIFFS.exists(IRMapfilename)) {
-      Serial.println(F("IRMAP config file does not exist! ... building and rebooting...."));
+      Serial.println(F("[INFO   ] IRMAP config file does not exist! ... building and rebooting...."));
       while (!saveDefaultIRMapConfig()){
         ESP.wdtFeed();
       };
@@ -343,7 +343,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 
     File configFile = SPIFFS.open(IRMapfilename, "r");
     if (!configFile) {
-      Serial.println(F("Failed to open IRMAP config file"));
+      Serial.println(F("[INFO   ] Failed to open IRMAP config file"));
       saveDefaultIRMapConfig();
       return ERROR_OPENING_FILE;
     }
@@ -352,7 +352,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
   StaticJsonDocument<buffer_size> json;
   DeserializationError error = deserializeJson(json, configFile);
   if (error)
-    Serial.println(F("Failed to read file, using default configuration"));
+    Serial.println(F("[INFO   ] Failed to read file, using default configuration"));
 
     myIRMap.I1   =  json["I1"].as<int8_t>();
     myIRMap.I2   =  json["I2"].as<int8_t>();
@@ -397,7 +397,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 bool saveRelayDefaultConfig(uint8_t rnb){
   StaticJsonDocument<buffer_size> json;
 
-   Serial.print(F("\n Initializing default relay parameters"));
+   Serial.print(F("\n[INFO   ] Initializing default relay parameters"));
 
  
     json[F("RELAYNB")]=rnb;
@@ -431,12 +431,12 @@ bool saveRelayDefaultConfig(uint8_t rnb){
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
     if (!configFile) {
-      Serial.println(F("\n Failed to write relay config file"));
+      Serial.println(F("\n[INFO   ] Failed to write relay config file"));
       return false;
     }
 
   if (serializeJsonPretty(json, configFile) == 0) {
-    Serial.println(F("Failed to write to file"));
+    Serial.println(F("[INFO   ] Failed to write to file"));
     configFile.close();
     return false;      
   }
@@ -467,12 +467,12 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
     if (!configFile) {
-      Serial.println(F("\n Failed to write relay config file"));
+      Serial.println(F("\n[INFO   ] Failed to write relay config file"));
       return false;
     }
 
   if (serializeJsonPretty(json, configFile) == 0) {
-    Serial.println(F("Failed to write to file"));
+    Serial.println(F("[INFO   ] Failed to write to file"));
     configFile.close();
     return false;    
   }
@@ -514,12 +514,12 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     SPIFFS.remove(relayfilename);
     File configFile = SPIFFS.open(relayfilename, "w");
     if (!configFile) {
-      Serial.println(F("\n Failed to write relay config file"));
+      Serial.println(F("\n[INFO   ] Failed to write relay config file"));
       return false;
     }
 
   if (serializeJsonPretty(json, configFile) == 0) {
-    Serial.println(F("Failed to write to file"));
+    Serial.println(F("[INFO   ] Failed to write to file"));
     configFile.close();
     return false;        
   }

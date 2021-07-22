@@ -38,6 +38,8 @@ extern "C" homekit_server_config_t config;
 extern "C" homekit_characteristic_t cha_switch_on;
 #ifdef HWver03_4R
 extern "C" homekit_characteristic_t cha_switch_on1;
+extern "C" homekit_characteristic_t cha_switch_on2;
+extern "C" homekit_characteristic_t cha_switch_on3;
 #endif
 
 extern "C" homekit_characteristic_t cha_temperature_name;
@@ -64,6 +66,63 @@ void cha_switch_on_setter(const homekit_value_t value) {
     }
  }
 
+	
+#ifdef HWver03_4R
+ void cha_switch_on_setter1(const homekit_value_t value) {
+	bool on = value.bool_value;
+	cha_switch_on1.value.bool_value = on;	//sync the value
+	LOG_D("Switch: %s", on ? "ON" : "OFF");
+
+    Relay * rly = nullptr;
+    Relay * rtemp = nullptr;
+
+    rtemp = getrelaybypin(Relay1Pin);
+    if (rtemp) {
+        if (on) {
+        rtemp->mdigitalWrite(Relay1Pin,HIGH);
+        } else {
+            rtemp->mdigitalWrite(Relay1Pin,LOW);
+        }
+    }
+ }
+
+ void cha_switch_on_setter2(const homekit_value_t value) {
+	bool on = value.bool_value;
+	cha_switch_on2.value.bool_value = on;	//sync the value
+	LOG_D("Switch: %s", on ? "ON" : "OFF");
+
+    Relay * rly = nullptr;
+    Relay * rtemp = nullptr;
+
+    rtemp = getrelaybypin(Relay2Pin);
+    if (rtemp) {
+        if (on) {
+        rtemp->mdigitalWrite(Relay2Pin,HIGH);
+        } else {
+            rtemp->mdigitalWrite(Relay2Pin,LOW);
+        }
+    }
+ }
+
+ void cha_switch_on_setter3(const homekit_value_t value) {
+	bool on = value.bool_value;
+	cha_switch_on3.value.bool_value = on;	//sync the value
+	LOG_D("Switch: %s", on ? "ON" : "OFF");
+
+    Relay * rly = nullptr;
+    Relay * rtemp = nullptr;
+
+    rtemp = getrelaybypin(Relay3Pin);
+    if (rtemp) {
+        if (on) {
+        rtemp->mdigitalWrite(Relay3Pin,HIGH);
+        } else {
+            rtemp->mdigitalWrite(Relay3Pin,LOW);
+        }
+    }
+ }
+#endif 
+
 void my_homekit_setup() {
 	// pinMode(PIN_SWITCH, OUTPUT);
 	// digitalWrite(PIN_SWITCH, OUTPUT);
@@ -73,7 +132,13 @@ void my_homekit_setup() {
 	//HomeKit sever uses the .setter_ex internally, see homekit_accessories_init function.
 	//Maybe this is a legacy design issue in the original esp-homekit library,
 	//and I have no reason to modify this "feature".
-	cha_switch_on.setter = cha_switch_on_setter;
+	cha_switch_on.setter =  cha_switch_on_setter;
+	#ifdef HWver03_4R	
+	cha_switch_on1.setter = cha_switch_on_setter1;
+	cha_switch_on2.setter = cha_switch_on_setter2;
+	cha_switch_on3.setter = cha_switch_on_setter3;
+	#endif 
+
 	arduino_homekit_setup(&config);
 
 	//report the switch value to HomeKit if it is changed (e.g. by a physical button)
