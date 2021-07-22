@@ -1,5 +1,6 @@
 #include <RelayClass.h>
 #include <RelaysArray.h>
+#include <JSONConfig.h>
 
 
 void Relay::freelockfunc() {
@@ -205,6 +206,65 @@ ksb_status_t Relay::TTLstate() {
 
 int Relay::readrelay (){
       return digitalRead(this->pin);
+}
+
+bool Relay::readPersistedrelay (){
+  char rfilename[20];
+  strcpy(rfilename,"/relayPersist");
+  strcat(rfilename, String(this->RelayConfParam->v_relaynb).c_str());
+  strcat(rfilename,".json");  
+
+  File configFile = SPIFFS.open(rfilename, "r");
+  if (!configFile) {
+    Serial.println(F("[INFO   ] Failed to open relayPersist file"));
+    return ERROR_OPENING_FILE;
+  }
+  StaticJsonDocument<100> json;
+  DeserializationError error = deserializeJson(json, configFile);
+  if (error) {
+    Serial.println(F("[INFO   ] Failed to read file, using default configuration"));
+    saveDefaultConfig();
+    return JSONCONFIG_CORRUPTED;    
+  }
+  bool temp = false;
+  temp =  (json["status"].as<uint8_t>() == 1);
+  /*
+  Serial.print("[INFO   ] relay pesisted status was ");
+  Serial.print (this->RelayConfParam->v_relaynb);
+  Serial.print(" ");
+  Serial.println(json["status"].as<uint8_t>() );
+  */
+  mdigitalWrite(this->getRelayPin(),temp);
+  configFile.close();
+  return temp;
+}
+
+bool Relay::savePersistedrelay(){
+  StaticJsonDocument<100> json;
+  
+  char rfilename[20];
+  strcpy(rfilename,"/relayPersist");
+  strcat(rfilename, String(this->RelayConfParam->v_relaynb).c_str());
+  strcat(rfilename,".json");
+
+  File configFile = SPIFFS.open(rfilename, "w");
+    if (!configFile) {
+      Serial.println(F("[INFO   ] Failed to open persist file for writing"));
+      return FAILURE;
+    }
+
+    json[F("status")] = (digitalRead(this->pin)) == HIGH ? "1" : "0";
+    Serial.println(F("\n[INFO   ] Serializing status"));
+
+    if (serializeJsonPretty(json, configFile) == 0) {
+      Serial.println(F("[INFO   ] Failed to write persist file"));
+      configFile.close();
+      return false;
+    }
+  configFile.println("\n");
+  configFile.close();
+
+  return true;
 }
 
 void Relay::attachLoopfunc(fnptr_a GeneralLoopFunc){

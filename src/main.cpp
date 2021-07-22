@@ -322,7 +322,6 @@ void ticker_relay_ttl_off (void* relaySender) {
   }
 }
 
-
 void onRelaychangeInterruptSvc(void* relaySender){
   Relay * rly = static_cast<Relay *>(relaySender);
   uint16_t pack = 0;
@@ -348,12 +347,13 @@ void onRelaychangeInterruptSvc(void* relaySender){
         mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
       }
- 
+
   } else {
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);                
   }
   #ifdef AppleHK
     //if (HomeKitt_PIN_SWITCH == rly->getRelayPin()) {
+      rly->savePersistedrelay();
       switch (rly->getRelayPin()) {
         case RelayPin:
           cha_switch_on.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
@@ -613,6 +613,40 @@ static void handleNewClient(void* arg, AsyncClient* client) {
 }
 //-------------------------------------------------------------------------------------------------------------
 
+void homekitUpdateBootStatus(void) {
+
+ Relay * rly = nullptr;
+
+  for (auto it : relays)  {
+    rly = static_cast<Relay *>(it);
+    if (rly) {
+        // uint16_t packetIdSub = mqttClient.subscribe(rtemp->RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
+      switch (rly->getRelayPin()) {
+        case RelayPin:
+          cha_switch_on.value.bool_value = rly->readPersistedrelay(); //digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+          homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);    
+          break;
+        #ifdef HWver03_4R  
+          case Relay1Pin:
+            cha_switch_on1.value.bool_value = rly->readPersistedrelay() ; //digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+            homekit_characteristic_notify(&cha_switch_on1, cha_switch_on1.value);    
+            break;
+          case Relay2Pin:
+            cha_switch_on2.value.bool_value = rly->readPersistedrelay(); // digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+            homekit_characteristic_notify(&cha_switch_on2, cha_switch_on2.value);   
+            break;
+          case Relay3Pin:
+            cha_switch_on3.value.bool_value = rly->readPersistedrelay(); //digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+            homekit_characteristic_notify(&cha_switch_on3, cha_switch_on3.value);   
+            break;   
+         #endif        
+      }
+
+    }
+  }
+}  
+
+
 DefineCalendarType(Calendar, CAL_MAX_NUM_EVENTS_TO_HOLD);
 Calendar MyCalendar;
 
@@ -793,6 +827,7 @@ void chronosInit() {
 
 
   #ifdef AppleHK
+
   //  homekit_storage_reset();   
     if (homekitNotInitialised) {
       homekitNotInitialised = false;
@@ -805,6 +840,8 @@ void chronosInit() {
         ((MyConfParam.v_PhyLoc) + "3").toCharArray(HAName_SW3, HK_name_len);  
       #endif
       my_homekit_setup();
+      homekitUpdateBootStatus();
+      
     }
   #endif
 

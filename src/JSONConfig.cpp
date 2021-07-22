@@ -1,4 +1,3 @@
-
 #include <JSONConfig.h>
 #include <RelayClass.h>
 
@@ -479,7 +478,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
   configFile.println("\n\n");
   configFile.close();
 
-    return true;
+  return true;
 
 }
 

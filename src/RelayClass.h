@@ -90,6 +90,8 @@ class Relay
     void setRelayTTT_Timer_Interval(uint32_t interval);
     ksb_status_t TTLstate();
     int readrelay ();
+    bool readPersistedrelay ();
+    bool savePersistedrelay ();    
     uint8_t getRelayPin();
     void attachLoopfunc(fnptr_a GeneralLoopFunc);
     void mdigitalWrite(uint8_t pn, uint8_t v);
