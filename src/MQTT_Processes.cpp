@@ -177,9 +177,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Serial.print(properties.retain);
   Serial.print(F("  len: "));
   Serial.print(len);
+  Serial.print(F("\n"));
 
   #ifndef DEBUG_DISABLED
-  debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
+    debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
   #endif
 
 
@@ -202,7 +203,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   }
 
 
-  /*  for (int i=0; i<MAX_RELAYS; i++){
+  /*  
+    for (int i=0; i<MAX_RELAYS; i++){
       rtemp = static_cast<Relay *>(mrelays[i]);
       //if (rtemp) {
         //Serial.println("");
@@ -212,7 +214,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
         rly = rtemp;
         break;
       }
-    }*/
+    }
+  */
 
   if (rly) {
     String temp = String(payload).substring(0,len);
@@ -228,6 +231,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     else
     {
       // sync mqtt state to the actual pin state
+      mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, (digitalRead(rly->getRelayPin()) == HIGH) ? ON : OFF); 
+
+      // sync mqtt state to the actual pin state
+      /*
       if (digitalRead(rly->getRelayPin()) == HIGH) {
           if (temp == OFF) {
             mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
@@ -238,6 +245,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
             mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
           }
       }
+      */
     }
 
     if (tp == rly->RelayConfParam->v_i_ttl_PUB_TOPIC) {

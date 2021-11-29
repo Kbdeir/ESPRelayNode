@@ -7,13 +7,14 @@
 
 // select feature type
 // **********************************************************
-// #define SR04                         // utrasonic sensor code 
+  #define SR04                         // utrasonic sensor code 
 // #define SolarHeaterControllerMode    // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
 // #define StepperMode
 // **********************************************************
 
-#define AppleHK
+// #define AppleHK
 #define DEBUG_DISABLED
 
 #define HK_name_len 30
+
 // #define blockingTime

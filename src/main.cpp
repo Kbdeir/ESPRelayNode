@@ -1,4 +1,7 @@
+// public time server 129.6.15.28
 // #define USEPREF n
+// V 1.0
+
 #include <defines.h>
 
 #ifndef DEBUG_DISABLED
@@ -172,6 +175,7 @@ int wifimode      = WIFI_CLT_MODE;
 String MAC;
 unsigned long lastMillis = 0;
 unsigned long lastMillis_1 = 0;
+unsigned long lastMillis_2 = 0;
 unsigned long lastMillis5000 = 0;
 int restartRequired_counter = 0;
 
@@ -330,7 +334,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
       rly->rchangedflag = false;
 
       if (rly->readrelay() == HIGH) {
-        Serial.print(F("\n\n[INFO   ] interrupt *ON* occurred."));
+        Serial.print(F("\n[INFO   ] interrupt *ON* occurred."));
         if (rly->RelayConfParam->v_ttl > 0 ) {
           rly->start_ttl_timer();
         }
@@ -339,7 +343,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
       }
 
       if (digitalRead(rly->getRelayPin()) == LOW) {
-        Serial.print(F("\n\n[INFO   ] interrupt *OFF* occurred."));
+        Serial.print(F("\n[INFO   ] interrupt *OFF* occurred."));
         rly->stop_ttl_timer();
         if (rly->RelayConfParam->v_ttl > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
@@ -535,6 +539,7 @@ void tiker_WIFI_CONNECT_func (void* obj) {
           WiFi.mode(WIFI_AP_STA);
         } else {
           // Station mode, try to connect with saved SSID & PASS
+          //WiFi.reconnect();
           WiFi.mode(WIFI_STA);
           WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); 
         }
@@ -613,6 +618,7 @@ static void handleNewClient(void* arg, AsyncClient* client) {
 }
 //-------------------------------------------------------------------------------------------------------------
 
+#ifdef AppleHK
 void homekitUpdateBootStatus(void) {
 
  Relay * rly = nullptr;
@@ -645,6 +651,7 @@ void homekitUpdateBootStatus(void) {
     }
   }
 }  
+#endif
 
 
 DefineCalendarType(Calendar, CAL_MAX_NUM_EVENTS_TO_HOLD);
@@ -825,26 +832,6 @@ void chronosInit() {
   Chronos::DateTime nowTime(Chronos::DateTime::now());
    //nowTime.printTo(SERIAL_DEVICE);
 
-
-  #ifdef AppleHK
-
-  //  homekit_storage_reset();   
-    if (homekitNotInitialised) {
-      homekitNotInitialised = false;
-      String s = "Bridge_" + MyConfParam.v_PhyLoc;      
-      s.toCharArray(HAName_Bridge, 32);
-      MyConfParam.v_PhyLoc.toCharArray(HAName_SW, HK_name_len);   
-      #ifdef HWver03_4R
-        ((MyConfParam.v_PhyLoc) + "1").toCharArray(HAName_SW1, HK_name_len);  
-        ((MyConfParam.v_PhyLoc) + "2").toCharArray(HAName_SW2, HK_name_len);  
-        ((MyConfParam.v_PhyLoc) + "3").toCharArray(HAName_SW3, HK_name_len);  
-      #endif
-      my_homekit_setup();
-      homekitUpdateBootStatus();
-      
-    }
-  #endif
-
   LINE();
 }
 
@@ -991,16 +978,17 @@ void thingsTODO_on_WIFI_Connected() {
             #endif
 
 
-            Serial.println(F("[INFO   ] starting mdns"));
+            Serial.println(F("[INFO   ] starting MDNS"));
             
             if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
               Serial.println(F("[INFO   ] Error setting up MDNS responder!"));
             }
-            Serial.println(F("[INFO   ] mDNS responder started"));
-            MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
-            MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
-            MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
             
+            Serial.println(F("[INFO   ] MDNS responder started"));
+            MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 8080
+            
+            //MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
+            //MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
             
             #ifdef blockingTime
              setSyncProvider(getNtpTime);
@@ -1012,10 +1000,12 @@ void thingsTODO_on_WIFI_Connected() {
             #ifndef DEBUG_DISABLED  
             debugV("* Starting MQTT connection timer, 5 seconds period"); 
             #endif 
-            tiker_MQTT_CONNECT.start();  // timer will retry to connect every 5s. 
-        		MBserver->begin();
-        		MBserver->onClient(&handleNewClient, MBserver);
 
+            tiker_MQTT_CONNECT.start();  // timer will retry to connect every 5s. 
+        		//MBserver->begin();
+        		//MBserver->onClient(&handleNewClient, MBserver);
+
+            homekitNotInitialised = true;      
 }
 
 
@@ -1062,8 +1052,6 @@ void Wifi_connect() {
 */
 
 void setupInputs(){
-
-
 
 #ifndef StepperMode
   #if defined (HWver02)  || defined (HWver03)
@@ -1273,6 +1261,7 @@ void setup() {
           thingsTODO_on_WIFI_Connected();
           blinkInterval = 1000;
           Wifireconnecttimer.stop();
+          lastMillis_2 = 0;
         });
 
         disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
@@ -1493,6 +1482,7 @@ void loop() {
     CalendarNotInitiated = false;
   }
 
+ 
 
  #ifndef StepperMode
 
@@ -1502,6 +1492,30 @@ void loop() {
     Pings.begin(MyConfParam.v_Pingserver,1);
   }
   }
+
+  if (millis() - lastMillis_2 > 2000) {
+    lastMillis_2 = millis();
+            #ifdef AppleHK
+              if((timeStatus() == timeSet) && homekitNotInitialised) {
+                  // homekit_storage_reset();   
+                  homekitNotInitialised = false;
+                  String s = "Bridge_" + MyConfParam.v_PhyLoc;      
+                  s.toCharArray(HAName_Bridge, 32);
+                  MyConfParam.v_PhyLoc.toCharArray(HAName_SW, HK_name_len);   
+                  #ifdef HWver03_4R
+                    ((MyConfParam.v_PhyLoc) + "1").toCharArray(HAName_SW1, HK_name_len);  
+                    ((MyConfParam.v_PhyLoc) + "2").toCharArray(HAName_SW2, HK_name_len);  
+                    ((MyConfParam.v_PhyLoc) + "3").toCharArray(HAName_SW3, HK_name_len);  
+                  #endif
+                  my_homekit_setup();
+                  homekitUpdateBootStatus();
+              }     
+            #endif 
+  }
+
+
+
+
 
   if (millis() - lastMillis > 1000) {
     lastMillis = millis();
@@ -1515,6 +1529,8 @@ void loop() {
           int trigPin = TRIG_PIN;    // Trigger
           int echoPin = ECHO_PIN;    // Echo
           long duration, cm, inches;
+          double emptypercent,fullpercent;
+        
           // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
           // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
           pinMode(trigPin, OUTPUT);
@@ -1534,27 +1550,25 @@ void loop() {
           cm = (duration/2) / 29.1;     // Divide by 29.1 or multiply by 0.0343
           if (cm > MyConfParam.v_Sonar_distance_max) { cm = -1; }
           inches = (duration/2) / 74;   // Divide by 74 or multiply by 0.0135
+          Serial.print("\n");
           Serial.print(inches);
           Serial.print("in, ");
           Serial.print(cm);
           Serial.print("cm");
-          Serial.println();
+          Serial.println();          
 
-          mqttClient.publish(MyConfParam.v_Sonar_distance.c_str(), QOS2, RETAINED, [cm](){
-                char tmp[10];
-                itoa(cm,tmp,10);
-                return tmp; //
-              }()
-            );
-            /*
+          emptypercent = (cm*100) / MyConfParam.v_Sonar_distance_max;
+          fullpercent = (100 - emptypercent) ;
 
-            mqttClient.publish((MyConfParam.v_Sonar_distance+"_rem").c_str(), QOS2, RETAINED, [cm](){
-                  char tmp[10];
-                  itoa(MyConfParam.v_Sonar_distance_max - cm,tmp,10);
-                  return tmp; //
-                }()
-              );
-              */
+          char res[8]; // Buffer big enough for 7-character float
+          dtostrf(emptypercent, 6, 1, res); // Leave room for too large numbers!     
+          mqttClient.publish((MyConfParam.v_Sonar_distance +"_empty%").c_str(), QOS2, RETAINED, res );               
+
+          dtostrf(fullpercent, 6, 1, res); // Leave room for too large numbers!   
+          mqttClient.publish((MyConfParam.v_Sonar_distance +"_full%").c_str(), QOS2, RETAINED, res );          
+        
+          dtostrf(cm, 6, 1, res); // Leave room for too large numbers!   
+          mqttClient.publish(MyConfParam.v_Sonar_distance.c_str(), QOS2, RETAINED, res );
     }
     #endif 
 
@@ -1575,54 +1589,40 @@ void loop() {
   #if defined (HWver02)  || defined (HWver03)
   if (relay0.RelayConfParam->v_TemperatureValue != "0") {
     if (millis() - lastMillis5000 > 5000) {
-  //    pinMode(TempSensorPin,  INPUT_PULLUP );  
+
+  //  pinMode(TempSensorPin,  INPUT_PULLUP );  
       lastMillis5000 = millis();
       tempsensor.getCurrentTemp(0);
-      MCelcius = tempsensor.Celcius;
       TempSensorSecond.getCurrentTemp(0);
+      MCelcius = tempsensor.Celcius;      
       MCelcius2 = TempSensorSecond.Celcius;
 
-      float rtmp = roundf(tempsensor.Celcius);
-      float TSolarTank = rtmp;
+      float TSolarTank = roundf(tempsensor.Celcius);
 
       Serial.print(F("\n[INFO   ] Temperature: "));
       Serial.print(tempsensor.getCurrentTemp(0));
       #ifndef DEBUG_DISABLED
-      debugV("[INFO   ] TempSensor1 %.2f C ", TSolarTank);
+        debugV("[INFO   ] TempSensor1 %.2f C ", TSolarTank);
       #endif
-
      
-      mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED, [rtmp](){
-            char tmp[10];
-            itoa(rtmp,tmp,10);
-            return tmp; //
-          // return String(round(MCelcius)).c_str();
-          }()
-        );
+      char res[8]; // Buffer big enough for 7-character float
+      dtostrf(MCelcius, 6, 1, res); // Leave room for too large numbers!
+      mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED,res); //String(MCelcius).c_str());
 
       #ifdef AppleHK
         if (MCelcius < 0 ) { MCelcius = 99; }; 
-        // float r = random(5,50);
-        // cha_temperature.value =  HOMEKIT_FLOAT(MCelcius);; //MCelcius;
-        cha_temperature.value.float_value = MCelcius;
+        //cha_temperature.value.float_value = MCelcius;
         homekit_characteristic_notify(&cha_temperature, HOMEKIT_FLOAT(MCelcius)) ;// cha_temperature.value);
       #endif        
 
-      rtmp = roundf(TempSensorSecond.Celcius);
-      float TSolarPanel = rtmp;
+      float TSolarPanel = roundf(TempSensorSecond.Celcius);
       Serial.print(F(" | Temperature_Sensor2: "));
       Serial.print(TempSensorSecond.getCurrentTemp(0)); 
       #ifndef DEBUG_DISABLED
-      debugV("[INFO   ] TempSensor2 %.2f C ", TSolarPanel);
+        debugV("[INFO   ] TempSensor2 %.2f C ", TSolarPanel);
       #endif
-
-      mqttClient.publish((relay0.RelayConfParam->v_TemperatureValue + "_2").c_str(), QOS2, RETAINED, [rtmp](){
-            char tmp[10];
-            itoa(rtmp,tmp,10);
-            return tmp; //
-          // return String(round(MCelcius)).c_str();
-          }()
-        );
+      dtostrf(TSolarPanel, 6, 1, res); // Leave room for too large numbers!
+      mqttClient.publish((relay0.RelayConfParam->v_TemperatureValue + "_2").c_str(), QOS2, RETAINED, res); // String(TSolarPanel).c_str());       
 
       #ifdef SolarHeaterControllerMode
             TempertatureSensorEvent(0,TSolarPanel,TSolarTank);

@@ -78,13 +78,13 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
 
   File configFile = SPIFFS.open(timerfilename, "w");
   if (!configFile) {
-    Serial.println(F("[TIMERS  ] Failed to open timer file for writing"));
+    Serial.println(F("[TIMERS ] Failed to open timer file for writing"));
     return false;
   }
 
 
   if (serializeJsonPretty(json, configFile) == 0) {
-    Serial.println(F("[TIMERS  ] Failed to write to file"));
+    Serial.println(F("[TIMERS ] Failed to write to file"));
   }
   configFile.println("\n\n");
   /*<64> dummy;
@@ -105,14 +105,14 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
 
   if (! SPIFFS.exists(filename)) {
 
-    Serial.print(F("\n[TIMERS  ] timer file does not exist! "));
+    Serial.print(F("\n[TIMERS ] timer file does not exist! "));
     Serial.println(filename);
     return FILE_NOT_FOUND;
   }
 
   File configFile = SPIFFS.open(filename, "r");
   if (!configFile) {
-    Serial.println(F("[TIMERS  ] Failed to open timer file \n"));
+    Serial.println(F("[TIMERS ] Failed to open timer file \n"));
     return ERROR_OPENING_FILE;
   }
 
@@ -121,7 +121,7 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(json, configFile);
   if (error) {
-    Serial.print(F("[TIMERS  ] Failed to read file, using default timer configuration\n "));
+    Serial.print(F("[TIMERS ] Failed to read file, using default timer configuration\n "));
     //saveDefaultConfig();
     return JSONCONFIG_CORRUPTED;
   }

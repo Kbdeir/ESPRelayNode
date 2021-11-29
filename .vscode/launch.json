@@ -29,6 +29,16 @@
             "projectEnvName": "huzzah",
             "toolchainBinDir": "C:/Users/kbdeir/.platformio/packages/toolchain-xtensa/bin",
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug (without uploading)",
+            "executable": "c:/Users/kbdeir/Documents/PlatformIO/Projects/SmartConfig - Copy/.pio/build/huzzah/firmware.elf",
+            "projectEnvName": "huzzah",
+            "toolchainBinDir": "C:/Users/kbdeir/.platformio/packages/toolchain-xtensa/bin",
+            "internalConsoleOptions": "openOnSessionStart",
+            "loadMode": "manual"
         }
     ]
 }

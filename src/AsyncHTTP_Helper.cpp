@@ -438,7 +438,9 @@ void SetAsyncHTTP(){
         },[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final){
         //Upload handler chunks in data
           if(!index){ // if index == 0 then this is the first frame of data
-            Serial.printf("\n >>>>>>>>>>>>>> UploadStart: %s\n", filename.c_str());
+            Serial.print(F("\n[SYSTEM  ] firmware upload started (will reboot once done): "));
+            Serial.print (filename.c_str());
+            Serial.print(F("\n"));
             // Serial.setDebugOutput(true);
 
             #ifdef ESP32
