@@ -45,12 +45,12 @@ void connectToMqtt() {
 }
 
 void tiker_MQTT_CONNECT_func (void* obj) {
-  Serial.print("[MQTT   ] waiting for WIFI ");
+
   #ifndef DEBUG_DISABLED
   debugV("[MQTT] waiting for WIFI ");
   #endif
   if  (WiFi.status() == WL_CONNECTED)  {
-    Serial.print("[MQTT   ] WIFI CONNECTED - CONNECTING TO MQTT ");
+    Serial.print("[MQTT   ] WIFI IS CONNECTED - CONNECTING TO MQTT ");
     #ifndef DEBUG_DISABLED
     debugV("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
     #endif

@@ -10,7 +10,7 @@ time_t epoch_t_;
 // send an NTP request to the time server at the given address
 void createNTPpacket(void)
 {
-   Serial.println(F("[NTP    ] Updating NTP time"));
+   Serial.println(F("\n[NTP    ] Updating NTP time"));
 
   // set all bytes in the buffer to 0
   memset(packetBuffer_, 0, NTP_PACKET_SIZE_);
