@@ -2,12 +2,14 @@
 
 #include <TimeLib.h>
 #include <ConfigParams.h>
-#include "ESPAsyncUDP.h"
+
 
 #ifdef ESP32
   #include <WiFi.h>
+  #include <AsyncUDP.h>
 #else
   #include <ESP8266WiFi.h>
+  #include "ESPAsyncUDP.h"
 #endif
 
 typedef void (*fnptr)();
@@ -23,6 +25,8 @@ extern unsigned int localPort;
 String digitalClockDisplay();
 String printDigits(int digits);
 void sendAsyncNTPPacket(void);
+
 void parsePacket(AsyncUDPPacket packet);
+
 time_t timeprovider(void);
 

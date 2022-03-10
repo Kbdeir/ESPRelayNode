@@ -9,7 +9,7 @@ extern void applyIRMap(int8_t Inpn, int8_t rlyn);
 
 
 config_read_error_t loadConfig(TConfigParams &ConfParam) {
-
+Serial.println(F("[INFO   ] loading SPIFFS"));
   if(SPIFFS.begin())
   {
     Serial.println(F("[INFO   ] SPIFFS Initialize....ok"));
@@ -217,8 +217,9 @@ bool saveDefaultConfig(){
   json[F("FRM_PRT")]=83;
   json[F("Update_now")]=0;
 
-
+#ifndef ESP32
   ESP.wdtFeed();
+#endif  
 
   SPIFFS.remove("/config.json");
 
@@ -228,7 +229,9 @@ bool saveDefaultConfig(){
     return false;
   }
 
+#ifndef ESP32
   ESP.wdtFeed();
+#endif  
 
   if (serializeJsonPretty(json, configFile) == 0) {
     Serial.println(F("[INFO   ] Failed to write to file"));
@@ -335,7 +338,9 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
     if (! SPIFFS.exists(IRMapfilename)) {
       Serial.println(F("[INFO   ] IRMAP config file does not exist! ... building and rebooting...."));
       while (!saveDefaultIRMapConfig()){
+      #ifndef ESP32
         ESP.wdtFeed();
+      #endif  
       };
       return FILE_NOT_FOUND;
     }

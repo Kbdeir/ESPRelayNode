@@ -30,7 +30,11 @@
 #include <TimerClass.h>
 #include <TempSensor.h>
 #include <TempConfig.h>
-#include "AsyncPing.h"
+#ifdef ESP32
+#include <ESP32Ping.h>
+#else
+  #include "AsyncPing.h"
+#endif
 
 
 
@@ -65,11 +69,12 @@ char HAName_SW[HK_name_len]      = "MySwitch_____\0";
   char HAName_SW3[HK_name_len]      = "MySwitch3_____\0";
 #endif
 
+#ifndef ESP32
 extern "C"
 {
   #include <homekit/types.h> // needed for icmp packet definitions
 }
-
+#endif
 
 #ifdef ESP32
   #include <WiFi.h>
@@ -104,7 +109,10 @@ time_t prevDisplay = 0; // when the digital clock was displayed
 NodeTimer NTmr(4);
 TempConfig PTempConfig(1);
 
+#ifndef ESP32
 AsyncPing Pings; //Pings[1]; 
+#endif
+
 IPAddress addr;
 
 const char * EventNames[] = {
@@ -213,8 +221,9 @@ void ticker_ACS712_func (void* obj);
 void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
 
+#ifndef ESP32
 WiFiEventHandler gotIpEventHandler, disconnectedEventHandler;
-
+#endif
 
 int getpinMode(uint8_t pin) 
 {
@@ -488,7 +497,7 @@ void IP_info()
       MAC = WiFi.macAddress();
       Serial.printf( "\n[WIFI   ] SSID %s, ",  WiFi.SSID().c_str() );
       //Serial.print( rssi);
-			//Serial.printf(" dBm\n" );  // printf??
+			//Serial.printf(" dBm\n" );  
       Serial.printf( "Pass: %s",  WiFi.psk().c_str() );
       //Serial.print( F("\n[WIFI   ] IP address:") );
 			//Serial.print(WiFi.localIP() );
@@ -498,7 +507,7 @@ void IP_info()
       Serial.print( F("\tGateway IP:\t") );  Serial.println( WiFi.gatewayIP() );
       Serial.print( F("\t1st DNS:\t") );     Serial.println( WiFi.dnsIP() );
       */
-      Serial.printf( "MAC:%s\n", MAC.c_str());
+      Serial.printf( "\n[WIFI   ] MAC:%s\n", MAC.c_str());
 }
 
 
@@ -667,7 +676,9 @@ void chronosInit() {
 
   while(tcounter <= MAX_NUMBER_OF_TIMERS) { [&tcounter]() 
     {
+        #ifndef ESP32
         ESP.wdtFeed();
+        #endif
         char  timerfilename[30] = "";
         strcpy(timerfilename, "/timer");
         strcat(timerfilename, String(tcounter).c_str());
@@ -933,12 +944,15 @@ void thingsTODO_on_WIFI_Connected() {
             Serial.print(F("\n[INFO   ] Starting UDP"));
 
 
-            #ifdef ESP8266
+           // #ifdef ESP8266
 
-                // AsyncNTP
+                
                 #ifdef blockingTime
                       Udp.begin(localPort);
                 #else
+                // AsyncNTP
+                Serial.println(F("[NTP    ] >> Time server: "));
+                Serial.println(MyConfParam.v_timeserver);
                 if (Audp.connect(MyConfParam.v_timeserver, NTP_REQUEST_PORT))
                 {
                   Serial.println(F("[NTP    ] >> Time server connected"));
@@ -975,11 +989,9 @@ void thingsTODO_on_WIFI_Connected() {
                     });
                 } */        
 
-            #endif
+            // #endif
 
-
-            Serial.println(F("[INFO   ] starting MDNS"));
-            
+            Serial.println(F("[INFO   ] starting MDNS"));    
             if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
               Serial.println(F("[INFO   ] Error setting up MDNS responder!"));
             }
@@ -993,8 +1005,9 @@ void thingsTODO_on_WIFI_Connected() {
             #ifdef blockingTime
              setSyncProvider(getNtpTime);
             #else
+    
              setSyncProvider(timeprovider);
-             setSyncInterval(2); 
+             setSyncInterval(5); 
             #endif 
 
             #ifndef DEBUG_DISABLED  
@@ -1010,31 +1023,30 @@ void thingsTODO_on_WIFI_Connected() {
 
 
 
-/*
+#ifdef ESP32
 void Wifi_connect() {
 
   Serial.println(F("[INFO   ] Starting WiFi"));
  // WiFi.softAPdisconnect();
  // WiFi.disconnect();
   WiFi.mode(WIFI_STA);
-
   delay(100);
-
     if (digitalRead(ConfigInputPin) == HIGH) {
         WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
-        Serial.print("\n[WIFI] ssid: "); Serial.print(MyConfParam.v_ssid.c_str());
-        Serial.print("\n[WIFI] pass: "); Serial.print(MyConfParam.v_pass.c_str());Serial.print("\n ");
+        Serial.print("\n[WIFI] ssid+: "); Serial.print(MyConfParam.v_ssid.c_str());
+        Serial.print("\n[WIFI] pass+: "); Serial.print(MyConfParam.v_pass.c_str()); 
+        Serial.print("\n ");
         trials = 0;
       	blinkInterval = 50;
         // LedBlinker.update(nullptr);
-        /* while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials*2)){
+         while ((WiFi.status() != WL_CONNECTED) & (trials < MaxWifiTrials*2)){
         //  while ((WiFi.waitForConnectResult() != WL_CONNECTED) & (trials < MaxWifiTrials)){
             delay(50);
         		blinkled();
             trials++;
             Serial.print(F("-"));
-        }*/
- /*       if  (WiFi.status() == WL_CONNECTED)   {
+        }
+        if  (WiFi.status() == WL_CONNECTED)   {
             thingsTODO_on_WIFI_Connected();
             trials = 0;
             APModetimer_run_value = 0;
@@ -1049,7 +1061,7 @@ void Wifi_connect() {
     	}
     }
 }
-*/
+#endif
 
 void setupInputs(){
 
@@ -1160,7 +1172,7 @@ void checkIn()
   
 
 void setup() {
-
+#ifndef ESP32
       Pings.on(true,[](const AsyncPingResponse& response){
         IPAddress addr(response.addr); //to prevent with no const toString() in 2.3.0
         if (response.answer)
@@ -1192,6 +1204,9 @@ void setup() {
         }
         return true;
       });
+#else
+
+#endif
 
 
     #ifdef StepperMode
@@ -1238,7 +1253,7 @@ void setup() {
             Serial.println(F("SPIFFS Mount Failed"));
             return;
           }
-          listDir(SPIFFS, "/", 0);
+          listDir(SPIFFS, "/", 0);  
         #else
         /*  if(SPIFFS.format()) { Serial.println("File System Formated"); }
             else { Serial.println("File System Formatting Error"); } */
@@ -1254,6 +1269,7 @@ void setup() {
         ESP.restart();
         };
 
+        #ifndef ESP32
         gotIpEventHandler = WiFi.onStationModeGotIP([](const WiFiEventStationModeGotIP& event)
         {
           Serial.print(F("\n[WIFI   ] Station connected, IP: "));
@@ -1272,6 +1288,7 @@ void setup() {
             Wifireconnecttimer.start();
             Serial.println(F("[WIFI   ] Starting reconnection timer\n"));
           }
+         
           blinkInterval = 50;
 
           if (digitalRead(ConfigInputPin) == LOW){
@@ -1283,6 +1300,7 @@ void setup() {
             }
           }      
         });
+        #endif
 
         
         WiFi.mode(WIFI_STA);
@@ -1290,7 +1308,13 @@ void setup() {
           Serial.print(F("\n[WIFI   ] Sarting WIFI in AP mode \n"));
           WiFi.mode(WIFI_AP_STA);
         }
+
+        Serial.print(F("\n[WIFI   ] Sarting WIFI in Station mode \n"));
+        #ifndef ESP32
         WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+        #else
+          Wifi_connect();
+        #endif
 
         mqttClient.onConnect(onMqttConnect);
         mqttClient.onDisconnect(onMqttDisconnect);
@@ -1419,8 +1443,11 @@ void loop() {
   yield();
   #endif
 
+
+    #ifndef ESP32
     ESP.wdtFeed();
     MDNS.update();
+    #endif
     pinMode (ConfigInputPin, INPUT_PULLUP );
 
     if (restartRequired){
@@ -1430,9 +1457,11 @@ void loop() {
       ESP.restart();
     }
 
- // if  (WiFi.status() != WL_CONNECTED)  {
-    //if (APModetimer_run_value == 0) Wifi_connect();
- // }
+  #ifdef ESP32
+    if  (WiFi.status() != WL_CONNECTED)  {
+      if (APModetimer_run_value == 0) Wifi_connect();
+    }
+  #endif
 
   #ifdef AppleHK
 	  my_homekit_loop();
@@ -1487,10 +1516,32 @@ void loop() {
  #ifndef StepperMode
 
   if (MyConfParam.v_Reboot_on_WIFI_Disconnection > 0) {
-  if (millis() - lastMillis_1 > 10000) {
-    lastMillis_1 = millis();
-    Pings.begin(MyConfParam.v_Pingserver,1);
-  }
+    if (millis() - lastMillis_1 > 10000) {
+      
+      lastMillis_1 = millis();
+      #ifndef ESP32
+        Pings.begin(MyConfParam.v_Pingserver,1);
+      #else
+          bool success = Ping.ping(MyConfParam.v_Pingserver, 1);
+          if(!success){
+          Serial.println("Ping failed");
+                if (MyConfParam.v_Reboot_on_WIFI_Disconnection > 0) {
+                  restartRequired_counter++;
+                  //Serial.printf("\n\nPinging failure count: %i \n\n", restartRequired_counter);
+                  Serial.print(F("\n[PING   ] Pinging failed count: "));
+                  Serial.print(restartRequired_counter);
+                  Serial.print("\n");
+                  if (restartRequired_counter > MyConfParam.v_Reboot_on_WIFI_Disconnection)  {
+                    restartRequired = true;
+                  }     
+                }        
+          } 
+          else {
+          Serial.println("Ping succesful.");
+          restartRequired_counter = 0;
+          } 
+      #endif
+    }
   }
 
   if (millis() - lastMillis_2 > 2000) {
@@ -1522,8 +1573,8 @@ void loop() {
 		
     #ifdef SR04
     if (MyConfParam. v_Sonar_distance != "0") {
-          pinMode(TRIG_PIN, INPUT_PULLUP);
-          pinMode(ECHO_PIN, INPUT_PULLUP);
+          //            pinMode(TRIG_PIN, INPUT_PULLUP);
+          //            pinMode(ECHO_PIN, INPUT_PULLUP);
           //HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
           //Serial.println(hcsr04.distanceInMillimeters());
           int trigPin = TRIG_PIN;    // Trigger
@@ -1534,18 +1585,33 @@ void loop() {
           // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
           // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
           pinMode(trigPin, OUTPUT);
+          pinMode(echoPin, INPUT);
           digitalWrite(trigPin, LOW);
-          delayMicroseconds(5);
+          delayMicroseconds(5);//5
           digitalWrite(trigPin, HIGH);
-          delayMicroseconds(15);
+          delayMicroseconds(15);//15
           digitalWrite(trigPin, LOW);
+       
           // Read the signal from the sensor: a HIGH pulse whose
           // duration is the time (in microseconds) from the sending
           // of the ping to the reception of its echo off of an object.
-          pinMode(echoPin, INPUT);
+
+          /*
+            digitalWrite(TRIG_PIN, LOW);
+            delayMicroseconds(2);
+            digitalWrite(TRIG_PIN, HIGH);
+            delayMicroseconds(10);
+            digitalWrite(TRIG_PIN, LOW);  
+
+            duration= pulseIn(ECHO_PIN, HIGH);
+*/
+
+         
           duration = pulseIn(echoPin, HIGH);
+          Serial.print(duration);
           pinMode(TRIG_PIN, INPUT_PULLUP);
           pinMode(ECHO_PIN, INPUT_PULLUP);
+          
 
           cm = (duration/2) / 29.1;     // Divide by 29.1 or multiply by 0.0343
           if (cm > MyConfParam.v_Sonar_distance_max) { cm = -1; }

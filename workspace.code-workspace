@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"name": "SmartConfig - Copy",
+			"path": "."
+		},
+		{
+			"name": "HomeKitKSB",
+			"path": "..\\HomeKitTest\\HomeKitKSB"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"string": "c",
+			"homekit.h": "c"
+		}
+	}
+}

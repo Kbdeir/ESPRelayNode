@@ -6,6 +6,7 @@
  *      Author: Mixiaoxiao (Wang Bin)
  */
 
+#ifndef ESP32
 #include <homekit/homekit.h>
 #include <homekit/characteristics.h>
 #include <defines.h>
@@ -198,3 +199,4 @@ homekit_server_config_t config = {
 		.setupId = "ABCD" //optional        
 };
 
+#endif

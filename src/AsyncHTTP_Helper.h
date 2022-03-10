@@ -6,7 +6,9 @@
 #include <string.h>
 #include <ESPAsyncWebServer.h>
 #include <ConfigParams.h>
-//#include <ExecOTA.h>
+#ifdef ESP32
+ #include <ExecOTA.h> 
+#endif 
 #include <JSONConfig.h>
 #include <SPIFFSEditor.h>
 #include <MQTT_Processes.h>

@@ -1,5 +1,6 @@
 #include <KSBAsyncNTP.h>
 
+
 // IPAddress timeWindowsCom = IPAddress(192,168, 20, 1);
 // char timeServer[]         = "192.168.20.1";   // NTP server
 // const int NTP_PACKET_SIZE_ = 48;           // NTP timestamp is in the first 48 bytes of the message
@@ -37,7 +38,7 @@ void parsePacket(AsyncUDPPacket packet)
 
     memcpy(packetBuffer_, packet.data(), sizeof(packetBuffer_));
 
-    /*
+    
     Serial.print("Received UDP Packet Type: ");
     Serial.println(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
     Serial.print("From: ");
@@ -51,7 +52,7 @@ void parsePacket(AsyncUDPPacket packet)
     Serial.print(", Length: ");
     Serial.print(packet.length());
     Serial.println();
-    */
+    
 
     unsigned long highWord = word(packetBuffer_[40], packetBuffer_[41]);
     unsigned long lowWord = word(packetBuffer_[42], packetBuffer_[43]);
@@ -88,8 +89,8 @@ void parsePacket(AsyncUDPPacket packet)
 }
 
 
-time_t timeprovider(void)
-{
+
+time_t timeprovider(void) {
     sendAsyncNTPPacket();
     if (ftimesynced) { 
         setSyncInterval(30);        
@@ -101,10 +102,10 @@ time_t timeprovider(void)
     }
 }
 
-void sendAsyncNTPPacket(void)
-{
+void sendAsyncNTPPacket(void) {
   // ftimesynced = false;
   createNTPpacket();
+  
   //Send unicast
   Audp.write(packetBuffer_, sizeof(packetBuffer_));
 }

@@ -1,6 +1,5 @@
 #pragma once
 /*the correct pin mapping is the following [1][2] (NodeMCU on the left and ESP8266 on the right):
-
     D0 = GPIO16;
     D1 = GPIO5;
     D2 = GPIO4;
@@ -22,6 +21,21 @@
 #include <Arduino.h>
 #include <Scheduletimer.h>
 #include <IPAddress.h>
+
+  #ifdef HWESP32
+    #define led       02 // led on IO2  
+
+    #define RelayPin  25 // relay on IO25
+    #define HomeKitt_PIN_SWITCH 25 // Homekit is on (Relay0 = RelayPin) pin only
+
+    #define InputPin02  33 // Input2 on IO22 
+    #define InputPin13  16 // Input3 on IO16    
+    #define InputPin14  17
+
+    #define ConfigInputPin 04 // configuration pin on IO4
+    #define TempSensorPin   33
+    #define SecondTempSensorPin 16    
+  #endif
 
 
 #ifdef HWver03

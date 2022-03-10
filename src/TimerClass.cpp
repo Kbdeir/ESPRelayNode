@@ -94,7 +94,9 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   }*/
   configFile.close();
 
-    ESP.wdtFeed();
+    #ifndef ESP32  
+    ESP.wdtFeed(); 
+    #endif
 
   return true;
 }

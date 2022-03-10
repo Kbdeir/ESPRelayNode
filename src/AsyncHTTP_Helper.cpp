@@ -1,5 +1,7 @@
-#include <arduino_homekit_server.h>
-#include <AsyncHTTP_Helper.h>
+#ifndef ESP32
+  #include <arduino_homekit_server.h>
+#endif
+#include <AsyncHTTP_Helper.h> 
 #include <SPIFFSEditor.h>
 #include <MQTT_Processes.h>
 #include <RelayClass.h>
@@ -31,9 +33,10 @@ extern bool steperrun;
 
 uint8_t AppliedRelayNumber = 0;
 
-//const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
+// const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 AsyncWebServer AsyncWeb_server(80);
-//AsyncWebSocket ws("/test");
+// AsyncEventSource events("/events"); // https://randomnerdtutorials.com/esp32-web-server-sent-events-sse/
+// AsyncWebSocket ws("/test");
 
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
 //File cf;
