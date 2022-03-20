@@ -69,12 +69,36 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_MQTT_B_PRT          = (json["MQTT_B_PRT"].as<String>()!="") ? json["MQTT_B_PRT"].as<uint16_t>() : 1883;
   ConfParam.v_Update_now          = (json["Update_now"].as<String>()!="") ? json["Update_now"].as<uint8_t>() == 1 : false;
   ConfParam.v_TOGGLE_BTN_PUB_TOPIC= (json["TOGGLE_BTN_PUB_TOPIC"].as<String>()!="") ? json["TOGGLE_BTN_PUB_TOPIC"].as<String>() : String(F("/none"));
+
   ConfParam.v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
   ConfParam.v_IN1_INPUTMODE       =  json["I1MODE"].as<uint8_t>();
   ConfParam.v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
 
-  ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
-  ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
+  #ifdef HWESP32
+      ConfParam.v_IN3_INPUTMODE       =  json["I3MODE"].as<uint8_t>();
+      ConfParam.v_IN4_INPUTMODE       =  json["I4MODE"].as<uint8_t>();
+      ConfParam.v_IN5_INPUTMODE       =  json["I5MODE"].as<uint8_t>();
+      ConfParam.v_IN6_INPUTMODE       =  json["I6MODE"].as<uint8_t>();
+  #endif
+
+  #ifndef HWESP32
+    ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
+    ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
+  #endif  
+
+  #ifdef HWESP32
+  //fixit
+    ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
+    ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
+
+    ConfParam.v_InputPin01_STATE_PUB_TOPIC = ConfParam.v_InputPin12_STATE_PUB_TOPIC;
+    ConfParam.v_InputPin02_STATE_PUB_TOPIC = ConfParam.v_InputPin14_STATE_PUB_TOPIC;
+    ConfParam.v_InputPin03_STATE_PUB_TOPIC = (json["I03_STS_PTP"].as<String>()!="") ? json["I03_STS_PTP"].as<String>() : String(F("/none"));
+    ConfParam.v_InputPin04_STATE_PUB_TOPIC = (json["I04_STS_PTP"].as<String>()!="") ? json["I04_STS_PTP"].as<String>() : String(F("/none"));
+    ConfParam.v_InputPin05_STATE_PUB_TOPIC = (json["I05_STS_PTP"].as<String>()!="") ? json["I05_STS_PTP"].as<String>() : String(F("/none"));
+    ConfParam.v_InputPin06_STATE_PUB_TOPIC = (json["I06_STS_PTP"].as<String>()!="") ? json["I06_STS_PTP"].as<String>() : String(F("/none"));    
+  #endif
+
 
   //ConfParam.v_FRM_IP              = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
 
@@ -104,7 +128,7 @@ bool saveConfig(TConfigParams &ConfParam){
       Serial.println(F("[INFO   ] Failed to open config file for writing"));
       return FAILURE;
     }
-
+    
     json[F("ssid")]= ConfParam.v_ssid ;
     json[F("pass")]=ConfParam.v_pass;
     json[F("PhyLoc")]=ConfParam.v_PhyLoc;
@@ -112,12 +136,33 @@ bool saveConfig(TConfigParams &ConfParam){
     json[F("MQTT_B_PRT")]=ConfParam.v_MQTT_B_PRT;
     json[F("FRM_IP")]= MyConfParam.v_FRM_IP.toString();
     json[F("FRM_PRT")]=ConfParam.v_FRM_PRT;
-    json[F("I12_STS_PTP")]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
-    json[F("I14_STS_PTP")]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
+    #ifndef HWESP32
+      json[F("I12_STS_PTP")]=ConfParam.v_InputPin12_STATE_PUB_TOPIC;
+      json[F("I14_STS_PTP")]=ConfParam.v_InputPin14_STATE_PUB_TOPIC;
+      json[F("I0MODE")]=ConfParam.v_IN0_INPUTMODE;
+      json[F("I1MODE")]=ConfParam.v_IN1_INPUTMODE;
+      json[F("I2MODE")]=ConfParam.v_IN2_INPUTMODE;    
+    #endif
+    #ifdef HWESP32 // fixit
+      json[F("I12_STS_PTP")]=ConfParam.v_InputPin01_STATE_PUB_TOPIC;
+      json[F("I14_STS_PTP")]=ConfParam.v_InputPin02_STATE_PUB_TOPIC;
+
+      json[F("I01_STS_PTP")]=ConfParam.v_InputPin01_STATE_PUB_TOPIC;
+      json[F("I02_STS_PTP")]=ConfParam.v_InputPin02_STATE_PUB_TOPIC;
+      json[F("I03_STS_PTP")]=ConfParam.v_InputPin03_STATE_PUB_TOPIC;
+      json[F("I04_STS_PTP")]=ConfParam.v_InputPin04_STATE_PUB_TOPIC;
+      json[F("I05_STS_PTP")]=ConfParam.v_InputPin05_STATE_PUB_TOPIC;
+      json[F("I06_STS_PTP")]=ConfParam.v_InputPin06_STATE_PUB_TOPIC;
+
+      json[F("I0MODE")]=ConfParam.v_IN0_INPUTMODE;
+      json[F("I1MODE")]=ConfParam.v_IN1_INPUTMODE;
+      json[F("I2MODE")]=ConfParam.v_IN2_INPUTMODE;   
+      json[F("I3MODE")]=ConfParam.v_IN3_INPUTMODE;
+      json[F("I4MODE")]=ConfParam.v_IN4_INPUTMODE;
+      json[F("I5MODE")]=ConfParam.v_IN5_INPUTMODE;   
+      json[F("I6MODE")]=ConfParam.v_IN6_INPUTMODE;             
+    #endif    
     json[F("TOGGLE_BTN_PUB_TOPIC")]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
-    json[F("I0MODE")]=ConfParam.v_IN0_INPUTMODE;
-    json[F("I1MODE")]=ConfParam.v_IN1_INPUTMODE;
-    json[F("I2MODE")]=ConfParam.v_IN2_INPUTMODE;
     json[F("timeserver")]=ConfParam.v_timeserver.toString(); 
     json[F("Pingserver")]=ConfParam.v_Pingserver.toString();     
     json[F("MQTT_Active")]=ConfParam.v_MQTT_Active;
@@ -208,11 +253,34 @@ bool saveDefaultConfig(){
   json[F("ACS_Sensor_Model")] = "30";
   json[F("Max_Current")]=10;
   json[F("TOGGLE_BTN_PUB_TOPIC")]="/home/Controller" + CID() + "/INS/sts/IN0" ;
+  #ifndef HWESP32
   json[F("I12_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
   json[F("I14_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";
   json[F("I0MODE")]=2;
   json[F("I1MODE")]=2;
-  json[F("I2MODE")]=2;
+  json[F("I2MODE")]=2;  
+  #endif
+  #ifdef HWESP32
+  json[F("I12_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
+  json[F("I14_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";  
+  json[F("I01_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
+  json[F("I02_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";
+  json[F("I03_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN3";
+  json[F("I04_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN4";  
+  json[F("I05_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN5";
+  json[F("I06_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN6";  
+  json[F("I0MODE")]=2;
+  json[F("I1MODE")]=2;
+  json[F("I2MODE")]=2;  
+  json[F("I3MODE")]=2;
+  json[F("I4MODE")]=2;
+  json[F("I5MODE")]=2;      
+  json[F("I6MODE")]=2;      
+  #endif  
+
+  json[F("Sonar_distance")]=0;
+  json[F("Sonar_distance_max")]=50; 
+
   json[F("FRM_IP")]="192.168.1.1";
   json[F("FRM_PRT")]=83;
   json[F("Update_now")]=0;

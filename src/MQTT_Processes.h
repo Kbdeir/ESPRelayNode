@@ -6,7 +6,6 @@
   #include <ConfigParams.h>
   #include <Scheduletimer.h>
 
-//#define MQTT_HOST IPAddress(192, 168, 30, 111)
   extern AsyncMqttClient mqttClient;
   extern Schedule_timer ticker_relay_ttl;
   extern Schedule_timer tiker_MQTT_CONNECT;

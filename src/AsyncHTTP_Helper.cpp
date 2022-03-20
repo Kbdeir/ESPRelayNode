@@ -136,8 +136,17 @@ String processor(const String& var)
 
   if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
   if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
+
   if(var == F( "I12_STS_PTP"))          return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
   if(var == F( "I14_STS_PTP"))          return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
+  #ifdef ESP32
+    if(var == F( "I01_STS_PTP"))          return String( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str());
+    if(var == F( "I02_STS_PTP"))          return String( MyConfParam.v_InputPin02_STATE_PUB_TOPIC.c_str());
+    if(var == F( "I03_STS_PTP"))          return String( MyConfParam.v_InputPin03_STATE_PUB_TOPIC.c_str());
+    if(var == F( "I04_STS_PTP"))          return String( MyConfParam.v_InputPin04_STATE_PUB_TOPIC.c_str());
+    if(var == F( "I05_STS_PTP"))          return String( MyConfParam.v_InputPin05_STATE_PUB_TOPIC.c_str());
+    if(var == F( "I06_STS_PTP"))          return String( MyConfParam.v_InputPin06_STATE_PUB_TOPIC.c_str());    
+  #endif
   if(var == F( "timeserver" ))          return MyConfParam.v_timeserver.toString() ;
   if(var == F( "Pingserver" ))          return MyConfParam.v_Pingserver.toString() ;
   if(var == F( "ntptz" ))               return String( MyConfParam.v_ntptz);
@@ -159,6 +168,14 @@ String processor(const String& var)
   if(var == F( "I0MODE" ))                return String( MyConfParam.v_IN0_INPUTMODE);
   if(var == F( "I1MODE" ))                return String( MyConfParam.v_IN1_INPUTMODE);
   if(var == F( "I2MODE" ))                return String( MyConfParam.v_IN2_INPUTMODE);
+  #ifdef ESP32
+    if(var == F( "I3MODE" ))              return String( MyConfParam.v_IN3_INPUTMODE);
+    if(var == F( "I4MODE" ))              return String( MyConfParam.v_IN4_INPUTMODE);
+    if(var == F( "I5MODE" ))              return String( MyConfParam.v_IN5_INPUTMODE);
+    if(var == F( "I6MODE" ))              return String( MyConfParam.v_IN6_INPUTMODE);    
+  #endif  
+
+
   if(var == F( "RSTATE0" ))               return (getrelaybynumber(AppliedRelayNumber)->readrelay() == HIGH) ? "ON" : "OFF";
   if(var == F( "RSTATE1" ))               return [](){
     if (getrelaybynumber(AppliedRelayNumber) != nullptr) {
@@ -530,6 +547,6 @@ void SetAsyncHTTP(){
                                 }
                               });
         */
-	Serial.print(F("[INFO   ] Starting HTTP server"));
+	Serial.println(F("[INFO   ] Starting HTTP server"));
   AsyncWeb_server.begin();
 }

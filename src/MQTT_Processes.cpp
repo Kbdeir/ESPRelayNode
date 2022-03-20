@@ -15,15 +15,25 @@ extern RemoteDebug Debug;
 
 //extern void *  mrelays[3];
 extern std::vector<void *> relays ; // a list to hold all relays
-
+extern String APssid;
 //#define StepperMode
 
 
 #ifndef StepperMode
+#ifndef HWESP32
 extern InputSensor Inputsnsr14;
 extern InputSensor Inputsnsr13;
 extern InputSensor Inputsnsr12;
 extern InputSensor Inputsnsr02;
+#endif
+#ifdef HWESP32
+extern InputSensor Inputsnsr01;
+extern InputSensor Inputsnsr02;
+extern InputSensor Inputsnsr03;
+extern InputSensor Inputsnsr04;
+extern InputSensor Inputsnsr05;
+extern InputSensor Inputsnsr06;
+#endif
 #endif 
 
 
@@ -36,11 +46,16 @@ extern InputSensor Inputsnsr02;
 AsyncMqttClient mqttClient;
 
 void connectToMqtt() {
-  Serial.println(F("\n[MQTT   ] Connecting"));
+
   #ifndef DEBUG_DISABLED
   debugV("[MQTT] Connecting");
   #endif 
   mqttClient.setCleanSession(true);
+  mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
+  Serial.print(F("[MQTT   ] * Connecting to broker at "));
+  Serial.print( MyConfParam.v_MQTT_BROKER);
+  Serial.print(F(" port: "));
+  Serial.println( MyConfParam.v_MQTT_B_PRT);  
   mqttClient.connect();
 }
 
@@ -50,14 +65,14 @@ void tiker_MQTT_CONNECT_func (void* obj) {
   debugV("[MQTT] waiting for WIFI ");
   #endif
   if  (WiFi.status() == WL_CONNECTED)  {
-    Serial.print("[MQTT   ] WIFI IS CONNECTED - CONNECTING TO MQTT ");
+    Serial.println("[MQTT   ] WIFI IS CONNECTED - CONNECTING TO MQTT ");
     #ifndef DEBUG_DISABLED
     debugV("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
     #endif
     connectToMqtt();
   }
 }
-Schedule_timer tiker_MQTT_CONNECT(tiker_MQTT_CONNECT_func,5000,0,MILLIS_);
+Schedule_timer tiker_MQTT_CONNECT(tiker_MQTT_CONNECT_func,10000,0,MILLIS_);
 
 
 boolean isValidNumber(String& str) {
@@ -80,12 +95,15 @@ void mqttpostinitstatusOfInputs(void* sender){
 
 void onMqttConnect(bool sessionPresent) {
   tiker_MQTT_CONNECT.stop();
-  Serial.println(F("[MQTT   ] Connected to MQTT."));
-  Serial.print(F("[MQTT   ] Session present: "));
+  Serial.print(F("[MQTT   ] Connected to MQTT - "));
+  Serial.print(F("Session present: "));
+  Serial.println(sessionPresent);  
   #ifndef DEBUG_DISABLED
   debugV("[MQTT] Connected to MQTT");
   #endif
-  Serial.println(sessionPresent);
+  String ControllerIDBirth = "/home/Controller" + CID() + "/Birth" ;
+  mqttClient.publish( ControllerIDBirth.c_str(), QOS2, false,"online");
+
 
 	//uint16_t packetIdSub = mqttClient.subscribe(relay0.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
   Relay * rtemp = nullptr;
@@ -96,9 +114,6 @@ void onMqttConnect(bool sessionPresent) {
     }
   }
 
-
-	Serial.print(F("[MQTT   ] Subscribing at QoS 2, packetId: "));
-  // Serial.println(packetIdSub);
   // mqttpostinitstatusOfInputs(NULL);
 
   #ifndef StepperMode
@@ -136,22 +151,50 @@ void onMqttConnect(bool sessionPresent) {
               digitalRead(InputPin14) == HIGH ?  ON : OFF);
           }
           #endif
+
+          #if defined (HWESP32)
+            if (Inputsnsr01.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+                digitalRead(InputPin01) == HIGH ?  ON : OFF);
+            }          
+            if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin02_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+                digitalRead(InputPin02) == HIGH ?  ON : OFF);
+            }
+            if (Inputsnsr03.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin03_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+                digitalRead(InputPin03) == HIGH ?  ON : OFF);
+            }          
+            if (Inputsnsr04.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin04_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, 
+                digitalRead(InputPin04) == HIGH ?  ON : OFF);
+            }            
+            if (Inputsnsr05.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin05_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, 
+                digitalRead(InputPin05) == HIGH ?  ON : OFF);
+            }       
+            if (Inputsnsr06.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin06_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, 
+                digitalRead(InputPin06) == HIGH ?  ON : OFF);
+            }                                     
+          #endif          
+
         }();
 
   #endif
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-  Serial.println(F("\n[MQTT   ] Disconnected"));
+  Serial.println(F("[MQTT   ] * Disconnected * "));
   if (WiFi.isConnected()) {
     tiker_MQTT_CONNECT.start(); // recoonect to mqtt server
   }
 }
 
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
-  Serial.print(F("\n[MQTT   ] Subscribe ack"));
+  Serial.print(F("[MQTT   ] Subscribe ack"));
   Serial.print(F("  packetId: "));
-  Serial.println(packetId);
+  Serial.print(packetId);
   Serial.print(F("  qos: "));
   Serial.println(qos);
 }
@@ -164,7 +207,7 @@ void onMqttUnsubscribe(uint16_t packetId) {
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
 
-  Serial.print(F("\n[MQTT   ] Received"));
+  Serial.print(F("[MQTT   ] Received"));
   Serial.print(F("  topic: "));
   Serial.print(topic);
 	Serial.print(F("  payload: "));
@@ -264,7 +307,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
 
 void onMqttPublish(uint16_t packetId) {
-  Serial.print(F("\n[MQTT   ] Publish ack"));
+  Serial.print(F("[MQTT   ] Publish ack"));
   Serial.print(F("  packetId: "));
-  Serial.print(packetId);
+  Serial.println(packetId);
 }

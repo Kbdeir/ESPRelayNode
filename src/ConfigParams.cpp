@@ -8,10 +8,21 @@ TIRMap myIRMap;
 
 String CID(){
   #ifdef ESP32
-    char buf[16];
+    /*char buf[20];
     uint64_t chipid = ESP.getEfuseMac();
-    ltoa(chipid,buf,10);
-    return String(buf);
+    ltoa(chipid,buf,20);
+    String tmp = String(buf);
+    return tmp;*/
+
+    uint64_t chipid = ESP.getEfuseMac();
+    uint16_t chip = (uint16_t)(chipid >> 32);
+
+    chip   = __builtin_bswap16(chip); 
+    chipid = __builtin_bswap32((uint32_t)chipid); 
+    
+    char temp[23];
+    snprintf(temp, 23, "%08X%04X", (uint32_t)chipid, chip );
+    return temp;
   #else
     return String(ESP.getChipId());
   #endif

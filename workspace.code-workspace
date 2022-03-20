@@ -12,7 +12,10 @@
 	"settings": {
 		"files.associations": {
 			"string": "c",
-			"homekit.h": "c"
+			"homekit.h": "c",
+			"deque": "cpp",
+			"vector": "cpp",
+			"array": "cpp"
 		}
 	}
 }

@@ -22,71 +22,66 @@
 #include <Scheduletimer.h>
 #include <IPAddress.h>
 
-  #ifdef HWESP32
+ #ifdef HWESP32
     #define led       02 // led on IO2  
-
     #define RelayPin  25 // relay on IO25
     #define HomeKitt_PIN_SWITCH 25 // Homekit is on (Relay0 = RelayPin) pin only
 
-    #define InputPin02  33 // Input2 on IO22 
-    #define InputPin13  16 // Input3 on IO16    
-    #define InputPin14  17
+    #define InputPin01  33 // Input1 on IO33
+    #define InputPin02  16 // Input2 on IO16    
+    #define InputPin03  17 // Input3 on IO17
+    #define InputPin04  21 // Input4 on IO21
+    #define InputPin05  26 // Input3 on IO26   
+    #define InputPin06  27 // Input6 on IO27  
 
-    #define ConfigInputPin 04 // configuration pin on IO4
-    #define TempSensorPin   33
-    #define SecondTempSensorPin 16    
-  #endif
-
-
-#ifdef HWver03
-  #define led         16
-  #define InputPin02  02 
+    #define ConfigInputPin      04 // configuration pin on IO4
+    #define TempSensorPin       InputPin01 // 33
+    #define SecondTempSensorPin InputPin02 // 16    
+    #define TRIG_PIN InputPin03
+    #define ECHO_PIN InputPin04
 #endif
 
-#ifdef HWver02
-  #define led         02 
-#endif
 
-  #ifdef HWver03_4R
-    #define led       05  
-
-    #define RelayPin  16
-    #define HomeKitt_PIN_SWITCH 16 // Homekit is on (Relay0 = RelayPin) pin only
-    #define Relay1Pin 14    
-    #define Relay2Pin 12        
-    #define Relay3Pin 13 
-
+ #ifdef HWver03
+    #define led         16
     #define InputPin02  02 
-    #define InputPin14  00
-    #define InputPin13  04    
-
-    #define ConfigInputPin 15 
-    #define TempSensorPin   2
-    #define SecondTempSensorPin 4    
+    #define SwitchButtonPin2 12 // revert to 12 when done testing  
   #endif
 
-  #if defined (HWver02)  || defined (HWver03)
+  #ifdef HWver02
+    #define led         02 
+    #define SwitchButtonPin2 13 // revert to 12 when done testing
+ #endif
+
+ #if defined (HWver02)  || defined (HWver03)
     #define RelayPin 05
     #define HomeKitt_PIN_SWITCH 05
     //#define Relay2Pin 16
     #define InputPin12 12
     #define ConfigInputPin 13 // was 13. should return to 13
     #define InputPin14 14
-  #endif
 
-  #ifdef HWver03
-    #define SwitchButtonPin2 12 // revert to 12 when done testing
-  #endif
-
-  #ifdef HWver02
-    #define SwitchButtonPin2 13 // revert to 12 when done testing
-  #endif
-
-  #if defined (HWver02)  || defined (HWver03)
     #define TempSensorPin 14
     #define SecondTempSensorPin 12
-  #endif
+    #define TRIG_PIN 14
+    #define ECHO_PIN 12    
+ #endif
 
+
+ #ifdef HWver03_4R
+    #define led       05  
+    #define RelayPin  16
+    #define HomeKitt_PIN_SWITCH 16 // Homekit is on (Relay0 = RelayPin) pin only
+    #define Relay1Pin 14    
+    #define Relay2Pin 12        
+    #define Relay3Pin 13 
+    #define InputPin02  02 
+    #define InputPin14  00
+    #define InputPin13  04    
+    #define ConfigInputPin 15 
+    #define TempSensorPin   2
+    #define SecondTempSensorPin 4    
+ #endif
 
 
 #define RETAINED true
@@ -144,13 +139,38 @@ typedef struct TConfigParams {
   uint16_t v_FRM_PRT ;
   boolean v_Update_now ;
 
-
+#ifndef HWESP32
   String v_TOGGLE_BTN_PUB_TOPIC ;
   String v_InputPin12_STATE_PUB_TOPIC ;
   String v_InputPin14_STATE_PUB_TOPIC ;
   uint8_t v_IN0_INPUTMODE;
   uint8_t v_IN1_INPUTMODE;
   uint8_t v_IN2_INPUTMODE;
+#endif  
+
+#ifdef HWESP32
+  String v_TOGGLE_BTN_PUB_TOPIC ;
+  String v_InputPin12_STATE_PUB_TOPIC ;
+  String v_InputPin14_STATE_PUB_TOPIC ;
+
+  String v_InputPin01_STATE_PUB_TOPIC ;
+  String v_InputPin02_STATE_PUB_TOPIC ;
+  String v_InputPin03_STATE_PUB_TOPIC ;
+  String v_InputPin04_STATE_PUB_TOPIC ;
+  String v_InputPin05_STATE_PUB_TOPIC ;
+  String v_InputPin06_STATE_PUB_TOPIC ;
+
+  uint8_t v_IN0_INPUTMODE;
+  uint8_t v_IN1_INPUTMODE;
+  uint8_t v_IN2_INPUTMODE;
+  uint8_t v_IN3_INPUTMODE;
+  uint8_t v_IN4_INPUTMODE;
+  uint8_t v_IN5_INPUTMODE;  
+  uint8_t v_IN6_INPUTMODE;
+#endif  
+
+
+
 
   String v_Sonar_distance ;
   uint16_t v_Sonar_distance_max;

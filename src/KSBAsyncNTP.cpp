@@ -11,7 +11,7 @@ time_t epoch_t_;
 // send an NTP request to the time server at the given address
 void createNTPpacket(void)
 {
-   Serial.println(F("\n[NTP    ] Updating NTP time"));
+   Serial.println(F("[NTP    ] Updating NTP time"));
 
   // set all bytes in the buffer to 0
   memset(packetBuffer_, 0, NTP_PACKET_SIZE_);
@@ -39,9 +39,9 @@ void parsePacket(AsyncUDPPacket packet)
     memcpy(packetBuffer_, packet.data(), sizeof(packetBuffer_));
 
     
-    Serial.print("Received UDP Packet Type: ");
-    Serial.println(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
-    Serial.print("From: ");
+    Serial.print("[NTP    ] Received UDP Packet Type: ");
+    Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+    Serial.print(" From: ");
     Serial.print(packet.remoteIP());
     Serial.print(":");
     Serial.print(packet.remotePort());

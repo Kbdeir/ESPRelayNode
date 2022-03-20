@@ -19,8 +19,8 @@ void ACS_Calibrate_Start(Relay &arelay, ACS712 &asensor){
 	Serial.println("[INFO   ] Sensitivity = " + String(sensitivity));
 	asensor.setSensitivity(sensitivity);
 	int zero = asensor.calibrate();
-	Serial.println(F("[INFO   ] Done!"));
-	Serial.println("[INFO   ] Zero point for this sensor = " + zero);
+	Serial.print(F("[INFO   ] Done! Zero point for this sensor = "));
+	Serial.println(zero);
 	asensor.setZeroPoint(zero);
 	//ticker_ACS712.interval(1000);
 

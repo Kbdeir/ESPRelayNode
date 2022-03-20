@@ -29,7 +29,7 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
                 listDir(fs, file.name(), levels -1);
             }
         } else {
-            Serial.print(F("  FILE: "));
+            Serial.print(F("FILE: "));
             Serial.print(file.name());
             Serial.print("\tSIZE: ");
             Serial.println(file.size());
