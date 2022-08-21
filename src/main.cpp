@@ -1,6 +1,7 @@
 // public time server 129.6.15.28
 // #define USEPREF n
 // V 1.0
+// ESP 8266 and ESP32 arduino libraries and examples : https://github.com/espressif/arduino-esp32/tree/master/libraries
 
 #include <defines.h>
 
@@ -11,7 +12,13 @@
 #endif 
 
 #ifdef AppleHK
-#include <AppleHKSupport.h>
+  #ifndef ESP32
+    #include <AppleHKSupport.h>
+  #endif
+  #ifdef ESP32
+    #include <ESP32HomeKit.h>
+    #include <ESP32HAP.h>
+  #endif
 #endif
 
 #include <Arduino.h>
@@ -31,16 +38,41 @@
 #include <TempSensor.h>
 #include <TempConfig.h>
 #ifdef ESP32
-#include <ESP32Ping.h>
+  #include <ESP32Ping.h>
 #else
   #include "AsyncPing.h"
 #endif
 
+#ifdef ESP_MESH
+    #include <ksbMesh.h>
+    extern Scheduler userScheduler;   // to control your personal task
+    extern painlessMesh  mesh;    
+#endif
 
+
+#ifdef INVERTERLINK
+  #include <inverter.h> 
+  #include <InverterHelper.h>
+#endif
 
 //#include <AH_EasyDriver.h>
 #include <AccelStepper.h>
 #include <SimpleTimer.h>
+
+
+#ifdef emonlib
+#include "EmonLib.h"             // Include Emon Library
+  EnergyMonitor emon1;             // Create an instance  
+  float realPower;
+  float apparentPower;
+  float powerFActor ;
+  float supplyVoltage;
+  float Irms ;  
+#endif  
+
+#ifdef OLED_1306
+#include <SSD1306.h>
+#endif
 
 #ifdef blockingTime
   #include <KSBNTP.h>
@@ -48,6 +80,9 @@
   #include <KSBAsyncNTP.h>
   AsyncUDP Audp;
 #endif
+
+bool esp_now_initiated = false;
+bool mesh_active = false;
 
 //#include <RelaysArray.h>
 //extern void *  mrelays[3];
@@ -58,7 +93,12 @@ extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
 extern "C"
 {
   #include <lwip/icmp.h> // needed for icmp packet definitions
+	// #include "freertos/FreeRTOS.h"
+	// #include "freertos/timers.h"  
 }
+
+// TimerHandle_t mqttReconnectTimer;
+// TimerHandle_t wifiReconnectTimer;
 
 char HAName_Bridge[HK_name_len]  = "MyBridge_____\0";
 char HAName_SW[HK_name_len]      = "MySwitch_____\0";
@@ -106,6 +146,10 @@ unsigned long lastMillis = 0;
 unsigned long lastMillis_1 = 0;
 unsigned long lastMillis5000 = 0;
 
+unsigned long switch_millis = 0;
+
+unsigned long mqttstartUpdatemillis = 0;
+
 #ifdef ESP32
   #include <ESPmDNS.h>
     #ifdef USEPREF
@@ -127,6 +171,7 @@ unsigned long lastMillis5000 = 0;
 #include <AsyncHTTP_Helper.h>
 
 bool homekitNotInitialised = true;
+bool HomespanInitiated = false;
 
 time_t prevDisplay = 0; // when the digital clock was displayed
 #include <Chronos.h>
@@ -139,6 +184,7 @@ AsyncPing Pings; //Pings[1];
 #endif
 
 IPAddress addr;
+
 
 const char * EventNames[] = {
   "N/A", // just a placeholder, for indexing easily
@@ -169,14 +215,14 @@ const char * EventNames[] = {
 #endif
 
 #ifdef SR04
-    // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
-    // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
-    //  int trigPin = 13;    // Trigger
-    //  int echoPin = 12;    // Echo
       long duration, cm, inches;
-      #include <hcsr04.h>
-    //  #define TRIG_PIN 14
-    //  #define ECHO_PIN 12
+      double emptypercent,fullpercent;         
+      #include <NewPing.h>
+      #define MAX_DISTANCE 250 
+      NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE);  
+      
+      //unsigned int pingSpeed = 50; // How frequently are we going to send out a ping (in milliseconds). 50ms would be 20 times a second.
+      //unsigned long pingTimer;     // Holds the next ping time.        
 #endif
 
 #ifdef StepperMode
@@ -200,7 +246,9 @@ const char * EventNames[] = {
 #endif
 
 
+
 long timezone     = 1;
+byte xtries = 0;
 byte daysavetime  = 1;
 int wifimode      = WIFI_CLT_MODE;
 
@@ -239,6 +287,53 @@ void ticker_relay_ttl_periodic_callback(void* obj);
 void ticker_ACS712_func (void* obj);
 void onRelaychangeInterruptSvc(void* t);
 void ticker_ACS712_mqtt (void* obj);
+
+
+#ifdef ESP_NOW
+//************** ESP_NOW ******************* 
+// Structure example to receive data
+// Must match the sender structure
+typedef struct struct_message {
+    char a[100];
+    bool SwitchState;
+} struct_message;
+
+// Create a struct_message called myData
+struct_message myData;
+
+// callback function that will be executed when data is received
+    #ifndef ESP32
+        void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) {
+          memcpy(&myData, incomingData, sizeof(myData));
+          Serial.print("\n[ESP_NOW] Bytes received: ");
+          Serial.print(len);
+          Serial.print(" Char: ");
+          Serial.print(myData.a);
+          Serial.print(" SwitchState: ");
+          Serial.print(myData.SwitchState);
+          Serial.println();
+          Serial.println("[ESP_NOW] posting update");
+            Relay * rtmp =  getrelaybynumber(0);
+            if (rtmp) rtmp->mdigitalWrite(rtmp->getRelayPin(),myData.SwitchState);
+        }
+    #endif
+    #ifdef ESP32
+        void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+          memcpy(&myData, incomingData, sizeof(myData));
+          Serial.print("\n[ESP_NOW] Bytes received: ");
+          Serial.print(len);
+          Serial.print(" Char: ");
+          Serial.print(myData.a);
+          Serial.print(" SwitchState: ");
+          Serial.print(myData.SwitchState);
+          Serial.println();
+          Serial.println("[ESP_NOW] posting update");
+            Relay * rtmp =  getrelaybynumber(0);
+            if (rtmp) rtmp->mdigitalWrite(rtmp->getRelayPin(),myData.SwitchState);
+        }
+    #endif
+
+ #endif
 
 int getpinMode(uint8_t pin) 
 {
@@ -320,9 +415,14 @@ void ticker_ACS712_func (void* relaySender) {
         ACS_I_Current = sensor.getCurrentAC();
         //Serial.println(String("ACS_I_Current = ") + ACS_I_Current + " A");
         //Serial.println(String("RelayConfParam->v_Max_Current = ") + rly->RelayConfParam->v_Max_Current);
-        if (ACS_I_Current > rly->RelayConfParam->v_Max_Current) {
+         if (ACS_I_Current > rly->RelayConfParam->v_Max_Current) {
+
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
             Serial.println(F("ACS_I_Current > RelayConfParam->v_Max_Current"));
+            Serial.println(F("Reactivating relay after TTA time"));
+            rly->ticker_relay_tta->interval(rly->RelayConfParam->v_tta*1000);
+            rly->ticker_relay_tta->start();  
+
         }
     }
   }
@@ -330,11 +430,13 @@ void ticker_ACS712_func (void* relaySender) {
 
 
 void ticker_relay_ttl_periodic_callback(void* relaySender){
-  Serial.print(F("\n TTL Countdown: "));
+
   //uint32_t t = ticker_relay_ttl.periodscounter();
   if (relaySender != nullptr) {
     Relay * rly = static_cast<Relay *>(relaySender);
     uint32_t t = rly->getRelayTTLperiodscounter();
+    Serial.print(F("[INFO   ] TTL Countdown: "));    
+    Serial.println(t);    
     if (digitalRead(rly->getRelayPin() == HIGH)) {
       mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, String(rly->RelayConfParam->v_ttl).c_str());
       mqttClient.publish( rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, (String(t).c_str()));
@@ -353,7 +455,7 @@ void ticker_relay_ttl_off (void* relaySender) {
 void onRelaychangeInterruptSvc(void* relaySender){
   Relay * rly = static_cast<Relay *>(relaySender);
   // uint16_t pack = 0;
-
+  //if (mqttClient.connected()) { xxxx
   if (rly->rchangedflag ) {
       rly->rchangedflag = false;
 
@@ -362,48 +464,54 @@ void onRelaychangeInterruptSvc(void* relaySender){
         if (rly->RelayConfParam->v_ttl > 0 ) {
           rly->start_ttl_timer();
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);  
+        //mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);   //xxx check why this is needed
+        // Serial.print(rly->RelayConfParam->v_STATE_PUB_TOPIC);
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);         
       }
 
       if (digitalRead(rly->getRelayPin()) == LOW) {
-        Serial.print(F("\n[INFO   ] interrupt *OFF* occurred."));
+        Serial.println(F("[INFO   ] interrupt *OFF* occurred."));
         rly->stop_ttl_timer();
         if (rly->RelayConfParam->v_ttl > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
+        //mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);   //xxx check why this is needed
+        // Serial.print(rly->RelayConfParam->v_STATE_PUB_TOPIC);        
+        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);        
       }
 
   } else {
-        mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);                
+       mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, digitalRead(rly->getRelayPin()) == HIGH ? ON : OFF);                
   }
+  //}
   #ifdef AppleHK
-    //if (HomeKitt_PIN_SWITCH == rly->getRelayPin()) {
-      rly->savePersistedrelay();
-      switch (rly->getRelayPin()) {
-        case RelayPin:
-          cha_switch_on.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
-          homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);    
-          break;
-        #ifdef HWver03_4R  
-          case Relay1Pin:
-            cha_switch_on1.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
-            homekit_characteristic_notify(&cha_switch_on1, cha_switch_on1.value);    
+    #ifndef ESP32
+      //if (HomeKitt_PIN_SWITCH == rly->getRelayPin()) {
+        rly->savePersistedrelay();
+        switch (rly->getRelayPin()) {
+          case RelayPin:
+            cha_switch_on.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+            homekit_characteristic_notify(&cha_switch_on, cha_switch_on.value);    
             break;
-          case Relay2Pin:
-            cha_switch_on2.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
-            homekit_characteristic_notify(&cha_switch_on2, cha_switch_on2.value);   
-            break;
-          case Relay3Pin:
-            cha_switch_on3.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
-            homekit_characteristic_notify(&cha_switch_on3, cha_switch_on3.value);   
-            break;   
-         #endif        
-      }
+          #ifdef HWver03_4R  
+            case Relay1Pin:
+              cha_switch_on1.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+              homekit_characteristic_notify(&cha_switch_on1, cha_switch_on1.value);    
+              break;
+            case Relay2Pin:
+              cha_switch_on2.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+              homekit_characteristic_notify(&cha_switch_on2, cha_switch_on2.value);   
+              break;
+            case Relay3Pin:
+              cha_switch_on3.value.bool_value = digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
+              homekit_characteristic_notify(&cha_switch_on3, cha_switch_on3.value);   
+              break;   
+          #endif        
+        }
+    #endif
+    #ifdef ESP32
 
-    //}         
+    #endif     
   #endif
 
 }
@@ -456,7 +564,12 @@ void buttonclick(void* relaySender, void* inputSender) {
 void TempertatureSensorEvent(int rlynb, float TSolarPanel, float TSolarTank) {
   Serial.print(F("\n[INFO   ] TempertatureSensorEvent"));
   Relay * rtmp =  getrelaybynumber(0);
-  
+      Serial.print(F("\n[INFO  ********* ] TempertatureSensorEvent TSolarPanel = "));
+      Serial.print (TSolarPanel);
+
+      Serial.print(F("\n[INFO  ********* ] TempertatureSensorEvent TSolarTank = "));
+      Serial.print (TSolarTank);
+
   //mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,TOG);
   if ((PTempConfig.spanTempfrom != 0) && (PTempConfig.spanBuffer != 0)) {
     if (TSolarPanel > PTempConfig.spanTempfrom) {
@@ -464,24 +577,22 @@ void TempertatureSensorEvent(int rlynb, float TSolarPanel, float TSolarTank) {
       Serial.print (PTempConfig.spanTempfrom);
       if ((TSolarPanel - TSolarTank) > PTempConfig.spanBuffer) {
         rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
-        Serial.print(F("\n[INFO   ] TempertatureSensorEvent SOLAR PANEL - TankTemp > "));
-        Serial.print (PTempConfig.spanBuffer);
+          Serial.print(F("\n[INFO   ] TempertatureSensorEvent SOLAR PANEL - TankTemp > "));
+          Serial.print (PTempConfig.spanBuffer);
       }
       if ((TSolarPanel - TSolarTank) < PTempConfig.spanBuffer) {
         rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-        Serial.print(F("\n[INFO   ] TempertatureSensorEvent SOLAR PANEL - TankTemp < "));
-        Serial.print (PTempConfig.spanBuffer);
+          Serial.print(F("\n[INFO   ] TempertatureSensorEvent SOLAR PANEL - TankTemp < "));
+          Serial.print (PTempConfig.spanBuffer);
       }    
     }
 
     if (TSolarPanel < PTempConfig.spanTempfrom) {
         rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
-        Serial.print(F("\n[INFO   ] TempertatureSensorEvent SOLAR PANEL < "));
-        Serial.print (PTempConfig.spanTempfrom);
+          Serial.print(F("\n[INFO   ] TempertatureSensorEvent SOLAR PANEL < "));
+          Serial.print (PTempConfig.spanTempfrom);
     }
-  }
-    
-  
+  } 
 }
 
 
@@ -499,17 +610,19 @@ if (relaySender){
 
 void IP_info()
 {
-  // int32_t rssi;           // store WiFi signal strength here
-  // String getSsid;
-  // String getPass;
-  // String getSsid = WiFi.SSID();
-  // String getPass = WiFi.psk();
-   #ifdef ESP32
-     wifi_config_t conf;
-     esp_wifi_get_config(WIFI_IF_STA, &conf);  // load wifi settings to struct comf
-   #endif
+      // int32_t rssi;           // store WiFi signal strength here
+      // String getSsid;
+      // String getPass;
+      // String getSsid = WiFi.SSID();
+      // String getPass = WiFi.psk();
+
+      #ifdef ESP32
+        wifi_config_t conf;
+        esp_wifi_get_config(WIFI_IF_STA, &conf);  // load wifi settings to struct comf
+      #endif
 
       MAC = WiFi.macAddress();
+
       Serial.printf( "[WIFI   ] SSID: %s, ",  WiFi.SSID().c_str() );
       Serial.printf( "PASS: %s",  WiFi.psk().c_str() );
       Serial.print( F(" * IP address:") );
@@ -524,26 +637,30 @@ void IP_info()
       Serial.print(" * RSSI:");
       Serial.print(rssi);               
       Serial.printf( " * MAC:%s\n", MAC.c_str());
-
 }
 
 
-// aaa
-
 extern Schedule_timer Wifireconnecttimer;
+extern void connectToMqtt();
 
 void tiker_WIFI_CONNECT_func (void* obj) {
-        Serial.print(F("\n[WIFI] WIFI timer active"));
+        Serial.println(F("\n[WIFI] WIFI timer active"));
         // Access Point mode configuration jumper is set
         if (digitalRead(ConfigInputPin) == LOW){ 
-                  Serial.print(F("\n[WIFI] Access Point mode configuration jumper is set"));                               
+          Serial.print(F("\n[WIFI] Access Point mode configuration jumper is set"));                               
           Wifireconnecttimer.stop();
           WiFi.mode(WIFI_AP_STA);
+     
         } else {
           // Station mode, try to connect with saved SSID & PASS
-          //WiFi.reconnect();
-          WiFi.mode(WIFI_STA);
-          WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); 
+          // WiFi.reconnect();
+          #ifndef ESP_MESH
+            WiFi.mode(WIFI_STA); 
+            WiFi.setSleep(WIFI_PS_NONE);
+            //WiFi.disconnect(true);
+            WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); 
+            WiFi.printDiag(Serial); 
+          #endif 
         }
 }
 Schedule_timer Wifireconnecttimer(tiker_WIFI_CONNECT_func,10000,0,MILLIS_);
@@ -621,6 +738,7 @@ static void handleNewClient(void* arg, AsyncClient* client) {
 //-------------------------------------------------------------------------------------------------------------
 
 #ifdef AppleHK
+#ifndef ESP32
 void homekitUpdateBootStatus(void) {
 
  Relay * rly = nullptr;
@@ -628,7 +746,6 @@ void homekitUpdateBootStatus(void) {
   for (auto it : relays)  {
     rly = static_cast<Relay *>(it);
     if (rly) {
-        // uint16_t packetIdSub = mqttClient.subscribe(rtemp->RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
       switch (rly->getRelayPin()) {
         case RelayPin:
           cha_switch_on.value.bool_value = rly->readPersistedrelay(); //digitalRead(rly->getRelayPin()) == HIGH ? true : false;	  //sync the value
@@ -654,6 +771,7 @@ void homekitUpdateBootStatus(void) {
   }
 }  
 #endif
+#endif
 
 
 DefineCalendarType(Calendar, CAL_MAX_NUM_EVENTS_TO_HOLD);
@@ -665,11 +783,13 @@ void chronosInit() {
   Chronos::DateTime::setTime(year(), month(), day(), hour(), minute(), second()); 
   //Chronos::DateTime::setTime(2018, 12, 7, 18, 00, 00);
 
-  uint8_t tcounter = 0;
-
+  uint8_t tcounter = 1;
+  #ifndef ESP32 
+  ESP.wdtFeed();
+  #endif
   while(tcounter <= MAX_NUMBER_OF_TIMERS) { [&tcounter]() 
     {
-        #ifndef ESP32
+        #ifndef ESP32 
         ESP.wdtFeed();
         #endif
         char  timerfilename[30] = "";
@@ -678,7 +798,9 @@ void chronosInit() {
         strcat(timerfilename, ".json");
 
         config_read_error_t res = loadNodeTimer(timerfilename,NTmr);
-       
+        #ifndef ESP32 
+        ESP.wdtFeed();
+        #endif
         tcounter++;
 
         if ((res == SUCCESS) && NTmr.enabled) {
@@ -833,6 +955,10 @@ void chronosInit() {
   PRINT(F("[NTP    ] Presumably got NTP time,"));
   PRINT(F(" right \"now\" it's: "));
   Chronos::DateTime::now().printTo(SERIAL_DEVICE);
+      
+      #ifndef ESP32
+      ESP.wdtFeed();
+     #endif 
   Chronos::DateTime nowTime(Chronos::DateTime::now());
    //nowTime.printTo(SERIAL_DEVICE);
 
@@ -934,92 +1060,72 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 
 
 void thingsTODO_on_WIFI_Connected() {
-            Serial.println(F("\n[WIFI   ] WiFi Connected"));
-            IP_info();
+    Serial.println(F("\n[WIFI   ] WiFi Connected"));
+    IP_info();
 
-            SetAsyncHTTP();
-        		blinkInterval = 1000;
-            Serial.print(F("[WIFI   ] IP number assigned by DHCP is "));
-            Serial.println(WiFi.localIP());
-            Serial.println(F("[INFO   ] Starting UDP"));
+    blinkInterval = 1000;
+    Serial.print(F("[WIFI   ] IP assigned by DHCP = "));
+    Serial.println(WiFi.localIP());   
 
-           // #ifdef ESP8266
-                #ifdef blockingTime
-                      Udp.begin(localPort);
-                #else
-                // AsyncNTP
-                Serial.print(F("[NTP    ] >> Time server: "));
-                Serial.println(MyConfParam.v_timeserver);
-                if (Audp.connect(MyConfParam.v_timeserver, NTP_REQUEST_PORT))
-                {
-                  Serial.println(F("[NTP    ] >> Time server connected"));
-                  Audp.onPacket([](AsyncUDPPacket packet)
-                  {
-                    parsePacket(packet);
-                  });
-                }
-                #endif
-                
+#ifdef OLED_1306
+    display.println(WiFi.localIP().toString());
+    display.display();
+#endif    
 
-               /* if(Audp.listen(1234)) {
-                    Serial.print("UDP Listening on IP: ");
-                    Serial.println(WiFi.localIP());
-                    Audp.onPacket([](AsyncUDPPacket packet) {
-                        Serial.print("UDP Packet Type: ");
-                        Serial.print(packet.isBroadcast()?"Broadcast":packet.isMulticast()?"Multicast":"Unicast");
-                        Serial.print(", From: ");
-                        Serial.print(packet.remoteIP());
-                        Serial.print(":");
-                        Serial.print(packet.remotePort());
-                        Serial.print(", To: ");
-                        Serial.print(packet.localIP());
-                        Serial.print(":");
-                        Serial.print(packet.localPort());
-                        Serial.print(", Length: ");
-                        Serial.print(packet.length());
-                        Serial.print(", Data: ");
-                        Serial.write(packet.data(), packet.length());
-                        Serial.println();
-                        //reply to the client
-                        packet.printf("Got %u bytes of data", packet.length());
-                        parsePacket(packet);
-                    });
-                } */        
+    Serial.print(F("[WIFI   ] Channel: "));
+    Serial.println(WiFi.channel());
+    Serial.println(F("[INFO   ] Starting UDP"));
 
-            // #endif
+    // #ifdef ESP8266
+    #ifdef blockingTime
+      Udp.begin(localPort);
+    #else
+      // AsyncNTP
+      Serial.print(F("[NTP    ] >> Time server: "));
+      Serial.println(MyConfParam.v_timeserver);
+      if (Audp.connect(MyConfParam.v_timeserver, NTP_REQUEST_PORT))
+      {
+        Serial.println(F("[NTP    ] >> Time server connected"));
+        Audp.onPacket([](AsyncUDPPacket packet)
+                      { parsePacket(packet); });
+      }
+    #endif
 
-            Serial.println(F("[INFO   ] starting MDNS"));    
-            if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str())) {
-              Serial.println(F("[INFO   ] Error setting up MDNS responder!"));
-            }
-            
-            Serial.println(F("[INFO   ] MDNS responder started"));
-            MDNS.addService("http","tcp", 80); // Announce esp tcp service on port 80
-            
-            //MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
-            //MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
-            
-            #ifdef blockingTime
-             setSyncProvider(getNtpTime);
-            #else
-    
-             setSyncProvider(timeprovider);
-             setSyncInterval(5); 
-            #endif 
+    Serial.println(F("[INFO   ] starting MDNS"));
+    if (!MDNS.begin((MyConfParam.v_PhyLoc).c_str()))
+    {
+      Serial.println(F("[INFO   ] Error setting up MDNS responder!"));
+    }
 
-            #ifndef DEBUG_DISABLED  
-            debugV("* Starting MQTT connection timer, 5 seconds period"); 
-            #endif 
+    Serial.println(F("[INFO   ] MDNS responder started"));
+    MDNS.addService("http", "tcp", 80); // Announce esp tcp service on port 80
 
-            tiker_MQTT_CONNECT.start();  // timer will retry to connect every 5s. 
-        		//MBserver->begin();
-        		//MBserver->onClient(&handleNewClient, MBserver);
+    // MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
+    // MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
 
-            homekitNotInitialised = true;      
+  #ifdef blockingTime
+    setSyncProvider(getNtpTime);
+  #else
+    setSyncProvider(timeprovider);
+    setSyncInterval(30);
+  #endif
+
+  #ifndef DEBUG_DISABLED
+    debugV("* Starting MQTT connection timer, 5 seconds period");
+  #endif
+
+    // tiker_MQTT_CONNECT.start(); // timer will retry to connect every 5s.  
+    SetAsyncHTTP();
+    connectToMqtt();
+
+    // MBserver->begin();
+    // MBserver->onClient(&handleNewClient, MBserver);
+
+    homekitNotInitialised = true;
+
+
+
 }
-
-
-
 
 
 #ifdef _commented_
@@ -1134,7 +1240,7 @@ void setupInputs(){
   Inputsnsr01.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr01.onInputClick_RelayServiceRoutine = buttonclick;
   Inputsnsr01.post_mqtt = true;
-  Inputsnsr01.mqtt_topic = MyConfParam.v_InputPin01_STATE_PUB_TOPIC + "_1"; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+  Inputsnsr01.mqtt_topic = MyConfParam.v_InputPin01_STATE_PUB_TOPIC; //+ "_1"; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
   Inputsnsr01.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
 
   Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
@@ -1225,6 +1331,16 @@ void checkIn()
   
 
 void setup() {
+
+//  mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
+//  wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
+
+#ifdef emonlib
+analogReadResolution()
+  // emon1.voltage(A1, 382, 1.7);  // Voltage: input pin, calibration, phase_shift ** voltage constant = alternating mains voltage ÷ alternating voltage at ADC input pin (alternating voltage at ADC input pin = voltage at the middle point of the resistor voltage divider)
+  emon1.current(A0, 30);       // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input
+#endif
+
     blinkInterval = 1000; 
     lastMillis_2 = 0;
     #ifndef ESP32
@@ -1301,7 +1417,25 @@ void setup() {
         #endif        
     #endif    
 
-    Serial.begin(115200);
+  Serial.begin(115200);
+  #ifdef INVERTERLINK
+  SERIAL_INVERTER.begin(2400);     // Using UART0 for comm with inverter. IE cant be connected during flashing
+  #endif
+  /*
+  uint32_t Freq = 0;
+  Freq = getCpuFrequencyMhz();
+  Serial.print("CPU Freq = ");
+  Serial.print(Freq);
+  Serial.println(" MHz");
+  Freq = getXtalFrequencyMhz();
+  Serial.print("XTAL Freq = ");
+  Serial.print(Freq);
+  Serial.println(" MHz");
+  Freq = getApbFrequency();
+  Serial.print("APB Freq = ");
+  Serial.print(Freq);
+  Serial.println(" Hz");    
+  */
 
         // LedBlinker.start();
 
@@ -1310,6 +1444,10 @@ void setup() {
           test or else use the SPIFFS plugin to create a partition
           https://github.com/me-no-dev/arduino-esp32fs-plugin
         */
+#ifdef OLED_1306
+       SSD_1306();
+       DSS1306_clear_text(0,0,1,"booting...");
+#endif       
 
         #ifdef ESP32
           if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
@@ -1331,36 +1469,48 @@ void setup() {
           delay(2000);
           ESP.restart();
         };
-
-// bbbb
-
         
-        WiFi.mode(WIFI_STA);
+        //ScanMyWiFi();
+        //delay(2000);
+
+        WiFi.mode(WIFI_STA); 
+        WiFi.setSleep(WIFI_PS_NONE);
+            
         if (digitalRead(ConfigInputPin) == LOW){
           Serial.print(F("\n[WIFI   ] Sarting WIFI in AP mode \n"));
           WiFi.mode(WIFI_AP_STA);
         }
 
-         String WiFiHostname = "ESP_" ; //+ CID();
-         WiFiHostname += MyConfParam.v_PhyLoc.substring(0,28);
-         WiFiHostname.replace(" ","");
-         Serial.print(F("[WIFI   ] Setting WiFi Hostname to "));
-         Serial.println(WiFiHostname);
-         WiFi.setHostname(WiFiHostname.c_str());
+      //   String WiFiHostname = "ESP_" ; //+ CID();
+      //   WiFiHostname += MyConfParam.v_PhyLoc.substring(0,28);
+      //   WiFiHostname.replace(" ","");
+      //   Serial.print(F("[WIFI   ] Setting WiFi Hostname to "));
+      //   Serial.println(WiFiHostname);
+      //   WiFi.setHostname(WiFiHostname.c_str());
 
         Serial.println(F("[WIFI   ] Starting WIFI in Station mode"));
+
         #ifndef ESP32
-          WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+          #ifndef ESP_MESH 
+            WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
+          #else
+              setup_mesh();
+          #endif   
         #else
           Serial.println(F("[WIFI   ] assigning WIFI Events"));
           WiFi.onEvent(WiFiGotIP, WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
-          WiFi.onEvent(WiFiDisconnected, WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);          
-          WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); // try to connect with saved SSID & PASS
-          // Wifi_connect();
+          WiFi.onEvent(WiFiDisconnected, WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);  
+          #ifndef ESP_MESH      
+            WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); 
+            WiFi.printDiag(Serial); 
+          #endif
+          #ifdef ESP_MESH
+                setup_mesh();
+          #endif          
         #endif
 
-        //mqttClient.setClientId(APssid.c_str());
-        //mqttClient.setCleanSession(true);
+        mqttClient.setClientId(APssid.c_str());
+        mqttClient.setCleanSession(true);
         mqttClient.setMaxTopicLength(256);
         mqttClient.onConnect(onMqttConnect);
         mqttClient.onDisconnect(onMqttDisconnect);
@@ -1368,13 +1518,14 @@ void setup() {
         mqttClient.onUnsubscribe(onMqttUnsubscribe);
         mqttClient.onMessage(onMqttMessage);
         mqttClient.onPublish(onMqttPublish);
-        mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
-        Serial.print("[MQTT   ] setting mqtt Will to: ");
+         // mqttClient.setServer("test.mosquitto.org",1883);//  (MQTT_HOST, MQTT_PORT);
+        mqttClient.setServer(MyConfParam.v_MQTT_BROKER.c_str(), MyConfParam.v_MQTT_B_PRT);
+        // Serial.print("[MQTT   ] setting mqtt Will to: ");
         // static String ControllerIDWill =  relay0.RelayConfParam->v_LWILL_TOPIC; // "/home/Controller" + CID() +"/Will" ;
-        static String ControllerIDWill =  "/home/Controller" + CID() +"/Will" ;   
-        Serial.println(ControllerIDWill);
-        mqttClient.setWill(ControllerIDWill.c_str(), QOS2, false,"offline");
-        mqttClient.setKeepAlive(5);
+        // static String ControllerIDWill =  "/home/Controller" + CID() +"/Will" ;   
+        // Serial.println(ControllerIDWill);
+        // mqttClient.setWill(ControllerIDWill.c_str(), QOS2, false,"offline");
+        mqttClient.setKeepAlive(10);
       
         mb.addCoil(LAMP1_COIL);
         mb.addCoil(LAMP2_COIL);
@@ -1481,8 +1632,6 @@ void setup() {
         //mrelays[1]=&relay2;
         // attachInterrupt(digitalPinToInterrupt(InputPin14), InputPin14_handleInterrupt, CHANGE );
 
-
-
     #ifdef StepperMode
     #define stepperenablepin InputPin02
         pinMode(dirPin, OUTPUT);   
@@ -1499,9 +1648,45 @@ void setup() {
 
 void loop() {
 
+  #ifdef emonlib
+  emon1.calcVI(20,5000);         // Calculate all. No.of wavelengths, time-out
+  emon1.serialprint();            
+
+   realPower       = emon1.realPower;        //extract Real Power into variable
+   apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
+   powerFActor     = emon1.powerFactor;      //extract Power Factor into Variable
+   supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
+   Irms            = emon1.Irms;             //extract Irms into Variable
+  #ifdef OLED_1306
+  display.clearDisplay();
+  DSS1306_clear_text(0,10,1,"current:");
+  DSS1306_clear_text(48,10,1,Irms);
+  DSS1306_clear_text(0,20,1,"voltage:");
+  DSS1306_clear_text(48,20,1,supplyVoltage);
+  display.display();  
+  #endif
+
+  #endif
+
+  #ifdef ESP_MESH
+  if ( mesh_active) {
+    mesh.update();
+  }
+  #endif
+
+  #ifdef AppleHKHomeSpan
+  if (HomespanInitiated) {
+    homeSpan.poll();
+  }
+  #endif 
+
   #ifndef DEBUG_DISABLED
   Debug.handle();
   yield();
+  #endif
+
+  #ifdef INVERTERLINK
+    serviceInverter();
   #endif
 
 
@@ -1521,18 +1706,28 @@ void loop() {
   #ifdef ESP32
     if  (WiFi.status() != WL_CONNECTED)  {
       // if (APModetimer_run_value == 0) Wifi_connect();
+      // Serial.println(F("[WIFI ] Disconnected"));
     }
   #endif
 
   #ifdef AppleHK
+  #ifndef ESP32
 	  my_homekit_loop();
+  #endif  
   #endif   
   // delay(10);
 
- 	blinkled();
+  blinkled();
 
-  tiker_MQTT_CONNECT.update(nullptr);
-  Wifireconnecttimer.update(nullptr);
+
+   #ifndef ESP_MESH
+    tiker_MQTT_CONNECT.update(nullptr);  
+    Wifireconnecttimer.update(nullptr);
+   #else
+    #ifdef ESP_MESH_ROOT
+    tiker_MQTT_CONNECT.update(nullptr);  
+    #endif
+   #endif
   // LedBlinker.update(nullptr);
 
   for (auto it : relays)  {
@@ -1544,8 +1739,11 @@ void loop() {
 
   #ifndef StepperMode
     #if defined (HWver02)  || defined (HWver03)
+    #if  defined (SolarHeaterControllerMode) || defined (SR04)
+    #else
       Inputsnsr14.watch();
       Inputsnsr12.watch();
+    #endif 
       Inputsnsr13.watch();
     #endif
     #ifdef HWver03
@@ -1577,6 +1775,7 @@ void loop() {
     }
   }
 
+
   if((timeStatus() == timeSet) && CalendarNotInitiated) {
     chronosInit();
     CalendarNotInitiated = false;
@@ -1587,7 +1786,7 @@ void loop() {
  #ifndef StepperMode
 
   if (MyConfParam.v_Reboot_on_WIFI_Disconnection > 0) {
-    if (millis() - lastMillis_1 > 10000) {
+    if (millis() - lastMillis_1 > 17000) {
       
       lastMillis_1 = millis();
       #ifndef ESP32
@@ -1617,91 +1816,101 @@ void loop() {
   if (millis() - lastMillis_2 > 2000) {
     lastMillis_2 = millis();
             #ifdef AppleHK
-              if((timeStatus() == timeSet) && homekitNotInitialised) {
-                  // homekit_storage_reset();   
+              #ifndef ESP32
+                if((timeStatus() == timeSet) && homekitNotInitialised) {
+                    // homekit_storage_reset();   
+                    homekitNotInitialised = false;
+                    String s = "Bridge_" + MyConfParam.v_PhyLoc;      
+                    s.toCharArray(HAName_Bridge, 32);
+                    MyConfParam.v_PhyLoc.toCharArray(HAName_SW, HK_name_len);   
+                    #ifdef HWver03_4R
+                      ((MyConfParam.v_PhyLoc) + "1").toCharArray(HAName_SW1, HK_name_len);  
+                      ((MyConfParam.v_PhyLoc) + "2").toCharArray(HAName_SW2, HK_name_len);  
+                      ((MyConfParam.v_PhyLoc) + "3").toCharArray(HAName_SW3, HK_name_len);  
+                    #endif
+                    my_homekit_setup();
+                    homekitUpdateBootStatus();
+                }     
+              #endif  
+
+                #ifdef ESP32
+                if((timeStatus() == timeSet) && homekitNotInitialised) {                
+                  setupHAP();
                   homekitNotInitialised = false;
-                  String s = "Bridge_" + MyConfParam.v_PhyLoc;      
-                  s.toCharArray(HAName_Bridge, 32);
-                  MyConfParam.v_PhyLoc.toCharArray(HAName_SW, HK_name_len);   
-                  #ifdef HWver03_4R
-                    ((MyConfParam.v_PhyLoc) + "1").toCharArray(HAName_SW1, HK_name_len);  
-                    ((MyConfParam.v_PhyLoc) + "2").toCharArray(HAName_SW2, HK_name_len);  
-                    ((MyConfParam.v_PhyLoc) + "3").toCharArray(HAName_SW3, HK_name_len);  
-                  #endif
-                  my_homekit_setup();
-                  homekitUpdateBootStatus();
-              }     
+                }
+                #endif
+        
             #endif 
   }
 
 
   if (millis() - lastMillis > 1000) {       // things to do every 1 second
     lastMillis = millis();
+
+#ifdef OLED_1306
+      display.display();
+#endif      
 		
     #ifdef SR04
     if (MyConfParam. v_Sonar_distance != "0") {
-          // pinMode(TRIG_PIN, INPUT_PULLUP);
-          // pinMode(ECHO_PIN, INPUT_PULLUP);
-          // HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
-          // Serial.println(hcsr04.distanceInMillimeters());
+      pinMode(TRIG_PIN, OUTPUT);
+      pinMode(ECHO_PIN, INPUT_PULLUP);
+      cm = sonar.convert_cm(sonar.ping_median(10,300));
+      Serial.print("[SONAR  ] Ping: ");
+      Serial.print(cm); // Send ping, get distance in cm and print result (0 = outside set distance range)
+      Serial.println("cm");
+
+
+      // old method
+          /*
           int trigPin = TRIG_PIN;    // Trigger
           int echoPin = ECHO_PIN;    // Echo
-          long duration, cm, inches;
-          double emptypercent,fullpercent;
         
-          // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
-          // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
           pinMode(trigPin, OUTPUT);
           pinMode(echoPin, INPUT);
-          digitalWrite(trigPin, LOW);
-          delayMicroseconds(5);//5
-          digitalWrite(trigPin, HIGH);
-          delayMicroseconds(15);//15
-          digitalWrite(trigPin, LOW);
-       
-          // Read the signal from the sensor: a HIGH pulse whose
-          // duration is the time (in microseconds) from the sending
-          // of the ping to the reception of its echo off of an object.
 
-          /*
-            digitalWrite(TRIG_PIN, LOW);
-            delayMicroseconds(2);
-            digitalWrite(TRIG_PIN, HIGH);
-            delayMicroseconds(10);
-            digitalWrite(TRIG_PIN, LOW);  
-            duration= pulseIn(ECHO_PIN, HIGH);
-          */
-         
+          digitalWrite(trigPin, LOW);
+          delayMicroseconds(5);
+          digitalWrite(trigPin, HIGH);
+          delayMicroseconds(15);
+          digitalWrite(trigPin, LOW);
+    
           duration = pulseIn(echoPin, HIGH);
           // Serial.print(duration);
           pinMode(TRIG_PIN, INPUT_PULLUP);
           pinMode(ECHO_PIN, INPUT_PULLUP);      
 
           cm = (duration/2) / 29.1;     // Divide by 29.1 or multiply by 0.0343
-          if (cm > MyConfParam.v_Sonar_distance_max) { cm = -1; }
+         // if (cm > MyConfParam.v_Sonar_distance_max) { cm = -1; }
           inches = (duration/2) / 74;   // Divide by 74 or multiply by 0.0135
-          Serial.print("[Sonar  ] Sonar distance: ");
+          Serial.print("[Sonar  ------------------------------------------------------------------------------->>> ] Sonar distance: ");
           Serial.print(inches);
           Serial.print(F(" inches, "));
           Serial.print(cm);
           Serial.println(F(" cm"));
+          */
+         char res[8]; // Buffer big enough for 7-character float
 
+         /*
+         // uncomment this section if you want to post percentage full and percentage empty to mqtt broker
           emptypercent = 0;
           if (MyConfParam.v_Sonar_distance_max > 0) {
           emptypercent = (cm*100) / MyConfParam.v_Sonar_distance_max;
           } 
           fullpercent = (100 - emptypercent) ;
 
-          char res[8]; // Buffer big enough for 7-character float
+          
           dtostrf(emptypercent, 6, 1, res); // Leave room for too large numbers!     
 
           if (mqttClient.connected()) { mqttClient.publish((MyConfParam.v_Sonar_distance +"_empty%").c_str(), QOS2, RETAINED, res );}             
 
           dtostrf(fullpercent, 6, 1, res); // Leave room for too large numbers!   
           if (mqttClient.connected()) {mqttClient.publish((MyConfParam.v_Sonar_distance +"_full%").c_str(), QOS2, RETAINED, res );}         
-        
+        */
+
           dtostrf(cm, 6, 1, res); // Leave room for too large numbers!   
           if (mqttClient.connected()) {mqttClient.publish(MyConfParam.v_Sonar_distance.c_str(), QOS2, RETAINED, res );}
+          
     }
     #endif 
 
@@ -1720,20 +1929,27 @@ void loop() {
 
  #ifndef StepperMode
   #if defined (HWver02)  || defined (HWver03) || defined (HWESP32)
+  #ifndef SR04 // have to stop it because it uses the same pins as the temp sensors
   if (relay0.RelayConfParam->v_TemperatureValue != "0") {
     if (millis() - lastMillis5000 > 5000) {
-
-      // pinMode(TempSensorPin,  INPUT_PULLUP );  
+    //  pinMode(TempSensorPin,  INPUT_PULLUP );  
+    //  pinMode(SecondTempSensorPin,  INPUT_PULLUP );        
       lastMillis5000 = millis();
-      tempsensor.getCurrentTemp(0);
+      tempsensor.getCurrentTemp(0); // this is assigned to tank
+      xtries = 0;
+      while ((xtries < 4) && (tempsensor.Celcius < 0)) {
+        // delayMicroseconds(500);
+        tempsensor.getCurrentTemp(0); // this is assigned to tank
+        xtries ++; 
+      }
       TempSensorSecond.getCurrentTemp(0);
       MCelcius = tempsensor.Celcius;      
-      MCelcius2 = TempSensorSecond.Celcius;
+      MCelcius2 = TempSensorSecond.Celcius; // this is assigned to panels
 
       float TSolarTank = roundf(tempsensor.Celcius);
 
       Serial.print(F("[INFO   ] Temperature Sensor #1: "));
-      Serial.println(tempsensor.getCurrentTemp(0));
+      Serial.println(MCelcius); // tempsensor.getCurrentTemp(0));
       #ifndef DEBUG_DISABLED
         debugV("[INFO   ] TempSensor1 %.2f C ", TSolarTank);
       #endif
@@ -1743,14 +1959,16 @@ void loop() {
       mqttClient.publish(relay0.RelayConfParam->v_TemperatureValue.c_str(), QOS2, RETAINED,res); //String(MCelcius).c_str());
 
       #ifdef AppleHK
+      #ifndef ESP32
         if (MCelcius < 0 ) { MCelcius = 99; }; 
         //cha_temperature.value.float_value = MCelcius;
         homekit_characteristic_notify(&cha_temperature, HOMEKIT_FLOAT(MCelcius)) ;// cha_temperature.value);
-      #endif        
+      #endif  
+      #endif       
 
       float TSolarPanel = roundf(TempSensorSecond.Celcius);
       Serial.print(F("[INFO   ] Temperature Sensor #2: "));
-      Serial.println(TempSensorSecond.getCurrentTemp(0)); 
+      Serial.println(MCelcius2); //TempSensorSecond.getCurrentTemp(0)); 
       #ifndef DEBUG_DISABLED
         debugV("[INFO   ] TempSensor2 %.2f C ", TSolarPanel);
       #endif
@@ -1758,13 +1976,17 @@ void loop() {
       mqttClient.publish((relay0.RelayConfParam->v_TemperatureValue + "_2").c_str(), QOS2, RETAINED, res); // String(TSolarPanel).c_str());       
 
       #ifdef SolarHeaterControllerMode
+      if (TSolarPanel > -100) {
+        if (TSolarTank > -100) {
             TempertatureSensorEvent(0,TSolarPanel,TSolarTank);
+        }    
+      }      
       #else
       #endif
 
     }
   }
-
+  #endif
   #endif 
  #endif 
 
