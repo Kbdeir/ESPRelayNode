@@ -28,19 +28,19 @@ Relay::Relay(uint8_t p,
   RelayConfParam = new Trelayconf;
 
   lockupdate = false;
-  freeinterval = 100; // was 200
+  freeinterval = 10; // was 200
   r_in_mode = 1;
   timerpaused = false;
   hastimerrunning = false;
 
   // tickers callback functions for ttl, acs, tta
-  fttlcallback = ttlcallback;
-  fttlupdatecallback = ttlupdatecallback;
-  fticker_ACS712_func = ACSfunc;
-  fticker_ACS712_mqtt_func = ACSfunc_mqtt;
-  fttacallback = ttacallback;
+  fttlcallback              = ttlcallback;
+  fttlupdatecallback        = ttlupdatecallback;
+  fticker_ACS712_func       = ACSfunc;
+  fticker_ACS712_mqtt_func  = ACSfunc_mqtt;
+  fttacallback              = ttacallback;
   fonchangeInterruptService = onchangeInterruptService;
-  fgeneralinLoopFunc = NULL;
+  fgeneralinLoopFunc        = NULL;
 
   ticker_relay_ttl = new Schedule_timer(fttlcallback,0,0,MILLIS_,fttlupdatecallback, SECONDS_);
   ticker_ACS712 = new Schedule_timer (fticker_ACS712_func,1000,0,MILLIS_);
@@ -114,6 +114,7 @@ boolean Relay::loadrelayparams(uint8_t rnb) {   //){
          saveRelayDefaultConfig(rnb);
          return false;
     }
+         Serial.print("[rfilename:]" );   
          Serial.print(rfilename );     
          Serial.println(" " ); 
 
@@ -134,6 +135,7 @@ boolean Relay::loadrelayparams(uint8_t rnb) {   //){
      RelayConfParam->v_relaynb            = (json["RELAYNB"].as<String>()!="") ? json["RELAYNB"].as<uint8_t>() : 0;
      RelayConfParam->v_PUB_TOPIC1         = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String("/none");
      RelayConfParam->v_TemperatureValue   = (json["TemperatureValue"].as<String>()!="") ? json["TemperatureValue"].as<String>() : String("0");
+     RelayConfParam->v_AlexaName   = (json["AlexaName"].as<String>()!="") ? json["AlexaName"].as<String>() : String("0");
      RelayConfParam->v_ttl_PUB_TOPIC      = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String("/ttlpubnone");
      RelayConfParam->v_i_ttl_PUB_TOPIC    = (json["i_ttl_PUB_TOPIC"].as<String>()!="") ? json["i_ttl_PUB_TOPIC"].as<String>() : String("/ittlnone");
      RelayConfParam->v_ACS_AMPS           = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String("/none");
@@ -146,22 +148,10 @@ boolean Relay::loadrelayparams(uint8_t rnb) {   //){
      RelayConfParam->v_LWILL_TOPIC        = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String("/lwtnone");
      RelayConfParam->v_SUB_TOPIC1         = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String("/inone");
      RelayConfParam->v_ACS_Active         = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<uint8_t>() == 1 : false;
-
      RelayConfParam->v_IN0_INPUTMODE       =  MyConfParam.v_IN0_INPUTMODE; //json["I0MODE"].as<uint8_t>();
      RelayConfParam->v_IN1_INPUTMODE       =  MyConfParam.v_IN1_INPUTMODE; //json["I1MODE"].as<uint8_t>();
      RelayConfParam->v_IN2_INPUTMODE       =  MyConfParam.v_IN2_INPUTMODE; //json["I2MODE"].as<uint8_t>();
-
-     /*
-        Serial.println(String("*RelayConfParam->v_relaynb  = ") + RelayConfParam->v_relaynb + " \n");     
-        Serial.println(String("*RelayConfParam->v_PUB_TOPIC1  = ") + RelayConfParam->v_PUB_TOPIC1 + " \n");   
-        Serial.println(String("*RelayConfParam->v_TemperatureValue = ") + RelayConfParam->v_TemperatureValue + " \n");   
-        Serial.println(String("*RelayConfParam->v_ttl_PUB_TOPIC   = ") + RelayConfParam->v_ttl_PUB_TOPIC  + " \n");   
-        Serial.println(String("*RelayConfParam->v_i_ttl_PUB_TOPIC  = ") + RelayConfParam->v_i_ttl_PUB_TOPIC + " \n");   
-        Serial.println(String("*RelayConfParam->v_CURR_TTL_PUB_TOPIC    = ") + RelayConfParam->v_CURR_TTL_PUB_TOPIC   + " \n");   
-        Serial.println(String("*RelayConfParam->v_STATE_PUB_TOPIC = ") + RelayConfParam->v_STATE_PUB_TOPIC + " \n");   
-        Serial.println(String("*RelayConfParam->v_LWILL_TOPIC  = ") + RelayConfParam->v_LWILL_TOPIC + " \n");   
-        Serial.println(String("*RelayConfParam->v_SUB_TOPIC1 = ") + RelayConfParam->v_SUB_TOPIC1 + " \n");   
-      */
+     RelayConfParam->v_ACS_elasticity      = (json["ACS_elasticity"].as<String>()!="") ? json["ACS_elasticity"].as<uint16_t>() : 0;
     
      configFile.close();
      return true;
@@ -228,12 +218,7 @@ bool Relay::readPersistedrelay (){
   }
   bool temp = false;
   temp =  (json["status"].as<uint8_t>() == 1);
-  /*
-  Serial.print("[INFO   ] relay pesisted status was ");
-  Serial.print (this->RelayConfParam->v_relaynb);
-  Serial.print(" ");
-  Serial.println(json["status"].as<uint8_t>() );
-  */
+
   mdigitalWrite(this->getRelayPin(),temp);
   configFile.close();
   return temp;
@@ -290,11 +275,10 @@ void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
            rl->timerpaused = (v==LOW); 
          }
         }
-              if (fonchangeInterruptService)  {
-                fonchangeInterruptService(this);
-              }
+        if (fonchangeInterruptService)  {
+           fonchangeInterruptService(this);
+         }
       }
-     // if (fonchangeInterruptService) fonchangeInterruptService(this);
     }
 }
 

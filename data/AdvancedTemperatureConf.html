@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Untitled Page</title>
-<meta name="generator" content="WYSIWYG Web Builder 11 - http://www.wysiwygwebbuilder.com">
+<meta name="generator" content="WYSIWYG Web Builder 17 - http://www.wysiwygwebbuilder.com">
 <style>
 body
 {
@@ -34,33 +34,36 @@ a:hover
    color: #0000FF;
    text-decoration: underline;
 }
+input:focus, textarea:focus, select:focus
+{
+   outline: none;
+}
 #wb_Form1
 {
    background-color: #D3D3D3;
    background-image: none;
-   border: 1px #CCCCCC solid;
+   border: 1px solid #CCCCCC;
+   border-radius: 0px;
 }
 #TDate
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #TDate:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
@@ -68,7 +71,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -79,22 +83,26 @@ a:hover
 }
 #btnSave
 {
-   border: 1px #2E6DA4 solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #2E6DA4;
    border-radius: 4px;
    background-color: #3370B7;
    background-image: none;
    color: #FFFFFF;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   padding: 0;
+   text-align: center;
+   -webkit-appearance: none;
+   margin: 0;
 }
 #wb_Text4 
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -103,11 +111,16 @@ a:hover
 {
    text-align: left;
 }
+#Checkbox7
+{
+   margin: 0;
+}
 #wb_Text11 
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: right;
@@ -118,49 +131,45 @@ a:hover
 }
 #TNBT
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #TNBT:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #TMTYPEedit
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #TMTYPEedit:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
@@ -168,7 +177,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #DCDCDC solid;
+   border: 0px solid #DCDCDC;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -181,7 +191,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -194,42 +205,44 @@ a:hover
 {
    background-color: #696969;
    background-image: none;
-   border: 1px #CCCCCC solid;
+   border: 1px solid #CCCCCC;
+   border-radius: 0px;
 }
 #Button2
 {
-   border: 1px #2E6DA4 solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #2E6DA4;
    border-radius: 4px;
    background-color: #3370B7;
    background-image: none;
    color: #FFFFFF;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   padding: 0;
+   text-align: center;
+   -webkit-appearance: none;
+   margin: 0;
 }
 #Editbox1
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox1:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
@@ -237,7 +250,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: right;
@@ -248,100 +262,90 @@ a:hover
 }
 #TRelay_edt
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #TRelay_edt:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #TSTATE_edt
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #C0C0C0;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: center;
-   vertical-align: middle;
 }
 #TSTATE_edt:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #RSTATE_edt
 {
-   border: 0px #FF4500 dotted;
-   -moz-border-radius: 5px;
-   -webkit-border-radius: 5px;
+   border: 0px dotted #FF4500;
    border-radius: 5px;
    background-color: #FF4500;
    background-image: none;
-   color :#D3D3D3;
+   color: #D3D3D3;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: center;
-   vertical-align: middle;
-   -moz-box-shadow: 5px 5px 10px #000000;
-   -webkit-box-shadow: 5px 5px 10px #000000;
    box-shadow: 5px 5px 10px #000000;
 }
 #RSTATE_edt:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox2
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox2:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
@@ -349,7 +353,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -362,35 +367,35 @@ a:hover
 </head>
 <body>
 <div id="wb_Form1" style="position:absolute;left:30px;top:91px;width:464px;height:718px;z-index:18;">
-<form name="Form1" method="get" action="AdvancedTempSave.html" enctype="text/plain" id="Form1" onsubmit="return ValidateForm1(this)">
-<input type="number" id="TDate" style="position:absolute;left:201px;top:159px;width:138px;height:19px;line-height:19px;z-index:0;" name="spanTempto" value="%spanTempto%">
-<div id="wb_Text3" style="position:absolute;left:41px;top:143px;width:144px;height:16px;z-index:1;text-align:left;">
+<form name="Form1" method="get" action="AdvancedTempSave.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
+<input type="number" id="TDate" style="position:absolute;left:201px;top:159px;width:138px;height:19px;z-index:0;" name="spanTempto" value="%spanTempto%" spellcheck="false">
+<div id="wb_Text3" style="position:absolute;left:41px;top:143px;width:144px;height:16px;z-index:1;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>LOW temp:</strong></span></div>
 <input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:303px;top:671px;width:126px;height:25px;z-index:2;">
-<div id="wb_Text4" style="position:absolute;left:201px;top:143px;width:150px;height:16px;z-index:3;text-align:left;">
+<div id="wb_Text4" style="position:absolute;left:201px;top:143px;width:150px;height:16px;z-index:3;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>High Temp:</strong></span></div>
-<input type="text" id="TMTYPEedit" style="position:absolute;left:399px;top:85px;width:36px;visibility:hidden;height:18px;line-height:18px;z-index:4;" name="TMTYPEedit" value="%TMTYPEedit%">
-<input type="number" id="TNBT" style="position:absolute;left:333px;top:85px;width:36px;visibility:hidden;height:18px;line-height:18px;z-index:5;" name="TNBT" value="%TNBT%">
+<input type="text" id="TMTYPEedit" style="position:absolute;left:399px;top:85px;width:36px;visibility:hidden;height:18px;z-index:4;" name="TMTYPEedit" value="%TMTYPEedit%" spellcheck="false">
+<input type="number" id="TNBT" style="position:absolute;left:333px;top:85px;width:36px;visibility:hidden;height:18px;z-index:5;" name="TNBT" value="%TNBT%" spellcheck="false">
 <div id="wb_Text11" style="position:absolute;left:336px;top:21px;width:60px;height:16px;text-align:right;z-index:6;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Enabled</strong></span></div>
 <input type="checkbox" id="Checkbox7" name="CEnabled" value="%CEnabled%" style="position:absolute;left:405px;top:19px;z-index:7;">
-<div id="wb_Text21" style="position:absolute;left:29px;top:99px;width:402px;height:35px;z-index:8;text-align:left;">
+<div id="wb_Text21" style="position:absolute;left:29px;top:99px;width:402px;height:35px;z-index:8;">
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Relay ON bounds</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><strong><br></strong>Set Relay ON if temperature is within:</span></div>
 <input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:30px;top:671px;width:126px;height:25px;z-index:9;">
-<input type="number" id="Editbox1" style="position:absolute;left:39px;top:159px;width:138px;height:18px;line-height:18px;z-index:10;" name="spanTempfrom" value="%spanTempfrom%">
+<input type="number" id="Editbox1" style="position:absolute;left:39px;top:159px;width:138px;height:18px;z-index:10;" name="spanTempfrom" value="%spanTempfrom%" spellcheck="false">
 <div id="wb_Text22" style="position:absolute;left:45px;top:21px;width:84px;height:16px;text-align:right;z-index:11;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Relay:</strong></span></div>
-<input type="number" id="TRelay_edt" style="position:absolute;left:137px;top:15px;width:66px;height:18px;line-height:18px;z-index:12;" name="TRelay" value="%TRelay%">
-<input type="text" id="TSTATE_edt" style="position:absolute;left:317px;top:67px;width:110px;height:18px;line-height:18px;z-index:13;" name="TSTATE" value="%TSTATE%" readonly disabled>
-<input type="text" id="RSTATE_edt" style="position:absolute;left:317px;top:99px;width:112px;height:18px;line-height:18px;z-index:14;" name="RSTATE" value="%RSTATE%" readonly disabled>
-<input type="number" id="Editbox2" style="position:absolute;left:29px;top:272px;width:138px;height:18px;line-height:18px;z-index:15;" name="spanBuffer" value="%spanBuffer%">
-<div id="wb_Text1" style="position:absolute;left:29px;top:215px;width:374px;height:48px;z-index:16;text-align:left;">
+<input type="number" id="TRelay_edt" style="position:absolute;left:137px;top:15px;width:66px;height:18px;z-index:12;" name="TRelay" value="%TRelay%" spellcheck="false">
+<input type="text" id="TSTATE_edt" style="position:absolute;left:317px;top:67px;width:110px;height:18px;z-index:13;" name="TSTATE" value="%TSTATE%" readonly disabled spellcheck="false">
+<input type="text" id="RSTATE_edt" style="position:absolute;left:317px;top:99px;width:112px;height:18px;z-index:14;" name="RSTATE" value="%RSTATE%" readonly disabled spellcheck="false">
+<input type="number" id="Editbox2" style="position:absolute;left:29px;top:272px;width:138px;height:18px;z-index:15;" name="spanBuffer" value="%spanBuffer%" spellcheck="false">
+<div id="wb_Text1" style="position:absolute;left:29px;top:215px;width:374px;height:48px;z-index:16;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Buffer Value:<br></strong>Relay ON if temperature is between LOW temp and [Low temp]+ Buffer (can skip using High Temp)</span></div>
 </form>
 </div>
 <div id="wb_Form2" style="position:absolute;left:30px;top:23px;width:464px;height:66px;z-index:19;">
 <form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
-<div id="wb_Text20" style="position:absolute;left:41px;top:20px;width:405px;height:27px;z-index:17;text-align:left;">
+<div id="wb_Text20" style="position:absolute;left:41px;top:20px;width:405px;height:27px;z-index:17;">
 <span style="color:#F5F5F5;font-family:Arial;font-size:24px;">Temperature / Relay Configuration</span></div>
 </form>
 </div>
@@ -415,39 +420,43 @@ a:hover
 
     </script>
 <script>
-function ValidateForm1(theForm)
+function submitForm1()
 {
    var regexp;
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.TRelay_edt.value))
+   var TRelay_edt = document.getElementById('TRelay_edt');
+   if (!(TRelay_edt.disabled || TRelay_edt.style.display === 'none' || TRelay_edt.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"TRelay\" field.");
-      theForm.TRelay_edt.focus();
-      return false;
-   }
-   if (theForm.TRelay_edt.value == "")
-   {
-      alert("Please enter a value for the \"TRelay\" field.");
-      theForm.TRelay_edt.focus();
-      return false;
-   }
-   if (theForm.TRelay_edt.value.length < 1)
-   {
-      alert("Please enter at least 1 characters in the \"TRelay\" field.");
-      theForm.TRelay_edt.focus();
-      return false;
-   }
-   if (theForm.TRelay_edt.value.length > 1)
-   {
-      alert("Please enter at most 1 characters in the \"TRelay\" field.");
-      theForm.TRelay_edt.focus();
-      return false;
-   }
-   if (theForm.TRelay_edt.value != "" && !(theForm.TRelay_edt.value >= 0 && theForm.TRelay_edt.value <= 4))
-   {
-      alert("Please enter a value greater than or equal to \"0\" and less than or equal to \"4\" in the \"TRelay\" field.");
-      theForm.TRelay_edt.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (!regexp.test(TRelay_edt.value))
+      {
+         alert("Please enter only digit characters in the \"TRelay\" field.");
+         TRelay_edt.focus();
+         return false;
+      }
+      if (TRelay_edt.value == "")
+      {
+         alert("Please enter a value for the \"TRelay\" field.");
+         TRelay_edt.focus();
+         return false;
+      }
+      if (TRelay_edt.value.length < 1)
+      {
+         alert("Please enter at least 1 characters in the \"TRelay\" field.");
+         TRelay_edt.focus();
+         return false;
+      }
+      if (TRelay_edt.value.length > 1)
+      {
+         alert("Please enter at most 1 characters in the \"TRelay\" field.");
+         TRelay_edt.focus();
+         return false;
+      }
+      if (TRelay_edt.value != "" && !(TRelay_edt.value >= 0 && TRelay_edt.value <= 4))
+      {
+         alert("Please enter a value greater than or equal to \"0\" and less than or equal to \"4\" in the \"TRelay\" field.");
+         TRelay_edt.focus();
+         return false;
+      }
    }
    return true;
 }

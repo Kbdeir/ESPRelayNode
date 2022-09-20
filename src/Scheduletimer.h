@@ -17,7 +17,7 @@ class Schedule_timer {
 private:
 
   bool tick(void* p_obj);
-  bool enabled;
+
   uint32_t timer;
   uint16_t repeat;
   ksb_resolution_t resolution = MICROS_;
@@ -33,6 +33,7 @@ private:
   uint32_t diffTime;
 
 public:
+  bool enabled;
   Schedule_timer();
   Schedule_timer(int a, int b);
   Schedule_timer(fnptr_a callback, uint32_t timer, uint16_t repeat = 0, ksb_resolution_t resolution = MICROS_,fnptr_a periodcallback = NULL, ksb_user_resolution_t user_res = SECONDS_);

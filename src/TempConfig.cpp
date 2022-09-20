@@ -69,18 +69,21 @@ bool saveTempConfig(AsyncWebServerRequest *request){
 
 config_read_error_t loadTempConfig(char* filename, TempConfig &para_TempConfig) {
 
+  Serial.println(F("[INFO  TP] opening /tempconfig.json file - 0"));
   if (! SPIFFS.exists(filename)) {
     Serial.println(F("\n[INFO   ] tempconfig file does not exist!:"));
     Serial.print(filename);
     return FILE_NOT_FOUND;
   }
 
+  Serial.println(F("[INFO  TP] opening /tempconfig.json file - 1"));
   File configFile = SPIFFS.open(filename, "r");
   if (!configFile) {
     Serial.println(F("\n[INFO   ] Failed to open tempconfig file"));
     return ERROR_OPENING_FILE;
   }
 
+  Serial.println(F("[INFO  TP] opening /tempconfig.json file - 2"));
   size_t size = configFile.size();
   if (size > Tbuffer_size) {
     Serial.println(F("\n[INFO   ] tempconfig file size is too large, rebuilding."));
@@ -95,7 +98,7 @@ config_read_error_t loadTempConfig(char* filename, TempConfig &para_TempConfig) 
 
   if (error) {
     Serial.println(F("Failed to parse tempconfig file"));
-    //saveDefaultConfig();
+  //  saveDefaultConfig();
     return JSONCONFIG_CORRUPTED;
   }
 

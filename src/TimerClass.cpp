@@ -1,6 +1,6 @@
 
 #include <TimerClass.h>
- #define buffer_size  1500
+ #define buffer_size  1024
 
 
 NodeTimer::NodeTimer(uint8_t para_id) {
@@ -56,7 +56,7 @@ NodeTimer * gettimerbypin(uint8_t pn){
 }
 
 bool saveNodeTimer(AsyncWebServerRequest *request){
-  StaticJsonDocument<1024> json;
+  StaticJsonDocument<buffer_size> json;
   int args = request->args();
   for(int i=0;i<args;i++){
     //Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
@@ -123,7 +123,8 @@ config_read_error_t loadNodeTimer(char* filename, NodeTimer &para_NodeTimer) {
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(json, configFile);
   if (error) {
-    Serial.println(F("[TIMERS ] * Failed to read file, using default timer configuration *"));
+    Serial.print(F("[TIMERS ] * Failed to read file, using default timer configuration *"));
+    Serial.println(filename);
     //saveDefaultConfig();
     return JSONCONFIG_CORRUPTED;
   }

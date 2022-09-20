@@ -38,12 +38,10 @@ time_t getNtpTime()
   sendNTPpacket(ntpServerIP);
   uint32_t beginWait = millis();
   while ((millis() - beginWait < 3000) && !ftimesynced) {
-
-    #ifdef ESP32
-    #else
-        ESP.wdtFeed();
-    #endif    
-
+      #ifndef ESP32 
+      ESP.wdtFeed();
+      #endif 
+    // Serial.println("[NTP    ] blocking time routine");
     
     int size = Udp.parsePacket();
     if (size >= NTP_PACKET_SIZE) {

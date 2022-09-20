@@ -7,6 +7,12 @@
 		{
 			"name": "HomeKitKSB",
 			"path": "..\\HomeKitTest\\HomeKitKSB"
+		},
+		{
+			"path": ".pio\\libdeps\\arduino-esp32\\ESP32 HomeKit SDK for Arduino\\examples\\BasicFan"
+		},
+		{
+			"path": "..\\ESPNow"
 		}
 	],
 	"settings": {
@@ -15,7 +21,12 @@
 			"homekit.h": "c",
 			"deque": "cpp",
 			"vector": "cpp",
-			"array": "cpp"
+			"array": "cpp",
+			"random": "cpp",
+			"chrono": "cpp",
+			"system_error": "cpp",
+			"xlocale": "cpp",
+			"typeinfo": "cpp"
 		}
 	}
 }

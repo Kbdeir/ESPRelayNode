@@ -1,7 +1,7 @@
 #include <hcsr04.h>
 
-#define TRIG_PIN 12
-#define ECHO_PIN 13
+#define TRIG_PIN 14
+#define ECHO_PIN 12
 
 HCSR04 hcsr04(TRIG_PIN, ECHO_PIN, 20, 4000);
 

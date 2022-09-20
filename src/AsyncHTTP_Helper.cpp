@@ -11,6 +11,11 @@
 #include <digitalClockDisplay.h>
 #include <ConfigParams.h>
 
+#ifdef ESP32
+  #ifdef AppleHK
+    #include <ESP32HAP.h>
+  #endif 
+#endif
 
 extern boolean CalendarNotInitiated ;
 extern NodeTimer NTmr;
@@ -34,7 +39,8 @@ extern bool steperrun;
 uint8_t AppliedRelayNumber = 0;
 
 // const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
-AsyncWebServer AsyncWeb_server(80);
+// AsyncWebServer AsyncWeb_server(80);
+AsyncWebServer AsyncWeb_server(8080);
 // AsyncEventSource events("/events"); // https://randomnerdtutorials.com/esp32-web-server-sent-events-sse/
 // AsyncWebSocket ws("/test");
 
@@ -110,16 +116,23 @@ String processor(const String& var)
   if(var == F( "ssid" ))                return  String(MyConfParam.v_ssid.c_str());
   if(var == F( "pass" ))                return String( MyConfParam.v_pass.c_str());
 
+  if(var == F( "mqttUser" ))            return  String(MyConfParam.v_mqttUser.c_str());
+  if(var == F( "mqttPass" ))            return String( MyConfParam.v_mqttPass.c_str());
+
   if(var == F( "RWD" ))  return String( MyConfParam.v_Reboot_on_WIFI_Disconnection);
 
   if(var == F( "PhyLoc" ))              return String( MyConfParam.v_PhyLoc.c_str());
-  if(var == F( "MQTT_BROKER" ))         return  MyConfParam.v_MQTT_BROKER.toString();
+  if(var == F( "MQTT_BROKER" ))         return String(MyConfParam.v_MQTT_BROKER.c_str()) ; // MyConfParam.v_MQTT_BROKER.toString();
   if(var == F( "MQTT_B_PRT" ))          return String( MyConfParam.v_MQTT_B_PRT);
 
   if (AppliedRelay != nullptr) {
+    if(var == F( "ACS_elasticity" ))    return String( AppliedRelay->RelayConfParam->v_ACS_elasticity); 
     if(var == F( "RELAYNB" ))             return String( AppliedRelay->RelayConfParam->v_relaynb);
     if(var == F( "PUB_TOPIC1" ))          return String( AppliedRelay->RelayConfParam->v_PUB_TOPIC1.c_str());
     if(var == F( "TemperatureValue" ))    return String( AppliedRelay->RelayConfParam->v_TemperatureValue.c_str());
+
+    if(var == F( "AlexaName" ))    return String( AppliedRelay->RelayConfParam->v_AlexaName.c_str());
+
     if(var == F( "ACS_Sensor_Model" ))    return String( AppliedRelay->RelayConfParam->v_ACS_Sensor_Model.c_str());
     if(var == F( "ttl" ))                 return String( AppliedRelay->RelayConfParam->v_ttl);
     if(var == F( "STATE_PUB_TOPIC" ))     return String( AppliedRelay->RelayConfParam->v_STATE_PUB_TOPIC.c_str());
@@ -131,7 +144,7 @@ String processor(const String& var)
     if(var == F( "Max_Current" ))         return String( AppliedRelay->RelayConfParam->v_Max_Current);
     if(var == F( "LWILL_TOPIC" ))         return String( AppliedRelay->RelayConfParam->v_LWILL_TOPIC.c_str());
     if(var == F( "SUB_TOPIC1" ))          return String( AppliedRelay->RelayConfParam->v_SUB_TOPIC1.c_str());
-    if(var == F( "ACS_Active" ))          { if (AppliedRelay->RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; };
+    if(var == F( "ACS_Active" ))          { if (AppliedRelay->RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; }; 
   }
 
   if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
@@ -139,14 +152,17 @@ String processor(const String& var)
 
   if(var == F( "I12_STS_PTP"))          return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
   if(var == F( "I14_STS_PTP"))          return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
+
   #ifdef ESP32
     if(var == F( "I01_STS_PTP"))          return String( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str());
     if(var == F( "I02_STS_PTP"))          return String( MyConfParam.v_InputPin02_STATE_PUB_TOPIC.c_str());
-    if(var == F( "I03_STS_PTP"))          return String( MyConfParam.v_InputPin03_STATE_PUB_TOPIC.c_str());
-    if(var == F( "I04_STS_PTP"))          return String( MyConfParam.v_InputPin04_STATE_PUB_TOPIC.c_str());
-    if(var == F( "I05_STS_PTP"))          return String( MyConfParam.v_InputPin05_STATE_PUB_TOPIC.c_str());
-    if(var == F( "I06_STS_PTP"))          return String( MyConfParam.v_InputPin06_STATE_PUB_TOPIC.c_str());    
   #endif
+
+  if(var == F( "I03_STS_PTP"))          return String( MyConfParam.v_InputPin03_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I04_STS_PTP"))          return String( MyConfParam.v_InputPin04_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I05_STS_PTP"))          return String( MyConfParam.v_InputPin05_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I06_STS_PTP"))          return String( MyConfParam.v_InputPin06_STATE_PUB_TOPIC.c_str()); 
+
   if(var == F( "timeserver" ))          return MyConfParam.v_timeserver.toString() ;
   if(var == F( "Pingserver" ))          return MyConfParam.v_Pingserver.toString() ;
   if(var == F( "ntptz" ))               return String( MyConfParam.v_ntptz);
@@ -154,7 +170,6 @@ String processor(const String& var)
   if(var == F( "Update_now" ))         { if (MyConfParam.v_Update_now)  return "1\" checked=\"\""; };
   if(var == F( "systemtime" ))          return digitalClockDisplay();
   if(var == F( "heap" ))                return String(ESP.getFreeHeap());
-
 
   if(var == F( "ATEMP" ))               return [](){
     //char tmp[10];
@@ -168,13 +183,11 @@ String processor(const String& var)
   if(var == F( "I0MODE" ))                return String( MyConfParam.v_IN0_INPUTMODE);
   if(var == F( "I1MODE" ))                return String( MyConfParam.v_IN1_INPUTMODE);
   if(var == F( "I2MODE" ))                return String( MyConfParam.v_IN2_INPUTMODE);
-  #ifdef ESP32
-    if(var == F( "I3MODE" ))              return String( MyConfParam.v_IN3_INPUTMODE);
-    if(var == F( "I4MODE" ))              return String( MyConfParam.v_IN4_INPUTMODE);
-    if(var == F( "I5MODE" ))              return String( MyConfParam.v_IN5_INPUTMODE);
-    if(var == F( "I6MODE" ))              return String( MyConfParam.v_IN6_INPUTMODE);    
-  #endif  
 
+  if(var == F( "I3MODE" ))              return String( MyConfParam.v_IN3_INPUTMODE);
+  if(var == F( "I4MODE" ))              return String( MyConfParam.v_IN4_INPUTMODE);
+  if(var == F( "I5MODE" ))              return String( MyConfParam.v_IN5_INPUTMODE);
+  if(var == F( "I6MODE" ))              return String( MyConfParam.v_IN6_INPUTMODE);    
 
   if(var == F( "RSTATE0" ))               return (getrelaybynumber(AppliedRelayNumber)->readrelay() == HIGH) ? "ON" : "OFF";
   if(var == F( "RSTATE1" ))               return [](){
@@ -183,9 +196,15 @@ String processor(const String& var)
     } else return "NA";
   }();
   
-
   if(var == F( "Sonar_distance" ))      return String( MyConfParam.v_Sonar_distance.c_str());
   if(var == F( "Sonar_distance_max" ))  return String( MyConfParam.v_Sonar_distance_max);
+
+  if(var == F( "CurrentTransformer_max_current" ))  return String( MyConfParam.v_CurrentTransformer_max_current);
+  if(var == F( "calibration" ))  return String( MyConfParam.v_calibration);    
+  if(var == F( "CurrentTransformerTopic" ))  return String( MyConfParam.v_CurrentTransformerTopic);   
+  if(var == F( "ToleranceOffTime" ))  return String( MyConfParam.v_ToleranceOffTime);   
+  if(var == F( "ToleranceOnTime" ))  return String( MyConfParam.v_ToleranceOnTime);   
+  if(var == F( "CT_MaxAllowed_current" ))  return String( MyConfParam.v_CT_MaxAllowed_current);               
 
   return String();
 }
@@ -255,7 +274,7 @@ void SetAsyncHTTP(){
   #ifdef ESP32
     AsyncWeb_server.addHandler(new SPIFFSEditor(SPIFFS,"user","pass"));
   #else
-    AsyncWeb_server.addHandler(new SPIFFSEditor("user","pass"));
+    AsyncWeb_server.addHandler(new SPIFFSEditor( "user","pass"));
   #endif
 
   //ws.onEvent(onWsEvent);
@@ -265,13 +284,11 @@ void SetAsyncHTTP(){
       request->send(200, "text/plain", String(ESP.getFreeHeap()));
     });
 
-
     AsyncWeb_server.on("/JConfig", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/config.json");
         // int args = request->args();
     });
-
 
     AsyncWeb_server.on("/Timer1", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
@@ -293,7 +310,6 @@ void SetAsyncHTTP(){
         // int args = request->args();
     });
 
-
     AsyncWeb_server.on("/AdvancedTemperatureConf.html", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         config_read_error_t res = loadTempConfig("/tempconfig.json",PTempConfig); 
@@ -313,7 +329,6 @@ void SetAsyncHTTP(){
             saveNodeTimer(request);
             CalendarNotInitiated = true;
     });
-
 
     AsyncWeb_server.on("/wscontrol.html", HTTP_GET, [](AsyncWebServerRequest *request){
           if (!request->authenticate("user", "pass")) return request->requestAuthentication();
@@ -336,7 +351,6 @@ void SetAsyncHTTP(){
           }
           request->send(SPIFFS, "/wscontrol.html", String(), false, processor);
     });
-
 
     AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
@@ -381,26 +395,29 @@ void SetAsyncHTTP(){
           loadIRMapConfig(myIRMap);
     });
 
-
     AsyncWeb_server.on("/ResetHomeKit", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/ResetHomeKit.html");
         // int args = request->args();
       #ifdef AppleHK
-          homekit_storage_reset();   
-				  Serial.println(F("HomeKit Web Reset, rebooting.."));
-          restartRequired = true; // main function will take care of restarting
+        #ifndef ESP32
+            homekit_storage_reset();   
+            Serial.println(F("HomeKit Web Reset, rebooting.."));
+            restartRequired = true; // main function will take care of restarting
+        #endif    
+      #endif
+
+      #ifdef ESP32
+        #ifdef AppleHK
+              resetHap(); 
+        #endif      
       #endif
     });
-
-
-
 
     AsyncWeb_server.on("/RelayCmdApplied.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/RelayCmdApplied.html");
     });    
-
 
     AsyncWeb_server.on("/ApplyRelay.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();

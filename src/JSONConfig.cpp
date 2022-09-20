@@ -1,9 +1,16 @@
 #include <JSONConfig.h>
 #include <RelayClass.h>
 
+#ifdef INVERTERLINK
+  #include <Settings.h>
+  extern Settings _settings;
+
+#endif
+
 const char* filename      = "/config.json";
 const char* IRMapfilename = "/IRMAP.json";
-#define buffer_size  2000
+#define buffer_size_2  2048
+#define buffer_size_IR  1000
 
 extern void applyIRMap(int8_t Inpn, int8_t rlyn);
 
@@ -34,7 +41,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
     return ERROR_OPENING_FILE;
   }
 
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_2> json;
 
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(json, configFile);
@@ -46,8 +53,12 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
 
   ConfParam.v_ssid                = (json["ssid"].as<String>()!="") ? json["ssid"].as<String>() : String(F("ksba"));
   ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("samsam12"));
+
+  ConfParam.v_mqttUser            = (json["mqttUser"].as<String>()!="") ? json["mqttUser"].as<String>() : String(F(""));
+  ConfParam.v_mqttPass            = (json["mqttPass"].as<String>()!="") ? json["mqttPass"].as<String>() : String(F(""));
+
   ConfParam.v_PhyLoc              = (json["PhyLoc"].as<String>()!="") ? json["PhyLoc"].as<String>() : String(F("Not configured yet"));
-  //ConfParam.v_MQTT_BROKER         = (json["MQTT_BROKER"].as<String>()!="") ? json["MQTT_BROKER"].as<String>() : String(F("192.168.1.1"));
+  ConfParam.v_MQTT_BROKER         = (json["MQTT_BROKER"].as<String>()!="") ? json["MQTT_BROKER"].as<String>() : String(F("192.168.1.1"));
 
   if (json["timeserver"].as<String>()!="") {
       ConfParam.v_timeserver.fromString(json["timeserver"].as<String>());} else
@@ -62,9 +73,10 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_MQTT_Active         = (json["MQTT_Active"].as<String>()!="") ? json["MQTT_Active"].as<uint8_t>() ==1 : false;
   ConfParam.v_ntptz               = (json["ntptz"].as<String>()!="") ? json["ntptz"].as<signed char>() : 2;
 
-  if (json["MQTT_BROKER"].as<String>()!="") {
+  /*if (json["MQTT_BROKER"].as<String>()!="") {
       ConfParam.v_MQTT_BROKER.fromString(json["MQTT_BROKER"].as<String>());} else
       { ConfParam.v_MQTT_BROKER.fromString("192.168.1.1");}
+      */
 
   ConfParam.v_MQTT_B_PRT          = (json["MQTT_B_PRT"].as<String>()!="") ? json["MQTT_B_PRT"].as<uint16_t>() : 1883;
   ConfParam.v_Update_now          = (json["Update_now"].as<String>()!="") ? json["Update_now"].as<uint8_t>() == 1 : false;
@@ -73,32 +85,25 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_IN0_INPUTMODE       =  json["I0MODE"].as<uint8_t>();
   ConfParam.v_IN1_INPUTMODE       =  json["I1MODE"].as<uint8_t>();
   ConfParam.v_IN2_INPUTMODE       =  json["I2MODE"].as<uint8_t>();
-
-  #ifdef HWESP32
-      ConfParam.v_IN3_INPUTMODE       =  json["I3MODE"].as<uint8_t>();
-      ConfParam.v_IN4_INPUTMODE       =  json["I4MODE"].as<uint8_t>();
-      ConfParam.v_IN5_INPUTMODE       =  json["I5MODE"].as<uint8_t>();
-      ConfParam.v_IN6_INPUTMODE       =  json["I6MODE"].as<uint8_t>();
-  #endif
+  ConfParam.v_IN3_INPUTMODE       =  json["I3MODE"].as<uint8_t>();
+  ConfParam.v_IN4_INPUTMODE       =  json["I4MODE"].as<uint8_t>();
+  ConfParam.v_IN5_INPUTMODE       =  json["I5MODE"].as<uint8_t>();
+  ConfParam.v_IN6_INPUTMODE       =  json["I6MODE"].as<uint8_t>();
 
   #ifndef HWESP32
     ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
     ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
   #endif  
-
   #ifdef HWESP32
   //fixit
-    ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
-    ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
-
     ConfParam.v_InputPin01_STATE_PUB_TOPIC = ConfParam.v_InputPin12_STATE_PUB_TOPIC;
-    ConfParam.v_InputPin02_STATE_PUB_TOPIC = ConfParam.v_InputPin14_STATE_PUB_TOPIC;
-    ConfParam.v_InputPin03_STATE_PUB_TOPIC = (json["I03_STS_PTP"].as<String>()!="") ? json["I03_STS_PTP"].as<String>() : String(F("/none"));
-    ConfParam.v_InputPin04_STATE_PUB_TOPIC = (json["I04_STS_PTP"].as<String>()!="") ? json["I04_STS_PTP"].as<String>() : String(F("/none"));
-    ConfParam.v_InputPin05_STATE_PUB_TOPIC = (json["I05_STS_PTP"].as<String>()!="") ? json["I05_STS_PTP"].as<String>() : String(F("/none"));
-    ConfParam.v_InputPin06_STATE_PUB_TOPIC = (json["I06_STS_PTP"].as<String>()!="") ? json["I06_STS_PTP"].as<String>() : String(F("/none"));    
+    ConfParam.v_InputPin02_STATE_PUB_TOPIC = ConfParam.v_InputPin14_STATE_PUB_TOPIC; 
   #endif
 
+   ConfParam.v_InputPin03_STATE_PUB_TOPIC = (json["I03_STS_PTP"].as<String>()!="") ? json["I03_STS_PTP"].as<String>() : String(F("/none"));
+   ConfParam.v_InputPin04_STATE_PUB_TOPIC = (json["I04_STS_PTP"].as<String>()!="") ? json["I04_STS_PTP"].as<String>() : String(F("/none"));
+   ConfParam.v_InputPin05_STATE_PUB_TOPIC = (json["I05_STS_PTP"].as<String>()!="") ? json["I05_STS_PTP"].as<String>() : String(F("/none"));
+   ConfParam.v_InputPin06_STATE_PUB_TOPIC = (json["I06_STS_PTP"].as<String>()!="") ? json["I06_STS_PTP"].as<String>() : String(F("/none"));     
 
   //ConfParam.v_FRM_IP              = (json["FRM_IP"].as<String>()!="") ? json["FRM_IP"].as<String>() : String(F("192.168.1.1"));
 
@@ -108,20 +113,37 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
 
 
   ConfParam.v_FRM_PRT             = (json["FRM_PRT"].as<String>()!="") ? json["FRM_PRT"].as<uint16_t>() : 83;
-
   ConfParam.v_Sonar_distance      = (json["Sonar_distance"].as<String>()!="") ? json["Sonar_distance"].as<String>() : String(F("0"));
   ConfParam.v_Sonar_distance_max  =  json["Sonar_distance_max"].as<uint16_t>();
-
+  ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("samsam12"));  
   ConfParam.v_Reboot_on_WIFI_Disconnection  =  json["RWD"].as<uint16_t>();  
+  ConfParam.v_CurrentTransformer_max_current = (json["CurrentTransformer_max_current"].as<String>()!="") ? json["CurrentTransformer_max_current"].as<uint8_t>() : 0;
+  ConfParam.v_calibration                    = (json["calibration"].as<String>()!="") ? json["calibration"].as<uint16_t>() : 1908;
+  ConfParam.v_CurrentTransformerTopic        = (json["CurrentTransformerTopic"].as<String>()!="") ? json["CurrentTransformerTopic"].as<String>() : String(F(""));  
+  ConfParam.v_ToleranceOffTime               = (json["ToleranceOffTime"].as<String>()!="") ? json["ToleranceOffTime"].as<uint16_t>() : 10;
+  ConfParam.v_ToleranceOnTime                = (json["ToleranceOnTime"].as<String>()!="") ? json["ToleranceOnTime"].as<uint16_t>() : 30;  
+  ConfParam.v_CT_MaxAllowed_current          = (json["CT_MaxAllowed_current"].as<String>()!="") ? json["CT_MaxAllowed_current"].as<uint16_t>() : 30;  
 
   configFile.close();
+
+  #ifdef INVERTERLINK
+            _settings._wifiSsid = ConfParam.v_ssid;
+            _settings._wifiPass = ConfParam.v_pass;
+            _settings._deviceType = "PIP";
+            _settings._deviceName = ConfParam.v_PhyLoc;
+            _settings._mqttServer = ConfParam.v_MQTT_BROKER;
+            _settings._mqttUser = ConfParam.v_mqttUser;
+            _settings._mqttPassword = ConfParam.v_mqttPass;
+            _settings._mqttPort = ConfParam.v_MQTT_B_PRT  ;       
+  #endif
+  //json = NILL;
   return SUCCESS;
 }
 
 
 bool saveConfig(TConfigParams &ConfParam){
 
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_2> json;
 
     File configFile = SPIFFS.open(filename, "w");
     if (!configFile) {
@@ -131,8 +153,12 @@ bool saveConfig(TConfigParams &ConfParam){
     
     json[F("ssid")]= ConfParam.v_ssid ;
     json[F("pass")]=ConfParam.v_pass;
+
+    json[F("mqttUser")]= ConfParam.v_mqttUser ;
+    json[F("mqttPass")]=ConfParam.v_mqttPass;
+
     json[F("PhyLoc")]=ConfParam.v_PhyLoc;
-    json[F("MQTT_BROKER")]=ConfParam.v_MQTT_BROKER.toString();
+    json[F("MQTT_BROKER")]=ConfParam.v_MQTT_BROKER; // .toString();
     json[F("MQTT_B_PRT")]=ConfParam.v_MQTT_B_PRT;
     json[F("FRM_IP")]= MyConfParam.v_FRM_IP.toString();
     json[F("FRM_PRT")]=ConfParam.v_FRM_PRT;
@@ -143,25 +169,37 @@ bool saveConfig(TConfigParams &ConfParam){
       json[F("I1MODE")]=ConfParam.v_IN1_INPUTMODE;
       json[F("I2MODE")]=ConfParam.v_IN2_INPUTMODE;    
     #endif
-    #ifdef HWESP32 // fixit
+     #ifdef HWESP32 // fixit
       json[F("I12_STS_PTP")]=ConfParam.v_InputPin01_STATE_PUB_TOPIC;
       json[F("I14_STS_PTP")]=ConfParam.v_InputPin02_STATE_PUB_TOPIC;
 
       json[F("I01_STS_PTP")]=ConfParam.v_InputPin01_STATE_PUB_TOPIC;
       json[F("I02_STS_PTP")]=ConfParam.v_InputPin02_STATE_PUB_TOPIC;
+     #endif   
       json[F("I03_STS_PTP")]=ConfParam.v_InputPin03_STATE_PUB_TOPIC;
       json[F("I04_STS_PTP")]=ConfParam.v_InputPin04_STATE_PUB_TOPIC;
       json[F("I05_STS_PTP")]=ConfParam.v_InputPin05_STATE_PUB_TOPIC;
       json[F("I06_STS_PTP")]=ConfParam.v_InputPin06_STATE_PUB_TOPIC;
 
-      json[F("I0MODE")]=ConfParam.v_IN0_INPUTMODE;
+      /*json[F("I0MODE")]=ConfParam.v_IN0_INPUTMODE;
       json[F("I1MODE")]=ConfParam.v_IN1_INPUTMODE;
-      json[F("I2MODE")]=ConfParam.v_IN2_INPUTMODE;   
+      json[F("I2MODE")]=ConfParam.v_IN2_INPUTMODE;   */
+      
       json[F("I3MODE")]=ConfParam.v_IN3_INPUTMODE;
       json[F("I4MODE")]=ConfParam.v_IN4_INPUTMODE;
       json[F("I5MODE")]=ConfParam.v_IN5_INPUTMODE;   
       json[F("I6MODE")]=ConfParam.v_IN6_INPUTMODE;             
-    #endif    
+    /* #endif    */
+
+      json[F("I03_STS_PTP")]=ConfParam.v_InputPin03_STATE_PUB_TOPIC;
+      json[F("I04_STS_PTP")]=ConfParam.v_InputPin04_STATE_PUB_TOPIC;
+      json[F("I05_STS_PTP")]=ConfParam.v_InputPin05_STATE_PUB_TOPIC;
+      json[F("I06_STS_PTP")]=ConfParam.v_InputPin06_STATE_PUB_TOPIC;
+      json[F("I3MODE")]=ConfParam.v_IN3_INPUTMODE;
+      json[F("I4MODE")]=ConfParam.v_IN4_INPUTMODE;
+      json[F("I5MODE")]=ConfParam.v_IN5_INPUTMODE;   
+      json[F("I6MODE")]=ConfParam.v_IN6_INPUTMODE;        
+
     json[F("TOGGLE_BTN_PUB_TOPIC")]=ConfParam.v_TOGGLE_BTN_PUB_TOPIC;
     json[F("timeserver")]=ConfParam.v_timeserver.toString(); 
     json[F("Pingserver")]=ConfParam.v_Pingserver.toString();     
@@ -172,6 +210,12 @@ bool saveConfig(TConfigParams &ConfParam){
     json[F("Sonar_distance_max")]=ConfParam.v_Sonar_distance_max; 
     json[F("RWD")]=ConfParam.v_Reboot_on_WIFI_Disconnection;    
 
+    json[F("CurrentTransformer_max_current")] = ConfParam.v_CurrentTransformer_max_current;
+    json[F("calibration")]                    = ConfParam.v_calibration; 
+    json[F("CurrentTransformerTopic")]        = ConfParam.v_CurrentTransformerTopic;        
+    json[F("ToleranceOnTime")]                = ConfParam.v_ToleranceOnTime; 
+    json[F("ToleranceOffTime")]               = ConfParam.v_ToleranceOffTime;        
+    json[F("CT_MaxAllowed_current")]          = ConfParam.v_CT_MaxAllowed_current;
 
     if (serializeJsonPretty(json, configFile) == 0) {
       Serial.println(F("[INFO   ] Failed to write to file"));
@@ -187,7 +231,7 @@ bool saveConfig(TConfigParams &ConfParam){
 
 bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
 
-  StaticJsonDocument<buffer_size> doc;
+  StaticJsonDocument<buffer_size_2> doc;
   // StaticJsonDocument<64> dummy;
 
     int args = request->args();
@@ -226,11 +270,15 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
 
 
 bool saveDefaultConfig(){
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_2> json;
 
   Serial.print("\n writing default parameters");
   json[F("ssid")]="ksba";
   json[F("pass")]="samsam12";
+
+  json[F("mqttUser")]="";
+  json[F("mqttPass")]="";
+
   json[F("PhyLoc")]="Not configured yet";
   json[F("timeserver")]="194.97.156.5";
   json[F("ntptz")]=2;
@@ -249,10 +297,10 @@ bool saveDefaultConfig(){
   json[F("ttl")]=0;
   json[F("tta")]=0;
   json[F("ACS_Active")]=0;
-  json[F("tta")]="0";
   json[F("ACS_Sensor_Model")] = "30";
   json[F("Max_Current")]=10;
   json[F("TOGGLE_BTN_PUB_TOPIC")]="/home/Controller" + CID() + "/INS/sts/IN0" ;
+  
   #ifndef HWESP32
   json[F("I12_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
   json[F("I14_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";
@@ -261,6 +309,7 @@ bool saveDefaultConfig(){
   json[F("I2MODE")]=2;  
   #endif
   #ifdef HWESP32
+  
   json[F("I12_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
   json[F("I14_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";  
   json[F("I01_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
@@ -276,7 +325,7 @@ bool saveDefaultConfig(){
   json[F("I4MODE")]=2;
   json[F("I5MODE")]=2;      
   json[F("I6MODE")]=2;      
-  #endif  
+  #endif 
 
   json[F("Sonar_distance")]=0;
   json[F("Sonar_distance_max")]=50; 
@@ -284,6 +333,13 @@ bool saveDefaultConfig(){
   json[F("FRM_IP")]="192.168.1.1";
   json[F("FRM_PRT")]=83;
   json[F("Update_now")]=0;
+
+  json[F("CurrentTransformer_max_current")] = 50;
+  json[F("calibration")]                    = 1906; 
+  json[F("ToleranceOffTime")]               = 10; 
+  json[F("ToleranceOnTime")]                = 30;
+  json[F("CT_MaxAllowed_current")]          = 30;      
+  json[F("CurrentTransformerTopic")]        = "/home/Controller" + CID() + "/CT";          
 
 #ifndef ESP32
   ESP.wdtFeed();
@@ -315,7 +371,7 @@ bool saveDefaultConfig(){
 
 
 bool saveDefaultIRMapConfig(){
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_IR> json;
 
   json["I1"]="-1";
   json["R1"]="-1";
@@ -364,7 +420,7 @@ bool saveDefaultIRMapConfig(){
 
 bool saveIRMapConfig(AsyncWebServerRequest *request){
 
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_IR> json;
 
   // Set the values in the document
 
@@ -421,7 +477,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
     }
 
 
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_IR> json;
   DeserializationError error = deserializeJson(json, configFile);
   if (error)
     Serial.println(F("[INFO   ] Failed to read file, using default configuration"));
@@ -467,7 +523,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap) {
 
 
 bool saveRelayDefaultConfig(uint8_t rnb){
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_2> json;
 
    Serial.print(F("\n[INFO   ] Initializing default relay parameters"));
 
@@ -490,6 +546,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
   //  json[F("I2MODE")]="0";
 
     json[F("tta")]="0";
+    json[F("ACS_elasticity")]="0";    
     json[F("Max_Current")]="10";
     json[F("LWILL_TOPIC")]="/home/Controller" + CID() + "/LWT";
     json[F("SUB_TOPIC1")]="/home/Controller" + CID() +  "/#";
@@ -521,7 +578,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
 
 
 bool saveRelayConfig(AsyncWebServerRequest *request){
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_2> json;
 
     json["ACS_Active"]    =  0 ;
 
@@ -558,7 +615,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
 
 
 bool saveRelayConfig(Trelayconf * RConfParam){
-  StaticJsonDocument<buffer_size> json;
+  StaticJsonDocument<buffer_size_2> json;
 
     json[F("RELAYNB")]=RConfParam->v_relaynb;
     json[F("PhyLoc")]=RConfParam->v_PhyLoc;
@@ -574,7 +631,8 @@ bool saveRelayConfig(Trelayconf * RConfParam){
     json[F("I0MODE")]=RConfParam->v_IN0_INPUTMODE;
     json[F("I1MODE")]=RConfParam->v_IN1_INPUTMODE;
     json[F("I2MODE")]=RConfParam->v_IN2_INPUTMODE;
-    json[F("tta")]=RConfParam->v_tta;
+    json[F("tta")]=RConfParam->v_tta; 
+    json[F("ACS_elasticity")]=RConfParam->v_ACS_elasticity;     
     json[F("Max_Current")]=RConfParam->v_Max_Current;
     json[F("LWILL_TOPIC")]=RConfParam->v_LWILL_TOPIC;
     json[F("SUB_TOPIC1")]=RConfParam->v_SUB_TOPIC1;

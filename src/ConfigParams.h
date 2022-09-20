@@ -13,6 +13,9 @@
     D10 = GPIO1;
     LED_BUILTIN = GPIO16 (auxiliary constant for the board LED, not a board pin);
 */
+
+#define softwareVersion  " - SW 1.1"
+
 #include <defines.h>
 
 #ifndef _CONFIGS_H__
@@ -22,20 +25,26 @@
 #include <Scheduletimer.h>
 #include <IPAddress.h>
 
+  
+
  #ifdef HWESP32
     #define led       02 // led on IO2  
     #define RelayPin  25 // relay on IO25
     #define HomeKitt_PIN_SWITCH 25 // Homekit is on (Relay0 = RelayPin) pin only
 
+#ifndef emonlib
     #define InputPin01  33 // Input1 on IO33
+#endif    
     #define InputPin02  16 // Input2 on IO16    
     #define InputPin03  17 // Input3 on IO17
-    #define InputPin04  21 // Input4 on IO21
-    #define InputPin05  26 // Input3 on IO26   
+    #define InputPin04  32 // Input4 on IO32  // SET TO 21 FOR FIRST VERSION OF ESP32 BOARD, CHANGED TO 32 TO AVOID USING SDL/SDC
+    #define InputPin05  26 // Input5 on IO26   
     #define InputPin06  27 // Input6 on IO27  
 
     #define ConfigInputPin      04 // configuration pin on IO4
+    #ifndef emonlib
     #define TempSensorPin       InputPin01 // 33
+    #endif
     #define SecondTempSensorPin InputPin02 // 16    
     #define TRIG_PIN InputPin03
     #define ECHO_PIN InputPin04
@@ -95,6 +104,7 @@
 
 const uint16_t MaxWifiTrials = 500;
 
+
 typedef struct IPAdr {
   uint8_t bytes[4];
 }IPAdr;
@@ -106,12 +116,14 @@ typedef struct Trelayconf {
   String v_STATE_PUB_TOPIC ;
   String v_LWILL_TOPIC ;
   String v_SUB_TOPIC1 ;
-  String v_ttl_PUB_TOPIC ;      // MQTT TTL publish topic
-  String v_CURR_TTL_PUB_TOPIC;  // running TTL publish topic
-  String v_i_ttl_PUB_TOPIC;     // TTL set/update topic
-  String v_TemperatureValue;     // TTL set/update topic
-  uint32_t v_ttl ;                // TTL VALUE
+  String v_ttl_PUB_TOPIC ;      
+  String v_CURR_TTL_PUB_TOPIC; 
+  String v_i_ttl_PUB_TOPIC;    
+  String v_TemperatureValue;     
+  String v_AlexaName;     
+  uint32_t v_ttl ;
   uint32_t v_tta ;
+  uint16_t v_ACS_elasticity ;  
   String v_ACS_Sensor_Model;
   boolean v_ACS_Active ;
   uint8_t v_Max_Current ;
@@ -131,8 +143,13 @@ typedef struct TConfigParams {
   IPAddress v_timeserver ;
   signed char v_ntptz ;
   uint8_t v_MQTT_Active ;
-  IPAddress v_MQTT_BROKER ;
+  // IPAddress v_MQTT_BROKER ;
+  String v_MQTT_BROKER ;
   uint16_t v_MQTT_B_PRT ;
+
+  String v_mqttUser;
+  String v_mqttPass;
+
   IPAddress v_Pingserver ;
 
   IPAddress v_FRM_IP ;
@@ -146,6 +163,15 @@ typedef struct TConfigParams {
   uint8_t v_IN0_INPUTMODE;
   uint8_t v_IN1_INPUTMODE;
   uint8_t v_IN2_INPUTMODE;
+//zzzzzzzzzz
+  String v_InputPin03_STATE_PUB_TOPIC ;
+  String v_InputPin04_STATE_PUB_TOPIC ;
+  String v_InputPin05_STATE_PUB_TOPIC ;
+  String v_InputPin06_STATE_PUB_TOPIC ;  
+  uint8_t v_IN3_INPUTMODE;
+  uint8_t v_IN4_INPUTMODE;
+  uint8_t v_IN5_INPUTMODE;  
+  uint8_t v_IN6_INPUTMODE;  
 #endif  
 
 #ifdef HWESP32
@@ -169,12 +195,17 @@ typedef struct TConfigParams {
   uint8_t v_IN6_INPUTMODE;
 #endif  
 
-
-
-
   String v_Sonar_distance ;
   uint16_t v_Sonar_distance_max;
   uint16_t v_Reboot_on_WIFI_Disconnection;  
+
+  uint8_t v_CurrentTransformer_max_current ;
+  uint16_t v_calibration;
+  String v_CurrentTransformerTopic ;
+  uint16_t v_ToleranceOffTime;
+  uint16_t v_ToleranceOnTime;    
+  uint16_t v_CT_MaxAllowed_current;      
+  
 
 } TConfigParams;
 
@@ -233,3 +264,5 @@ GPIO14 	 5
 GPIO15 	 8
 GPIO16 	 0
 */
+
+

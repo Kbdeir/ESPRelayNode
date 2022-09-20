@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "HCSR04.h"
 
+
 HCSR04::HCSR04(int trigger, int echo)
 {
     pinMode(trigger, OUTPUT);
@@ -19,30 +20,25 @@ HCSR04::HCSR04(int trigger, int echo, int minRange, int maxRange)
     _maxRange = maxRange;
 }
 
-unsigned int HCSR04::echoInMicroseconds()
+long HCSR04::echoInMicroseconds()
 {
+    long res = 0;
+    pinMode(_trigger, OUTPUT);
+    pinMode(_echo, INPUT);
     digitalWrite(_trigger, LOW);
-    delayMicroseconds(5);
+     delayMicroseconds(5);    
     digitalWrite(_trigger, HIGH);
-    delayMicroseconds(10);
+    delayMicroseconds(15);
     digitalWrite(_trigger, LOW);  
-    // Why don't I just use? "return pulseIn(_echo, HIGH);"
-	// Arduino Primo doesn't have access to pulseIn.
-    while(digitalRead(_echo) == LOW);
-
-    int pulseStart = micros();
-
-    while(digitalRead(_echo) == HIGH);
-
-    return micros() - pulseStart;
+    return pulseIn(_echo, HIGH);
 }
 
-int HCSR04::distanceInMillimeters()
+long HCSR04::distanceInCentimeters()
 {
-    int duration = echoInMicroseconds();
+    long duration = echoInMicroseconds();
     
-    // Given the speed of sound in air is 332m/s = 3320cm/s = 0.0332cm/us).
-    int distance = (duration / 2) * 0.332;
+    // Given the speed of sound in air is 332m/s = 3320cm/s = 0.0332cm/us). cm = (duration/2) / 29.1;     // Divide by 29.1 or multiply by 0.0343
+    distance = (duration / 2) / 29.1;
 	
 	if (_minRange == -1 && _maxRange == -1)
 	{
@@ -62,10 +58,14 @@ void HCSR04::ToSerial()
     Serial.println(ToString());
 }
 
+int16_t HCSR04::distanceInCms()
+{
+    return (distanceInCentimeters() / 100);
+}
+
 String HCSR04::ToString()
 {
     String distanceString = "{\"Protocol\":\"Bifrost\",\"Device\":\"HCSR04\",\"Driver version\":\"2.0.0\",\"Properties\":{\"Distance\":<<DISTANCE>>}}";
-    distanceString.replace("<<DISTANCE>>", String(distanceInMillimeters()));
-
+    distanceString.replace("<<DISTANCE>>", String(distanceInCentimeters()));
     return distanceString;
 }

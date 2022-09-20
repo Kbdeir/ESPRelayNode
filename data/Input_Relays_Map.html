@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Untitled Page</title>
-<meta name="generator" content="WYSIWYG Web Builder 11 - http://www.wysiwygwebbuilder.com">
+<meta name="generator" content="WYSIWYG Web Builder 17 - http://www.wysiwygwebbuilder.com">
 <style>
 body
 {
@@ -34,17 +34,23 @@ a:hover
    color: #0000FF;
    text-decoration: underline;
 }
+input:focus, textarea:focus, select:focus
+{
+   outline: none;
+}
 #wb_Form1
 {
    background-color: #D3D3D3;
    background-image: none;
-   border: 1px #CCCCCC solid;
+   border: 1px solid #CCCCCC;
+   border-radius: 0px;
 }
 #wb_Text3 
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -55,25 +61,23 @@ a:hover
 }
 #Editbox1
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox1:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
@@ -81,7 +85,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -92,409 +97,375 @@ a:hover
 }
 #TDate
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #TDate:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox2
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox2:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox3
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox3:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox4
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox4:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox5
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox5:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox6
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox6:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox7
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox7:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox8
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox8:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox9
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox9:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox10
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox10:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox11
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox11:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox12
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox12:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox13
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox13:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox14
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox14:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox15
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox15:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox16
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox16:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox17
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox17:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
@@ -502,7 +473,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -513,83 +485,86 @@ a:hover
 }
 #Editbox18
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 18px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox18:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #Editbox19
 {
-   border: 1px #CCCCCC solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #CCCCCC;
    border-radius: 4px;
    background-color: #FFFFFF;
    background-image: none;
-   color :#000000;
+   color: #000000;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   line-height: 19px;
    padding: 4px 4px 4px 4px;
+   margin: 0;
    text-align: left;
-   vertical-align: middle;
 }
 #Editbox19:focus
 {
    border-color: #66AFE9;
-   -webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   -moz-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
    outline: 0;
 }
 #btnSave
 {
-   border: 1px #2E6DA4 solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #2E6DA4;
    border-radius: 4px;
    background-color: #3370B7;
    background-image: none;
    color: #FFFFFF;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   padding: 0;
+   text-align: center;
+   -webkit-appearance: none;
+   margin: 0;
 }
 #Button2
 {
-   border: 1px #2E6DA4 solid;
-   -moz-border-radius: 4px;
-   -webkit-border-radius: 4px;
+   border: 1px solid #2E6DA4;
    border-radius: 4px;
    background-color: #3370B7;
    background-image: none;
    color: #FFFFFF;
    font-family: Arial;
    font-weight: normal;
+   font-style: normal;
    font-size: 13px;
+   padding: 0;
+   text-align: center;
+   -webkit-appearance: none;
+   margin: 0;
 }
 #wb_Text20 
 {
    background-color: #696969;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: center;
@@ -602,7 +577,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -615,7 +591,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -628,7 +605,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -641,7 +619,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -654,7 +633,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -667,7 +647,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -680,7 +661,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -693,7 +675,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -706,7 +689,8 @@ a:hover
 {
    background-color: transparent;
    background-image: none;
-   border: 0px #000000 solid;
+   border: 0px solid #000000;
+   border-radius: 0px;
    padding: 0;
    margin: 0;
    text-align: left;
@@ -719,320 +703,400 @@ a:hover
 </head>
 <body>
 <div id="wb_Form1" style="position:absolute;left:38px;top:76px;width:359px;height:518px;z-index:33;">
-<form name="Form1" method="get" action="ApplyIRMap.html" enctype="text/plain" id="Form1" onsubmit="return ValidateForm1(this)">
-<div id="wb_Text3" style="position:absolute;left:33px;top:7px;width:144px;height:16px;z-index:0;text-align:left;">
+<form name="Form1" method="get" action="ApplyIRMap.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
+<div id="wb_Text3" style="position:absolute;left:33px;top:7px;width:144px;height:16px;z-index:0;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Input</strong></span></div>
-<input type="number" id="Editbox1" style="position:absolute;left:29px;top:31px;width:54px;height:18px;line-height:18px;z-index:1;" name="I1" value="%I1%">
-<input type="number" id="TDate" style="position:absolute;left:257px;top:31px;width:58px;height:19px;line-height:19px;z-index:2;" name="R1" value="%R1%">
-<input type="number" id="Editbox2" style="position:absolute;left:29px;top:71px;width:54px;height:18px;line-height:18px;z-index:3;" name="I2" value="%I2%">
-<input type="number" id="Editbox3" style="position:absolute;left:257px;top:71px;width:58px;height:19px;line-height:19px;z-index:4;" name="R2" value="%R2%">
-<input type="number" id="Editbox4" style="position:absolute;left:29px;top:111px;width:54px;height:18px;line-height:18px;z-index:5;" name="I3" value="%I3%">
-<input type="number" id="Editbox5" style="position:absolute;left:257px;top:111px;width:58px;height:19px;line-height:19px;z-index:6;" name="R3" value="%R3%">
-<input type="number" id="Editbox6" style="position:absolute;left:29px;top:151px;width:54px;height:18px;line-height:18px;z-index:7;" name="I4" value="%I4%">
-<input type="number" id="Editbox7" style="position:absolute;left:257px;top:151px;width:58px;height:19px;line-height:19px;z-index:8;" name="R4" value="%R4%">
-<input type="number" id="Editbox8" style="position:absolute;left:29px;top:191px;width:54px;height:18px;line-height:18px;z-index:9;" name="I5" value="%I5%">
-<input type="number" id="Editbox9" style="position:absolute;left:257px;top:191px;width:58px;height:19px;line-height:19px;z-index:10;" name="R5" value="%R5%">
-<input type="number" id="Editbox10" style="position:absolute;left:29px;top:231px;width:54px;height:18px;line-height:18px;z-index:11;" name="I6" value="%I6%">
-<input type="number" id="Editbox11" style="position:absolute;left:257px;top:231px;width:58px;height:19px;line-height:19px;z-index:12;" name="R6" value="%R6%">
-<input type="number" id="Editbox12" style="position:absolute;left:29px;top:267px;width:54px;height:18px;line-height:18px;z-index:13;" name="I7" value="%I7%">
-<input type="number" id="Editbox13" style="position:absolute;left:257px;top:267px;width:58px;height:19px;line-height:19px;z-index:14;" name="R7" value="%R7%">
-<input type="number" id="Editbox14" style="position:absolute;left:29px;top:303px;width:54px;height:18px;line-height:18px;z-index:15;" name="I8" value="%I8%">
-<input type="number" id="Editbox15" style="position:absolute;left:257px;top:303px;width:58px;height:19px;line-height:19px;z-index:16;" name="R8" value="%R8%">
-<input type="number" id="Editbox16" style="position:absolute;left:29px;top:339px;width:54px;height:18px;line-height:18px;z-index:17;" name="I9" value="%I9%">
-<input type="number" id="Editbox17" style="position:absolute;left:257px;top:339px;width:58px;height:19px;line-height:19px;z-index:18;" name="R9" value="%R9%">
-<input type="number" id="Editbox18" style="position:absolute;left:29px;top:379px;width:54px;height:18px;line-height:18px;z-index:19;" name="I10" value="%I10%">
-<input type="number" id="Editbox19" style="position:absolute;left:257px;top:379px;width:58px;height:19px;line-height:19px;z-index:20;" name="R10" value="%R10%">
+<input type="number" id="Editbox1" style="position:absolute;left:29px;top:31px;width:54px;height:18px;z-index:1;" name="I1" value="%I1%" spellcheck="false">
+<input type="number" id="TDate" style="position:absolute;left:257px;top:31px;width:58px;height:19px;z-index:2;" name="R1" value="%R1%" spellcheck="false">
+<input type="number" id="Editbox2" style="position:absolute;left:29px;top:71px;width:54px;height:18px;z-index:3;" name="I2" value="%I2%" spellcheck="false">
+<input type="number" id="Editbox3" style="position:absolute;left:257px;top:71px;width:58px;height:19px;z-index:4;" name="R2" value="%R2%" spellcheck="false">
+<input type="number" id="Editbox4" style="position:absolute;left:29px;top:111px;width:54px;height:18px;z-index:5;" name="I3" value="%I3%" spellcheck="false">
+<input type="number" id="Editbox5" style="position:absolute;left:257px;top:111px;width:58px;height:19px;z-index:6;" name="R3" value="%R3%" spellcheck="false">
+<input type="number" id="Editbox6" style="position:absolute;left:29px;top:151px;width:54px;height:18px;z-index:7;" name="I4" value="%I4%" spellcheck="false">
+<input type="number" id="Editbox7" style="position:absolute;left:257px;top:151px;width:58px;height:19px;z-index:8;" name="R4" value="%R4%" spellcheck="false">
+<input type="number" id="Editbox8" style="position:absolute;left:29px;top:191px;width:54px;height:18px;z-index:9;" name="I5" value="%I5%" spellcheck="false">
+<input type="number" id="Editbox9" style="position:absolute;left:257px;top:191px;width:58px;height:19px;z-index:10;" name="R5" value="%R5%" spellcheck="false">
+<input type="number" id="Editbox10" style="position:absolute;left:29px;top:231px;width:54px;height:18px;z-index:11;" name="I6" value="%I6%" spellcheck="false">
+<input type="number" id="Editbox11" style="position:absolute;left:257px;top:231px;width:58px;height:19px;z-index:12;" name="R6" value="%R6%" spellcheck="false">
+<input type="number" id="Editbox12" style="position:absolute;left:29px;top:267px;width:54px;height:18px;z-index:13;" name="I7" value="%I7%" spellcheck="false">
+<input type="number" id="Editbox13" style="position:absolute;left:257px;top:267px;width:58px;height:19px;z-index:14;" name="R7" value="%R7%" spellcheck="false">
+<input type="number" id="Editbox14" style="position:absolute;left:29px;top:303px;width:54px;height:18px;z-index:15;" name="I8" value="%I8%" spellcheck="false">
+<input type="number" id="Editbox15" style="position:absolute;left:257px;top:303px;width:58px;height:19px;z-index:16;" name="R8" value="%R8%" spellcheck="false">
+<input type="number" id="Editbox16" style="position:absolute;left:29px;top:339px;width:54px;height:18px;z-index:17;" name="I9" value="%I9%" spellcheck="false">
+<input type="number" id="Editbox17" style="position:absolute;left:257px;top:339px;width:58px;height:19px;z-index:18;" name="R9" value="%R9%" spellcheck="false">
+<input type="number" id="Editbox18" style="position:absolute;left:29px;top:379px;width:54px;height:18px;z-index:19;" name="I10" value="%I10%" spellcheck="false">
+<input type="number" id="Editbox19" style="position:absolute;left:257px;top:379px;width:58px;height:19px;z-index:20;" name="R10" value="%R10%" spellcheck="false">
 <input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:29px;top:467px;width:126px;height:25px;z-index:21;">
 <input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:199px;top:467px;width:126px;height:25px;z-index:22;">
-<div id="wb_Text1" style="position:absolute;left:144px;top:32px;width:70px;height:27px;z-index:23;text-align:left;">
+<div id="wb_Text1" style="position:absolute;left:144px;top:32px;width:70px;height:27px;z-index:23;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text2" style="position:absolute;left:144px;top:72px;width:70px;height:27px;z-index:24;text-align:left;">
+<div id="wb_Text2" style="position:absolute;left:144px;top:72px;width:70px;height:27px;z-index:24;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text5" style="position:absolute;left:144px;top:192px;width:70px;height:27px;z-index:25;text-align:left;">
+<div id="wb_Text5" style="position:absolute;left:144px;top:192px;width:70px;height:27px;z-index:25;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text6" style="position:absolute;left:144px;top:111px;width:70px;height:27px;z-index:26;text-align:left;">
+<div id="wb_Text6" style="position:absolute;left:144px;top:111px;width:70px;height:27px;z-index:26;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text8" style="position:absolute;left:144px;top:231px;width:70px;height:27px;z-index:27;text-align:left;">
+<div id="wb_Text8" style="position:absolute;left:144px;top:231px;width:70px;height:27px;z-index:27;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text9" style="position:absolute;left:144px;top:268px;width:70px;height:27px;z-index:28;text-align:left;">
+<div id="wb_Text9" style="position:absolute;left:144px;top:268px;width:70px;height:27px;z-index:28;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text10" style="position:absolute;left:144px;top:304px;width:70px;height:27px;z-index:29;text-align:left;">
+<div id="wb_Text10" style="position:absolute;left:144px;top:304px;width:70px;height:27px;z-index:29;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text11" style="position:absolute;left:144px;top:340px;width:70px;height:27px;z-index:30;text-align:left;">
+<div id="wb_Text11" style="position:absolute;left:144px;top:340px;width:70px;height:27px;z-index:30;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text12" style="position:absolute;left:144px;top:380px;width:70px;height:27px;z-index:31;text-align:left;">
+<div id="wb_Text12" style="position:absolute;left:144px;top:380px;width:70px;height:27px;z-index:31;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
-<div id="wb_Text7" style="position:absolute;left:144px;top:152px;width:70px;height:27px;z-index:32;text-align:left;">
+<div id="wb_Text7" style="position:absolute;left:144px;top:152px;width:70px;height:27px;z-index:32;">
 <span style="color:#000000;font-family:Arial;font-size:24px;">===&gt;</span></div>
 </form>
 </div>
-<div id="wb_Text4" style="position:absolute;left:296px;top:84px;width:150px;height:16px;z-index:34;text-align:left;">
+<div id="wb_Text4" style="position:absolute;left:296px;top:84px;width:150px;height:16px;z-index:34;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"><strong>Relay</strong></span></div>
 <div id="wb_Text20" style="position:absolute;left:38px;top:36px;width:361px;height:40px;text-align:center;z-index:35;">
 <span style="color:#F5F5F5;font-family:Arial;font-size:21px;">Attach Inputs to Relays</span><span style="color:#000000;font-family:Arial;font-size:21px;"><br></span></div>
 <script>
-function ValidateForm1(theForm)
+function submitForm1()
 {
    var regexp;
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox1.value))
+   var Editbox1 = document.getElementById('Editbox1');
+   if (!(Editbox1.disabled || Editbox1.style.display === 'none' || Editbox1.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"I1\" field.");
-      theForm.Editbox1.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox1.value.length != 0 && !regexp.test(Editbox1.value))
+      {
+         alert("Please enter only digit characters in the \"I1\" field.");
+         Editbox1.focus();
+         return false;
+      }
+      if (Editbox1.value != "" && !(Editbox1.value >= -1 && Editbox1.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I1\" field.");
+         Editbox1.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox1.value != "" && !(theForm.Editbox1.value >= -1 && theForm.Editbox1.value <= 8))
+   var TDate = document.getElementById('TDate');
+   if (!(TDate.disabled || TDate.style.display === 'none' || TDate.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I1\" field.");
-      theForm.Editbox1.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (TDate.value.length != 0 && !regexp.test(TDate.value))
+      {
+         alert("Please enter only digit characters in the \"R1\" field.");
+         TDate.focus();
+         return false;
+      }
+      if (TDate.value != "" && !(TDate.value >= -1 && TDate.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R1\" field.");
+         TDate.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.TDate.value))
+   var Editbox2 = document.getElementById('Editbox2');
+   if (!(Editbox2.disabled || Editbox2.style.display === 'none' || Editbox2.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"R1\" field.");
-      theForm.TDate.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox2.value.length != 0 && !regexp.test(Editbox2.value))
+      {
+         alert("Please enter only digit characters in the \"I2\" field.");
+         Editbox2.focus();
+         return false;
+      }
+      if (Editbox2.value != "" && !(Editbox2.value >= -1 && Editbox2.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I2\" field.");
+         Editbox2.focus();
+         return false;
+      }
    }
-   if (theForm.TDate.value != "" && !(theForm.TDate.value >= -1 && theForm.TDate.value <= 8))
+   var Editbox3 = document.getElementById('Editbox3');
+   if (!(Editbox3.disabled || Editbox3.style.display === 'none' || Editbox3.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R1\" field.");
-      theForm.TDate.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox3.value.length != 0 && !regexp.test(Editbox3.value))
+      {
+         alert("Please enter only digit characters in the \"R2\" field.");
+         Editbox3.focus();
+         return false;
+      }
+      if (Editbox3.value != "" && !(Editbox3.value >= -1 && Editbox3.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R2\" field.");
+         Editbox3.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox2.value))
+   var Editbox4 = document.getElementById('Editbox4');
+   if (!(Editbox4.disabled || Editbox4.style.display === 'none' || Editbox4.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"I2\" field.");
-      theForm.Editbox2.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox4.value.length != 0 && !regexp.test(Editbox4.value))
+      {
+         alert("Please enter only digit characters in the \"I3\" field.");
+         Editbox4.focus();
+         return false;
+      }
+      if (Editbox4.value != "" && !(Editbox4.value >= -1 && Editbox4.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I3\" field.");
+         Editbox4.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox2.value != "" && !(theForm.Editbox2.value >= -1 && theForm.Editbox2.value <= 8))
+   var Editbox5 = document.getElementById('Editbox5');
+   if (!(Editbox5.disabled || Editbox5.style.display === 'none' || Editbox5.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I2\" field.");
-      theForm.Editbox2.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox5.value.length != 0 && !regexp.test(Editbox5.value))
+      {
+         alert("Please enter only digit characters in the \"R3\" field.");
+         Editbox5.focus();
+         return false;
+      }
+      if (Editbox5.value != "" && !(Editbox5.value >= -1 && Editbox5.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R3\" field.");
+         Editbox5.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox3.value))
+   var Editbox6 = document.getElementById('Editbox6');
+   if (!(Editbox6.disabled || Editbox6.style.display === 'none' || Editbox6.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"R2\" field.");
-      theForm.Editbox3.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox6.value.length != 0 && !regexp.test(Editbox6.value))
+      {
+         alert("Please enter only digit characters in the \"I4\" field.");
+         Editbox6.focus();
+         return false;
+      }
+      if (Editbox6.value != "" && !(Editbox6.value >= -1 && Editbox6.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I4\" field.");
+         Editbox6.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox3.value != "" && !(theForm.Editbox3.value >= -1 && theForm.Editbox3.value <= 8))
+   var Editbox7 = document.getElementById('Editbox7');
+   if (!(Editbox7.disabled || Editbox7.style.display === 'none' || Editbox7.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R2\" field.");
-      theForm.Editbox3.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox7.value.length != 0 && !regexp.test(Editbox7.value))
+      {
+         alert("Please enter only digit characters in the \"R4\" field.");
+         Editbox7.focus();
+         return false;
+      }
+      if (Editbox7.value != "" && !(Editbox7.value >= -1 && Editbox7.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R4\" field.");
+         Editbox7.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox4.value))
+   var Editbox8 = document.getElementById('Editbox8');
+   if (!(Editbox8.disabled || Editbox8.style.display === 'none' || Editbox8.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"I3\" field.");
-      theForm.Editbox4.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox8.value.length != 0 && !regexp.test(Editbox8.value))
+      {
+         alert("Please enter only digit characters in the \"I5\" field.");
+         Editbox8.focus();
+         return false;
+      }
+      if (Editbox8.value != "" && !(Editbox8.value >= -1 && Editbox8.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I5\" field.");
+         Editbox8.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox4.value != "" && !(theForm.Editbox4.value >= -1 && theForm.Editbox4.value <= 8))
+   var Editbox9 = document.getElementById('Editbox9');
+   if (!(Editbox9.disabled || Editbox9.style.display === 'none' || Editbox9.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I3\" field.");
-      theForm.Editbox4.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox9.value.length != 0 && !regexp.test(Editbox9.value))
+      {
+         alert("Please enter only digit characters in the \"R5\" field.");
+         Editbox9.focus();
+         return false;
+      }
+      if (Editbox9.value != "" && !(Editbox9.value >= -1 && Editbox9.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R5\" field.");
+         Editbox9.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox5.value))
+   var Editbox10 = document.getElementById('Editbox10');
+   if (!(Editbox10.disabled || Editbox10.style.display === 'none' || Editbox10.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"R3\" field.");
-      theForm.Editbox5.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox10.value.length != 0 && !regexp.test(Editbox10.value))
+      {
+         alert("Please enter only digit characters in the \"I6\" field.");
+         Editbox10.focus();
+         return false;
+      }
+      if (Editbox10.value != "" && !(Editbox10.value >= -1 && Editbox10.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I6\" field.");
+         Editbox10.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox5.value != "" && !(theForm.Editbox5.value >= -1 && theForm.Editbox5.value <= 8))
+   var Editbox11 = document.getElementById('Editbox11');
+   if (!(Editbox11.disabled || Editbox11.style.display === 'none' || Editbox11.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R3\" field.");
-      theForm.Editbox5.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox11.value.length != 0 && !regexp.test(Editbox11.value))
+      {
+         alert("Please enter only digit characters in the \"R6\" field.");
+         Editbox11.focus();
+         return false;
+      }
+      if (Editbox11.value != "" && !(Editbox11.value >= -1 && Editbox11.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R6\" field.");
+         Editbox11.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox6.value))
+   var Editbox12 = document.getElementById('Editbox12');
+   if (!(Editbox12.disabled || Editbox12.style.display === 'none' || Editbox12.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"I4\" field.");
-      theForm.Editbox6.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox12.value.length != 0 && !regexp.test(Editbox12.value))
+      {
+         alert("Please enter only digit characters in the \"I7\" field.");
+         Editbox12.focus();
+         return false;
+      }
+      if (Editbox12.value != "" && !(Editbox12.value >= -1 && Editbox12.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I7\" field.");
+         Editbox12.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox6.value != "" && !(theForm.Editbox6.value >= -1 && theForm.Editbox6.value <= 8))
+   var Editbox13 = document.getElementById('Editbox13');
+   if (!(Editbox13.disabled || Editbox13.style.display === 'none' || Editbox13.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I4\" field.");
-      theForm.Editbox6.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox13.value.length != 0 && !regexp.test(Editbox13.value))
+      {
+         alert("Please enter only digit characters in the \"R7\" field.");
+         Editbox13.focus();
+         return false;
+      }
+      if (Editbox13.value != "" && !(Editbox13.value >= -1 && Editbox13.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R7\" field.");
+         Editbox13.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox7.value))
+   var Editbox14 = document.getElementById('Editbox14');
+   if (!(Editbox14.disabled || Editbox14.style.display === 'none' || Editbox14.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"R4\" field.");
-      theForm.Editbox7.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox14.value.length != 0 && !regexp.test(Editbox14.value))
+      {
+         alert("Please enter only digit characters in the \"I8\" field.");
+         Editbox14.focus();
+         return false;
+      }
+      if (Editbox14.value != "" && !(Editbox14.value >= -1 && Editbox14.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I8\" field.");
+         Editbox14.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox7.value != "" && !(theForm.Editbox7.value >= -1 && theForm.Editbox7.value <= 8))
+   var Editbox15 = document.getElementById('Editbox15');
+   if (!(Editbox15.disabled || Editbox15.style.display === 'none' || Editbox15.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R4\" field.");
-      theForm.Editbox7.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox15.value.length != 0 && !regexp.test(Editbox15.value))
+      {
+         alert("Please enter only digit characters in the \"R8\" field.");
+         Editbox15.focus();
+         return false;
+      }
+      if (Editbox15.value != "" && !(Editbox15.value >= -1 && Editbox15.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R8\" field.");
+         Editbox15.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox8.value))
+   var Editbox16 = document.getElementById('Editbox16');
+   if (!(Editbox16.disabled || Editbox16.style.display === 'none' || Editbox16.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"I5\" field.");
-      theForm.Editbox8.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox16.value.length != 0 && !regexp.test(Editbox16.value))
+      {
+         alert("Please enter only digit characters in the \"I9\" field.");
+         Editbox16.focus();
+         return false;
+      }
+      if (Editbox16.value != "" && !(Editbox16.value >= -1 && Editbox16.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I9\" field.");
+         Editbox16.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox8.value != "" && !(theForm.Editbox8.value >= -1 && theForm.Editbox8.value <= 8))
+   var Editbox17 = document.getElementById('Editbox17');
+   if (!(Editbox17.disabled || Editbox17.style.display === 'none' || Editbox17.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I5\" field.");
-      theForm.Editbox8.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox17.value.length != 0 && !regexp.test(Editbox17.value))
+      {
+         alert("Please enter only digit characters in the \"R9\" field.");
+         Editbox17.focus();
+         return false;
+      }
+      if (Editbox17.value != "" && !(Editbox17.value >= -1 && Editbox17.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R9\" field.");
+         Editbox17.focus();
+         return false;
+      }
    }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox9.value))
+   var Editbox18 = document.getElementById('Editbox18');
+   if (!(Editbox18.disabled || Editbox18.style.display === 'none' || Editbox18.style.visibility === 'hidden'))
    {
-      alert("Please enter only digit characters in the \"R5\" field.");
-      theForm.Editbox9.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox18.value.length != 0 && !regexp.test(Editbox18.value))
+      {
+         alert("Please enter only digit characters in the \"I10\" field.");
+         Editbox18.focus();
+         return false;
+      }
+      if (Editbox18.value != "" && !(Editbox18.value >= -1 && Editbox18.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I10\" field.");
+         Editbox18.focus();
+         return false;
+      }
    }
-   if (theForm.Editbox9.value != "" && !(theForm.Editbox9.value >= -1 && theForm.Editbox9.value <= 8))
+   var Editbox19 = document.getElementById('Editbox19');
+   if (!(Editbox19.disabled || Editbox19.style.display === 'none' || Editbox19.style.visibility === 'hidden'))
    {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R5\" field.");
-      theForm.Editbox9.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox10.value))
-   {
-      alert("Please enter only digit characters in the \"I6\" field.");
-      theForm.Editbox10.focus();
-      return false;
-   }
-   if (theForm.Editbox10.value != "" && !(theForm.Editbox10.value >= -1 && theForm.Editbox10.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I6\" field.");
-      theForm.Editbox10.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox11.value))
-   {
-      alert("Please enter only digit characters in the \"R6\" field.");
-      theForm.Editbox11.focus();
-      return false;
-   }
-   if (theForm.Editbox11.value != "" && !(theForm.Editbox11.value >= -1 && theForm.Editbox11.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R6\" field.");
-      theForm.Editbox11.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox12.value))
-   {
-      alert("Please enter only digit characters in the \"I7\" field.");
-      theForm.Editbox12.focus();
-      return false;
-   }
-   if (theForm.Editbox12.value != "" && !(theForm.Editbox12.value >= -1 && theForm.Editbox12.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I7\" field.");
-      theForm.Editbox12.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox13.value))
-   {
-      alert("Please enter only digit characters in the \"R7\" field.");
-      theForm.Editbox13.focus();
-      return false;
-   }
-   if (theForm.Editbox13.value != "" && !(theForm.Editbox13.value >= -1 && theForm.Editbox13.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R7\" field.");
-      theForm.Editbox13.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox14.value))
-   {
-      alert("Please enter only digit characters in the \"I8\" field.");
-      theForm.Editbox14.focus();
-      return false;
-   }
-   if (theForm.Editbox14.value != "" && !(theForm.Editbox14.value >= -1 && theForm.Editbox14.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I8\" field.");
-      theForm.Editbox14.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox15.value))
-   {
-      alert("Please enter only digit characters in the \"R8\" field.");
-      theForm.Editbox15.focus();
-      return false;
-   }
-   if (theForm.Editbox15.value != "" && !(theForm.Editbox15.value >= -1 && theForm.Editbox15.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R8\" field.");
-      theForm.Editbox15.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox16.value))
-   {
-      alert("Please enter only digit characters in the \"I9\" field.");
-      theForm.Editbox16.focus();
-      return false;
-   }
-   if (theForm.Editbox16.value != "" && !(theForm.Editbox16.value >= -1 && theForm.Editbox16.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I9\" field.");
-      theForm.Editbox16.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox17.value))
-   {
-      alert("Please enter only digit characters in the \"R9\" field.");
-      theForm.Editbox17.focus();
-      return false;
-   }
-   if (theForm.Editbox17.value != "" && !(theForm.Editbox17.value >= -1 && theForm.Editbox17.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R9\" field.");
-      theForm.Editbox17.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox18.value))
-   {
-      alert("Please enter only digit characters in the \"I10\" field.");
-      theForm.Editbox18.focus();
-      return false;
-   }
-   if (theForm.Editbox18.value != "" && !(theForm.Editbox18.value >= -1 && theForm.Editbox18.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"I10\" field.");
-      theForm.Editbox18.focus();
-      return false;
-   }
-   regexp = /^[-+]?\d*\.?\d*$/;
-   if (!regexp.test(theForm.Editbox19.value))
-   {
-      alert("Please enter only digit characters in the \"R10\" field.");
-      theForm.Editbox19.focus();
-      return false;
-   }
-   if (theForm.Editbox19.value != "" && !(theForm.Editbox19.value >= -1 && theForm.Editbox19.value <= 8))
-   {
-      alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R10\" field.");
-      theForm.Editbox19.focus();
-      return false;
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (Editbox19.value.length != 0 && !regexp.test(Editbox19.value))
+      {
+         alert("Please enter only digit characters in the \"R10\" field.");
+         Editbox19.focus();
+         return false;
+      }
+      if (Editbox19.value != "" && !(Editbox19.value >= -1 && Editbox19.value <= 8))
+      {
+         alert("Please enter a value greater than or equal to \"-1\" and less than or equal to \"8\" in the \"R10\" field.");
+         Editbox19.focus();
+         return false;
+      }
    }
    return true;
 }

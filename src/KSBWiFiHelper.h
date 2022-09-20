@@ -13,10 +13,9 @@
 #ifdef ESP32
     void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info);
     void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info);
-    void  blinkled();
 #endif 
+    void  blinkled();
 
-
-
+void ScanMyWiFi(void);
 
 #endif

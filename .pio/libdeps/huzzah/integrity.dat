@@ -1,0 +1,5 @@
+vintlabs/FauxmoESP@^3.4
+https://github.com/PaulStoffregen/OneWire
+https://github.com/me-no-dev/ESPAsyncWebServer
+painlessmesh/painlessMesh@^1.5.0
+ESPAsyncTCP

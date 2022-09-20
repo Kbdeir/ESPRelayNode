@@ -130,7 +130,7 @@ void setup() {
   mqttClient.onUnsubscribe(onMqttUnsubscribe);
   mqttClient.onMessage(onMqttMessage);
   mqttClient.onPublish(onMqttPublish);
-  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
+  mqttClient.setServer("test.mosquitto.org",MQTT_PORT);//  (MQTT_HOST, MQTT_PORT);
 #if ASYNC_TCP_SSL_ENABLED
   mqttClient.setSecure(MQTT_SECURE);
   if (MQTT_SECURE) {

@@ -50,12 +50,21 @@ void connectToMqtt() {
   #ifndef DEBUG_DISABLED
   debugV("[MQTT] Connecting");
   #endif 
+  mqttClient.disconnect();
   mqttClient.setCleanSession(true);
-  mqttClient.setServer(MyConfParam.v_MQTT_BROKER, MyConfParam.v_MQTT_B_PRT);
-  Serial.print(F("[MQTT   ] * Connecting to broker at "));
+  mqttClient.setServer (MyConfParam.v_MQTT_BROKER.c_str(), MyConfParam.v_MQTT_B_PRT);
+  Serial.print(F("\n[MQTT   ] Connecting to broker at "));
   Serial.print( MyConfParam.v_MQTT_BROKER);
   Serial.print(F(" port: "));
   Serial.println( MyConfParam.v_MQTT_B_PRT);  
+
+  if (MyConfParam.v_mqttUser.c_str() != "") {
+      mqttClient.setCredentials(MyConfParam.v_mqttUser.c_str(), MyConfParam.v_mqttPass.c_str());
+      Serial.print(F("[MQTT   ] user: "));
+      Serial.print(MyConfParam.v_mqttUser);
+      Serial.print(F(" pass: "));
+      Serial.println(MyConfParam.v_mqttPass);      
+    }
   mqttClient.connect();
 }
 
@@ -153,10 +162,12 @@ void onMqttConnect(bool sessionPresent) {
           #endif
 
           #if defined (HWESP32)
+            #ifndef emonlib
             if (Inputsnsr01.fclickmode == INPUT_NORMAL) {
               mqttClient.publish( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                 digitalRead(InputPin01) == HIGH ?  ON : OFF);
-            }          
+            }     
+            #endif       
             if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
               mqttClient.publish( MyConfParam.v_InputPin02_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                 digitalRead(InputPin02) == HIGH ?  ON : OFF);
@@ -184,6 +195,7 @@ void onMqttConnect(bool sessionPresent) {
   #endif
 }
 
+
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
   Serial.println(F("[MQTT   ] * Disconnected * "));
   if (WiFi.isConnected()) {
@@ -207,11 +219,14 @@ void onMqttUnsubscribe(uint16_t packetId) {
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
 
+  String temp = String(payload).substring(0,len);
   Serial.print(F("[MQTT   ] Received"));
   Serial.print(F("  topic: "));
   Serial.print(topic);
 	Serial.print(F("  payload: "));
-  Serial.print(payload);
+  Serial.println(temp);
+
+  /*
   Serial.print(F("  qos: "));
   Serial.print(properties.qos);
   Serial.print(F("  dup: "));
@@ -221,6 +236,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Serial.print(F("  len: "));
   Serial.print(len);
   Serial.print(F("\n"));
+  */
 
   #ifndef DEBUG_DISABLED
     debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
@@ -261,7 +277,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   */
 
   if (rly) {
-    String temp = String(payload).substring(0,len);
+    // String temp = String(payload).substring(0,len);
     if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
       if (temp == ON) {
           rly->mdigitalWrite(rly->getRelayPin(),HIGH);
@@ -300,6 +316,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
         saveRelayConfig(rly->RelayConfParam);
         mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED,
             String(rly->RelayConfParam->v_ttl).c_str());
+
+           
       }
     }
   }
@@ -307,7 +325,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
 
 void onMqttPublish(uint16_t packetId) {
-  Serial.print(F("[MQTT   ] Publish ack"));
-  Serial.print(F("  packetId: "));
-  Serial.println(packetId);
+  //Serial.println(F("[MQTT   ] Publish ack"));
+  //Serial.print(F("  packetId: "));
+  //Serial.println(packetId);
 }

@@ -47,7 +47,7 @@ Schedule_timer::Schedule_timer(fnptr_a callback, uint32_t timer, uint16_t repeat
 		this->periodcallback = periodcallback;
 		enabled = false;
 		lastTime = 0;
-	  ksb_lastsecondcounter = 0;
+	  	ksb_lastsecondcounter = 0;
 		counts = 0;
 		ksb_seconds = 0;
 		periodcallback_interval = 1 ;
@@ -58,7 +58,7 @@ Schedule_timer::~Schedule_timer() {}
 
 void Schedule_timer::start() {
 	if (callback == NULL) return;
-  //if (periodcallback == NULL) return;
+  	//if (periodcallback == NULL) return;
 	if (resolution == MILLIS_) lastTime = millis();
 	else lastTime = micros();
 	enabled = true;
@@ -98,31 +98,37 @@ void Schedule_timer::update(void* p_obj) {
 
 bool Schedule_timer::tick(void* p_obj) {
 	if (!enabled)	return false;
+	if (repeat > 0) { 
+		if (repeat - counts == 0) {
+			this->stop();
+			return false;
+		}
+		}
 	if (resolution == MILLIS_) {
 		if ((millis() - lastTime) >= timer) {
 			lastTime = millis();
-			if (repeat - counts == 1) enabled = false;
+			//if (repeat - counts == 1) enabled = false;
 			counts++;
-	  	return true;
+	  		return true;
 			}
-			if ((millis() - ksb_lastsecondcounter) >= 1000*periodcallback_interval) {
+			if ((millis() - ksb_lastsecondcounter) >= 1000 * periodcallback_interval) {
 				ksb_lastsecondcounter = millis();
 				ksb_seconds++;
-	  		if (periodcallback != NULL) periodcallback(p_obj);
+	  			if (periodcallback != NULL) periodcallback(p_obj);
 			}
 		}
 	else {
 
 		if ((micros() - lastTime) >= timer) {
 			lastTime = micros();
-			if (repeat - counts == 1) enabled = false;
+			//if (repeat - counts == 1) enabled = false;
 			counts++;
 			return true;
 			}
-			if ((micros() - ksb_lastsecondcounter) >= 1000000*periodcallback_interval) {
+			if ((micros() - ksb_lastsecondcounter) >= 1000000 * periodcallback_interval) {
 				ksb_seconds++;
 				ksb_lastsecondcounter = micros();
-	  		if (periodcallback != NULL) periodcallback(p_obj);
+	  			if (periodcallback != NULL) periodcallback(p_obj);
 			}
 		}
 	return false;

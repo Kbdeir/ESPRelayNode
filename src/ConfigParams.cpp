@@ -7,24 +7,39 @@ TConfigParams MyConfParam;
 TIRMap myIRMap;
 
 String CID(){
+  String res;
   #ifdef ESP32
-    /*char buf[20];
+    /*
+    char buf[20];
     uint64_t chipid = ESP.getEfuseMac();
     ltoa(chipid,buf,20);
     String tmp = String(buf);
-    return tmp;*/
-
+    return tmp;
+    */
     uint64_t chipid = ESP.getEfuseMac();
     uint16_t chip = (uint16_t)(chipid >> 32);
-
     chip   = __builtin_bswap16(chip); 
     chipid = __builtin_bswap32((uint32_t)chipid); 
-    
     char temp[23];
     snprintf(temp, 23, "%08X%04X", (uint32_t)chipid, chip );
-    return temp;
+
+    /*
+    uint32_t chipId2 = 0;
+    for(int i=0; i<17; i=i+8) {
+      chipId2 |= ((ESP.getEfuseMac() >> (40 - i)) & 0xff) << i;
+    }
+    Serial.printf ("\n[Chip   ] >>>>>>>>>>> ESP32 Chip model = %s Rev %d\n", ESP.getChipModel(), ESP.getChipRevision());
+    Serial.printf ("[Chip   ] >>>>>>>>>>> This chip has %d cores\n", ESP.getChipCores());
+    Serial.print ("[Chip   ] >>>>>>>>>>> Chip ID: "); Serial.println(chipId2);
+    char temp2[23];
+    snprintf(temp2, 23, "%08X", chipId2 );
+    Serial.print("[Chip   ] >>>>>>>>>>> Chip ID HEX: ");
+    Serial.println(temp2);
+    */
+  return temp;
   #else
-    return String(ESP.getChipId());
+    res = String(ESP.getChipId());//  + softwareVersion;
+    return res;
   #endif
 }
 

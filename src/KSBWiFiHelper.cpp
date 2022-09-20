@@ -1,5 +1,22 @@
 #include <KSBWiFiHelper.h>
 #include <TimerClass.h>
+#include <defines.h>
+
+#ifdef ESP_MESH
+    #include <ksbMesh.h>
+#endif
+
+#ifdef ESP_NOW
+    #ifndef ESP32
+        #include <espnow.h>  
+        extern void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) ;
+    #endif
+    #ifdef ESP32
+       #include <esp_now.h> 
+       extern void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len);
+    #endif
+#endif
+
 
 extern void thingsTODO_on_WIFI_Connected();
 extern Schedule_timer Wifireconnecttimer;
@@ -8,6 +25,36 @@ extern long blinkInterval; // blinkInterval at which to blink (milliseconds)
 extern unsigned long lastMillis_2;
 extern unsigned long previousMillis;
 extern int ledState;             					// ledState used to set the LED
+
+void ScanMyWiFi(void) {
+  Serial.println("scan start");
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  // WiFi.scanNetworks will return the number of networks found
+  int n = WiFi.scanNetworks();
+  Serial.println("scan done");
+  if (n == 0) {
+      Serial.println("no networks found");
+  } else {
+    Serial.print(n);
+    Serial.println(" networks found");
+    for (int i = 0; i < n; ++i) {
+      // Print SSID and RSSI for each network found
+      Serial.print(i + 1);
+      Serial.print(": ");
+      Serial.print(WiFi.SSID(i));
+      Serial.print(" (");
+      Serial.print(WiFi.RSSI(i));
+      Serial.print(")");
+      Serial.print(WiFi.channel(i));
+      //Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
+    }
+  }
+  Serial.println("");
+  WiFi.disconnect();
+  WiFi.scanDelete();
+}
+
 
 #ifdef ESP32
 void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
@@ -19,15 +66,29 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
     blinkInterval = 1000;
     Wifireconnecttimer.stop();
     lastMillis_2 = 0;
+    
+    #ifdef ESP_NOW
+                if (esp_now_init() != ESP_OK) {
+                    Serial.println("Error initializing ESP-NOW");
+                    return;
+                }
+                    Serial.println(" >>>>>  ESP-NOW");
+                
+                // Once ESPNow is successfully Init, we will register for recv CB to
+                // get recv packer info
+                esp_now_register_recv_cb(OnDataRecv);
+    #endif  
+                
 }
 void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 {
     Serial.println("[WIFI   ] * Event: WiFi disconnected * ");
-    if (blinkInterval > 50)
-    {
+    WiFi.disconnect();
+    //if (blinkInterval > 50)
+    //{
         Wifireconnecttimer.start();
         Serial.println(F("[WIFI   ] Starting reconnection timer\n"));
-    }
+   // }
     blinkInterval = 50;
     if (digitalRead(ConfigInputPin) == LOW)
     {
@@ -51,6 +112,19 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
         blinkInterval = 1000;
         Wifireconnecttimer.stop();
         lastMillis_2 = 0; 
+
+    #ifdef ESP_NOW
+                if (esp_now_init() != 0) {
+                    Serial.println("Error initializing ESP-NOW");
+                    return;
+                }
+                    Serial.println(" >>>>>  ESP-NOW");
+                
+                // Once ESPNow is successfully Init, we will register for recv CB to
+                // get recv packer info
+                esp_now_register_recv_cb(OnDataRecv);
+    #endif  
+
     });
     WiFiEventHandler disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event)
     {

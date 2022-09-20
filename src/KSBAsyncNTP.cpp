@@ -3,8 +3,8 @@
 
 // IPAddress timeWindowsCom = IPAddress(192,168, 20, 1);
 // char timeServer[]         = "192.168.20.1";   // NTP server
-// const int NTP_PACKET_SIZE_ = 48;           // NTP timestamp is in the first 48 bytes of the message
-byte packetBuffer_[NTP_PACKET_SIZE_];         // buffer to hold incoming and outgoing packets
+// const int NTP_PACKET_SIZE_ = 48;              // NTP timestamp is in the first 48 bytes of the message
+byte packetBuffer_[NTP_PACKET_SIZE_];            // buffer to hold incoming and outgoing packets
 
 time_t epoch_t_;
 
@@ -53,7 +53,6 @@ void parsePacket(AsyncUDPPacket packet)
     Serial.print(packet.length());
     Serial.println();
     
-
     unsigned long highWord = word(packetBuffer_[40], packetBuffer_[41]);
     unsigned long lowWord = word(packetBuffer_[42], packetBuffer_[43]);
 

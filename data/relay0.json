@@ -1,0 +1,21 @@
+{
+  "ACS_Active": 0,
+  "RELAYNB": "0",
+  "STATE_PUB_TOPIC": "/home/Controller240AC42AAAF8/Coils/State/C1",
+  "ttl_PUB_TOPIC": "/home/Controller240AC42AAAF8/sts/VTTL",
+  "CURR_TTL_PUB_TOPIC": "/home/Controller240AC42AAAF8/sts/CURRVTTL",
+  "i_ttl_PUB_TOPIC": "/home/Controller240AC42AAAF8/i/TTL",
+  "ACS_AMPS": "/home/Controller240AC42AAAF8/Coils/C1/Amps",
+  "LWILL_TOPIC": "/home/Controller240AC42AAAF8/LWT",
+  "SUB_TOPIC1": "/home/Controller240AC42AAAF8/#",
+  "ttl": "0",
+  "tta": "0",
+  "Max_Current": "10",
+  "ACSmultiple": "30",
+  "ACS_Sensor_Model": "30",
+  "TemperatureValue": "0",
+  "PUB_TOPIC1": "/home/Controller240AC42AAAF8/Coils/C1",
+  "ACS_elasticity": "11"
+}
+
+
