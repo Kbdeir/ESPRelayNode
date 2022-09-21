@@ -55,9 +55,12 @@
 
 #ifdef ALEXA
 #include "fauxmoESP.h"
-#define LAMP_1 "lamp bedroom"
-#define LAMP_2 "lamp kitchen"
-fauxmoESP fauxmo;
+    // #define LAMP_1 "lamp bedroom"
+    #ifdef _LAMP_2_
+      #define LAMP_2 "lamp kitchen"
+    #endif
+  fauxmoESP fauxmo;
+  bool Alexa_initialised = false;
 #endif
 
 #ifdef INVERTERLINK
@@ -521,21 +524,16 @@ void onRelaychangeInterruptSvc(void* relaySender){
           rtemp = getrelaybypin(RelayPin);
           if (rtemp) {
           byte val = digitalRead(rtemp->getRelayPin()) == HIGH ? 1 : 0;     
-          /*       
-              if (val == 1) { 
-                fauxmo.setState(LAMP_1,true,1); 
-                fauxmo.setState(LAMP_2,true,1);               
-              } else {
-                fauxmo.setState(LAMP_1,false,1); 
-                fauxmo.setState(LAMP_2,false,1);                   
-              }
-            */
               if (val == 1) { 
                 fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(),true,1); 
-                fauxmo.setState(LAMP_2,true,1);               
+                #ifdef _LAMP_2_
+                fauxmo.setState(LAMP_2,true,1);   
+                #endif            
               } else {
                 fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(),false,1); 
-                fauxmo.setState(LAMP_2,false,1);                   
+                #ifdef _LAMP_2_
+                fauxmo.setState(LAMP_2,false,1);     
+                #endif              
               }             
           }
   #endif
@@ -1222,6 +1220,8 @@ void thingsTODO_on_WIFI_Connected() {
 
 
 #ifdef ALEXA
+if (!Alexa_initialised) {
+Alexa_initialised = true;
 Serial.println("[ALEXA  ] Starting Alexa server");
   // mySwitch.enableReceive(RF_RECEIVER);  // Receiver on interrupt 0 => that is pin #2
 
@@ -1240,7 +1240,9 @@ Serial.println("[ALEXA  ] Starting Alexa server");
 
   // Add virtual devices
   fauxmo.addDevice(relay0.getRelayConfig()->v_AlexaName.c_str());
+  #ifdef _LAMP_2_
   fauxmo.addDevice(LAMP_2);
+  #endif
 
   fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
     // Callback when a command from Alexa is received. 
@@ -1264,6 +1266,8 @@ Serial.println("[ALEXA  ] Starting Alexa server");
               }
           }
     }
+    #ifdef _LAMP_2_
+    
     if ( (strcmp(device_name, LAMP_2) == 0) ) {
       // this just sets a variable that the main loop() does something about
       Serial.println("RELAY 2 switched by Alexa");
@@ -1277,8 +1281,10 @@ Serial.println("[ALEXA  ] Starting Alexa server");
               }
           }      
     }
-  });
 
+    #endif
+  });
+}
 #endif    
 
 }

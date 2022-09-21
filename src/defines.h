@@ -14,7 +14,8 @@
 // #define SR04_SERIAL 
 // #define SolarHeaterControllerMode    // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
 // #define StepperMode
-// #define blockingTime
+//
+ #define blockingTime
 
 #define DEBUG_DISABLED
 #define HK_name_len 30
@@ -23,7 +24,9 @@
 // #define ESP_MESH_ROOT
 // #define OLED_1306
 // #define AppleHK
-#define ALEXA
+#define ALEXA 
+ #define _LAMP_2_
+
 // #define INVERTERLINK
 // #define WEBSOCKETS
 // #define _ACS712_
