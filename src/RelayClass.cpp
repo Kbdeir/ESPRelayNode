@@ -135,7 +135,7 @@ boolean Relay::loadrelayparams(uint8_t rnb) {   //){
      RelayConfParam->v_relaynb            = (json["RELAYNB"].as<String>()!="") ? json["RELAYNB"].as<uint8_t>() : 0;
      RelayConfParam->v_PUB_TOPIC1         = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String("/none");
      RelayConfParam->v_TemperatureValue   = (json["TemperatureValue"].as<String>()!="") ? json["TemperatureValue"].as<String>() : String("0");
-     RelayConfParam->v_AlexaName   = (json["AlexaName"].as<String>()!="") ? json["AlexaName"].as<String>() : String("0");
+     RelayConfParam->v_AlexaName          = (json["AlexaName"].as<String>()!="") ? json["AlexaName"].as<String>() : String("0");
      RelayConfParam->v_ttl_PUB_TOPIC      = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String("/ttlpubnone");
      RelayConfParam->v_i_ttl_PUB_TOPIC    = (json["i_ttl_PUB_TOPIC"].as<String>()!="") ? json["i_ttl_PUB_TOPIC"].as<String>() : String("/ittlnone");
      RelayConfParam->v_ACS_AMPS           = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String("/none");

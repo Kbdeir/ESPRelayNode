@@ -32,9 +32,9 @@
     #define RelayPin  25 // relay on IO25
     #define HomeKitt_PIN_SWITCH 25 // Homekit is on (Relay0 = RelayPin) pin only
 
-#ifndef emonlib
-    #define InputPin01  33 // Input1 on IO33
-#endif    
+    #ifndef emonlib
+      #define InputPin01  33 // Input1 on IO33
+    #endif    
     #define InputPin02  16 // Input2 on IO16    
     #define InputPin03  17 // Input3 on IO17
     #define InputPin04  32 // Input4 on IO32  // SET TO 21 FOR FIRST VERSION OF ESP32 BOARD, CHANGED TO 32 TO AVOID USING SDL/SDC
@@ -48,6 +48,10 @@
     #define SecondTempSensorPin InputPin02 // 16    
     #define TRIG_PIN InputPin03
     #define ECHO_PIN InputPin04
+
+    #ifdef ESP32_2RBoard
+      #define Relay1Pin 18     
+    #endif        
 #endif
 
 

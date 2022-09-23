@@ -55,10 +55,6 @@
 
 #ifdef ALEXA
 #include "fauxmoESP.h"
-    // #define LAMP_1 "lamp bedroom"
-    #ifdef _LAMP_2_
-      #define LAMP_2 "lamp kitchen"
-    #endif
   fauxmoESP fauxmo;
   bool Alexa_initialised = false;
 #endif
@@ -392,6 +388,18 @@ Relay relay0(
     relayon
   );
 
+  #ifdef ESP32_2RBoard
+  Relay relay1( 
+      Relay1Pin,
+      ticker_relay_ttl_off,
+      ticker_relay_ttl_periodic_callback,
+      ticker_ACS712_func,
+      ticker_ACS712_mqtt,
+      onRelaychangeInterruptSvc,
+      relayon
+    );
+  #endif
+
  #ifdef HWver03_4R    
   Relay relay1( 
       Relay1Pin,
@@ -520,23 +528,16 @@ void onRelaychangeInterruptSvc(void* relaySender){
   //}
 
   #ifdef ALEXA
-          Relay * rtemp = nullptr;
-          rtemp = getrelaybypin(RelayPin);
-          if (rtemp) {
-          byte val = digitalRead(rtemp->getRelayPin()) == HIGH ? 1 : 0;     
-              if (val == 1) { 
-                fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(),true,1); 
-                #ifdef _LAMP_2_
-                fauxmo.setState(LAMP_2,true,1);   
-                #endif            
-              } else {
-                fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(),false,1); 
-                #ifdef _LAMP_2_
-                fauxmo.setState(LAMP_2,false,1);     
-                #endif              
-              }             
-          }
-  #endif
+    // notify all relays status
+    Relay * rtemp = nullptr;
+    for (auto it : relays)  {
+      rtemp = static_cast<Relay *>(it);
+      if (rtemp) {
+          fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(),digitalRead(rtemp->getRelayPin()) == HIGH,1); 
+      }
+    }
+  #endif // ALEXA
+
   #ifdef AppleHK
     #ifndef ESP32
       //if (HomeKitt_PIN_SWITCH == rly->getRelayPin()) {
@@ -1220,74 +1221,59 @@ void thingsTODO_on_WIFI_Connected() {
 
 
 #ifdef ALEXA
-if (!Alexa_initialised) {
-Alexa_initialised = true;
-Serial.println("[ALEXA  ] Starting Alexa server");
-  // mySwitch.enableReceive(RF_RECEIVER);  // Receiver on interrupt 0 => that is pin #2
+  if (!Alexa_initialised) {
+    Alexa_initialised = true;
+    Serial.println("[ALEXA  ] Starting Alexa server");
+    // mySwitch.enableReceive(RF_RECEIVER);  // Receiver on interrupt 0 => that is pin #2
 
-  // By default, fauxmoESP creates it's own webserver on the defined port
-  // The TCP port must be 80 for gen3 devices (default is 1901)
-  // This has to be done before the call to enable()
-  fauxmo.createServer(true); // not needed, this is the default value
-  fauxmo.setPort(80); // This is required for gen3 devices
+    // By default, fauxmoESP creates it's own webserver on the defined port
+    // The TCP port must be 80 for gen3 devices (default is 1901)
+    // This has to be done before the call to enable()
+    fauxmo.createServer(true); // not needed, this is the default value
+    fauxmo.setPort(80); // This is required for gen3 devices
 
-  // You have to call enable(true) once you have a WiFi connection
-  // You can enable or disable the library at any moment
-  // Disabling it will prevent the devices from being discovered and switched
-  fauxmo.enable(true);
-  // You can use different ways to invoke alexa to modify the devices state:
-  // "Alexa, turn lamp two on"
+    // You have to call enable(true) once you have a WiFi connection
+    // You can enable or disable the library at any moment
+    // Disabling it will prevent the devices from being discovered and switched
+    fauxmo.enable(true);
+    // You can use different ways to invoke alexa to modify the devices state:
+    // "Alexa, turn lamp two on"
 
-  // Add virtual devices
-  fauxmo.addDevice(relay0.getRelayConfig()->v_AlexaName.c_str());
-  #ifdef _LAMP_2_
-  fauxmo.addDevice(LAMP_2);
-  #endif
+    for (auto it : relays)  {
+      Serial.printf("[MAIN] Adding relays to fauxmo");      
+      Relay * rtemp = static_cast<Relay *>(it);
+        if (rtemp) {
+           fauxmo.addDevice(rtemp->getRelayConfig()->v_AlexaName.c_str());
+        }  
+    }     
 
-  fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
-    // Callback when a command from Alexa is received. 
-    // You can use device_id or device_name to choose the element to perform an action onto (relay, LED,...)
-    // State is a boolean (ON/OFF) and value a number from 0 to 255 (if you say "set kitchen light to 50%" you will receive a 128 here).
-    // Just remember not to delay too much here, this is a callback, exit as soon as possible.
-    // If you have to do something more involved here set a flag and process it in your main loop.
-        
-    Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);
-    if ( (strcmp(device_name, relay0.getRelayConfig()->v_AlexaName.c_str()) == 0) ) {
-      // this just sets a variable that the main loop() does something about
-      Serial.println("RELAY 1 switched by Alexa");
-      //digitalWrite(RELAY_PIN_1, !digitalRead(RELAY_PIN_1));
-          Relay * rtemp = nullptr;
-          rtemp = getrelaybypin(RelayPin);
-          if (rtemp) {
-              if (state) {
-              rtemp->mdigitalWrite(RelayPin,HIGH);
-              } else {
-                  rtemp->mdigitalWrite(RelayPin,LOW);
-              }
-          }
-    }
-    #ifdef _LAMP_2_
-    
-    if ( (strcmp(device_name, LAMP_2) == 0) ) {
-      // this just sets a variable that the main loop() does something about
-      Serial.println("RELAY 2 switched by Alexa");
-          Relay * rtemp = nullptr;
-          rtemp = getrelaybypin(RelayPin);
-          if (rtemp) {
-              if (state) {
-              rtemp->mdigitalWrite(RelayPin,HIGH);
-              } else {
-                  rtemp->mdigitalWrite(RelayPin,LOW);
-              }
-          }      
-    }
-
-    #endif
-  });
-}
+    fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
+      // Callback when a command from Alexa is received. 
+      // You can use device_id or device_name to choose the element to perform an action onto (relay, LED,...)
+      // State is a boolean (ON/OFF) and value a number from 0 to 255 (if you say "set kitchen light to 50%" you will receive a 128 here).
+      // Just remember not to delay too much here, this is a callback, exit as soon as possible.
+      // If you have to do something more involved here set a flag and process it in your main loop.
+              
+      Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);
+      for (auto it : relays)  {
+        // if ( (strcmp(device_name, relay0.getRelayConfig()->v_AlexaName.c_str()) == 0) ) {      
+          Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);      
+            Relay * rtemp = static_cast<Relay *>(it);
+            if (rtemp) {
+              if ( (strcmp(device_name, rtemp->getRelayConfig()->v_AlexaName.c_str()) == 0) ) { 
+                    if (state) {
+                    rtemp->mdigitalWrite(rtemp->getRelayPin(),HIGH);
+                    } else {
+                        rtemp->mdigitalWrite(rtemp->getRelayPin(),LOW);
+                    }
+            } 
+            }  
+      } 
+    } );
+  }
 #endif    
 
-}
+} // thingsTODO_on_WIFI_Connected
 
 
 #ifdef _commented_
@@ -1496,21 +1482,34 @@ void checkIn()
   
 
 void setup() {
-
+#ifndef ESP32
 ESP.wdtDisable();
+#endif
 
 //  mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
 //  wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
 #ifdef emonlib
+  #define CurrentPin A5
+  #define VoltagePin A7
+  
+  #ifdef ESP32_2RBoard
+    #define CurrentPin A7
+    #define VoltagePin A6
+  #endif  
+
   RelayCTon.stop();  
   RelayCToff.stop();
   analogReadResolution(12);
  // adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11); //pin 34
  // adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_11); //pin 34  
   analogSetClockDiv(255);
-  emon1.voltage(A7, 382, 1);   // Voltage: input pin, calibration, phase_shift ** voltage constant = alternating mains voltage ÷ alternating voltage at ADC input pin (alternating voltage at ADC input pin = voltage at the middle point of the resistor voltage divider)
-  emon1.current(A5, 50);       // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input
+  //emon1.voltage(A7, 382, 1);   // Voltage: input pin, calibration, phase_shift ** voltage constant = alternating mains voltage ÷ alternating voltage at ADC input pin (alternating voltage at ADC input pin = voltage at the middle point of the resistor voltage divider)
+  //emon1.current(A5, 50);       // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input
+
+  emon1.voltage(VoltagePin, 382/2 , 1);   // 382 Voltage: input pin, calibration, phase_shift ** voltage constant = alternating mains voltage ÷ alternating voltage at ADC input pin (alternating voltage at ADC input pin = voltage at the middle point of the resistor voltage divider)
+  emon1.current(CurrentPin, 30);       // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input
+  
 #endif
 
     blinkInterval = 1000; 
@@ -1621,7 +1620,7 @@ ESP.wdtDisable();
         */
         #ifdef OLED_1306
               SSD_1306();
-              DSS1306_clear_text(0,0,1,"booting...");
+              DSS1306_text(0,0,1,"booting...");
         #endif       
         //    
         #ifdef ESP32
@@ -1757,7 +1756,21 @@ ESP.wdtDisable();
         relay0.attachLoopfunc(relayloopservicefunc);
         relay0.stop_ttl_timer();
         relay0.setRelayTTT_Timer_Interval(relay0.RelayConfParam->v_ttl*1000);
-   ESP.wdtFeed();
+
+        #ifdef ESP32_2RBoard
+          while (relay1.loadrelayparams(1) != true){
+            delay(2000);
+            ESP.restart();
+          };
+          relay1.attachLoopfunc(relayloopservicefunc);
+          relay1.stop_ttl_timer();
+          relay1.setRelayTTT_Timer_Interval(relay1.RelayConfParam->v_ttl*1000);
+        #endif
+
+
+        #ifndef ESP32 
+        ESP.wdtFeed();
+        #endif
         #ifdef HWver03_4R   
           while (relay1.loadrelayparams(1) != true){
             delay(2000);
@@ -1786,25 +1799,33 @@ ESP.wdtDisable();
         
 
         relays.push_back(&relay0); // order is important
+        #ifdef ESP32_2RBoard
+          relays.push_back(&relay1);
+        #endif
+
         #ifdef HWver03_4R  
         // order is important
           relays.push_back(&relay1);
           relays.push_back(&relay2);
           relays.push_back(&relay3);   
         #endif     
-ESP.wdtFeed();
+        #ifndef ESP32
+        ESP.wdtFeed();
+        #endif
         while (loadIRMapConfig(myIRMap) != SUCCESS){
           delay(2000);
           ESP.restart();
         };
-ESP.wdtFeed();
+        #ifndef ESP32
+        ESP.wdtFeed();
+        #endif
         Serial.println(F("[INFO TP] opening /tempconfig.json file"));
         if (relay0.RelayConfParam->v_TemperatureValue != "0") {
             config_read_error_t res = loadTempConfig("/tempconfig.json",PTempConfig);      
         } else {
           Serial.println(F("[INFO TP] v_TemperatureValue = 0; skiping"));
         }
-ESP.wdtFeed();
+
        #ifdef _ACS712_
        ACS_Calibrate_Start(relay0,sensor);
        #endif
@@ -1840,7 +1861,7 @@ ESP.wdtFeed();
     RelayCToff.stop();      
     RelayCTon.interval (MyConfParam.v_ToleranceOnTime * 1000);
     RelayCToff.interval(MyConfParam.v_ToleranceOffTime * 1000);  
-    emon1.current(A5, MyConfParam.v_CurrentTransformer_max_current); 
+    emon1.current(CurrentPin, MyConfParam.v_CurrentTransformer_max_current); 
   #endif
 
 }
@@ -1970,7 +1991,7 @@ void loop() {
     }
   }
 
-ESP.wdtFeed();
+
   if((timeStatus() == timeSet) && CalendarNotInitiated) {
       chronosInit();
     CalendarNotInitiated = false;
@@ -2047,6 +2068,8 @@ ESP.wdtFeed();
     secondson++;
 
     #ifdef emonlib
+    // amps = 0;
+    
       amps = emon1.calcIrms(150); // Calculate Irms only (100 is optimal)
       Serial.print ("[CT     ] Amps ");
       Serial.print (amps);
@@ -2062,14 +2085,16 @@ ESP.wdtFeed();
           new_val.f = amps;
           hap_char_update_val(hcx_temp, &new_val);
         #endif        
-/*
+
+        
+      /*
       Serial.print ("Max Allowed Current: ");
       Serial.print (MyConfParam.v_CT_MaxAllowed_current);
       Serial.print (" | off time: ");
       Serial.print (time_off);
       Serial.print (" | on time: ");
       Serial.println (time_on);            
-*/
+      */
       if (amps > MyConfParam.v_CT_MaxAllowed_current) {
         if (RelayCToff.enabled == false) {
             Serial.println("[CT     ] timer off runing - High consumption detected");
@@ -2078,22 +2103,65 @@ ESP.wdtFeed();
         }
       }
       
-      // emon1.calcVI(20,1000);                    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
-      // emon1.serialprint();            
-      // realPower       = emon1.realPower;        //extract Real Power into variable
-      // apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
-      // supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
-      // Irms            = emon1.Irms;             //extract Irms into Variable      
-      // powerFActor     = emon1.powerFactor;      //extract Power Factor into Variable
+      emon1.calcVI(20,1000);                    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
+      emon1.serialprint();            
+      realPower       = emon1.realPower;        //extract Real Power into variable
+      apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
+      supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
+      Irms            = emon1.Irms;             //extract Irms into Variable      
+      powerFActor     = emon1.powerFactor;      //extract Power Factor into Variable
 
 
       #ifdef OLED_1306
         display.clearDisplay();
-        DSS1306_clear_text(0,10,1,"current:");
-        DSS1306_clear_text(48,10,1,Irms);
-        DSS1306_clear_text(0,20,1,"voltage:");
-        DSS1306_clear_text(48,20,1,supplyVoltage);
-        display.display();  
+        display.setTextSize(1);
+        #define StartRow 18 
+        #define rect_height 30
+        #define rect_width 60
+
+        display.drawRect(0,StartRow,rect_width,rect_height, WHITE);
+        display.drawRect(rect_width + 2 ,StartRow,rect_width,rect_height, WHITE);   
+
+        display.setCursor(20,1);
+        display.println("Power Readings");
+
+
+        display.setCursor(8, StartRow + 2);
+        display.println("Current");
+        display.setTextColor(SSD1306_WHITE);
+        display.setCursor(10,StartRow + 16);       
+        display.setTextSize(1.5); 
+        display.print(String(Irms));
+        display.setTextSize(1);        
+        display.print(" A");
+
+        display.setCursor(rect_width + 10 ,StartRow + 2 );    
+        display.println("Voltage" );
+        display.setCursor(rect_width + 8,StartRow + 16 );   
+        display.setTextSize(1.5);                  
+        display.print(String(supplyVoltage));
+        display.setTextSize(1);              
+        display.setTextColor(WHITE);
+        display.println(" V");   
+
+        display.setCursor(1,54);  // col,row      
+        display.setTextColor(BLACK,WHITE);
+        display.print(WiFi.localIP().toString());
+        display.setTextColor(WHITE);
+        display.setCursor(120,54);  // col,row    
+        if ((WiFi.status() == WL_CONNECTED)) display.print("*");   
+        if ((WiFi.status() != WL_CONNECTED)) display.print("x");  
+        display.setCursor(110,54);  // col,row   
+        if (mqttClient.connected()) display.print("M");   
+        if (!mqttClient.connected()) display.print("m");          
+
+/*
+        DSS1306_text(0,10,1,"Current: ");
+        DSS1306_text(48,10,1,String(Irms));
+        DSS1306_text(0,20,1,"Voltage: ");
+        DSS1306_text(48,20,1,String(supplyVoltage));
+        DSS1306_text(0, 50,1, WiFi.localIP().toString()); 
+        */       
       #endif
     #endif
 

@@ -90,10 +90,10 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_IN5_INPUTMODE       =  json["I5MODE"].as<uint8_t>();
   ConfParam.v_IN6_INPUTMODE       =  json["I6MODE"].as<uint8_t>();
 
-  #ifndef HWESP32
+  //#ifndef HWESP32
     ConfParam.v_InputPin12_STATE_PUB_TOPIC = (json["I12_STS_PTP"].as<String>()!="") ? json["I12_STS_PTP"].as<String>() : String(F("/none"));
     ConfParam.v_InputPin14_STATE_PUB_TOPIC = (json["I14_STS_PTP"].as<String>()!="") ? json["I14_STS_PTP"].as<String>() : String(F("/none"));
-  #endif  
+  //#endif  
   #ifdef HWESP32
   //fixit
     ConfParam.v_InputPin01_STATE_PUB_TOPIC = ConfParam.v_InputPin12_STATE_PUB_TOPIC;
@@ -530,16 +530,16 @@ bool saveRelayDefaultConfig(uint8_t rnb){
  
     json[F("RELAYNB")]=rnb;
     json[F("PhyLoc")]="NA";
-    json[F("PUB_TOPIC1")]= "/home/Controller" + CID() + "/Coils/C1";
-    json[F("STATE_PUB_TOPIC")]="/home/Controller" + CID() + "/Coils/State/C1";
+    json[F("PUB_TOPIC1")]= "/home/Controller" + CID() + "/Coils/C" + String(rnb) ; //1";
+    json[F("STATE_PUB_TOPIC")]="/home/Controller" + CID() + "/Coils/State/C" + String(rnb) ; //1";
 
     json[F("TemperatureValue")]="0";
     json[F("ACS_Sensor_Model")] = "30";
     json[F("ttl")] = "0";
-    json[F("ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/VTTL";
-    json[F("i_ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/i/TTL";
-    json[F("ACS_AMPS")]="/home/Controller" + CID() + "/Coils/C1/Amps";
-    json[F("CURR_TTL_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/CURRVTTL";
+    json[F("ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/VTTL" + String(rnb) ; //1";;
+    json[F("i_ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/i/TTL" + String(rnb) ; //1";;
+    json[F("ACS_AMPS")]="/home/Controller" + CID() + "/Coils/C1/Amps" + String(rnb) ; //1";;
+    json[F("CURR_TTL_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/CURRVTTL" + String(rnb) ; //1";;
 
   //  json[F("I0MODE")]="0";
   //  json[F("I1MODE")]="0";
@@ -548,7 +548,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
     json[F("tta")]="0";
     json[F("ACS_elasticity")]="0";    
     json[F("Max_Current")]="10";
-    json[F("LWILL_TOPIC")]="/home/Controller" + CID() + "/LWT";
+    json[F("LWILL_TOPIC")]="/home/Controller" + CID() + "/LWT" + String(rnb) ; //1";;
     json[F("SUB_TOPIC1")]="/home/Controller" + CID() +  "/#";
     json[F("ACS_Active")]="0";
 
@@ -611,6 +611,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
   return true;
 
 }
+
 
 
 

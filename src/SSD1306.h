@@ -272,7 +272,7 @@ void testscrolltext(void) {
   delay(500);
 }
 
-void DSS1306_clear_text(uint16_t _col, uint16_t _row ,uint8_t _size, String st) {
+void DSS1306_text(uint16_t _col, uint16_t _row ,uint8_t _size, String st) {
   // display.clearDisplay();
   display.setTextSize(_size); // Draw 2X-scale text
   display.setTextColor(WHITE);

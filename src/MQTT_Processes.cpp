@@ -135,6 +135,13 @@ void onMqttConnect(bool sessionPresent) {
           }
           #endif
 
+          #ifdef ESP32_2RBoard 
+            if (Inputsnsr02.fclickmode == INPUT_NORMAL) { 
+              mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+                digitalRead(InputPin02) == HIGH ?  ON : OFF);
+            }         
+          #endif   
+
           #if defined (HWver03_4R)
             if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
               mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
