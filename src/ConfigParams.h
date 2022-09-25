@@ -32,7 +32,7 @@
     #define RelayPin  25 // relay on IO25
     #define HomeKitt_PIN_SWITCH 25 // Homekit is on (Relay0 = RelayPin) pin only
 
-    #ifndef emonlib
+    #ifndef _emonlib_
       #define InputPin01  33 // Input1 on IO33
     #endif    
     #define InputPin02  16 // Input2 on IO16    
@@ -42,7 +42,7 @@
     #define InputPin06  27 // Input6 on IO27  
 
     #define ConfigInputPin      04 // configuration pin on IO4
-    #ifndef emonlib
+    #ifndef _emonlib_
     #define TempSensorPin       InputPin01 // 33
     #endif
     #define SecondTempSensorPin InputPin02 // 16    

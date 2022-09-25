@@ -1,7 +1,7 @@
-// public time server 129.6.15.28
+/// public time server 129.6.15.28
 // #define USEPREF n
-// V 1.0
-// ESP 8266 and ESP32 arduino libraries and examples : https://github.com/espressif/arduino-esp32/tree/master/libraries
+// SW V 10.0 @ 25/09/2022
+
 
 #include <defines.h>
 
@@ -69,7 +69,7 @@
 #include <SimpleTimer.h>
 
 
-#ifdef emonlib
+#ifdef _emonlib_
 #include "EmonLib.h"             // Include Emon Library
   EnergyMonitor emon1;           // Create an instance  
   float realPower;
@@ -80,6 +80,11 @@
   double amps = 0;
   uint32_t time_on = 10;
   uint32_t time_off = 10;   
+  float apparentPower_2;
+  unsigned long lwhtime = 0; //Last watt hour time
+  float wh = 0.0;  //Stores watt hour data  
+  #define POWER_FACTOR 0.9	//for calculate kW
+  float MTD_kwh, YTD_kwh = 0;
 #endif  
 
 #ifdef OLED_1306
@@ -301,7 +306,7 @@ float MCelcius;
 float MCelcius2;
 
 #if defined (HWver02)  || defined (HWver03) || defined (HWESP32)
-#ifndef emonlib
+#ifndef _emonlib_
   static TempSensor tempsensor(TempSensorPin);
 #endif  
   static TempSensor TempSensorSecond(SecondTempSensorPin);
@@ -723,7 +728,7 @@ Schedule_timer Wifireconnecttimer(tiker_WIFI_CONNECT_func,10000,0,MILLIS_); /// 
 
 
 
-#ifdef emonlib
+#ifdef _emonlib_
 extern Schedule_timer  RelayCTon;
 extern Schedule_timer  RelayCToff;
 
@@ -1132,7 +1137,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
   #endif
 
   #ifdef HWESP32
-  #ifndef emonlib
+  #ifndef _emonlib_
   InputSensor Inputsnsr01(InputPin01,process_Input,INPUT_NONE);
   #endif
   InputSensor Inputsnsr02(InputPin02,process_Input,INPUT_NONE);     
@@ -1384,7 +1389,7 @@ void setupInputs(){
   #endif
 
   #ifdef HWESP32
-  #ifndef emonlib
+  #ifndef _emonlib_
   Inputsnsr01.initialize(InputPin01,process_Input,INPUT_NONE);
   Inputsnsr01.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr01.onInputClick_RelayServiceRoutine = buttonclick;
@@ -1489,7 +1494,7 @@ ESP.wdtDisable();
 //  mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
 //  wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
-#ifdef emonlib
+#ifdef _emonlib_
   #define CurrentPin A5
   #define VoltagePin A7
   
@@ -1498,16 +1503,18 @@ ESP.wdtDisable();
     #define VoltagePin A6
   #endif  
 
+  analogReadResolution(12);
+  adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11); //pin 34
+  adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_11); //pin 34   
+
   RelayCTon.stop();  
   RelayCToff.stop();
-  analogReadResolution(12);
- // adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11); //pin 34
- // adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_11); //pin 34  
-  analogSetClockDiv(255);
+
+  // analogSetClockDiv(255);
   //emon1.voltage(A7, 382, 1);   // Voltage: input pin, calibration, phase_shift ** voltage constant = alternating mains voltage ÷ alternating voltage at ADC input pin (alternating voltage at ADC input pin = voltage at the middle point of the resistor voltage divider)
   //emon1.current(A5, 50);       // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input
 
-  emon1.voltage(VoltagePin, 382/2 , 1);   // 382 Voltage: input pin, calibration, phase_shift ** voltage constant = alternating mains voltage ÷ alternating voltage at ADC input pin (alternating voltage at ADC input pin = voltage at the middle point of the resistor voltage divider)
+  emon1.voltage(VoltagePin, 382/2 , 1.7);   // 382 Voltage: input pin, calibration, phase_shift ** voltage constant = alternating mains voltage ÷ alternating voltage at ADC input pin (alternating voltage at ADC input pin = voltage at the middle point of the resistor voltage divider)
   emon1.current(CurrentPin, 30);       // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input
   
 #endif
@@ -1579,7 +1586,7 @@ ESP.wdtDisable();
         pinMode ( InputPin02, INPUT_PULLUP );
         #endif
         #ifdef HWESP32
-        #ifndef emonlib
+        #ifndef _emonlib_
         pinMode ( InputPin01, INPUT_PULLUP );
         #endif
         pinMode ( InputPin02, INPUT_PULLUP );
@@ -1656,7 +1663,7 @@ ESP.wdtDisable();
         WiFi.setSleep(WIFI_PS_NONE);
             
         if (digitalRead(ConfigInputPin) == LOW){
-          Serial.print(F("\n[WIFI   ] Sarting WIFI in AP mode \n"));
+          Serial.print(F("\n[WIFI   ] >>>>>>>>>>>>>>>>>>>>> Sarting WIFI in AP mode \n"));
           WiFi.mode(WIFI_AP_STA);
         }
 
@@ -1735,7 +1742,7 @@ ESP.wdtDisable();
         #endif       
 
         #ifdef HWESP32 // order is important
-        #ifndef emonlib
+        #ifndef _emonlib_
         inputs.push_back(&Inputsnsr01); 
         #endif
         inputs.push_back(&Inputsnsr02);      
@@ -1856,7 +1863,7 @@ ESP.wdtDisable();
    beginSerialSR04();
   #endif
 
-  #ifdef emonlib
+  #ifdef _emonlib_
     RelayCTon.stop();
     RelayCToff.stop();      
     RelayCTon.interval (MyConfParam.v_ToleranceOnTime * 1000);
@@ -1927,7 +1934,7 @@ void loop() {
 
   blinkled();
 
-    #ifdef emonlib
+    #ifdef _emonlib_
       RelayCTon.update(nullptr);
       RelayCToff.update(nullptr);
     #endif
@@ -1971,7 +1978,7 @@ void loop() {
     #endif
 
     #ifdef HWESP32
-    #ifndef emonlib
+    #ifndef _emonlib_
       Inputsnsr01.watch();
     #endif  
       Inputsnsr02.watch();     
@@ -2067,13 +2074,11 @@ void loop() {
     lastMillis = millis();
     secondson++;
 
-    #ifdef emonlib
-    // amps = 0;
-    
-      amps = emon1.calcIrms(150); // Calculate Irms only (100 is optimal)
-      Serial.print ("[CT     ] Amps ");
+    #ifdef _emonlib_  
+      amps = emon1.calcIrms(150); // Calculate Irms only (150 is optimal)
+      Serial.print (F("[CT     ] Amps "));
       Serial.print (amps);
-      Serial.print (" | offsetI  ");
+      Serial.print (F(" | offsetI  "));
       Serial.println (emon1.offsetI);
       char resx[8];
       dtostrf(amps, 6, 2, resx); // Leave room for too large numbers!   
@@ -2085,8 +2090,7 @@ void loop() {
           new_val.f = amps;
           hap_char_update_val(hcx_temp, &new_val);
         #endif        
-
-        
+     
       /*
       Serial.print ("Max Allowed Current: ");
       Serial.print (MyConfParam.v_CT_MaxAllowed_current);
@@ -2095,39 +2099,61 @@ void loop() {
       Serial.print (" | on time: ");
       Serial.println (time_on);            
       */
+     
       if (amps > MyConfParam.v_CT_MaxAllowed_current) {
         if (RelayCToff.enabled == false) {
-            Serial.println("[CT     ] timer off runing - High consumption detected");
+            Serial.println(F("[CT     ] timer off runing - High consumption detected"));
             RelayCToff.start(); 
             // RelayCTon.stop();
         }
       }
       
-      emon1.calcVI(20,1000);                    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
+      emon1.calcVI(20,500);                    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
+      Serial.print(F("[CT     ]"));
       emon1.serialprint();            
       realPower       = emon1.realPower;        //extract Real Power into variable
       apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
+      apparentPower_2 = amps * emon1.Vrms;
       supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
-      Irms            = emon1.Irms;             //extract Irms into Variable      
+      Irms            = amps ; // emon1.Irms;             //extract Irms into Variable      
       powerFActor     = emon1.powerFactor;      //extract Power Factor into Variable
 
+      // wh += (amps*(millis()-lwhtime)*POWER_FACTOR*supplyVoltage)/3600000.0; //3600000 convert to float
+      wh += (amps*(millis()-lwhtime)*abs(emon1.powerFactor)*supplyVoltage)/3600000.0; //3600000 convert to float
+      lwhtime = millis();  
+      MTD_kwh = wh;
+      YTD_kwh = wh;
+    
 
       #ifdef OLED_1306
         display.clearDisplay();
         display.setTextSize(1);
-        #define StartRow 18 
+        #define StartRow 22 
         #define rect_height 30
         #define rect_width 60
 
         display.drawRect(0,StartRow,rect_width,rect_height, WHITE);
         display.drawRect(rect_width + 2 ,StartRow,rect_width,rect_height, WHITE);   
 
-        display.setCursor(20,1);
-        display.println("Power Readings");
+        display.setCursor(1,1);
+        // display.println("Power Readings");
+        display.print(String(apparentPower_2) + " w");
+        display.setCursor(60,1);        
+        display.print(String(wh/1000) + " KWh");        
 
+        display.setCursor(1,12);        
+        display.print(String(MTD_kwh/1000) + " MTD");      
+        if ((Chronos::DateTime::now().day() == 1) && (Chronos::DateTime::now().hour() == 1) && 
+            (Chronos::DateTime::now().minute() == 1) && (Chronos::DateTime::now().second() == 1)) MTD_kwh = 0; 
+
+        display.setCursor(60,12);        
+        display.print(String(YTD_kwh/1000) + " YTD");       
+        if ((Chronos::DateTime::now().day() == 1) && (Chronos::DateTime::now().hour() == 1) && 
+            (Chronos::DateTime::now().minute() == 1) && (Chronos::DateTime::now().second() == 1) && 
+            (Chronos::DateTime::now().month() == 1) ) YTD_kwh = 0;                          
 
         display.setCursor(8, StartRow + 2);
-        display.println("Current");
+        display.println(F("Current"));
         display.setTextColor(SSD1306_WHITE);
         display.setCursor(10,StartRow + 16);       
         display.setTextSize(1.5); 
@@ -2136,7 +2162,7 @@ void loop() {
         display.print(" A");
 
         display.setCursor(rect_width + 10 ,StartRow + 2 );    
-        display.println("Voltage" );
+        display.println(F("Voltage"));
         display.setCursor(rect_width + 8,StartRow + 16 );   
         display.setTextSize(1.5);                  
         display.print(String(supplyVoltage));
@@ -2154,14 +2180,6 @@ void loop() {
         display.setCursor(110,54);  // col,row   
         if (mqttClient.connected()) display.print("M");   
         if (!mqttClient.connected()) display.print("m");          
-
-/*
-        DSS1306_text(0,10,1,"Current: ");
-        DSS1306_text(48,10,1,String(Irms));
-        DSS1306_text(0,20,1,"Voltage: ");
-        DSS1306_text(48,20,1,String(supplyVoltage));
-        DSS1306_text(0, 50,1, WiFi.localIP().toString()); 
-        */       
       #endif
     #endif
 
@@ -2261,7 +2279,7 @@ void loop() {
   #if defined (HWver02)  || defined (HWver03) || defined (HWESP32)
   #ifndef SR04 // have to stop it because it uses the same pins as the temp sensors
   if (relay0.RelayConfParam->v_TemperatureValue != "0") {
-    #ifndef emonlib
+    #ifndef _emonlib_
     if (millis() - lastMillis5000 > 5000) {
     //  pinMode(TempSensorPin,  INPUT_PULLUP );  
     //  pinMode(SecondTempSensorPin,  INPUT_PULLUP );        

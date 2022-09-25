@@ -169,7 +169,7 @@ void onMqttConnect(bool sessionPresent) {
           #endif
 
           #if defined (HWESP32)
-            #ifndef emonlib
+            #ifndef _emonlib_
             if (Inputsnsr01.fclickmode == INPUT_NORMAL) {
               mqttClient.publish( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                 digitalRead(InputPin01) == HIGH ?  ON : OFF);

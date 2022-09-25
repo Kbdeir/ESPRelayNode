@@ -6,6 +6,7 @@
     "files.associations": {
         "string_view": "cpp",
         "regex": "cpp",
-        "defines.h": "c"
+        "defines.h": "c",
+        "random": "cpp"
     }
 }
