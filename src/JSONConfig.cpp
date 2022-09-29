@@ -10,7 +10,7 @@
 const char* filename      = "/config.json";
 const char* IRMapfilename = "/IRMAP.json";
 #ifndef ESP32
-#define buffer_size_2  1600 // 2048
+#define buffer_size_2  1800 // 2048
 #endif
 #ifdef ESP32
 #define buffer_size_2  2400

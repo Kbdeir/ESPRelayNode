@@ -1,6 +1,7 @@
 #ifndef _CTPROCESSOR_
 #define _CTPROCESSOR_
 
+#ifdef ESP32
 #include "Arduino.h"
 #include "EmonLib.h"      
 
@@ -46,5 +47,6 @@ class CTPROCESSOR
   private:
 
 };
+#endif
 
 #endif
