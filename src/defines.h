@@ -11,6 +11,7 @@
  //#define ESP32_4RBoard
  #define OLED_1306                    // OLED only available on ESP32
  #define _emonlib_  // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
+
 #endif
 
 // select feature type
@@ -28,7 +29,7 @@
 // #define ESP_MESH_ROOT
 
 // #define AppleHK
-#define ALEXA 
+ #define ALEXA 
 
 // #define INVERTERLINK
 // #define WEBSOCKETS

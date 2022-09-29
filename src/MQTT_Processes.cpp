@@ -20,20 +20,27 @@ extern String APssid;
 
 
 #ifndef StepperMode
-#ifndef HWESP32
-extern InputSensor Inputsnsr14;
-extern InputSensor Inputsnsr13;
-extern InputSensor Inputsnsr12;
-extern InputSensor Inputsnsr02;
-#endif
-#ifdef HWESP32
-extern InputSensor Inputsnsr01;
-extern InputSensor Inputsnsr02;
-extern InputSensor Inputsnsr03;
-extern InputSensor Inputsnsr04;
-extern InputSensor Inputsnsr05;
-extern InputSensor Inputsnsr06;
-#endif
+  #ifndef HWESP32
+  extern InputSensor Inputsnsr14;
+  extern InputSensor Inputsnsr13;
+  extern InputSensor Inputsnsr12;
+  extern InputSensor Inputsnsr02;
+  #endif
+
+  #ifdef HWESP32
+  #ifndef _emonlib_
+  extern InputSensor Inputsnsr01;
+  #endif
+  #ifdef ESP32_2RBoard
+  extern InputSensor Inputsnsr01;
+  #endif  
+
+  extern InputSensor Inputsnsr02;
+  extern InputSensor Inputsnsr03;
+  extern InputSensor Inputsnsr04;
+  extern InputSensor Inputsnsr05;
+  extern InputSensor Inputsnsr06;
+  #endif
 #endif 
 
 
@@ -136,10 +143,12 @@ void onMqttConnect(bool sessionPresent) {
           #endif
 
           #ifdef ESP32_2RBoard 
+          
             if (Inputsnsr02.fclickmode == INPUT_NORMAL) { 
               mqttClient.publish( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                 digitalRead(InputPin02) == HIGH ?  ON : OFF);
             }         
+            
           #endif   
 
           #if defined (HWver03_4R)
@@ -175,6 +184,16 @@ void onMqttConnect(bool sessionPresent) {
                 digitalRead(InputPin01) == HIGH ?  ON : OFF);
             }     
             #endif       
+            
+            #ifdef ESP32_2RBoard
+            
+            if (Inputsnsr01.fclickmode == INPUT_NORMAL) {
+              mqttClient.publish( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
+                digitalRead(InputPin01) == HIGH ?  ON : OFF);
+            }    
+            
+            #endif
+
             if (Inputsnsr02.fclickmode == INPUT_NORMAL) {
               mqttClient.publish( MyConfParam.v_InputPin02_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                 digitalRead(InputPin02) == HIGH ?  ON : OFF);

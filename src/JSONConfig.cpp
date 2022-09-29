@@ -9,7 +9,12 @@
 
 const char* filename      = "/config.json";
 const char* IRMapfilename = "/IRMAP.json";
-#define buffer_size_2  2048
+#ifndef ESP32
+#define buffer_size_2  1600 // 2048
+#endif
+#ifdef ESP32
+#define buffer_size_2  2400
+#endif
 #define buffer_size_IR  1000
 
 extern void applyIRMap(int8_t Inpn, int8_t rlyn);
@@ -123,7 +128,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_ToleranceOffTime               = (json["ToleranceOffTime"].as<String>()!="") ? json["ToleranceOffTime"].as<uint16_t>() : 10;
   ConfParam.v_ToleranceOnTime                = (json["ToleranceOnTime"].as<String>()!="") ? json["ToleranceOnTime"].as<uint16_t>() : 30;  
   ConfParam.v_CT_MaxAllowed_current          = (json["CT_MaxAllowed_current"].as<String>()!="") ? json["CT_MaxAllowed_current"].as<uint16_t>() : 30;  
-
+  ConfParam.v_CT_adjustment                  = (json["CT_adjustment"].as<String>()!="") ? json["CT_adjustment"].as<float_t>() : 10;
   configFile.close();
 
   #ifdef INVERTERLINK
@@ -215,6 +220,7 @@ bool saveConfig(TConfigParams &ConfParam){
     json[F("CurrentTransformerTopic")]        = ConfParam.v_CurrentTransformerTopic;        
     json[F("ToleranceOnTime")]                = ConfParam.v_ToleranceOnTime; 
     json[F("ToleranceOffTime")]               = ConfParam.v_ToleranceOffTime;        
+    json[F("CT_adjustment")]                  = ConfParam.v_CT_adjustment;            
     json[F("CT_MaxAllowed_current")]          = ConfParam.v_CT_MaxAllowed_current;
 
     if (serializeJsonPretty(json, configFile) == 0) {
@@ -286,19 +292,7 @@ bool saveDefaultConfig(){
   json[F("MQTT_Active")]=0;
   json[F("MQTT_BROKER")]="192.168.1.1";
   json[F("MQTT_B_PRT")]=1883;
-  json[F("PUB_TOPIC1")]="/home/Controller" + CID() + "/Coils/C1" ;
-  json[F("STATE_PUB_TOPIC")]="/home/Controller" + CID() + "/Coils/State/C1";
-  json[F("ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/VTTL";
-  json[F("i_ttl_PUB_TOPIC")]="/home/Controller" + CID() + "/i/TTL";
-  json[F("CURR_TTL_PUB_TOPIC")]="/home/Controller" + CID() + "/sts/CURRVTTL";
-  json[F("")]="/home/Controller" + CID() + "/LWT";
-  json[F("SUB_TOPIC1")]= "/home/Controller" + CID() +  "/#";
-  json[F("ACS_AMPS")]="/home/Controller" + CID() + "/Coils/C1/Amps";
-  json[F("ttl")]=0;
-  json[F("tta")]=0;
-  json[F("ACS_Active")]=0;
-  json[F("ACS_Sensor_Model")] = "30";
-  json[F("Max_Current")]=10;
+
   json[F("TOGGLE_BTN_PUB_TOPIC")]="/home/Controller" + CID() + "/INS/sts/IN0" ;
   
   #ifndef HWESP32
@@ -308,24 +302,24 @@ bool saveDefaultConfig(){
   json[F("I1MODE")]=2;
   json[F("I2MODE")]=2;  
   #endif
-  #ifdef HWESP32
-  
-  json[F("I12_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
-  json[F("I14_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";  
-  json[F("I01_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
-  json[F("I02_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";
-  json[F("I03_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN3";
-  json[F("I04_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN4";  
-  json[F("I05_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN5";
-  json[F("I06_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN6";  
-  json[F("I0MODE")]=2;
-  json[F("I1MODE")]=2;
-  json[F("I2MODE")]=2;  
-  json[F("I3MODE")]=2;
-  json[F("I4MODE")]=2;
-  json[F("I5MODE")]=2;      
-  json[F("I6MODE")]=2;      
-  #endif 
+
+ 
+    json[F("I12_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
+    json[F("I14_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";  
+    json[F("I01_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN1";
+    json[F("I02_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN2";
+    json[F("I03_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN3";
+    json[F("I04_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN4";  
+    json[F("I05_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN5";
+    json[F("I06_STS_PTP")]="/home/Controller" + CID() + "/INS/sts/IN6";  
+    json[F("I0MODE")]=2;
+    json[F("I1MODE")]=2;
+    json[F("I2MODE")]=2;  
+    json[F("I3MODE")]=2;
+    json[F("I4MODE")]=2;
+    json[F("I5MODE")]=2;      
+    json[F("I6MODE")]=2;      
+
 
   json[F("Sonar_distance")]=0;
   json[F("Sonar_distance_max")]=50; 
@@ -339,23 +333,17 @@ bool saveDefaultConfig(){
   json[F("ToleranceOffTime")]               = 10; 
   json[F("ToleranceOnTime")]                = 30;
   json[F("CT_MaxAllowed_current")]          = 30;      
-  json[F("CurrentTransformerTopic")]        = "/home/Controller" + CID() + "/CT";          
+  json[F("CurrentTransformerTopic")]        = "/home/Controller" + CID() + "/CT";   
+  json[F("CT_adjustment")]                  = 10;        
 
-#ifndef ESP32
-  ESP.wdtFeed();
-#endif  
+  //SPIFFS.remove("/config.json");
 
-  SPIFFS.remove("/config.json");
 
   File configFile = SPIFFS.open("/config.json", "w");
   if (!configFile) {
     Serial.println(F("\n[INFO   ] Failed to write default config file"));
     return false;
   }
-
-#ifndef ESP32
-  ESP.wdtFeed();
-#endif  
 
   if (serializeJsonPretty(json, configFile) == 0) {
     Serial.println(F("[INFO   ] Failed to write to file"));
@@ -364,6 +352,20 @@ bool saveDefaultConfig(){
   }
   configFile.println("\n\n");
   configFile.close();
+
+  Serial.println (F("[INFO   ] Printing out default settings"));
+  File file2 = SPIFFS.open("/config.json","r");
+  if(!file2){
+      Serial.println("Failed to open file for reading");
+      return false;
+  }  
+
+  while(file2.available()){
+      Serial.write(file2.read());
+  }
+
+//  delay(2000);
+//  ESP.restart();
 
   return true;
 }
@@ -665,3 +667,89 @@ bool saveRelayConfig(Trelayconf * RConfParam){
 
   return true;
   }
+
+
+
+bool saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
+  StaticJsonDocument<200> json;
+
+    json[F("KWh")]=String(KWh);
+    json[F("MTD_KWh")]=String(MTD_KWh);
+    json[F("YTD_KWh")]=String(YTD_KWh);
+
+    // SPIFFS.remove("/AccumulatedPower.json");
+    File configFile = SPIFFS.open("/AccumulatedPower.json", "w");
+    if (!configFile) {
+      Serial.println(F("\n[INFO   ] Failed to write relay Power file"));
+      return false;
+    }
+
+  if (serializeJsonPretty(json, configFile) == 0) {
+    Serial.println(F("[INFO   ] Failed to write Power values to file"));
+    configFile.close();
+    return false;        
+  }
+
+  // configFile.println("\n\n");
+  /*StaticJsonDocument<64> dummy;
+  dummy["end"]="0";
+  if (serializeJsonPretty(dummy, configFile) == 0) {
+    Serial.println(F("Failed to write to file"));
+  }*/
+  configFile.close();
+
+  return true;
+  }
+
+
+
+
+bool loadCTReadings(float &KWh,  float &MTD_KWh, float &YTD_KWh) {
+Serial.println(F("[INFO   ] loading SPIFFS"));
+  if(SPIFFS.begin())
+  {
+    Serial.println(F("[INFO   ] SPIFFS Initialize....ok"));
+  }
+  else
+  {
+    Serial.println(F("[INFO   ] SPIFFS Initialization...failed"));
+  }
+
+  Serial.println(F("[INFO   ] Opening config.json"));
+  if (! SPIFFS.exists("/AccumulatedPower.json")) {
+    Serial.println(F("[INFO   ] AccumulatedPower file does not exist!"));
+    KWh      =  0;
+    MTD_KWh  =  0;
+    YTD_KWh  =  0;
+    return false;
+  }
+
+  Serial.println(F("[INFO   ] Starting config.json parsing"));
+  File configFile = SPIFFS.open("/AccumulatedPower.json", "r");
+  if (!configFile) {
+    Serial.println(F("[INFO   ] Failed to open AccumulatedPower.json file"));
+    KWh      =  0;
+    MTD_KWh  =  0;
+    YTD_KWh  =  0;
+    return false;
+  }
+
+  StaticJsonDocument<200> json;
+
+  // Deserialize the JSON document
+  DeserializationError error = deserializeJson(json, configFile);
+  if (error) {
+    Serial.println(F("[INFO   ] Failed to read AccumulatedPower.json file, using default configuration"));
+    KWh      =  0;
+    MTD_KWh  =  0;
+    YTD_KWh  =  0;
+    return false;    
+  }
+
+  KWh      = (json["KWh"].as<String>()!="")     ? json["KWh"].as<float>() : 0;
+  MTD_KWh  = (json["MTD_KWh"].as<String>()!="") ? json["MTD_KWh"].as<float>() : 0;
+  YTD_KWh  = (json["YTD_KWh"].as<String>()!="") ? json["YTD_KWh"].as<float>() : 0;
+
+  return true;
+}
+

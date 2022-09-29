@@ -203,6 +203,7 @@ String processor(const String& var)
   if(var == F( "calibration" ))  return String( MyConfParam.v_calibration);    
   if(var == F( "CurrentTransformerTopic" ))  return String( MyConfParam.v_CurrentTransformerTopic);   
   if(var == F( "ToleranceOffTime" ))  return String( MyConfParam.v_ToleranceOffTime);   
+  if(var == F( "CT_adjustment" ))  return String( MyConfParam.v_CT_adjustment);     
   if(var == F( "ToleranceOnTime" ))  return String( MyConfParam.v_ToleranceOnTime);   
   if(var == F( "CT_MaxAllowed_current" ))  return String( MyConfParam.v_CT_MaxAllowed_current);               
 

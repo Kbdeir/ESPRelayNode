@@ -346,7 +346,7 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h) {
 
 void SSD_1306() {
 
-  #ifdef OLED_1306
+#ifdef OLED_1306
   Serial.begin(115200);
   Serial.println(F("SSD1306 allocation starting"));
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
@@ -355,64 +355,10 @@ void SSD_1306() {
     for(;;); // Don't proceed, loop forever
   }
 
-  display.setTextSize(1); // Draw 2X-scale text
+  display.setTextSize(1); 
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
-  
-
-  // Show initial display buffer contents on the screen --
-  // the library initializes this with an Adafruit splash screen.
-  //display.display();
-  //delay(500); // Pause for 2 seconds
-
-  // Clear the buffer
   display.clearDisplay();
-
-  // Draw a single pixel in white
-  //display.drawPixel(10, 10, WHITE);
-
-  // Show the display buffer on the screen. You MUST call display() after
-  // drawing commands to make them visible on screen!
-  //display.display();
-  //delay(500);
-  // display.display() is NOT necessary after every single drawing command,
-  // unless that's what you want...rather, you can batch up a bunch of
-  // drawing operations and then update the screen all at once by calling
-  // display.display(). These examples demonstrate both approaches...
-
- // testdrawline();      // Draw many lines
-
- // testdrawrect();      // Draw rectangles (outlines)
-
-//  testfillrect();      // Draw rectangles (filled)
-
-//  testdrawcircle();    // Draw circles (outlines)
-
- // testfillcircle();    // Draw circles (filled)
-
-//  testdrawroundrect(); // Draw rounded rectangles (outlines)
-
-//  testfillroundrect(); // Draw rounded rectangles (filled)
-
-//  testdrawtriangle();  // Draw triangles (outlines)
-
-//  testfilltriangle();  // Draw triangles (filled)
-
-//  testdrawchar();      // Draw characters of the default font
-
-//  testdrawstyles();    // Draw 'stylized' characters
-
-//  testscrolltext();    // Draw scrolling text
-
-//  testdrawbitmap();    // Draw a small bitmap image
-
-  // Invert and restore display, pausing in-between
-// display.invertDisplay(true);
-//  delay(1000);
-//  display.invertDisplay(false);
-//  delay(1000);
-
-//  testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
 #endif
 
 }

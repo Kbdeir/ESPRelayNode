@@ -50,7 +50,8 @@
     #define ECHO_PIN InputPin04
 
     #ifdef ESP32_2RBoard
-      #define Relay1Pin 18     
+      #define Relay1Pin 18    
+      #define InputPin01  33 // Input1 on IO33       
     #endif        
 #endif
 
@@ -209,6 +210,7 @@ typedef struct TConfigParams {
   uint16_t v_ToleranceOffTime;
   uint16_t v_ToleranceOnTime;    
   uint16_t v_CT_MaxAllowed_current;      
+  float v_CT_adjustment;
   
 
 } TConfigParams;

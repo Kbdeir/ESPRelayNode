@@ -7,6 +7,9 @@
         "string_view": "cpp",
         "regex": "cpp",
         "defines.h": "c",
-        "random": "cpp"
+        "random": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "vector": "cpp"
     }
 }

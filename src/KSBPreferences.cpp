@@ -5,8 +5,6 @@
   #include <Arduino.h>
   #include <ESPAsyncWebServer.h>
 
-
-
 //void SaveWifi_to_Preferences(Preferences preferences, String ssid, String pass)
 void SaveWifi_to_Preferences(Preferences preferences, String ssid, String pass)
 {
@@ -15,7 +13,6 @@ void SaveWifi_to_Preferences(Preferences preferences, String ssid, String pass)
   preferences.putString("pass", pass );
   preferences.end();
 }
-
 
 void ReadParams(TConfigParams &ConfParam, Preferences preferences){
     preferences.begin("Args_param", false);
