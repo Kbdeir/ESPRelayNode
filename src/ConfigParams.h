@@ -25,14 +25,13 @@
 #include <Scheduletimer.h>
 #include <IPAddress.h>
 
-  
-
  #ifdef HWESP32
     #define led       02 // led on IO2  
     #define RelayPin  25 // relay on IO25
     #define HomeKitt_PIN_SWITCH 25 // Homekit is on (Relay0 = RelayPin) pin only
 
-    #ifndef _emonlib_
+    // #ifndef _emonlib_
+    #if not defined _emonlib_ && not defined _pressureSensor_
       #define InputPin01  33 // Input1 on IO33
     #endif    
     #define InputPin02  16 // Input2 on IO16    
@@ -42,7 +41,7 @@
     #define InputPin06  27 // Input6 on IO27  
 
     #define ConfigInputPin      04 // configuration pin on IO4
-    #ifndef _emonlib_
+     #if not defined _emonlib_ && not defined _pressureSensor_
     #define TempSensorPin       InputPin01 // 33
     #endif
     #define SecondTempSensorPin InputPin02 // 16    
@@ -211,7 +210,10 @@ typedef struct TConfigParams {
   uint16_t v_ToleranceOnTime;    
   uint16_t v_CT_MaxAllowed_current;      
   float v_CT_adjustment;
+  uint8_t v_CT_saveThreshold;  
   
+  uint16_t maSensor_L_Calibration, maSensor_HighCalibration, maSensor_max_range;  
+  String maSTopic ;
 
 } TConfigParams;
 

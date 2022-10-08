@@ -40,6 +40,7 @@
 #include <InputClass.h>
 #include <TimerClass.h>
 #include <TempSensor.h>
+
 #include <TempConfig.h>
 #ifdef ESP32
   #include <ESP32Ping.h>
@@ -249,6 +250,12 @@ const char * EventNames[] = {
 extern SoftwareSerial myPort;
 #endif
 
+#ifdef _pressureSensor_
+  #include "TLPressureSensor.h"
+  TLPressureSensor TL136(7, 4, 3, 51);
+  
+#endif
+
 #ifdef StepperMode
   //AH_EasyDriver(int RES, int DIR, int STEP, int MS1, int MS2, int SLP);
   //AH_EasyDriver shadeStepper(200,14,12,14,12,12,02);    // init w/o "enable" and "reset" functions
@@ -302,7 +309,7 @@ float MCelcius;
 float MCelcius2;
 
 #if defined (HWver02)  || defined (HWver03) || defined (HWESP32)
-#ifndef _emonlib_
+ #if not defined _emonlib_ && not defined _pressureSensor_
   static TempSensor tempsensor(TempSensorPin);
 #endif  
   static TempSensor TempSensorSecond(SecondTempSensorPin);
@@ -508,7 +515,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
         if (rly->RelayConfParam->v_ttl > 0 ) {
           rly->start_ttl_timer();
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);   //xxx check why this is needed
+      //  mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, ON);   //xxx check why this is needed
         // Serial.print(rly->RelayConfParam->v_STATE_PUB_TOPIC);
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);         
       }
@@ -519,7 +526,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
         if (rly->RelayConfParam->v_ttl > 0 ) {
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
-        mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);   //xxx check why this is needed
+      //  mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);   //xxx check why this is needed
         // Serial.print(rly->RelayConfParam->v_STATE_PUB_TOPIC);        
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);        
       }
@@ -725,6 +732,25 @@ void tiker_WIFI_CONNECT_func (void* obj) {
 Schedule_timer Wifireconnecttimer(tiker_WIFI_CONNECT_func,10000,0,MILLIS_); /// xxx
 
 
+void startsoftAP(){
+  delay(1000);
+  Serial.println(F("** softAP **"));
+  wifimode = WIFI_AP_MODE;
+  WiFi.softAPdisconnect();
+  WiFi.disconnect();
+  delay(100);
+  String t = APssid + String(MyConfParam.v_PhyLoc);
+  WiFi.softAP(t.c_str(), APpassword);
+  Serial.println(F("starting softAP mode - Connect to: "));
+  Serial.println(t);
+  Serial.print(F("IP address: "));
+  Serial.println(WiFi.softAPIP());
+	trials = 0;
+	SetAsyncHTTP();
+	blinkInterval = 100;
+	APModetimer_run_value = 0;
+}
+
 
 #ifdef _emonlib_
   extern Schedule_timer  RelayCTon;
@@ -752,26 +778,6 @@ Schedule_timer Wifireconnecttimer(tiker_WIFI_CONNECT_func,10000,0,MILLIS_); /// 
   Schedule_timer  RelayCTon(RelayCTon_func,  CT_1.time_on   ,0, MILLIS_);
   Schedule_timer RelayCToff(RelayCT0ff_func, CT_1.time_off  ,0, MILLIS_);
 #endif 
-
-
-void startsoftAP(){
-  delay(1000);
-  Serial.println(F("** softAP **"));
-  wifimode = WIFI_AP_MODE;
-  WiFi.softAPdisconnect();
-  WiFi.disconnect();
-  delay(100);
-  String t = APssid + String(MyConfParam.v_PhyLoc);
-  WiFi.softAP(t.c_str(), APpassword);
-  Serial.println(F("starting softAP mode - Connect to: "));
-  Serial.println(t);
-  Serial.print(F("IP address: "));
-  Serial.println(WiFi.softAPIP());
-	trials = 0;
-	SetAsyncHTTP();
-	blinkInterval = 100;
-	APModetimer_run_value = 0;
-}
 
 
 //------------modbus-------------------------------------------------------------------------------------------------
@@ -1135,7 +1141,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
   #endif
 
   #ifdef HWESP32
-  #ifndef _emonlib_
+  #if not defined _emonlib_ && not defined _pressureSensor_
   #ifndef ESP32_2RBoard
   InputSensor Inputsnsr01(InputPin01,process_Input,INPUT_NONE);
   #endif 
@@ -1333,7 +1339,9 @@ void Wifi_connect()
 #endif
 
 void setupInputs(){
-
+#ifdef _pressureSensor_
+config_read_error_t res = TLloadconfig("/PressureSensorConfig.json",TL136);
+#endif 
 #ifndef StepperMode
   #if defined (HWver02)  || defined (HWver03)
   Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
@@ -1393,7 +1401,7 @@ void setupInputs(){
   #endif
 
   #ifdef HWESP32
-  #ifndef _emonlib_
+   #if not defined _emonlib_ && not defined _pressureSensor_
   Inputsnsr01.initialize(InputPin01,process_Input,INPUT_NONE);
   Inputsnsr01.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
   Inputsnsr01.onInputClick_RelayServiceRoutine = buttonclick;
@@ -1497,7 +1505,7 @@ void checkIn()
 #endif
 */
 
-  
+
 
 void setup() {
   #ifndef ESP32
@@ -1525,6 +1533,16 @@ void setup() {
     emon1.current(CurrentPin, 30);       // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input
     */
   #endif
+  #ifdef _pressureSensor_
+
+  //  adc1_config_width(chars.bit_width);
+  //  adc1_config_channel_atten(ADC1_CHANNEL_6, chars.atten);
+  //  adc1_config_channel_atten(ADC1_CHANNEL_7, chars.atten);
+
+    analogReadResolution(12);
+    adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11); 
+    adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_11);   
+  #endif   
 
     blinkInterval = 1000; 
     lastMillis_2 = 0;
@@ -1593,7 +1611,7 @@ void setup() {
         pinMode ( InputPin02, INPUT_PULLUP );
         #endif
         #ifdef HWESP32
-        #ifndef _emonlib_
+        #if not defined _emonlib_ && not defined _pressureSensor_
         pinMode ( InputPin01, INPUT_PULLUP );
         #endif
         pinMode ( InputPin02, INPUT_PULLUP );
@@ -1756,7 +1774,7 @@ void setup() {
         #endif       
 
         #ifdef HWESP32 // order is important
-        #ifndef _emonlib_
+         #if not defined _emonlib_ && not defined _pressureSensor_
         inputs.push_back(&Inputsnsr01); 
         #endif
         #ifdef ESP32_2RBoard
@@ -1888,7 +1906,6 @@ void setup() {
 }
 
 
-
 void loop() {
 
   #ifdef ALEXA
@@ -1989,7 +2006,7 @@ void loop() {
     #endif
 
     #ifdef HWESP32
-    #ifndef _emonlib_
+     #if not defined _emonlib_ && not defined _pressureSensor_
       Inputsnsr01.watch();
     #endif  
     #ifdef ESP32_2RBoard
@@ -2086,26 +2103,39 @@ void loop() {
     lastMillis = millis();
     secondson++;
 
-    #ifdef _emonlib_  
-      CT_1.readPower(MyConfParam.v_CT_adjustment);
-      CT_1.DisplayPower(display, mqttClient);
-      if (mqttClient.connected()) {
-        mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.resx);
-        }        
-      #ifdef AppleHK
-        hap_val_t new_val;
-        new_val.f = CT_1.amps;
-        hap_char_update_val(hcx_temp, &new_val);
-      #endif   
-      if (CT_1.amps > MyConfParam.v_CT_MaxAllowed_current) {
-        if (RelayCToff.enabled == false) {
-          Serial.println(F("[CT     ] timer off runing - High consumption detected"));
-          RelayCToff.start(); 
-          // RelayCTon.stop();
+    #ifdef _pressureSensor_
+      TL136.read(500);
+      TL136.DisplayLevel(display);
+      if (MyConfParam.v_Sonar_distance != "0") {
+        if (mqttClient.connected()) {
+          mqttClient.publish(TL136.maSTopic.c_str(), QOS2, RETAINED, TL136.jsonPost.c_str()); 
         }
-      }        
+      }
+    #endif
 
-    #endif    
+    //#ifndef _pressureSensor_
+        #ifdef _emonlib_  
+          CT_1.readPower(MyConfParam.v_CT_adjustment, MyConfParam.v_CT_saveThreshold);
+          CT_1.DisplayPower(display, mqttClient);
+          if (mqttClient.connected()) {
+            // "{'msg':{'source':'[SOURCE]','data':[{'voltage':'[VOLTAGE]', 'wh':'[WH]', 'MTD_wh':'[MTD_WH]', 'YTD_wh':'[YTD_WH]'}]}}"
+            // mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.resx);
+            mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.jsonPost.c_str());        
+            }        
+          #ifdef AppleHK
+            hap_val_t new_val;
+            new_val.f = CT_1.amps;
+            hap_char_update_val(hcx_temp, &new_val);
+          #endif   
+          if (CT_1.amps > MyConfParam.v_CT_MaxAllowed_current) {
+            if (RelayCToff.enabled == false) {
+              Serial.println(F("[CT     ] timer off runing - High consumption detected"));
+              RelayCToff.start(); 
+              // RelayCTon.stop();
+            }
+          }        
+        #endif 
+    // #endif       
 
     #ifdef OLED_1306
           display.display();
@@ -2203,7 +2233,7 @@ void loop() {
   #if defined (HWver02)  || defined (HWver03) || defined (HWESP32)
   #ifndef SR04 // have to stop it because it uses the same pins as the temp sensors
   if (relay0.RelayConfParam->v_TemperatureValue != "0") {
-    #ifndef _emonlib_
+     #if not defined _emonlib_ && not defined _pressureSensor_
     if (millis() - lastMillis5000 > 5000) {
     //  pinMode(TempSensorPin,  INPUT_PULLUP );  
     //  pinMode(SecondTempSensorPin,  INPUT_PULLUP );        
@@ -2284,149 +2314,3 @@ void loop() {
   #endif  
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #ifdef _emonlibx_  
-      amps = emon1.calcIrms(150); // Calculate Irms only (150 is optimal)
-      Serial.print (F("[CT     ] Amps "));
-      Serial.print (amps);
-      Serial.print (F(" | offsetI  "));
-      Serial.println (emon1.offsetI);
-      char resx[8];
-      dtostrf(amps, 6, 2, resx); // Leave room for too large numbers!   
-      if (mqttClient.connected()) {
-        mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, resx);
-        }  
-        #ifdef AppleHK
-          hap_val_t new_val;
-          new_val.f = amps;
-          hap_char_update_val(hcx_temp, &new_val);
-        #endif        
-     
-      /*
-      Serial.print ("Max Allowed Current: ");
-      Serial.print (MyConfParam.v_CT_MaxAllowed_current);
-      Serial.print (" | off time: ");
-      Serial.print (time_off);
-      Serial.print (" | on time: ");
-      Serial.println (time_on);            
-      */
-     
-      if (amps > MyConfParam.v_CT_MaxAllowed_current) {
-        if (RelayCToff.enabled == false) {
-            Serial.println(F("[CT     ] timer off runing - High consumption detected"));
-            RelayCToff.start(); 
-            // RelayCTon.stop();
-        }
-      }
-      
-      emon1.calcVI(20,500);                    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
-      Serial.print(F("[CT     ]"));
-      emon1.serialprint();            
-      realPower       = emon1.realPower;        //extract Real Power into variable
-      apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
-      apparentPower_2 = amps * emon1.Vrms;
-      supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
-      Irms            = amps ; // emon1.Irms;             //extract Irms into Variable      
-      powerFActor     = emon1.powerFactor;      //extract Power Factor into Variable
-
-      // wh += (amps*(millis()-lwhtime)*POWER_FACTOR*supplyVoltage)/3600000.0; //3600000 convert to float
-
-      Instantaneous_Wh = (amps*(millis()-lwhtime)*abs(emon1.powerFactor)*supplyVoltage)/3600000.0; 
-      lwhtime = millis();  
-      CTSaveThreshold += Instantaneous_Wh;
-      PreviousWh = wh;
-      wh += Instantaneous_Wh;
-      MTD_Wh += Instantaneous_Wh;
-      YTD_Wh += Instantaneous_Wh;
-
-      Stabilized ++;
-      Serial.printf ("[CT     ] CT Values wh= %f | PreviousWh wh= %f | DIFF= %f \n", wh, PreviousWh, wh-PreviousWh );       
-      if (Stabilized > 5) {
-        if (CTSaveThreshold > CTSaveThreshold_value) {
-          CTSaveThreshold = 0;
-          saveCTReadings(wh, MTD_Wh, YTD_Wh);
-          Serial.printf ("[CT     ] Saved CT Values %f Wh | %f MTD_Wh | %f YTD_Wh \n",wh, MTD_Wh, YTD_Wh ); 
-        }
-      }
- 
-      #ifdef OLED_1306
-        display.clearDisplay();
-        display.setTextSize(1);
-        #define StartRow 22 
-        #define rect_height 30
-        #define rect_width 60
-
-        display.drawRect(0,StartRow,rect_width,rect_height, WHITE);
-        display.drawRect(rect_width + 2 ,StartRow,rect_width,rect_height, WHITE);   
-
-        display.setCursor(1,1);
-        // display.println("Power Readings");
-        display.print(String(apparentPower_2) + " w");
-        display.setCursor(60,1);        
-        display.print(String(wh/1000) + " KWh");        
-
-        display.setCursor(1,12);        
-        display.print(String(MTD_Wh/1000) + " MTD");      
-        if ((Chronos::DateTime::now().day() == 1) && (Chronos::DateTime::now().hour() == 1) && 
-            (Chronos::DateTime::now().minute() == 1) && (Chronos::DateTime::now().second() == 1)) MTD_Wh = 0; 
-
-        display.setCursor(60,12);        
-        display.print(String(YTD_Wh/1000) + " YTD");       
-        if ((Chronos::DateTime::now().day() == 1) && (Chronos::DateTime::now().hour() == 1) && 
-            (Chronos::DateTime::now().minute() == 1) && (Chronos::DateTime::now().second() == 1) && 
-            (Chronos::DateTime::now().month() == 1) ) YTD_Wh = 0;                          
-
-        display.setCursor(8, StartRow + 2);
-        display.println(F("Current"));
-        display.setTextColor(SSD1306_WHITE);
-        display.setCursor(10,StartRow + 16);       
-        display.setTextSize(1.5); 
-        display.print(String(Irms));
-        display.setTextSize(1);        
-        display.print(" A");
-
-        display.setCursor(rect_width + 10 ,StartRow + 2 );    
-        display.println(F("Voltage"));
-        display.setCursor(rect_width + 8,StartRow + 16 );   
-        display.setTextSize(1.5);                  
-        display.print(String(supplyVoltage));
-        display.setTextSize(1);              
-        display.setTextColor(WHITE);
-        display.println(" V");   
-
-        display.setCursor(1,54);  // col,row      
-        display.setTextColor(BLACK,WHITE);
-        display.print(WiFi.localIP().toString());
-        display.setTextColor(WHITE);
-        display.setCursor(120,54);  // col,row    
-        if ((WiFi.status() == WL_CONNECTED)) display.print("*");   
-        if ((WiFi.status() != WL_CONNECTED)) display.print("x");  
-        display.setCursor(110,54);  // col,row   
-        if (mqttClient.connected()) display.print("M");   
-        if (!mqttClient.connected()) display.print("m");          
-      #endif
-    #endif

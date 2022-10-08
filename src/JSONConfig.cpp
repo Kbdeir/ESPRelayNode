@@ -128,7 +128,10 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_ToleranceOffTime               = (json["ToleranceOffTime"].as<String>()!="") ? json["ToleranceOffTime"].as<uint16_t>() : 10;
   ConfParam.v_ToleranceOnTime                = (json["ToleranceOnTime"].as<String>()!="") ? json["ToleranceOnTime"].as<uint16_t>() : 30;  
   ConfParam.v_CT_MaxAllowed_current          = (json["CT_MaxAllowed_current"].as<String>()!="") ? json["CT_MaxAllowed_current"].as<uint16_t>() : 30;  
-  ConfParam.v_CT_adjustment                  = (json["CT_adjustment"].as<String>()!="") ? json["CT_adjustment"].as<float_t>() : 10;
+  ConfParam.v_CT_adjustment                  = (json["CT_adjustment"].as<String>()!="") ? json["CT_adjustment"].as<float_t>() : 0.05;
+  ConfParam.v_CT_saveThreshold               = (json["CT_saveThreshold"].as<String>()!="") ? json["CT_saveThreshold"].as<uint8_t>() : 10;
+  
+
   configFile.close();
 
   #ifdef INVERTERLINK
@@ -220,7 +223,9 @@ bool saveConfig(TConfigParams &ConfParam){
     json[F("CurrentTransformerTopic")]        = ConfParam.v_CurrentTransformerTopic;        
     json[F("ToleranceOnTime")]                = ConfParam.v_ToleranceOnTime; 
     json[F("ToleranceOffTime")]               = ConfParam.v_ToleranceOffTime;        
-    json[F("CT_adjustment")]                  = ConfParam.v_CT_adjustment;            
+    json[F("CT_adjustment")]                  = ConfParam.v_CT_adjustment;       
+    json[F("CT_saveThreshold")]                  = ConfParam.v_CT_saveThreshold;       
+        
     json[F("CT_MaxAllowed_current")]          = ConfParam.v_CT_MaxAllowed_current;
 
     if (serializeJsonPretty(json, configFile) == 0) {
@@ -334,7 +339,9 @@ bool saveDefaultConfig(){
   json[F("ToleranceOnTime")]                = 30;
   json[F("CT_MaxAllowed_current")]          = 30;      
   json[F("CurrentTransformerTopic")]        = "/home/Controller" + CID() + "/CT";   
-  json[F("CT_adjustment")]                  = 10;        
+  json[F("CT_adjustment")]                  = 0.05;    
+  json[F("CT_saveThreshold")]               = 10;      
+      
 
   //SPIFFS.remove("/config.json");
 

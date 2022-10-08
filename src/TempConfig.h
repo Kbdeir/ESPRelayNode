@@ -50,5 +50,4 @@ typedef void (*fnptr_b)(int, void* t);
 bool saveTempConfig(AsyncWebServerRequest *request);
 config_read_error_t loadTempConfig(char* filename, TempConfig &para_TempConfig);
 //TempConfig * gettimerbypin(uint8_t pn);
-
 //#endif

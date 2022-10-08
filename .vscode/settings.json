@@ -10,6 +10,8 @@
         "random": "cpp",
         "deque": "cpp",
         "string": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "*.tcc": "cpp",
+        "thread": "cpp"
     }
 }

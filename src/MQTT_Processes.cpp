@@ -28,7 +28,7 @@ extern String APssid;
   #endif
 
   #ifdef HWESP32
-  #ifndef _emonlib_
+   #if not defined _emonlib_ && not defined _pressureSensor_
   extern InputSensor Inputsnsr01;
   #endif
   #ifdef ESP32_2RBoard
@@ -178,7 +178,7 @@ void onMqttConnect(bool sessionPresent) {
           #endif
 
           #if defined (HWESP32)
-            #ifndef _emonlib_
+             #if not defined _emonlib_ && not defined _pressureSensor_
             if (Inputsnsr01.fclickmode == INPUT_NORMAL) {
               mqttClient.publish( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED,
                 digitalRead(InputPin01) == HIGH ?  ON : OFF);

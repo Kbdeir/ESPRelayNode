@@ -10,8 +10,8 @@
  //#define ESP32_3RBoard
  //#define ESP32_4RBoard
  #define OLED_1306                    // OLED only available on ESP32
- #define _emonlib_  // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
-
+ // #define _emonlib_  // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
+  #define _pressureSensor_
 #endif
 
 // select feature type

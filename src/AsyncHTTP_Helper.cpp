@@ -7,6 +7,7 @@
 #include <RelayClass.h>
 #include <TimerClass.h>
 #include <TempConfig.h>
+#include <TLPressureSensor.h>
 #include <AccelStepper.h>
 #include <digitalClockDisplay.h>
 #include <ConfigParams.h>
@@ -20,6 +21,7 @@
 extern boolean CalendarNotInitiated ;
 extern NodeTimer NTmr;
 extern TempConfig PTempConfig;
+extern TLPressureSensor TL136;
 extern float MCelcius;
 extern float ACS_I_Current;
 extern bool homekitNotInitialised;
@@ -47,18 +49,6 @@ AsyncWebServer AsyncWeb_server(8080);
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
 //File cf;
 
-String TempConfProcessor(const String& var)
-{
-
-  if(var == F( "TNBT" ))                return String(PTempConfig.id);
-  if(var == F( "TRelay" ))              return String(PTempConfig.relay);
-  if(var == F( "spanTempfrom" ))        return String(PTempConfig.spanTempfrom);
-  if(var == F( "spanTempto" ))          return String(PTempConfig.spanTempto);
-  if(var == F( "spanBuffer" ))          return String(PTempConfig.spanBuffer);  
-  if(var == F( "CEnabled" ))            { if (PTempConfig.enabled)             return "1\" checked=\"\""; };
-
-  return String();
-}
 
 String timerprocessor(const String& var)
 {
@@ -101,6 +91,32 @@ String timerprocessor(const String& var)
         } else return "NA";
       }();
 
+  return String();
+}
+
+
+String TempConfProcessor(const String& var)
+{
+
+  if(var == F( "TNBT" ))                return String(PTempConfig.id);
+  if(var == F( "TRelay" ))              return String(PTempConfig.relay);
+  if(var == F( "spanTempfrom" ))        return String(PTempConfig.spanTempfrom);
+  if(var == F( "spanTempto" ))          return String(PTempConfig.spanTempto);
+  if(var == F( "spanBuffer" ))          return String(PTempConfig.spanBuffer);  
+  if(var == F( "CEnabled" ))            { if (PTempConfig.enabled)             return "1\" checked=\"\""; };
+
+  return String();
+}
+
+String TLProcessor(const String& var)
+{
+  if(var == F( "maSTopic" ))              return String(TL136.maSTopic);
+  if(var == F( "maSHL" ))                 return String(TL136.max_sensor_measurment_capacity_meters);
+  if(var == F( "maSLC" ))                 return String(TL136.maSLC);
+  if(var == F( "maSHC" ))                 return String(TL136.maSHC);  
+  if(var == F( "maBurdenResistor" ))      return String(TL136.BurdenResistorValue);  
+  if(var == F( "systemtime" ))            return digitalClockDisplay();
+  if(var == F( "ma_ADC" ))                return String(TL136.sampleI);  
   return String();
 }
 
@@ -205,7 +221,9 @@ String processor(const String& var)
   if(var == F( "ToleranceOffTime" ))  return String( MyConfParam.v_ToleranceOffTime);   
   if(var == F( "CT_adjustment" ))  return String( MyConfParam.v_CT_adjustment);     
   if(var == F( "ToleranceOnTime" ))  return String( MyConfParam.v_ToleranceOnTime);   
-  if(var == F( "CT_MaxAllowed_current" ))  return String( MyConfParam.v_CT_MaxAllowed_current);               
+  if(var == F( "CT_MaxAllowed_current" ))  return String( MyConfParam.v_CT_MaxAllowed_current);   
+  if(var == F( "CT_saveThreshold" ))  return String( MyConfParam.v_CT_saveThreshold);                 
+
 
   return String();
 }
@@ -329,6 +347,19 @@ void SetAsyncHTTP(){
       request->send(SPIFFS, "/savetimer.html");
             saveNodeTimer(request);
             CalendarNotInitiated = true;
+    });
+    
+    AsyncWeb_server.on("/PressureSensorConfig.html", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        config_read_error_t res = TLloadconfig("/PressureSensorConfig.json",TL136); 
+        request->send(SPIFFS, "/PressureSensorConfig.html", String(), false, TLProcessor);
+      });      
+
+    AsyncWeb_server.on("/PressureSensorSave.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/PressureSensorSave.html");
+            TLsaveconfig(request); 
+            config_read_error_t res = TLloadconfig("/PressureSensorConfig.json",TL136);  
     });
 
     AsyncWeb_server.on("/wscontrol.html", HTTP_GET, [](AsyncWebServerRequest *request){
