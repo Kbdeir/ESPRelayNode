@@ -314,11 +314,11 @@ input:focus, textarea:focus, select:focus
    border-radius: 0px;
    padding: 0;
    margin: 0;
-   text-align: right;
+   text-align: left;
 }
 #wb_Text2 div
 {
-   text-align: right;
+   text-align: left;
 }
 #wb_Text3 
 {
@@ -342,11 +342,11 @@ input:focus, textarea:focus, select:focus
    border-radius: 0px;
    padding: 0;
    margin: 0;
-   text-align: right;
+   text-align: left;
 }
 #wb_Text4 div
 {
-   text-align: right;
+   text-align: left;
 }
 #wb_Text5 
 {
@@ -464,12 +464,48 @@ input:focus, textarea:focus, select:focus
 {
    text-align: right;
 }
+#wb_Text9 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text9 div
+{
+   text-align: right;
+}
+#Editbox1
+{
+   border: 1px solid #CCCCCC;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   line-height: 18px;
+   padding: 4px 4px 4px 4px;
+   margin: 0;
+   text-align: left;
+}
+#Editbox1:focus
+{
+   border-color: #66AFE9;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
 </style>
     
 
 </head>
 <body>
-<div id="wb_Form2" style="position:absolute;left:43px;top:18px;width:464px;height:93px;z-index:24;">
+<div id="wb_Form2" style="position:absolute;left:43px;top:18px;width:464px;height:93px;z-index:25;">
 <form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
 <div id="wb_Text24" style="position:absolute;left:56px;top:9px;width:379px;height:27px;z-index:0;">
 <span style="color:#F5F5F5;font-family:Arial;font-size:24px;">Pressure Sensor Configuration</span></div>
@@ -477,35 +513,35 @@ input:focus, textarea:focus, select:focus
 <span style="color:#DCDCDC;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
 </form>
 </div>
-<div id="wb_Form1" style="position:absolute;left:43px;top:113px;width:466px;height:587px;z-index:25;">
+<div id="wb_Form1" style="position:absolute;left:43px;top:113px;width:466px;height:587px;z-index:26;">
 <form name="Form1" method="get" action="PressureSensorSave.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
-<div id="wb_Text62" style="position:absolute;left:23px;top:96px;width:92px;height:15px;text-align:right;z-index:2;">
+<div id="wb_Text62" style="position:absolute;left:35px;top:70px;width:82px;height:15px;text-align:right;z-index:2;">
 <span style="color:#000000;font-family:Arial;font-size:13px;"> Sensor Topic</span></div>
-<div id="wb_Text64" style="position:absolute;left:35px;top:179px;width:134px;height:15px;text-align:right;z-index:3;">
+<div id="wb_Text64" style="position:absolute;left:56px;top:179px;width:134px;height:15px;text-align:right;z-index:3;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">4 ma&nbsp; callibration</span></div>
-<input type="number" id="Editbox45" style="position:absolute;left:259px;top:135px;width:54px;height:18px;z-index:4;" name="maSHL" value="%maSHL%" spellcheck="false" title="0 - 100 Amps">
+<input type="number" id="Editbox45" style="position:absolute;left:254px;top:102px;width:54px;height:18px;z-index:4;" name="maSHL" value="%maSHL%" spellcheck="false" title="0 - 100 Amps">
 <input type="number" id="Editbox46" style="position:absolute;left:201px;top:172px;width:54px;height:18px;z-index:5;" name="maSLC" value="%maSLC%" spellcheck="false">
-<div id="wb_Text61" style="position:absolute;left:30px;top:36px;width:270px;height:21px;z-index:6;">
+<div id="wb_Text61" style="position:absolute;left:35px;top:26px;width:270px;height:21px;z-index:6;">
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>04-20 ma Sensor</strong></span></div>
-<div id="wb_Text65" style="position:absolute;left:27px;top:212px;width:147px;height:15px;text-align:right;z-index:7;">
+<div id="wb_Text65" style="position:absolute;left:43px;top:212px;width:147px;height:15px;text-align:right;z-index:7;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">20 ma callibration</span></div>
-<input type="text" id="Editbox44" style="position:absolute;left:133px;top:90px;width:306px;height:16px;z-index:8;" name="maSTopic" value="%maSTopic%" spellcheck="false">
+<input type="text" id="Editbox44" style="position:absolute;left:133px;top:64px;width:306px;height:16px;z-index:8;" name="maSTopic" value="%maSTopic%" spellcheck="false">
 <input type="number" id="Editbox47" style="position:absolute;left:201px;top:205px;width:54px;height:18px;z-index:9;" name="maSHC" value="%maSHC%" spellcheck="false">
 <input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:26px;top:544px;width:90px;height:25px;z-index:10;">
 <input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:353px;top:544px;width:79px;height:25px;z-index:11;">
-<input type="number" id="edt_burdenRes" style="position:absolute;left:212px;top:344px;width:54px;height:18px;z-index:12;" name="maBurdenResistor" value="%maBurdenResistor%" spellcheck="false">
-<div id="wb_Text1" style="position:absolute;left:35px;top:351px;width:144px;height:15px;text-align:right;z-index:13;">
+<input type="number" id="edt_burdenRes" style="position:absolute;left:201px;top:329px;width:54px;height:18px;z-index:12;" name="maBurdenResistor" value="%maBurdenResistor%" spellcheck="false">
+<div id="wb_Text1" style="position:absolute;left:51px;top:336px;width:144px;height:15px;text-align:right;z-index:13;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Burden Resistor Value</span></div>
-<div id="wb_Text2" style="position:absolute;left:275px;top:351px;width:43px;height:15px;text-align:right;z-index:14;">
+<div id="wb_Text2" style="position:absolute;left:275px;top:336px;width:43px;height:15px;z-index:14;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">ohms</span></div>
-<div id="wb_Text3" style="position:absolute;left:51px;top:388px;width:262px;height:15px;text-align:center;z-index:15;">
+<div id="wb_Text3" style="position:absolute;left:51px;top:380px;width:262px;height:15px;text-align:center;z-index:15;">
 <span style="color:#FF0000;font-family:Arial;font-size:13px;"><strong>Current ADC Steps&nbsp; =&nbsp; %ma_ADC%</strong></span></div>
-<div id="wb_Text4" style="position:absolute;left:270px;top:179px;width:179px;height:15px;text-align:right;z-index:16;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">This is ADC reading at 4 ma</span></div>
+<div id="wb_Text4" style="position:absolute;left:270px;top:179px;width:179px;height:15px;z-index:16;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">= ADC reading at 4 ma</span></div>
 <div id="wb_Text6" style="position:absolute;left:51px;top:289px;width:357px;height:15px;z-index:17;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">ADC_ATTEN_DB_11: Reading range:150 mV ~ <strong>2450 </strong>mV</span></div>
 <input type="number" id="maSHC_edt" onclick="calc20maCalibration(this);return false;" style="position:absolute;left:357px;top:470px;width:54px;height:18px;z-index:18;" name="maSHC_edt" value="" disabled spellcheck="false">
-<input type="button" id="Button1" onclick="calc20maCalibration(this);return false;" name="" value="Calculate 20ma calibration factor" style="position:absolute;left:35px;top:438px;width:192px;height:24px;z-index:19;">
+<input type="button" id="Button1" onclick="calc20maCalibration(this);return false;" name="" value="Calculate 20ma calibration factor" style="position:absolute;left:35px;top:438px;width:230px;height:24px;z-index:19;">
 <div id="wb_Text5" style="position:absolute;left:51px;top:251px;width:385px;height:30px;z-index:20;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">This is ADC reading calibration at 20 ma set to: <br><strong>0.02 * BurdenResistor * 1000 * (4096 / 3300) * (2450 / 3000)</strong></span></div>
 <input type="number" id="Voltage_edt" onclick="calc20maCalibration(this);return false;" style="position:absolute;left:150px;top:470px;width:54px;height:18px;z-index:21;" name="Voltage_edt" value="3300" spellcheck="false">
@@ -513,11 +549,14 @@ input:focus, textarea:focus, select:focus
 <span style="color:#000000;font-family:Arial;font-size:13px;">System voltage (mv)</span></div>
 <div id="wb_Text8" style="position:absolute;left:234px;top:477px;width:115px;height:15px;text-align:right;z-index:23;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Result</span></div>
+<input type="number" id="Editbox1" style="position:absolute;left:254px;top:133px;width:54px;height:18px;z-index:24;" name="TankHeight" value="%TankHeight%" spellcheck="false">
 </form>
 </div>
-<div id="wb_Text63" style="position:absolute;left:0px;top:255px;width:286px;height:15px;text-align:right;z-index:26;">
+<div id="wb_Text63" style="position:absolute;left:0px;top:222px;width:286px;height:15px;text-align:right;z-index:27;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">maximum sensor measurment (cm)</span></div>
 
+<div id="wb_Text9" style="position:absolute;left:0px;top:253px;width:286px;height:15px;text-align:right;z-index:29;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Tank height (cm)</span></div>
 <script>
 function submitForm1()
 {
@@ -651,6 +690,29 @@ function submitForm1()
       {
          alert("Calibration factor");
          Voltage_edt.focus();
+         return false;
+      }
+   }
+   var Editbox1 = document.getElementById('Editbox1');
+   if (!(Editbox1.disabled || Editbox1.style.display === 'none' || Editbox1.style.visibility === 'hidden'))
+   {
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (!regexp.test(Editbox1.value))
+      {
+         alert("Please enter only digit characters in the \"TankHeight\" field.");
+         Editbox1.focus();
+         return false;
+      }
+      if (Editbox1.value == "")
+      {
+         alert("Please enter a value for the \"TankHeight\" field.");
+         Editbox1.focus();
+         return false;
+      }
+      if (Editbox1.value != "" && !(Editbox1.value >= 0 && Editbox1.value <= 500))
+      {
+         alert("Please enter a value greater than or equal to \"0\" and less than or equal to \"500\" in the \"TankHeight\" field.");
+         Editbox1.focus();
          return false;
       }
    }

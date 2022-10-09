@@ -112,6 +112,7 @@ String TLProcessor(const String& var)
 {
   if(var == F( "maSTopic" ))              return String(TL136.maSTopic);
   if(var == F( "maSHL" ))                 return String(TL136.max_sensor_measurment_capacity_meters);
+  if(var == F( "TankHeight" ))            return String(TL136.max_tank_capacity_meters);  
   if(var == F( "maSLC" ))                 return String(TL136.maSLC);
   if(var == F( "maSHC" ))                 return String(TL136.maSHC);  
   if(var == F( "maBurdenResistor" ))      return String(TL136.BurdenResistorValue);  

@@ -2105,7 +2105,7 @@ void loop() {
 
     #ifdef _pressureSensor_
       TL136.read(500);
-      TL136.DisplayLevel(display);
+      TL136.DisplayLevel(display, WiFi.isConnected(), mqttClient.connected());
       if (MyConfParam.v_Sonar_distance != "0") {
         if (mqttClient.connected()) {
           mqttClient.publish(TL136.maSTopic.c_str(), QOS2, RETAINED, TL136.jsonPost.c_str()); 

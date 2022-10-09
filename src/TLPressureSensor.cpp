@@ -11,7 +11,7 @@ float TLPressureSensor::mapf(float x, float in_min, float in_max, float out_min,
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-TLPressureSensor::TLPressureSensor(uint8_t _Pin, uint8_t _max_sensor_measurment_capacity_meters, uint8_t _max_tank_capacity_meters, uint8_t _BurdenResistorValue)
+TLPressureSensor::TLPressureSensor(uint8_t _Pin, uint16_t _max_sensor_measurment_capacity_meters, uint16_t _max_tank_capacity_meters, uint16_t _BurdenResistorValue)
  {
   SPin = _Pin;
   pinMode (35, INPUT_PULLDOWN);
@@ -89,6 +89,7 @@ config_read_error_t TLloadconfig(char* filename, TLPressureSensor &para_Pressure
 
   para_PressureSensorConfig.maSTopic = (json["maSTopic"].as<String>()!="") ? json["maSTopic"].as<String>() : "0";
   para_PressureSensorConfig.max_sensor_measurment_capacity_meters = (json["maSHL"].as<String>()!="") ? json["maSHL"].as<uint16_t>() : 0;
+  para_PressureSensorConfig.max_tank_capacity_meters = (json["TankHeight"].as<String>()!="") ? json["TankHeight"].as<uint16_t>() : 0;  
   para_PressureSensorConfig.maSHC = (json["maSHC"].as<String>()!="") ? json["maSHC"].as<uint16_t>() : 0;
   para_PressureSensorConfig.maSLC = (json["maSLC"].as<String>()!="") ? json["maSLC"].as<uint16_t>() : 0;  
   para_PressureSensorConfig.BurdenResistorValue = (json["maBurdenResistor"].as<String>()!="") ? json["maBurdenResistor"].as<uint16_t>() : 0;    
@@ -130,7 +131,7 @@ config_read_error_t TLsaveconfig(AsyncWebServerRequest *request){
 
 
 
-  int TLPressureSensor::DisplayLevel(Adafruit_SSD1306 &display){
+  int TLPressureSensor::DisplayLevel(Adafruit_SSD1306 &display, bool wificonnected, bool mqttconnected){
      #ifdef OLED_1306
         display.clearDisplay();
         display.setTextSize(1);
@@ -139,52 +140,32 @@ config_read_error_t TLsaveconfig(AsyncWebServerRequest *request){
         #define rect_width 110
 
         display.drawRect(0,StartRow,rect_width,rect_height, WHITE);
-        // display.drawRect(rect_width + 2 ,StartRow,rect_width,rect_height, WHITE);   
-
-        
-        // display.println("Power Readings");
-        /*
-        display.setCursor(1,1);    
-        display.print(String(apparentPower_2) + " w");
-        display.setCursor(60,1);        
-        display.print(String(wh/1000) + " KWh");        
-        */
-       display.setCursor(0, 0);
+ 
+        display.setCursor(0, 0);
         display.println("Water Level Readings");      
-        display.printf("%0.1f percent", (measure/300)*100);                        
+        display.printf("%.1f percent", (measure/max_tank_capacity_meters)*100);                        
         
         display.setCursor(40, StartRow);
         display.println(F("Level"));
         display.setTextColor(SSD1306_WHITE);
         display.setCursor(20,StartRow + 14);       
         display.setTextSize(2); 
-        display.print(String(measure));
+        display.printf("%.1f",measure);
         display.setTextSize(1);        
         display.print(" cm");
-
-        /*
-        display.setCursor(rect_width + 10 ,StartRow + 2 );    
-        display.println(F("Voltage"));
-        display.setCursor(rect_width + 8,StartRow + 16 );   
-        display.setTextSize(1.5);                  
-        display.print(String(supplyVoltage));
-        display.setTextSize(1);              
-        display.setTextColor(WHITE);
-        display.println(" V");   
-        */
-
 
         display.setCursor(1,54);  // col,row      
         display.setTextColor(BLACK,WHITE);
         display.print(WiFi.localIP().toString());
         display.setTextColor(WHITE);
         display.setCursor(120,54);  // col,row    
-       // if ((WiFi.status() == WL_CONNECTED)) display.print("*");   
-       // if ((WiFi.status() != WL_CONNECTED)) display.print("x");  
+        if (wificonnected)  display.print("*");   
+        if (!wificonnected) display.print("x");  
         display.setCursor(110,54);  // col,row   
+        if (mqttconnected) display.print("M");   
+        if (!mqttconnected) display.print("m");    
       #endif    
   }
-
 
 #endif
 
