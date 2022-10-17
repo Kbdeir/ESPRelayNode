@@ -219,11 +219,11 @@ input:focus, textarea:focus, select:focus
    border-radius: 0px;
    padding: 0;
    margin: 0;
-   text-align: left;
+   text-align: right;
 }
 #wb_Text3 div
 {
-   text-align: left;
+   text-align: right;
 }
 #Editbox4
 {
@@ -1682,11 +1682,11 @@ input:focus, textarea:focus, select:focus
    border-radius: 0px;
    padding: 0;
    margin: 0;
-   text-align: left;
+   text-align: right;
 }
 #wb_Text16 div
 {
-   text-align: left;
+   text-align: right;
 }
 #Editbox24
 {
@@ -2567,16 +2567,52 @@ input:focus, textarea:focus, select:focus
    -webkit-appearance: none;
    margin: 0;
 }
+#wb_Text61 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text61 div
+{
+   text-align: right;
+}
+#Editbox44
+{
+   border: 1px solid #CCCCCC;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   line-height: 18px;
+   padding: 4px 4px 4px 4px;
+   margin: 0;
+   text-align: left;
+}
+#Editbox44:focus
+{
+   border-color: #66AFE9;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
 </style>
     
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:3px;top:106px;width:529px;height:1419px;z-index:130;">
+<div id="wb_Form1" style="position:absolute;left:3px;top:106px;width:529px;height:1476px;z-index:132;">
 <form name="Form1" method="get" action="Apply.html" enctype="multipart/form-data" id="Form1" onsubmit="return submitForm1()">
 <div id="wb_Text1" style="position:absolute;left:116px;top:77px;width:54px;height:15px;text-align:right;z-index:0;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">SSID</span></div>
 <input type="text" id="Editbox1" style="position:absolute;left:184px;top:69px;width:126px;height:16px;z-index:1;" name="ssid" value="%ssid%" spellcheck="false">
-<div id="wb_Text7" style="position:absolute;left:41px;top:140px;width:129px;height:18px;text-align:right;z-index:2;">
+<div id="wb_Text7" style="position:absolute;left:0px;top:140px;width:170px;height:18px;text-align:right;z-index:2;">
 <span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Time Server IP</strong></span></div>
 <div id="wb_Text2" style="position:absolute;left:104px;top:109px;width:67px;height:15px;text-align:right;z-index:3;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Password</span></div>
@@ -2584,260 +2620,263 @@ input:focus, textarea:focus, select:focus
 <span style="color:#000000;font-family:Arial;font-size:13px;">Time Zone</span></div>
 <input type="text" id="Editbox2" style="position:absolute;left:184px;top:101px;width:126px;height:18px;z-index:5;" name="pass" value="%pass%" spellcheck="false">
 <input type="text" id="Editbox14" style="position:absolute;left:184px;top:37px;width:258px;height:18px;z-index:6;" name="PhyLoc" value="%PhyLoc%" spellcheck="false">
-<div id="wb_Text6" style="position:absolute;left:148px;top:281px;width:107px;height:15px;text-align:right;z-index:7;">
+<div id="wb_Text6" style="position:absolute;left:170px;top:347px;width:150px;height:15px;text-align:right;z-index:7;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Active</span></div>
-<div id="wb_Text3" style="position:absolute;left:39px;top:317px;width:138px;height:15px;z-index:8;">
+<div id="wb_Text3" style="position:absolute;left:14px;top:382px;width:209px;height:15px;text-align:right;z-index:8;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Server Address</span></div>
-<input type="text" id="Editbox4" style="position:absolute;left:189px;top:310px;width:209px;height:18px;z-index:9;" name="MQTT_BROKER" value="%MQTT_BROKER%" spellcheck="false">
-<input type="number" id="Editbox5" style="position:absolute;left:448px;top:310px;width:52px;height:18px;z-index:10;" name="MQTT_B_PRT" value="%MQTT_B_PRT%" spellcheck="false">
-<select name="IN2_INPUTMODE_C" size="1" id="IN2_INPUTMODE_C" onchange="FUNC_IN2_INPUTMODE(this);return false;" style="position:absolute;left:182px;top:623px;width:196px;height:28px;z-index:11;" autocomplete="off">
+<input type="text" id="Editbox4" style="position:absolute;left:231px;top:375px;width:173px;height:18px;z-index:9;" name="MQTT_BROKER" value="%MQTT_BROKER%" spellcheck="false">
+<input type="number" id="Editbox5" style="position:absolute;left:453px;top:375px;width:52px;height:18px;z-index:10;" name="MQTT_B_PRT" value="%MQTT_B_PRT%" spellcheck="false">
+<select name="IN2_INPUTMODE_C" size="1" id="IN2_INPUTMODE_C" onchange="FUNC_IN2_INPUTMODE(this);return false;" style="position:absolute;left:178px;top:692px;width:196px;height:28px;z-index:11;" autocomplete="off">
 <option value="1">Click Mode</option>
 <option value="2">Input Mode</option>
 <option value="3">Toggle Mode - Coil Connected</option>
 <option value="4">Copy Input to Coil</option>
 </select>
-<div id="wb_Text8" style="position:absolute;left:420px;top:317px;width:28px;height:15px;z-index:12;">
+<div id="wb_Text8" style="position:absolute;left:425px;top:382px;width:28px;height:15px;z-index:12;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Port</span></div>
-<input type="submit" id="Button1" name="Submit" value="save" style="position:absolute;left:37px;top:1359px;width:96px;height:25px;z-index:13;">
+<input type="submit" id="Button1" name="Submit" value="save" style="position:absolute;left:36px;top:1416px;width:96px;height:25px;z-index:13;">
 <input type="text" id="Editbox3" style="position:absolute;left:184px;top:135px;width:126px;height:18px;z-index:14;" name="timeserver" value="%timeserver%" spellcheck="false">
-<input type="checkbox" id="Checkbox2" name="MQTT_Active" value="%MQTT_Active%" style="position:absolute;left:273px;top:278px;z-index:15;">
+<input type="checkbox" id="Checkbox2" name="MQTT_Active" value="%MQTT_Active%" style="position:absolute;left:334px;top:343px;z-index:15;">
 <input type="number" id="Editbox15" style="position:absolute;left:422px;top:135px;width:52px;height:18px;z-index:16;" name="ntptz" value="%ntptz%" spellcheck="false">
-<input type="submit" id="Button3" onclick="window.location.href='restart.html';return false;" name="restart" value="restart" style="position:absolute;left:197px;top:1358px;width:96px;height:25px;z-index:17;">
-<div id="wb_Text20" style="position:absolute;left:36px;top:45px;width:136px;height:15px;text-align:right;z-index:18;">
+<input type="submit" id="Button3" onclick="window.location.href='restart.html';return false;" name="restart" value="restart" style="position:absolute;left:196px;top:1415px;width:96px;height:25px;z-index:17;">
+<div id="wb_Text20" style="position:absolute;left:8px;top:45px;width:164px;height:15px;text-align:right;z-index:18;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Physical location tag</span></div>
-<input type="submit" id="Button2" onclick="window.close();return false;" name="cancelbtn" value="cancel" style="position:absolute;left:348px;top:1358px;width:96px;height:25px;z-index:19;">
-<div id="wb_Text17" style="position:absolute;left:46px;top:1014px;width:128px;height:15px;text-align:right;z-index:20;">
+<input type="submit" id="Button2" onclick="window.close();return false;" name="cancelbtn" value="cancel" style="position:absolute;left:347px;top:1415px;width:96px;height:25px;z-index:19;">
+<div id="wb_Text17" style="position:absolute;left:6px;top:1080px;width:166px;height:15px;text-align:right;z-index:20;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Sonar distance topic</span></div>
-<div id="wb_Text18" style="position:absolute;left:31px;top:1043px;width:146px;height:30px;text-align:right;z-index:21;">
+<div id="wb_Text18" style="position:absolute;left:6px;top:1117px;width:169px;height:15px;text-align:right;z-index:21;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Sonar Max Distance (cm)</span></div>
-<input type="number" id="Editbox13" style="position:absolute;left:183px;top:1044px;width:54px;height:18px;z-index:22;" name="Sonar_distance_max" value="%Sonar_distance_max%" spellcheck="false">
-<input type="text" id="Editbox18" style="position:absolute;left:184px;top:513px;width:291px;height:18px;z-index:23;" name="I12_STS_PTP" value="%I12_STS_PTP%" spellcheck="false">
-<input type="text" id="Editbox22" style="position:absolute;left:182px;top:587px;width:291px;height:18px;z-index:24;" name="I14_STS_PTP" value="%I14_STS_PTP%" spellcheck="false">
+<input type="number" id="Editbox13" style="position:absolute;left:181px;top:1110px;width:54px;height:18px;z-index:22;" name="Sonar_distance_max" value="%Sonar_distance_max%" spellcheck="false">
+<input type="text" id="Editbox18" style="position:absolute;left:180px;top:582px;width:291px;height:18px;z-index:23;" name="I12_STS_PTP" value="%I12_STS_PTP%" spellcheck="false">
+<input type="text" id="Editbox22" style="position:absolute;left:178px;top:656px;width:291px;height:18px;z-index:24;" name="I14_STS_PTP" value="%I14_STS_PTP%" spellcheck="false">
 <input type="text" id="RelayEditBox" style="position:absolute;left:451px;top:178px;width:23px;visibility:hidden;height:18px;z-index:25;" name="RelayNB" value="1" spellcheck="false">
-<input type="text" id="Editbox33" style="position:absolute;left:185px;top:439px;width:291px;height:18px;z-index:26;" name="TOGGLE_BTN_PUB_TOPIC" value="%TOGGLE_BTN_PUB_TOPIC%" spellcheck="false">
-<select name="IN1_INPUTMODE_C" size="1" id="IN1_INPUTMODE_C" onchange="FUNC_IN1_INPUTMODE(this);return false;" style="position:absolute;left:182px;top:547px;width:196px;height:28px;z-index:27;" autocomplete="off">
+<input type="text" id="Editbox33" style="position:absolute;left:181px;top:508px;width:291px;height:18px;z-index:26;" name="TOGGLE_BTN_PUB_TOPIC" value="%TOGGLE_BTN_PUB_TOPIC%" spellcheck="false">
+<select name="IN1_INPUTMODE_C" size="1" id="IN1_INPUTMODE_C" onchange="FUNC_IN1_INPUTMODE(this);return false;" style="position:absolute;left:178px;top:616px;width:196px;height:28px;z-index:27;" autocomplete="off">
 <option value="1">Click Mode</option>
 <option value="2">Input Mode</option>
 <option value="3">Toggle Mode - Coil Connected</option>
 <option value="4">Copy Input to Coil</option>
 </select>
-<input type="text" id="I1MODE" style="position:absolute;left:398px;top:547px;width:32px;height:18px;z-index:28;" name="I1MODE" value="%I1MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="I2MODE" style="position:absolute;left:398px;top:623px;width:32px;height:18px;z-index:29;" name="I2MODE" value="%I2MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="I0MODE" style="position:absolute;left:399px;top:475px;width:32px;height:18px;z-index:30;" name="I0MODE" value="%I0MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<select name="IN0_INPUTMODE_C" size="1" id="IN0_INPUTMODE_C" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:182px;top:475px;width:196px;height:28px;z-index:31;" autocomplete="off">
+<input type="text" id="I1MODE" style="position:absolute;left:394px;top:616px;width:32px;height:18px;z-index:28;" name="I1MODE" value="%I1MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<input type="text" id="I2MODE" style="position:absolute;left:394px;top:692px;width:32px;height:18px;z-index:29;" name="I2MODE" value="%I2MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<input type="text" id="I0MODE" style="position:absolute;left:395px;top:544px;width:32px;height:18px;z-index:30;" name="I0MODE" value="%I0MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<select name="IN0_INPUTMODE_C" size="1" id="IN0_INPUTMODE_C" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:178px;top:544px;width:196px;height:28px;z-index:31;" autocomplete="off">
 <option value="2">Input Mode</option>
 <option value="3">Toggle Mode - Coil Connected</option>
 <option value="4">Copy Input to Coil</option>
 </select>
-<div id="wb_Text12" style="position:absolute;left:28px;top:278px;width:142px;height:21px;z-index:32;">
+<div id="wb_Text12" style="position:absolute;left:34px;top:343px;width:197px;height:21px;z-index:32;">
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>MQTT Server</strong></span></div>
-<div id="wb_Text13" style="position:absolute;left:22px;top:982px;width:311px;height:21px;z-index:33;">
+<div id="wb_Text13" style="position:absolute;left:20px;top:1048px;width:463px;height:21px;z-index:33;">
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Sonar Configuration - Water Level</strong></span></div>
-<div id="wb_Text14" style="position:absolute;left:23px;top:408px;width:248px;height:21px;z-index:34;">
+<div id="wb_Text14" style="position:absolute;left:19px;top:477px;width:248px;height:21px;z-index:34;">
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Inputs Configuration</strong></span></div>
-<div id="wb_Text15" style="position:absolute;left:23px;top:7px;width:236px;height:21px;z-index:35;">
+<div id="wb_Text15" style="position:absolute;left:23px;top:7px;width:325px;height:21px;z-index:35;">
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Wifi Configuration</strong></span></div>
-<input type="text" id="Editbox12" style="position:absolute;left:183px;top:1007px;width:291px;height:18px;z-index:36;" name="Sonar_distance" value="%Sonar_distance%" spellcheck="false">
-<input type="number" id="Editbox24" style="position:absolute;left:422px;top:183px;width:52px;height:18px;z-index:37;" name="RWD" value="%RWD%" spellcheck="false">
-<input type="text" id="Editbox25" style="position:absolute;left:210px;top:224px;width:99px;height:18px;z-index:38;" name="Pingserver" value="%Pingserver%" spellcheck="false">
-<div id="wb_Text19" style="position:absolute;left:37px;top:223px;width:157px;height:30px;text-align:right;z-index:39;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Ping Server IP<br>Defaults to 192.168.50.1</span></div>
-<div id="wb_Text16" style="position:absolute;left:28px;top:183px;width:378px;height:33px;z-index:40;">
-<span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Reboot on WIF disconnection </strong></span><span style="color:#000000;font-family:Arial;font-size:13px;">- number of Ping retries:<br>Retry period is 10 seconds. Set 0 to disable. </span></div>
-<select name="IN3_INPUTMODE_C" size="1" id="IN3_INPUTMODE_C" onchange="FUNC_IN3_INPUTMODE(this);return false;" style="position:absolute;left:184px;top:703px;width:196px;height:28px;z-index:41;" autocomplete="off">
+<input type="text" id="Editbox12" style="position:absolute;left:181px;top:1073px;width:291px;height:18px;z-index:36;" name="Sonar_distance" value="%Sonar_distance%" spellcheck="false">
+<input type="number" id="Editbox24" style="position:absolute;left:422px;top:239px;width:52px;height:18px;z-index:37;" name="RWD" value="%RWD%" spellcheck="false">
+<input type="text" id="Editbox25" style="position:absolute;left:233px;top:287px;width:105px;height:18px;z-index:38;" name="Pingserver" value="%Pingserver%" spellcheck="false">
+<div id="wb_Text19" style="position:absolute;left:6px;top:294px;width:202px;height:15px;text-align:right;z-index:39;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Ping Server IP</span></div>
+<div id="wb_Text16" style="position:absolute;left:7px;top:237px;width:413px;height:33px;text-align:right;z-index:40;">
+<span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Reboot on WIF disconnection </strong></span><span style="color:#000000;font-family:Arial;font-size:13px;">- #Ping retries:<br>Retry period is 10 seconds, 0 = disabled</span></div>
+<select name="IN3_INPUTMODE_C" size="1" id="IN3_INPUTMODE_C" onchange="FUNC_IN3_INPUTMODE(this);return false;" style="position:absolute;left:180px;top:772px;width:196px;height:28px;z-index:41;" autocomplete="off">
 <option value="1">Click Mode</option>
 <option value="2">Input Mode</option>
 <option value="3">Toggle Mode - Coil Connected</option>
 <option value="4">Copy Input to Coil</option>
 </select>
-<select name="IN4_INPUTMODE_C" size="1" id="IN4_INPUTMODE_C" onchange="FUNC_IN4_INPUTMODE(this);return false;" style="position:absolute;left:184px;top:779px;width:196px;height:28px;z-index:42;" autocomplete="off">
+<select name="IN4_INPUTMODE_C" size="1" id="IN4_INPUTMODE_C" onchange="FUNC_IN4_INPUTMODE(this);return false;" style="position:absolute;left:180px;top:848px;width:196px;height:28px;z-index:42;" autocomplete="off">
 <option value="1">Click Mode</option>
 <option value="2">Input Mode</option>
 <option value="3">Toggle Mode - Coil Connected</option>
 <option value="4">Copy Input to Coil</option>
 </select>
-<input type="text" id="I3MODE" style="position:absolute;left:400px;top:703px;width:32px;height:18px;z-index:43;" name="I3MODE" value="%I3MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="I4MODE" style="position:absolute;left:400px;top:779px;width:32px;height:18px;z-index:44;" name="I4MODE" value="%I4MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="Editbox27" style="position:absolute;left:184px;top:743px;width:291px;height:18px;z-index:45;" name="I04_STS_PTP" value="%I04_STS_PTP%" spellcheck="false">
-<input type="text" id="Editbox26" style="position:absolute;left:186px;top:670px;width:291px;height:18px;z-index:46;" name="I03_STS_PTP" value="%I03_STS_PTP%" spellcheck="false">
-<select name="IN5_INPUTMODE_C" size="1" id="IN5_INPUTMODE_C" onchange="FUNC_IN5_INPUTMODE(this);return false;" style="position:absolute;left:185px;top:856px;width:196px;height:28px;z-index:47;" autocomplete="off">
+<input type="text" id="I3MODE" style="position:absolute;left:396px;top:772px;width:32px;height:18px;z-index:43;" name="I3MODE" value="%I3MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<input type="text" id="I4MODE" style="position:absolute;left:396px;top:848px;width:32px;height:18px;z-index:44;" name="I4MODE" value="%I4MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<input type="text" id="Editbox27" style="position:absolute;left:180px;top:812px;width:291px;height:18px;z-index:45;" name="I04_STS_PTP" value="%I04_STS_PTP%" spellcheck="false">
+<input type="text" id="Editbox26" style="position:absolute;left:182px;top:739px;width:291px;height:18px;z-index:46;" name="I03_STS_PTP" value="%I03_STS_PTP%" spellcheck="false">
+<select name="IN5_INPUTMODE_C" size="1" id="IN5_INPUTMODE_C" onchange="FUNC_IN5_INPUTMODE(this);return false;" style="position:absolute;left:180px;top:925px;width:196px;height:28px;z-index:47;" autocomplete="off">
 <option value="1">Click Mode</option>
 <option value="2">Input Mode</option>
 <option value="3">Toggle Mode - Coil Connected</option>
 <option value="4">Copy Input to Coil</option>
 </select>
-<select name="IN6_INPUTMODE_C" size="1" id="IN6_INPUTMODE_C" onchange="FUNC_IN6_INPUTMODE(this);return false;" style="position:absolute;left:185px;top:932px;width:196px;height:28px;z-index:48;" autocomplete="off">
+<select name="IN6_INPUTMODE_C" size="1" id="IN6_INPUTMODE_C" onchange="FUNC_IN6_INPUTMODE(this);return false;" style="position:absolute;left:180px;top:1001px;width:196px;height:28px;z-index:48;" autocomplete="off">
 <option value="1">Click Mode</option>
 <option value="2">Input Mode</option>
 <option value="3">Toggle Mode - Coil Connected</option>
 <option value="4">Copy Input to Coil</option>
 </select>
-<input type="text" id="I5MODE" style="position:absolute;left:401px;top:856px;width:32px;height:18px;z-index:49;" name="I5MODE" value="%I5MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="I6MODE" style="position:absolute;left:401px;top:932px;width:32px;height:18px;z-index:50;" name="I6MODE" value="%I6MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="Editbox31" style="position:absolute;left:185px;top:896px;width:291px;height:18px;z-index:51;" name="I06_STS_PTP" value="%I06_STS_PTP%" spellcheck="false">
-<input type="text" id="Editbox30" style="position:absolute;left:187px;top:823px;width:291px;height:18px;z-index:52;" name="I05_STS_PTP" value="%I05_STS_PTP%" spellcheck="false">
-<div id="wb_Text27" style="position:absolute;left:47px;top:749px;width:127px;height:15px;text-align:right;z-index:53;">
+<input type="text" id="I5MODE" style="position:absolute;left:396px;top:925px;width:32px;height:18px;z-index:49;" name="I5MODE" value="%I5MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<input type="text" id="I6MODE" style="position:absolute;left:396px;top:1001px;width:32px;height:18px;z-index:50;" name="I6MODE" value="%I6MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<input type="text" id="Editbox31" style="position:absolute;left:180px;top:965px;width:291px;height:18px;z-index:51;" name="I06_STS_PTP" value="%I06_STS_PTP%" spellcheck="false">
+<input type="text" id="Editbox30" style="position:absolute;left:182px;top:892px;width:291px;height:18px;z-index:52;" name="I05_STS_PTP" value="%I05_STS_PTP%" spellcheck="false">
+<div id="wb_Text27" style="position:absolute;left:43px;top:818px;width:127px;height:15px;text-align:right;z-index:53;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 4&nbsp; publish topic</span></div>
-<div id="wb_Text28" style="position:absolute;left:47px;top:831px;width:127px;height:15px;text-align:right;z-index:54;">
+<div id="wb_Text28" style="position:absolute;left:42px;top:900px;width:127px;height:15px;text-align:right;z-index:54;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 5&nbsp; publish topic</span></div>
-<div id="wb_Text31" style="position:absolute;left:47px;top:902px;width:127px;height:15px;text-align:right;z-index:55;">
+<div id="wb_Text31" style="position:absolute;left:42px;top:971px;width:127px;height:15px;text-align:right;z-index:55;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 6&nbsp; publish topic</span></div>
-<div id="wb_Text23" style="position:absolute;left:42px;top:676px;width:132px;height:15px;text-align:right;z-index:56;">
+<div id="wb_Text23" style="position:absolute;left:38px;top:745px;width:132px;height:15px;text-align:right;z-index:56;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 3&nbsp; publish topic</span></div>
-<input type="text" id="Editbox28" style="position:absolute;left:316px;top:346px;width:126px;height:18px;z-index:57;" name="mqttPass" value="%mqttPass%" spellcheck="false">
-<input type="text" id="Editbox29" style="position:absolute;left:97px;top:347px;width:126px;height:16px;z-index:58;" name="mqttUser" value="%mqttUser%" spellcheck="false">
-<div id="wb_Text33" style="position:absolute;left:39px;top:351px;width:54px;height:15px;text-align:right;z-index:59;">
+<input type="text" id="Editbox28" style="position:absolute;left:322px;top:411px;width:126px;height:18px;z-index:57;" name="mqttPass" value="%mqttPass%" spellcheck="false">
+<input type="text" id="Editbox29" style="position:absolute;left:103px;top:412px;width:126px;height:16px;z-index:58;" name="mqttUser" value="%mqttUser%" spellcheck="false">
+<div id="wb_Text33" style="position:absolute;left:44px;top:416px;width:54px;height:15px;text-align:right;z-index:59;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">User</span></div>
-<div id="wb_Text34" style="position:absolute;left:244px;top:351px;width:61px;height:15px;text-align:right;z-index:60;">
+<div id="wb_Text34" style="position:absolute;left:249px;top:416px;width:61px;height:15px;text-align:right;z-index:60;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Password</span></div>
-<div id="wb_Text48" style="position:absolute;left:22px;top:1102px;width:270px;height:21px;z-index:61;">
+<div id="wb_Text48" style="position:absolute;left:9px;top:1171px;width:386px;height:21px;z-index:61;">
 <span style="color:#000000;font-family:Arial;font-size:19px;"><strong>External Current Transformer</strong></span></div>
-<div id="wb_Text49" style="position:absolute;left:69px;top:1125px;width:128px;height:15px;text-align:right;z-index:62;">
+<div id="wb_Text49" style="position:absolute;left:9px;top:1207px;width:189px;height:15px;text-align:right;z-index:62;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Current Sensor Topic</span></div>
-<div id="wb_Text50" style="position:absolute;left:22px;top:1153px;width:178px;height:30px;text-align:right;z-index:63;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">CurrentTransformer max measurment&nbsp; current (A)</span></div>
-<input type="number" id="Editbox35" style="position:absolute;left:208px;top:1154px;width:54px;height:18px;z-index:64;" name="CurrentTransformer_max_current" value="%CurrentTransformer_max_current%" spellcheck="false" title="0 - 100 Amps">
-<div id="wb_Text51" style="position:absolute;left:328px;top:1162px;width:82px;height:15px;text-align:right;z-index:65;">
+<input type="number" id="Editbox35" style="position:absolute;left:209px;top:1232px;width:54px;height:18px;z-index:63;" name="CurrentTransformer_max_current" value="%CurrentTransformer_max_current%" spellcheck="false" title="0 - 100 Amps">
+<div id="wb_Text51" style="position:absolute;left:329px;top:1240px;width:82px;height:15px;text-align:right;z-index:64;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">v_calibration</span></div>
-<input type="number" id="Editbox37" style="position:absolute;left:422px;top:1155px;width:54px;height:18px;z-index:66;" name="calibration" value="%calibration%" spellcheck="false">
-<input type="text" id="Editbox36" style="position:absolute;left:206px;top:1123px;width:271px;height:16px;z-index:67;" name="CurrentTransformerTopic" value="%CurrentTransformerTopic%" spellcheck="false">
-<input type="number" id="Editbox38" style="position:absolute;left:208px;top:1220px;width:54px;height:18px;z-index:68;" name="ToleranceOffTime" value="%ToleranceOffTime%" spellcheck="false" title="0 to  3600 seconds">
-<div id="wb_Text53" style="position:absolute;left:19px;top:1227px;width:178px;height:15px;text-align:right;z-index:69;">
+<input type="number" id="Editbox37" style="position:absolute;left:423px;top:1233px;width:54px;height:18px;z-index:65;" name="calibration" value="%calibration%" spellcheck="false">
+<input type="text" id="Editbox36" style="position:absolute;left:207px;top:1201px;width:271px;height:16px;z-index:66;" name="CurrentTransformerTopic" value="%CurrentTransformerTopic%" spellcheck="false">
+<input type="number" id="Editbox38" style="position:absolute;left:209px;top:1298px;width:54px;height:18px;z-index:67;" name="ToleranceOffTime" value="%ToleranceOffTime%" spellcheck="false" title="0 to  3600 seconds">
+<div id="wb_Text53" style="position:absolute;left:20px;top:1305px;width:178px;height:15px;text-align:right;z-index:68;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Tolerance OFF time</span></div>
-<input type="number" id="Editbox39" style="position:absolute;left:208px;top:1252px;width:54px;height:18px;z-index:70;" name="ToleranceOnTime" value="%ToleranceOnTime%" spellcheck="false" title="Valid values: 0 - 3600 seconds. 0 = No auto re-activation of the relay.">
-<div id="wb_Text54" style="position:absolute;left:19px;top:1259px;width:178px;height:15px;text-align:right;z-index:71;">
+<input type="number" id="Editbox39" style="position:absolute;left:209px;top:1330px;width:54px;height:18px;z-index:69;" name="ToleranceOnTime" value="%ToleranceOnTime%" spellcheck="false" title="Valid values: 0 - 3600 seconds. 0 = No auto re-activation of the relay.">
+<div id="wb_Text54" style="position:absolute;left:20px;top:1336px;width:178px;height:15px;text-align:right;z-index:70;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Tolerance ON time</span></div>
-<input type="number" id="Editbox40" style="position:absolute;left:208px;top:1188px;width:54px;height:18px;z-index:72;" name="CT_MaxAllowed_current" value="%CT_MaxAllowed_current%" spellcheck="false" title="0 to 50 Amps. If you draw more current than the value in this field, relay will be shut down after the number of seconds set in the &quot;Tolerance OFF time&quot; setting">
-<div id="wb_Text55" style="position:absolute;left:22px;top:1187px;width:178px;height:30px;text-align:right;z-index:73;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">CurrentTransformer max allowed&nbsp; current (A)</span></div>
-<div id="wb_Text56" style="position:absolute;left:272px;top:1227px;width:60px;height:15px;text-align:right;z-index:74;">
+<input type="number" id="Editbox40" style="position:absolute;left:209px;top:1266px;width:54px;height:18px;z-index:71;" name="CT_MaxAllowed_current" value="%CT_MaxAllowed_current%" spellcheck="false" title="0 to 50 Amps. If you draw more current than the value in this field, relay will be shut down after the number of seconds set in the &quot;Tolerance OFF time&quot; setting">
+<div id="wb_Text56" style="position:absolute;left:273px;top:1305px;width:60px;height:15px;text-align:right;z-index:72;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">seconds</span></div>
-<div id="wb_Text57" style="position:absolute;left:272px;top:1259px;width:60px;height:15px;text-align:right;z-index:75;">
+<div id="wb_Text57" style="position:absolute;left:273px;top:1337px;width:60px;height:15px;text-align:right;z-index:73;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">seconds</span></div>
-<div id="wb_Text59" style="position:absolute;left:327px;top:1187px;width:82px;height:30px;text-align:right;z-index:76;">
+<div id="wb_Text59" style="position:absolute;left:294px;top:1273px;width:117px;height:15px;text-align:right;z-index:74;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Adjustment (Amps)</span></div>
-<input type="text" id="Editbox42" style="position:absolute;left:421px;top:1188px;width:54px;height:18px;z-index:77;" name="CT_adjustment" value="%CT_adjustment%" spellcheck="false">
-<div id="wb_Text60" style="position:absolute;left:65px;top:1291px;width:137px;height:15px;text-align:right;z-index:78;">
+<input type="text" id="Editbox42" style="position:absolute;left:422px;top:1266px;width:54px;height:18px;z-index:75;" name="CT_adjustment" value="%CT_adjustment%" spellcheck="false">
+<div id="wb_Text60" style="position:absolute;left:66px;top:1368px;width:137px;height:15px;text-align:right;z-index:76;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Save Threshold (wh)</span></div>
-<input type="number" id="Editbox43" style="position:absolute;left:208px;top:1284px;width:54px;height:18px;z-index:79;" name="CT_saveThreshold" value="%CT_saveThreshold%" spellcheck="false">
+<input type="number" id="Editbox43" style="position:absolute;left:209px;top:1361px;width:54px;height:18px;z-index:77;" name="CT_saveThreshold" value="%CT_saveThreshold%" spellcheck="false">
+<div id="wb_Text55" style="position:absolute;left:0px;top:1273px;width:201px;height:15px;text-align:right;z-index:78;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Max allowed Amps</span></div>
+<div id="wb_Text50" style="position:absolute;left:0px;top:1239px;width:200px;height:15px;text-align:right;z-index:79;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Sensor rating (A)</span></div>
+<div id="wb_Text61" style="position:absolute;left:95px;top:181px;width:150px;height:15px;text-align:right;z-index:80;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Screen orientation</span></div>
+<input type="number" id="Editbox44" style="position:absolute;left:259px;top:175px;width:52px;height:18px;z-index:81;" name="Screen_orientation" value="%Screen_orientation%" spellcheck="false">
 </form>
 </div>
-<div id="wb_Text21" style="position:absolute;left:3px;top:22px;width:529px;height:82px;text-align:center;z-index:131;">
+<div id="wb_Text21" style="position:absolute;left:3px;top:22px;width:529px;height:82px;text-align:center;z-index:133;">
 <span style="color:#DCDCDC;font-family:Arial;font-size:24px;letter-spacing:2.07px;line-height:41px;">NODE CONFIGURATION</span><span style="color:#FFFFFF;font-family:Arial;font-size:24px;letter-spacing:4.07px;line-height:41px;"><br></span></div>
-<div id="wb_Text22" style="position:absolute;left:27px;top:68px;width:504px;height:25px;text-align:center;z-index:132;">
+<div id="wb_Text22" style="position:absolute;left:27px;top:68px;width:504px;height:25px;text-align:center;z-index:134;">
 <span style="color:#FFFFFF;font-family:Arial;font-size:17px;line-height:19px;">Node ID: %NODEID% - MAC : %MACADDR%</span></div>
-<div id="wb_Form2" style="position:absolute;left:545px;top:993px;width:529px;height:119px;z-index:133;">
+<div id="wb_Form2" style="position:absolute;left:545px;top:993px;width:529px;height:119px;z-index:135;">
 <form name="Form2" method="post" action="/update" enctype="multipart/form-data" id="Form2">
-<input type="file" name="update" id="FileUpload1" style="position:absolute;left:12px;top:63px;width:309px;height:29px;line-height:29px;z-index:80;">
-<input type="submit" id="Button5" name="firmwareload" value="Upload & Update" style="position:absolute;left:353px;top:65px;width:126px;height:25px;z-index:81;">
-<div id="wb_Text26" style="position:absolute;left:9px;top:14px;width:336px;height:49px;z-index:82;">
-<span style="color:#000000;font-family:Arial;font-size:17px;"><strong>Firmware update<br></strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><br>Select firmware file to upload</span></div>
+<input type="file" name="update" id="FileUpload1" style="position:absolute;left:12px;top:63px;width:309px;height:29px;line-height:29px;z-index:82;">
+<input type="submit" id="Button5" name="firmwareload" value="Upload & Update" style="position:absolute;left:353px;top:65px;width:126px;height:25px;z-index:83;">
+<div id="wb_Text26" style="position:absolute;left:14px;top:15px;width:336px;height:34px;z-index:84;">
+<span style="color:#000000;font-family:Arial;font-size:17px;"><strong>Firmware update</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><br>Select firmware file to upload</span></div>
 </form>
 </div>
-<div id="wb_Text30" style="position:absolute;left:726px;top:32px;width:340px;height:15px;text-align:right;z-index:134;">
+<div id="wb_Text30" style="position:absolute;left:726px;top:32px;width:340px;height:15px;text-align:right;z-index:136;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
-<div id="wb_Form3" style="position:absolute;visibility:hidden;left:562px;top:965px;width:482px;height:158px;z-index:135;">
+<div id="wb_Form3" style="position:absolute;visibility:hidden;left:562px;top:965px;width:482px;height:158px;z-index:137;">
 <form name="Form2" method="post" action="/upload" enctype="multipart/form-data" id="Form3">
-<div id="wb_Text32" style="position:absolute;left:12px;top:24px;width:336px;height:16px;z-index:83;">
+<div id="wb_Text32" style="position:absolute;left:12px;top:24px;width:336px;height:16px;z-index:85;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Upload file:</span></div>
-<input type="file" name="update" id="FileUpload2" style="position:absolute;left:26px;top:49px;width:309px;height:29px;line-height:29px;z-index:84;">
-<input type="submit" id="Button6" name="UploadHTML" value="Upload" style="position:absolute;left:347px;top:51px;width:126px;height:25px;z-index:85;">
+<input type="file" name="update" id="FileUpload2" style="position:absolute;left:26px;top:49px;width:309px;height:29px;line-height:29px;z-index:86;">
+<input type="submit" id="Button6" name="UploadHTML" value="Upload" style="position:absolute;left:347px;top:51px;width:126px;height:25px;z-index:87;">
 </form>
 </div>
-<div id="wb_Text29" style="position:absolute;left:4px;top:627px;width:175px;height:15px;text-align:right;z-index:136;">
+<div id="wb_Text29" style="position:absolute;left:0px;top:696px;width:175px;height:15px;text-align:right;z-index:138;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 1&nbsp; publish topic</span></div>
-<div id="wb_Text35" style="position:absolute;left:4px;top:702px;width:175px;height:15px;text-align:right;z-index:137;">
+<div id="wb_Text35" style="position:absolute;left:0px;top:771px;width:175px;height:15px;text-align:right;z-index:139;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Input 2&nbsp; publish topic</span></div>
-<div id="wb_Form4" style="position:absolute;left:551px;top:167px;width:516px;height:693px;z-index:138;">
+<div id="wb_Form4" style="position:absolute;left:551px;top:167px;width:516px;height:693px;z-index:140;">
 <form name="Relay2Conf" method="get" action="ApplyRelay.html" enctype="text/plain" id="Form4" onsubmit="return submitRelay2Conf()">
-<input type="text" id="RelayNb2" style="position:absolute;left:443px;top:9px;width:20px;visibility:hidden;height:18px;z-index:86;" name="RelayNB" value="2" spellcheck="false">
-<input type="submit" id="Button7" name="Submit" value="save" style="position:absolute;left:34px;top:644px;width:96px;height:25px;z-index:87;">
-<div id="wb_Text38" style="position:absolute;left:35px;top:301px;width:145px;height:16px;text-align:right;z-index:88;">
+<input type="text" id="RelayNb2" style="position:absolute;left:443px;top:9px;width:20px;visibility:hidden;height:18px;z-index:88;" name="RelayNB" value="2" spellcheck="false">
+<input type="submit" id="Button7" name="Submit" value="save" style="position:absolute;left:34px;top:644px;width:96px;height:25px;z-index:89;">
+<div id="wb_Text38" style="position:absolute;left:35px;top:301px;width:145px;height:16px;text-align:right;z-index:90;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Last Will Topic</span></div>
-<div id="wb_Text42" style="position:absolute;left:16px;top:184px;width:164px;height:16px;text-align:right;z-index:89;">
+<div id="wb_Text42" style="position:absolute;left:16px;top:184px;width:164px;height:16px;text-align:right;z-index:91;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Current TTL Publish Topic</span></div>
-<div id="wb_Text44" style="position:absolute;left:10px;top:264px;width:170px;height:16px;text-align:right;z-index:90;">
+<div id="wb_Text44" style="position:absolute;left:10px;top:264px;width:170px;height:16px;text-align:right;z-index:92;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Amps Sensor Publish Topic</span></div>
-<div id="wb_Text45" style="position:absolute;left:49px;top:477px;width:192px;height:15px;text-align:right;z-index:91;">
+<div id="wb_Text45" style="position:absolute;left:6px;top:477px;width:253px;height:15px;text-align:right;z-index:93;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Time to Live (TTL) in seconds</span></div>
-<input type="text" id="Editbox6" style="position:absolute;left:189px;top:19px;width:34px;height:21px;z-index:92;" name="RELAYNB" value="%RELAYNB%" spellcheck="false">
-<input type="text" id="Editbox16" style="position:absolute;left:189px;top:98px;width:291px;height:18px;z-index:93;" name="STATE_PUB_TOPIC" value="%STATE_PUB_TOPIC%" spellcheck="false">
-<input type="text" id="Editbox17" style="position:absolute;left:189px;top:137px;width:291px;height:18px;z-index:94;" name="ttl_PUB_TOPIC" value="%TTL_PUB_TOPIC%" spellcheck="false">
-<input type="text" id="Editbox19" style="position:absolute;left:189px;top:176px;width:291px;height:18px;z-index:95;" name="CURR_TTL_PUB_TOPIC" value="%CURR_TTL_PUB_TOPIC%" spellcheck="false">
-<input type="text" id="Editbox20" style="position:absolute;left:189px;top:215px;width:291px;height:18px;z-index:96;" name="i_ttl_PUB_TOPIC" value="%i_ttl_PUB_TOPIC%" spellcheck="false">
-<input type="text" id="Editbox21" style="position:absolute;left:189px;top:254px;width:291px;height:18px;z-index:97;" name="ACS_AMPS" value="%ACS_AMPS%" spellcheck="false">
-<input type="text" id="Editbox7" style="position:absolute;left:189px;top:293px;width:291px;height:18px;z-index:98;" name="LWILL_TOPIC" value="%LWILL_TOPIC%" spellcheck="false">
-<div id="wb_Text11" style="position:absolute;left:0px;top:332px;width:180px;height:16px;text-align:right;z-index:99;">
+<input type="text" id="Editbox6" style="position:absolute;left:189px;top:19px;width:34px;height:21px;z-index:94;" name="RELAYNB" value="%RELAYNB%" spellcheck="false">
+<input type="text" id="Editbox16" style="position:absolute;left:189px;top:98px;width:291px;height:18px;z-index:95;" name="STATE_PUB_TOPIC" value="%STATE_PUB_TOPIC%" spellcheck="false">
+<input type="text" id="Editbox17" style="position:absolute;left:189px;top:137px;width:291px;height:18px;z-index:96;" name="ttl_PUB_TOPIC" value="%TTL_PUB_TOPIC%" spellcheck="false">
+<input type="text" id="Editbox19" style="position:absolute;left:189px;top:176px;width:291px;height:18px;z-index:97;" name="CURR_TTL_PUB_TOPIC" value="%CURR_TTL_PUB_TOPIC%" spellcheck="false">
+<input type="text" id="Editbox20" style="position:absolute;left:189px;top:215px;width:291px;height:18px;z-index:98;" name="i_ttl_PUB_TOPIC" value="%i_ttl_PUB_TOPIC%" spellcheck="false">
+<input type="text" id="Editbox21" style="position:absolute;left:189px;top:254px;width:291px;height:18px;z-index:99;" name="ACS_AMPS" value="%ACS_AMPS%" spellcheck="false">
+<input type="text" id="Editbox7" style="position:absolute;left:189px;top:293px;width:291px;height:18px;z-index:100;" name="LWILL_TOPIC" value="%LWILL_TOPIC%" spellcheck="false">
+<div id="wb_Text11" style="position:absolute;left:0px;top:332px;width:180px;height:16px;text-align:right;z-index:101;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Subscribtion Topic</span></div>
-<input type="text" id="Editbox8" style="position:absolute;left:189px;top:332px;width:291px;height:18px;z-index:100;" name="SUB_TOPIC1" value="%SUB_TOPIC1%" spellcheck="false">
-<input type="number" id="Editbox9" style="position:absolute;left:247px;top:470px;width:72px;height:18px;z-index:101;" name="ttl" value="%ttl%" spellcheck="false">
-<input type="number" id="Editbox10" style="position:absolute;left:246px;top:504px;width:72px;height:18px;z-index:102;" name="tta" value="%tta%" spellcheck="false">
-<input type="number" id="Editbox11" style="position:absolute;left:246px;top:541px;width:72px;height:18px;z-index:103;" name="Max_Current" value="%Max_Current%" maxlength="2" spellcheck="false">
-<select name="ACSmultiple" size="1" id="ACSmultiple" onchange="myFunction(this);return false;" style="position:absolute;left:246px;top:577px;width:96px;height:28px;z-index:104;" autocomplete="off">
+<input type="text" id="Editbox8" style="position:absolute;left:189px;top:332px;width:291px;height:18px;z-index:102;" name="SUB_TOPIC1" value="%SUB_TOPIC1%" spellcheck="false">
+<input type="number" id="Editbox9" style="position:absolute;left:264px;top:471px;width:73px;height:18px;z-index:103;" name="ttl" value="%ttl%" spellcheck="false">
+<input type="number" id="Editbox10" style="position:absolute;left:263px;top:505px;width:73px;height:18px;z-index:104;" name="tta" value="%tta%" spellcheck="false">
+<input type="number" id="Editbox11" style="position:absolute;left:263px;top:542px;width:73px;height:18px;z-index:105;" name="Max_Current" value="%Max_Current%" maxlength="2" spellcheck="false">
+<select name="ACSmultiple" size="1" id="ACSmultiple" onchange="myFunction(this);return false;" style="position:absolute;left:250px;top:577px;width:97px;height:28px;z-index:106;" autocomplete="off">
 <option value="5">5 Amps</option>
 <option value="20">20 Amps</option>
 <option selected value="30">30 Amps</option>
 </select>
-<input type="text" id="ACS_Sensor_Model" style="position:absolute;left:350px;top:577px;width:44px;height:18px;z-index:105;" name="ACS_Sensor_Model" value="%ACS_Sensor_Model%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="checkbox" id="Checkbox7" name="ACS_Active" value="%ACS_Active%" style="position:absolute;left:246px;top:617px;z-index:106;">
-<div id="wb_Text25" style="position:absolute;left:112px;top:620px;width:128px;height:15px;text-align:right;z-index:107;">
+<input type="text" id="ACS_Sensor_Model" style="position:absolute;left:350px;top:577px;width:44px;height:18px;z-index:107;" name="ACS_Sensor_Model" value="%ACS_Sensor_Model%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
+<input type="checkbox" id="Checkbox7" name="ACS_Active" value="%ACS_Active%" style="position:absolute;left:246px;top:617px;z-index:108;">
+<div id="wb_Text25" style="position:absolute;left:112px;top:620px;width:128px;height:15px;text-align:right;z-index:109;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Measure Current</span></div>
-<input type="text" id="Editbox34" style="position:absolute;left:374px;top:5px;width:112px;height:18px;z-index:108;" name="RSTATE0" value="%RSTATE0%" readonly disabled spellcheck="false">
-<input type="text" id="TemperatureValue_edt" style="position:absolute;left:189px;top:368px;width:253px;height:18px;z-index:109;" name="TemperatureValue" value="%TemperatureValue%" spellcheck="false">
-<div id="wb_Text5" style="position:absolute;left:0px;top:372px;width:180px;height:15px;text-align:right;z-index:110;">
+<input type="text" id="Editbox34" style="position:absolute;left:374px;top:5px;width:112px;height:18px;z-index:110;" name="RSTATE0" value="%RSTATE0%" readonly disabled spellcheck="false">
+<input type="text" id="TemperatureValue_edt" style="position:absolute;left:189px;top:368px;width:253px;height:18px;z-index:111;" name="TemperatureValue" value="%TemperatureValue%" spellcheck="false">
+<div id="wb_Text5" style="position:absolute;left:0px;top:372px;width:180px;height:15px;text-align:right;z-index:112;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Temperature Value Topic</span></div>
-<div id="wb_Text39" style="position:absolute;left:18px;top:581px;width:224px;height:15px;text-align:right;z-index:111;">
+<div id="wb_Text39" style="position:absolute;left:18px;top:581px;width:224px;height:15px;text-align:right;z-index:113;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Select ACS Sensor Model</span></div>
-<div id="wb_ACS_text" style="position:absolute;left:278px;top:619px;width:220px;height:15px;text-align:center;z-index:112;">
+<div id="wb_ACS_text" style="position:absolute;left:278px;top:619px;width:220px;height:15px;text-align:center;z-index:114;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Current consumption: %ACS% Amps</span></div>
-<div id="wb_Text36" style="position:absolute;left:18px;top:540px;width:224px;height:30px;text-align:right;z-index:113;">
+<div id="wb_Text36" style="position:absolute;left:3px;top:540px;width:256px;height:30px;text-align:right;z-index:115;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Maximum current allowed before coil shutdown</span></div>
-<div id="wb_Text46" style="position:absolute;left:16px;top:511px;width:224px;height:15px;text-align:right;z-index:114;">
+<div id="wb_Text46" style="position:absolute;left:3px;top:511px;width:256px;height:15px;text-align:right;z-index:116;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Time to Activate (TTA) in seconds</span></div>
-<div id="wb_Text43" style="position:absolute;left:10px;top:222px;width:170px;height:16px;text-align:right;z-index:115;">
+<div id="wb_Text43" style="position:absolute;left:10px;top:222px;width:170px;height:16px;text-align:right;z-index:117;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Stored TTL Update Topic</span></div>
-<div id="wb_Text41" style="position:absolute;left:17px;top:142px;width:163px;height:16px;text-align:right;z-index:116;">
+<div id="wb_Text41" style="position:absolute;left:17px;top:142px;width:163px;height:16px;text-align:right;z-index:118;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">TTL Publish Topic</span></div>
-<div id="wb_Text40" style="position:absolute;left:0px;top:104px;width:180px;height:16px;text-align:right;z-index:117;">
+<div id="wb_Text40" style="position:absolute;left:0px;top:104px;width:180px;height:16px;text-align:right;z-index:119;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Coils State Publish Topic</span></div>
-<div id="wb_Text37" style="position:absolute;left:0px;top:64px;width:180px;height:16px;text-align:right;z-index:118;">
+<div id="wb_Text37" style="position:absolute;left:0px;top:64px;width:180px;height:16px;text-align:right;z-index:120;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Coil Value Publish Topic</span></div>
-<div id="wb_Text10" style="position:absolute;left:0px;top:27px;width:180px;height:16px;text-align:right;z-index:119;">
+<div id="wb_Text10" style="position:absolute;left:0px;top:27px;width:180px;height:16px;text-align:right;z-index:121;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Relay Number</span></div>
-<input type="text" id="Editbox23" style="position:absolute;left:189px;top:59px;width:291px;height:18px;z-index:120;" name="PUB_TOPIC1" value="%PUB_TOPIC1%" spellcheck="false">
-<input type="submit" id="Button4" onclick="window.location.href='./AdvancedTemperatureConf.html';return false;" name="AdvTempConf" value="..." style="position:absolute;left:460px;top:370px;width:28px;height:30px;z-index:121;">
-<input type="number" id="Editbox32" style="position:absolute;left:404px;top:504px;width:72px;height:18px;z-index:122;" name="ACS_elasticity" value="%ACS_elasticity%" spellcheck="false">
-<div id="wb_Text47" style="position:absolute;left:375px;top:487px;width:111px;height:15px;text-align:right;z-index:123;">
+<input type="text" id="Editbox23" style="position:absolute;left:189px;top:59px;width:291px;height:18px;z-index:122;" name="PUB_TOPIC1" value="%PUB_TOPIC1%" spellcheck="false">
+<input type="submit" id="Button4" onclick="window.location.href='./AdvancedTemperatureConf.html';return false;" name="AdvTempConf" value="..." style="position:absolute;left:460px;top:370px;width:28px;height:30px;z-index:123;">
+<input type="number" id="Editbox32" style="position:absolute;left:404px;top:504px;width:72px;height:18px;z-index:124;" name="ACS_elasticity" value="%ACS_elasticity%" spellcheck="false">
+<div id="wb_Text47" style="position:absolute;left:375px;top:487px;width:111px;height:15px;text-align:right;z-index:125;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Time Elasticity</span></div>
-<div id="wb_Text58" style="position:absolute;left:0px;top:427px;width:180px;height:15px;text-align:right;z-index:124;">
+<div id="wb_Text58" style="position:absolute;left:0px;top:427px;width:180px;height:15px;text-align:right;z-index:126;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Alexa Name</span></div>
-<input type="text" id="Editbox41" style="position:absolute;left:189px;top:420px;width:253px;height:18px;z-index:125;" name="AlexaName" value="%AlexaName%" spellcheck="false">
+<input type="text" id="Editbox41" style="position:absolute;left:189px;top:420px;width:253px;height:18px;z-index:127;" name="AlexaName" value="%AlexaName%" spellcheck="false">
 </form>
 </div>
-<input type="submit" id="Button8" onclick="window.location.href='Timer1';return false;" name="" value="Timer configuration" style="position:absolute;left:556px;top:882px;width:509px;height:32px;z-index:139;">
-<label for="" id="Label2" onclick="window.location.href='/heap';return false;" style="position:absolute;left:866px;top:51px;width:195px;height:18px;line-height:18px;z-index:140;">System heap: %heap%</label>
-<div id="wb_Text52" style="position:absolute;left:3px;top:550px;width:176px;height:30px;text-align:right;z-index:141;">
+<input type="submit" id="Button8" onclick="window.location.href='Timer1';return false;" name="" value="Timer configuration" style="position:absolute;left:556px;top:882px;width:509px;height:32px;z-index:141;">
+<label for="" id="Label2" onclick="window.location.href='/heap';return false;" style="position:absolute;left:866px;top:51px;width:195px;height:18px;line-height:18px;z-index:142;">System heap: %heap%</label>
+<div id="wb_Text52" style="position:absolute;left:1px;top:619px;width:176px;height:30px;text-align:right;z-index:143;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Toggle BTN Publish Topic<br>Input 0</span></div>
-<input type="submit" id="Button9" onclick="window.location.href='Input_Relays_Map';return false;" name="" value="Input to Relays Map" style="position:absolute;left:556px;top:930px;width:509px;height:32px;z-index:142;">
-<div id="wb_Text9" style="position:absolute;left:726px;top:86px;width:340px;height:15px;text-align:right;z-index:143;">
+<input type="submit" id="Button9" onclick="window.location.href='Input_Relays_Map';return false;" name="" value="Input to Relays Map" style="position:absolute;left:556px;top:930px;width:509px;height:32px;z-index:144;">
+<div id="wb_Text9" style="position:absolute;left:726px;top:86px;width:340px;height:15px;text-align:right;z-index:145;">
 <span style="color:#000000;font-family:Arial;font-size:13px;">Ambiant Temperature: %ATEMP% C</span></div>
-<div id="wb_Form5" style="position:absolute;left:551px;top:114px;width:516px;height:49px;z-index:144;">
+<div id="wb_Form5" style="position:absolute;left:551px;top:114px;width:516px;height:49px;z-index:146;">
 <form name="Form2" method="get" action="/" enctype="multipart/form-data" id="Form5">
-<input type="submit" id="Button10" name="GETRELAYNBBTN" value="Click to display relay configuration: " style="position:absolute;left:17px;top:12px;width:235px;height:25px;z-index:126;">
-<select name="GETRELAYNB" size="1" id="GETRELAYNB" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:268px;top:10px;width:65px;height:28px;z-index:127;" autocomplete="off">
+<input type="submit" id="Button10" name="GETRELAYNBBTN" value="Click to display relay configuration: " style="position:absolute;left:17px;top:12px;width:235px;height:25px;z-index:128;">
+<select name="GETRELAYNB" size="1" id="GETRELAYNB" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:268px;top:10px;width:65px;height:28px;z-index:129;" autocomplete="off">
 <option value="0">0</option>
 <option value="1">1</option>
 <option value="2">2</option>
 <option value="3">3</option>
 </select>
-<input type="submit" id="Button11" name="RELAYACTION" value="ON" style="position:absolute;left:353px;top:12px;width:65px;height:25px;z-index:128;">
-<input type="submit" id="Button12" name="RELAYACTION" value="OFF" style="position:absolute;left:429px;top:12px;width:65px;height:25px;z-index:129;">
+<input type="submit" id="Button11" name="RELAYACTION" value="ON" style="position:absolute;left:353px;top:12px;width:65px;height:25px;z-index:130;">
+<input type="submit" id="Button12" name="RELAYACTION" value="OFF" style="position:absolute;left:429px;top:12px;width:65px;height:25px;z-index:131;">
 </form>
 </div>
-<div id="wb_Text24" style="position:absolute;left:562px;top:86px;width:129px;height:15px;z-index:145;" onclick="window.location.href='edit';return false;">
+<div id="wb_Text24" style="position:absolute;left:562px;top:86px;width:129px;height:15px;z-index:147;" onclick="window.location.href='edit';return false;">
 <span style="color:#4169E1;font-family:Arial;font-size:13px;">Configuration files</span></div>
 
-<input type="submit" id="Button13" onclick="window.location.href='./PressureSensorConfig.html';return false;" name="" value="Pressure Sensor configuration" style="position:absolute;left:552px;top:1136px;width:509px;height:32px;z-index:147;">
+<input type="submit" id="Button13" onclick="window.location.href='./PressureSensorConfig.html';return false;" name="" value="Pressure Sensor configuration" style="position:absolute;left:552px;top:1136px;width:509px;height:32px;z-index:149;">
 <script>
 function submitForm1()
 {
@@ -3472,6 +3511,35 @@ function submitForm1()
       {
          alert("Calibration factor");
          Editbox43.focus();
+         return false;
+      }
+   }
+   var Editbox44 = document.getElementById('Editbox44');
+   if (!(Editbox44.disabled || Editbox44.style.display === 'none' || Editbox44.style.visibility === 'hidden'))
+   {
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (!regexp.test(Editbox44.value))
+      {
+         alert("Screen orientation must be between 0 to 3");
+         Editbox44.focus();
+         return false;
+      }
+      if (Editbox44.value == "")
+      {
+         alert("Screen orientation must be between 0 to 3");
+         Editbox44.focus();
+         return false;
+      }
+      if (Editbox44.value.length < 0)
+      {
+         alert("Screen orientation must be between 0 to 3");
+         Editbox44.focus();
+         return false;
+      }
+      if (Editbox44.value.length > 3)
+      {
+         alert("Screen orientation must be between 0 to 3");
+         Editbox44.focus();
          return false;
       }
    }

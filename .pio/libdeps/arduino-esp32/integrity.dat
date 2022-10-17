@@ -1,10 +1,12 @@
-https://github.com/me-no-dev/ESPAsyncWebServer.git
+thingpulse/ESP8266 and ESP32 OLED driver for SSD1306 displays@^4.3.0
+adafruit/Adafruit SSD1306@^2.5.4
 AsyncMqttClient
 bblanchon/ArduinoJson@^6.19.2
-painlessmesh/painlessMesh@^1.5.0
-vintlabs/FauxmoESP@^3.4
-adafruit/Adafruit SSD1306@^2.5.4
-AsyncTCP
-brawrdon/ESP32 HomeKit SDK for Arduino@^1.1.0
+aircoookie/Espalexa@^2.7.0
 arkhipenko/TaskScheduler@^3.6.0
 marian-craciunescu/ESP32Ping@^1.7
+https://github.com/me-no-dev/ESPAsyncWebServer.git
+vintlabs/FauxmoESP@^3.4
+painlessmesh/painlessMesh@^1.5.0
+brawrdon/ESP32 HomeKit SDK for Arduino@^1.1.0
+AsyncTCP

@@ -12,6 +12,9 @@
         "string": "cpp",
         "vector": "cpp",
         "*.tcc": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "functional": "cpp",
+        "memory": "cpp",
+        "sstream": "cpp"
     }
 }

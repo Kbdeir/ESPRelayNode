@@ -7,11 +7,15 @@
 #else
  #define HWESP32                        // ESP32 based board. 1 relay, 6 inputs
  #define ESP32_2RBoard
- //#define ESP32_3RBoard
- //#define ESP32_4RBoard
+// #define ESP32_3RBoard
+// #define ESP32_4RBoard
  #define OLED_1306                    // OLED only available on ESP32
- // #define _emonlib_  // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
-  #define _pressureSensor_
+// #define OLED_ThingPulse
+ #define _emonlib_  // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
+ #define _pressureSensor_
+
+#define PULLMODE_ INPUT_PULLUP
+// #define PULLMODE_ INPUT_PULLDOWN
 #endif
 
 // select feature type
@@ -29,7 +33,8 @@
 // #define ESP_MESH_ROOT
 
 // #define AppleHK
- #define ALEXA 
+ #define _ALEXA_ 
+// #define _ESP_ALEXA_
 
 // #define INVERTERLINK
 // #define WEBSOCKETS

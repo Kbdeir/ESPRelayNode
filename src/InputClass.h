@@ -27,7 +27,6 @@ class InputSensor{
     input_mode fclickmode;
     fnptr_d onInputChange_RelayServiceRoutine;
     fnptr_d onInputClick_RelayServiceRoutine;
-
     fnptr_d onInputLOOP_RelayServiceRoutine;
 
 
@@ -37,15 +36,11 @@ class InputSensor{
       input_mode clickmode
     );
 
-    void SetInputSensorPin(uint8_t p);
+    void SetInputSensorPin(uint8_t p, int PULLMODE);
 
     ~InputSensor();
     void addrelay(Relay * rly);
-    void initialize(
-        uint8_t p,
-        fnptr_d on_callback,
-        input_mode clickmode          
-        );
+    void initialize(uint8_t p,fnptr_d on_callback, input_mode clickmode, int PULLMODE = INPUT_PULLUP);
     void watch();
     InputSensor * getinputbynumber(uint8_t nb);
     void clearAttachedRelays();

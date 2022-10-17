@@ -18,16 +18,31 @@
   #endif 
 #endif
 
+#ifdef _ESP_ALEXA_
+  #define ESPALEXA_ASYNC //it is important to define this before #include <Espalexa.h>!
+  #include <Espalexa.h>
+  extern Espalexa espalexa; 
+#endif
+#ifdef _ALEXA_
+#include "fauxmoESP.h"
+extern fauxmoESP fauxmo;
+#endif
+
 extern boolean CalendarNotInitiated ;
 extern NodeTimer NTmr;
 extern TempConfig PTempConfig;
+#ifdef _pressureSensor_
 extern TLPressureSensor TL136;
+#endif 
 extern float MCelcius;
 extern float ACS_I_Current;
 extern bool homekitNotInitialised;
 
 extern void setupInputs();
 extern void clearIRMap();
+
+extern bool webing;
+
 
 //extern std::vector<void *> relays ; // a list to hold all relays
 //extern  int currentPosition;
@@ -42,7 +57,14 @@ uint8_t AppliedRelayNumber = 0;
 
 // const char* serverIndex = "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>";
 // AsyncWebServer AsyncWeb_server(80);
-AsyncWebServer AsyncWeb_server(8080);
+#if defined _ESP_ALEXA_
+AsyncWebServer AsyncWeb_server(80);
+#else
+// AsyncWebServer AsyncWeb_server(8080);
+AsyncWebServer AsyncWeb_server(80);
+#endif
+
+
 // AsyncEventSource events("/events"); // https://randomnerdtutorials.com/esp32-web-server-sent-events-sse/
 // AsyncWebSocket ws("/test");
 
@@ -108,11 +130,12 @@ String TempConfProcessor(const String& var)
   return String();
 }
 
+#ifdef _pressureSensor_
 String TLProcessor(const String& var)
 {
   if(var == F( "maSTopic" ))              return String(TL136.maSTopic);
-  if(var == F( "maSHL" ))                 return String(TL136.max_sensor_measurment_capacity_meters);
-  if(var == F( "TankHeight" ))            return String(TL136.max_tank_capacity_meters);  
+  if(var == F( "maSHL" ))                 return String(TL136.max_sensor_measurment_capacity);
+  if(var == F( "TankHeight" ))            return String(TL136.max_tank_capacity);  
   if(var == F( "maSLC" ))                 return String(TL136.maSLC);
   if(var == F( "maSHC" ))                 return String(TL136.maSHC);  
   if(var == F( "maBurdenResistor" ))      return String(TL136.BurdenResistorValue);  
@@ -120,6 +143,7 @@ String TLProcessor(const String& var)
   if(var == F( "ma_ADC" ))                return String(TL136.sampleI);  
   return String();
 }
+#endif
 
 
 
@@ -223,7 +247,9 @@ String processor(const String& var)
   if(var == F( "CT_adjustment" ))  return String( MyConfParam.v_CT_adjustment);     
   if(var == F( "ToleranceOnTime" ))  return String( MyConfParam.v_ToleranceOnTime);   
   if(var == F( "CT_MaxAllowed_current" ))  return String( MyConfParam.v_CT_MaxAllowed_current);   
-  if(var == F( "CT_saveThreshold" ))  return String( MyConfParam.v_CT_saveThreshold);                 
+  if(var == F( "CT_saveThreshold" ))  return String( MyConfParam.v_CT_saveThreshold);         
+  
+  if(var == F( "Screen_orientation" ))  return String( MyConfParam.v_Screen_orientation);              
 
 
   return String();
@@ -350,6 +376,7 @@ void SetAsyncHTTP(){
             CalendarNotInitiated = true;
     });
     
+    #ifdef _pressureSensor_
     AsyncWeb_server.on("/PressureSensorConfig.html", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         config_read_error_t res = TLloadconfig("/PressureSensorConfig.json",TL136); 
@@ -362,6 +389,7 @@ void SetAsyncHTTP(){
             TLsaveconfig(request); 
             config_read_error_t res = TLloadconfig("/PressureSensorConfig.json",TL136);  
     });
+    #endif
 
     AsyncWeb_server.on("/wscontrol.html", HTTP_GET, [](AsyncWebServerRequest *request){
           if (!request->authenticate("user", "pass")) return request->requestAuthentication();
@@ -388,6 +416,7 @@ void SetAsyncHTTP(){
     AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         AppliedRelayNumber = 0;
+              webing = true;
         if (request->hasParam("GETRELAYNB")) {
             String t = request->getParam("GETRELAYNB")->value();
             AppliedRelayNumber = t.toInt();
@@ -411,6 +440,7 @@ void SetAsyncHTTP(){
             }
         } 
          request->send(SPIFFS, "/Config.html", String(), false, processor);
+               webing = false;
     }
     );
 
@@ -557,6 +587,28 @@ void SetAsyncHTTP(){
 				Serial.println(F("rebooting.."));
         restartRequired = true; // main function will take care of restarting
 	      });
+
+    #ifdef _ESP_ALEXA_
+    AsyncWeb_server.onNotFound([](AsyncWebServerRequest *request){
+      if (!espalexa.handleAlexaApiCall(request)) //if you don't know the URI, ask espalexa whether it is an Alexa control request
+      {
+        //whatever you want to do with 404s
+        request->send(404, "text/plain", "Not found");
+      }
+    });
+    #endif
+    #ifdef _ALEXA_
+      // These two callbacks are required for gen1 and gen3 compatibility
+      AsyncWeb_server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+          if (fauxmo.process(request->client(), request->method() == HTTP_GET, request->url(), String((char *)data))) return;
+          // Handle any other body request here...
+      });
+      AsyncWeb_server.onNotFound([](AsyncWebServerRequest *request) {
+          String body = (request->hasParam("body", true)) ? request->getParam("body", true)->value() : String();
+          if (fauxmo.process(request->client(), request->method() == HTTP_GET, request->url(), body)) return;
+          // Handle not found request here...
+      });
+    #endif
 
         /*
         AsyncWeb_server.on("/upload", HTTP_POST, [](AsyncWebServerRequest *request){

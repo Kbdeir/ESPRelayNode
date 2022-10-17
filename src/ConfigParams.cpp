@@ -3,6 +3,8 @@
 boolean ftimesynced = false;
 boolean CalendarNotInitiated = true;
 
+  bool webing = false;
+
 TConfigParams MyConfParam;
 TIRMap myIRMap;
 

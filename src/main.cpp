@@ -54,11 +54,12 @@
     extern painlessMesh  mesh;    
 #endif
 
-#ifdef ALEXA
+#ifdef _ALEXA_
 #include "fauxmoESP.h"
   fauxmoESP fauxmo;
   bool Alexa_initialised = false;
 #endif
+
 
 #ifdef INVERTERLINK
   #include <inverter.h> 
@@ -88,6 +89,12 @@
 #include <SSD1306.h>
 #endif
 
+#ifdef OLED_ThingPulse
+#include <Wire.h>
+#include <SSD1306Wire.h>
+SSD1306Wire display(0x3c,SDA,SCL);
+#endif
+
 #ifdef blockingTime
   #include <KSBNTP.h>
 #else
@@ -109,6 +116,35 @@ bool mesh_active = false;
 extern std::vector<void *> relays ; // a list to hold all relays
 extern std::vector<void *> inputs ; // a list to hold all relays
 extern void applyIRMAp(uint8_t Inpn, uint8_t rlyn);
+
+
+#ifdef _ESP_ALEXA_
+  #define ESPALEXA_ASYNC //it is important to define this before #include <Espalexa.h>!
+  #include <Espalexa.h>
+  Espalexa espalexa;
+  extern AsyncWebServer AsyncWeb_server;
+  bool Alexa_initialised = false;
+
+  void alphaChanged(EspalexaDevice* d) {
+    if (d == nullptr) return; 
+
+    //do what you need to do here
+      for (auto it : relays)  {
+        Relay * rtemp = static_cast<Relay *>(it);
+          if (rtemp) {
+                if ( (strcmp(d->getName().c_str(), rtemp->getRelayConfig()->v_AlexaName.c_str()) == 0) ) { 
+                      if (d->getValue()) {
+                      rtemp->mdigitalWrite(rtemp->getRelayPin(),HIGH);
+                      } else {
+                          rtemp->mdigitalWrite(rtemp->getRelayPin(),LOW);
+                      }
+              } 
+          }  
+      }  
+  }  
+
+#endif
+
 
 extern "C"
 {
@@ -165,6 +201,7 @@ unsigned long previousMillis = 0;             // will store last time LED was up
 unsigned long lastMillis = 0;
 unsigned long lastMillis_1 = 0;
 unsigned long lastMillis5000 = 0;
+unsigned long lastMillis6000 = 0;
 
 unsigned long switch_millis = 0;
 
@@ -252,8 +289,7 @@ extern SoftwareSerial myPort;
 
 #ifdef _pressureSensor_
   #include "TLPressureSensor.h"
-  TLPressureSensor TL136(7, 4, 3, 51);
-  
+  TLPressureSensor TL136(35u , 400, 300, 51);
 #endif
 
 #ifdef StepperMode
@@ -527,7 +563,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
           mqttClient.publish(rly->RelayConfParam->v_CURR_TTL_PUB_TOPIC.c_str(), QOS2, NOT_RETAINED, "0");
         }
       //  mqttClient.publish(rly->RelayConfParam->v_PUB_TOPIC1.c_str(), QOS2, RETAINED, OFF);   //xxx check why this is needed
-        // Serial.print(rly->RelayConfParam->v_STATE_PUB_TOPIC);        
+      //  Serial.print(rly->RelayConfParam->v_STATE_PUB_TOPIC);        
         mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);        
       }
 
@@ -536,7 +572,7 @@ void onRelaychangeInterruptSvc(void* relaySender){
   }
   //}
 
-  #ifdef ALEXA
+  #ifdef _ALEXA_
     // notify all relays status
     Relay * rtemp = nullptr;
     for (auto it : relays)  {
@@ -546,6 +582,20 @@ void onRelaychangeInterruptSvc(void* relaySender){
       }
     }
   #endif // ALEXA
+  #ifdef _ESP_ALEXA_
+    Relay * rtemp = nullptr;
+    int n = 0;
+    for (auto it : relays)  {
+      rtemp = static_cast<Relay *>(it);
+      if (rtemp) {
+          //fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(),digitalRead(rtemp->getRelayPin()) == HIGH,1); 
+          if ( (strcmp(espalexa.getDevice(n)->getName().c_str(), rtemp->getRelayConfig()->v_AlexaName.c_str()) == 0) ) { 
+             espalexa.getDevice(n)->setState(digitalRead(rtemp->getRelayPin()) == HIGH);
+          }
+      }
+      n++;
+    }
+  #endif
 
   #ifdef AppleHK
     #ifndef ESP32
@@ -813,11 +863,11 @@ static void handleData(void* arg, AsyncClient* client, void *data, size_t len) {
 
 /*
 static void handleDisconnect(void* arg, AsyncClient* client) {
- Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
+Serial.printf("\n client %s disconnected \n", client->remoteIP().toString().c_str());
 }
 
 static void handleTimeOut(void* arg, AsyncClient* client, uint32_t time) {
- Serial.printf("\n client ACK timeout ip: %s \n", client->remoteIP().toString().c_str());
+Serial.printf("\n client ACK timeout ip: %s \n", client->remoteIP().toString().c_str());
 }*/
 
 /* server events */
@@ -1161,6 +1211,7 @@ void chronosevaluatetimers(Calendar MyCalendar) {
 //InputSensor Inputsnsr14(InputPin14,process_Input,INPUT_NONE);
 
 
+
 void thingsTODO_on_WIFI_Connected() {
     Serial.println(F("\n[WIFI   ] WiFi Connected"));
     IP_info();
@@ -1234,8 +1285,24 @@ void thingsTODO_on_WIFI_Connected() {
 
     homekitNotInitialised = true;
 
+#ifdef _ESP_ALEXA_
+//our callback functions
+if (!Alexa_initialised) {
+    Alexa_initialised = true;
+    for (auto it : relays)  {
+      Serial.printf("[MAIN] Adding relays to fauxmo");      
+      Relay * rtemp = static_cast<Relay *>(it);
+        if (rtemp) {
+          espalexa.addDevice(rtemp->getRelayConfig()->v_AlexaName.c_str(), alphaChanged);
+        }  
+    }   
+    // EspalexaDevice* device3; //this is optional
+    espalexa.begin(&AsyncWeb_server); //give espalexa a pointer to your server object so it can use your server instead of creating its own
+}
+#endif
 
-#ifdef ALEXA
+
+#ifdef _ALEXA_
   if (!Alexa_initialised) {
     Alexa_initialised = true;
     Serial.println("[ALEXA  ] Starting Alexa server");
@@ -1244,7 +1311,7 @@ void thingsTODO_on_WIFI_Connected() {
     // By default, fauxmoESP creates it's own webserver on the defined port
     // The TCP port must be 80 for gen3 devices (default is 1901)
     // This has to be done before the call to enable()
-    fauxmo.createServer(true); // not needed, this is the default value
+    // fauxmo.createServer(true); // not needed, this is the default value
     fauxmo.setPort(80); // This is required for gen3 devices
 
     // You have to call enable(true) once you have a WiFi connection
@@ -1340,125 +1407,124 @@ void Wifi_connect()
 
 void setupInputs(){
 #ifdef _pressureSensor_
-config_read_error_t res = TLloadconfig("/PressureSensorConfig.json",TL136);
+  config_read_error_t res = TLloadconfig("/PressureSensorConfig.json", TL136);
+  TL136.preparejsontemplate();
 #endif 
-#ifndef StepperMode
-  #if defined (HWver02)  || defined (HWver03)
-  Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
-  Inputsnsr12.initialize(InputPin12,process_Input,INPUT_NONE);
-  Inputsnsr13.initialize(SwitchButtonPin2,process_Input,INPUT_NONE);  
-  #endif
-  #ifdef HWver03_4R
+  #ifndef StepperMode
+    #if defined (HWver02)  || defined (HWver03)
+    Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
+    Inputsnsr12.initialize(InputPin12,process_Input,INPUT_NONE);
+    Inputsnsr13.initialize(SwitchButtonPin2,process_Input,INPUT_NONE);  
+    #endif
+    #ifdef HWver03_4R
+      Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
+      Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr02.post_mqtt = true;
+      Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+      Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+
+      Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
+      Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr14.post_mqtt = true;
+      Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
+      Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);  
+
+      Inputsnsr13.initialize(InputPin13,process_Input,INPUT_NONE);
+      Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr13.post_mqtt = true;
+      Inputsnsr13.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;  // change this later KSB
+      Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);    
+    #endif
+    #ifdef HWver03
     Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
     Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
     Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
     Inputsnsr02.post_mqtt = true;
     Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
     Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+    #endif
 
-    Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
-    Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr14.post_mqtt = true;
-    Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
-    Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);  
+    #if defined (HWver02)  || defined (HWver03)
+      Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr12.post_mqtt = true;
+      Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
+      Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
 
-    Inputsnsr13.initialize(InputPin13,process_Input,INPUT_NONE);
-    Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr13.post_mqtt = true;
-    Inputsnsr13.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;  // change this later KSB
-    Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);    
-  #endif
-  #ifdef HWver03
-  Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
-  Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr02.post_mqtt = true;
-  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-  Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
-  #endif
+      Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr13.post_mqtt = true;
+      Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;
+      Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
 
-  #if defined (HWver02)  || defined (HWver03)
-  Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr12.post_mqtt = true;
-  Inputsnsr12.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC;
-  Inputsnsr12.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+      Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr14.post_mqtt = true;
+      Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
+      Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
+      //Inputsnsr14.SetInputSensorPin(InputPin14);
+    #endif
 
-  Inputsnsr13.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr13.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr13.post_mqtt = true;
-  Inputsnsr13.mqtt_topic = MyConfParam.v_TOGGLE_BTN_PUB_TOPIC;
-  Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN0_INPUTMODE);
+    #ifdef HWESP32
+      #if not defined _emonlib_ && not defined _pressureSensor_
+        Inputsnsr01.initialize(InputPin01,process_Input,INPUT_NONE,PULLMODE_);
+        Inputsnsr01.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+        Inputsnsr01.onInputClick_RelayServiceRoutine = buttonclick;
+        Inputsnsr01.post_mqtt = true;
+        Inputsnsr01.mqtt_topic = MyConfParam.v_InputPin01_STATE_PUB_TOPIC; //+ "_1"; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+        Inputsnsr01.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);  
+      #endif
 
-  Inputsnsr14.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr14.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr14.post_mqtt = true;
-  Inputsnsr14.mqtt_topic = MyConfParam.v_InputPin14_STATE_PUB_TOPIC;
-  Inputsnsr14.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
-  //Inputsnsr14.SetInputSensorPin(InputPin14);
-  #endif
+      #ifdef ESP32_2RBoard  
+        Inputsnsr01.initialize(InputPin01,process_Input,INPUT_NONE,PULLMODE_);
+        Inputsnsr01.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+        Inputsnsr01.onInputClick_RelayServiceRoutine = buttonclick;
+        Inputsnsr01.post_mqtt = true;
+        Inputsnsr01.mqtt_topic = MyConfParam.v_InputPin01_STATE_PUB_TOPIC; //+ "_1"; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+        Inputsnsr01.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);  
+      #endif
 
-  #ifdef HWESP32
-   #if not defined _emonlib_ && not defined _pressureSensor_
-  Inputsnsr01.initialize(InputPin01,process_Input,INPUT_NONE);
-  Inputsnsr01.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr01.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr01.post_mqtt = true;
-  Inputsnsr01.mqtt_topic = MyConfParam.v_InputPin01_STATE_PUB_TOPIC; //+ "_1"; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-  Inputsnsr01.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);  
-  #endif
+      Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE,PULLMODE_);
+      Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr02.post_mqtt = true;
+      Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin02_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+      Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
 
-  #ifdef ESP32_2RBoard
-  
-    Inputsnsr01.initialize(InputPin01,process_Input,INPUT_NONE);
-    Inputsnsr01.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr01.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr01.post_mqtt = true;
-    Inputsnsr01.mqtt_topic = MyConfParam.v_InputPin01_STATE_PUB_TOPIC; //+ "_1"; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-    Inputsnsr01.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);  
-    
-  #endif
-  Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
-  Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr02.post_mqtt = true;
-  Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin02_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-  Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);
+      Inputsnsr03.initialize(InputPin03,process_Input,INPUT_NONE,PULLMODE_);
+      Inputsnsr03.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr03.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr03.post_mqtt = true;
+      Inputsnsr03.mqtt_topic = MyConfParam.v_InputPin03_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+      Inputsnsr03.fclickmode = static_cast <input_mode>(MyConfParam.v_IN3_INPUTMODE);
 
-  Inputsnsr03.initialize(InputPin03,process_Input,INPUT_NONE);
-  Inputsnsr03.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr03.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr03.post_mqtt = true;
-  Inputsnsr03.mqtt_topic = MyConfParam.v_InputPin03_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-  Inputsnsr03.fclickmode = static_cast <input_mode>(MyConfParam.v_IN3_INPUTMODE);
+      Inputsnsr04.initialize(InputPin04,process_Input,INPUT_NONE,PULLMODE_);
+      Inputsnsr04.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr04.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr04.post_mqtt = true;
+      Inputsnsr04.mqtt_topic = MyConfParam.v_InputPin04_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+      Inputsnsr04.fclickmode = static_cast <input_mode>(MyConfParam.v_IN4_INPUTMODE);
 
-  Inputsnsr04.initialize(InputPin04,process_Input,INPUT_NONE);
-  Inputsnsr04.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr04.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr04.post_mqtt = true;
-  Inputsnsr04.mqtt_topic = MyConfParam.v_InputPin04_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-  Inputsnsr04.fclickmode = static_cast <input_mode>(MyConfParam.v_IN4_INPUTMODE);
+      Inputsnsr05.initialize(InputPin05,process_Input,INPUT_NONE,PULLMODE_);
+      Inputsnsr05.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr05.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr05.post_mqtt = true;
+      Inputsnsr05.mqtt_topic = MyConfParam.v_InputPin05_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+      Inputsnsr05.fclickmode = static_cast <input_mode>(MyConfParam.v_IN5_INPUTMODE);
 
-  Inputsnsr05.initialize(InputPin05,process_Input,INPUT_NONE);
-  Inputsnsr05.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr05.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr05.post_mqtt = true;
-  Inputsnsr05.mqtt_topic = MyConfParam.v_InputPin05_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-  Inputsnsr05.fclickmode = static_cast <input_mode>(MyConfParam.v_IN5_INPUTMODE);
+      Inputsnsr06.initialize(InputPin06,process_Input,INPUT_NONE,PULLMODE_);
+      Inputsnsr06.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr06.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr06.post_mqtt = true;
+      Inputsnsr06.mqtt_topic = MyConfParam.v_InputPin06_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+      Inputsnsr06.fclickmode = static_cast <input_mode>(MyConfParam.v_IN6_INPUTMODE);
 
-  Inputsnsr06.initialize(InputPin06,process_Input,INPUT_NONE);
-  Inputsnsr06.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-  Inputsnsr06.onInputClick_RelayServiceRoutine = buttonclick;
-  Inputsnsr06.post_mqtt = true;
-  Inputsnsr06.mqtt_topic = MyConfParam.v_InputPin06_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-  Inputsnsr06.fclickmode = static_cast <input_mode>(MyConfParam.v_IN6_INPUTMODE);
+    #endif//HWESP32
 
-  #endif
-
-
-  #endif
+  #endif //StepperMode
 }
 
 
@@ -1514,12 +1580,22 @@ void setup() {
 
   Serial.begin(115200);
 
+  #ifdef OLED_ThingPulse
+    display.init();
+    display.flipScreenVertically();
+    display.setFont(ArialMT_Plain_16);
+    // Display some text
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.drawString(0, 0, "Hello world");
+    display.display();
+  #endif
+
   #ifdef INVERTERLINK
   SERIAL_INVERTER.begin(2400);     // Using UART0 for comm with inverter. IE cant be connected during flashing
   #endif
 
-//  mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
-//  wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
+  //  mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
+  //  wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void*)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
   #ifdef _emonlib_
     //CT processor try
@@ -1533,16 +1609,6 @@ void setup() {
     emon1.current(CurrentPin, 30);       // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input
     */
   #endif
-  #ifdef _pressureSensor_
-
-  //  adc1_config_width(chars.bit_width);
-  //  adc1_config_channel_atten(ADC1_CHANNEL_6, chars.atten);
-  //  adc1_config_channel_atten(ADC1_CHANNEL_7, chars.atten);
-
-    analogReadResolution(12);
-    adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11); 
-    adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_11);   
-  #endif   
 
     blinkInterval = 1000; 
     lastMillis_2 = 0;
@@ -1665,7 +1731,7 @@ void setup() {
         #ifdef ESP32
           if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
             Serial.println(F("SPIFFS Mount Failed"));
-           // if(SPIFFS.format()) { Serial.println("File System Formated"); }
+        //    if(SPIFFS.format()) { Serial.println("File System Formated"); }
             return;
           }
           listDir(SPIFFS, "/", 0);  
@@ -1695,7 +1761,7 @@ void setup() {
         WiFi.setSleep(WIFI_PS_NONE);
             
         if (digitalRead(ConfigInputPin) == LOW){
-          Serial.print(F("\n[WIFI   ] >>>>>>>>>>>>>>>>>>>>> Sarting WIFI in AP mode \n"));
+          Serial.print(F("\n[WIFI   ] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Sarting WIFI in AP mode <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< \n"));
           WiFi.mode(WIFI_AP_STA);
         }
 
@@ -1908,10 +1974,15 @@ void setup() {
 
 void loop() {
 
-  #ifdef ALEXA
+  #ifdef _ALEXA_
     fauxmo.handle();
   #endif
     
+  #ifdef _ESP_ALEXA_
+   espalexa.loop();
+  #endif
+    
+
   #ifdef ESP_MESH
   if ( mesh_active) {
     mesh.update();
@@ -1934,18 +2005,17 @@ void loop() {
   #endif
 
 
-    #ifndef ESP32
-      ESP.wdtFeed();
-      MDNS.update();
-    #endif
-    pinMode (ConfigInputPin, INPUT_PULLUP );
+   #ifndef ESP32
+    ESP.wdtFeed();
+     MDNS.update();
+   #endif
 
-    if (restartRequired){
+   if (restartRequired){
       Serial.println(F("\n[SYSTEM ] Restarting\n\r"));
       restartRequired = false;
       delay(2500);
       ESP.restart();
-    }
+   }
 
   #ifdef ESP32
     if  (WiFi.status() != WL_CONNECTED)  {
@@ -2029,7 +2099,6 @@ void loop() {
     }
   }
 
-
   if((timeStatus() == timeSet) && CalendarNotInitiated) {
       chronosInit();
     CalendarNotInitiated = false;
@@ -2098,44 +2167,68 @@ void loop() {
             #endif 
   }
 
+  if (millis() - lastMillis6000 > 6000) {       // things to do every 1 second
+    lastMillis6000 = millis();
+    #ifdef _ESP_ALEXA_
+      if (Alexa_initialised) {
+
+        int n = 0;
+        for (auto it : relays)  {
+          Relay * rtemp = nullptr;
+          rtemp = static_cast<Relay *>(it);
+          if (rtemp) {
+              if ( (strcmp(espalexa.getDevice(n)->getName().c_str(), rtemp->getRelayConfig()->v_AlexaName.c_str()) == 0) ) { 
+                espalexa.getDevice(n)->setState(digitalRead(rtemp->getRelayPin()) == HIGH);
+                Serial.printf("\n [ALEXA   ] updating ALEXA %s to %d",espalexa.getDevice(n)->getName(),digitalRead(rtemp->getRelayPin()) == HIGH );
+              }
+          }
+          n++;
+        }
+        n = 0;
+      }
+    #endif
+  }
+
 
   if (millis() - lastMillis > 1000) {       // things to do every 1 second
     lastMillis = millis();
     secondson++;
 
+    #ifdef _emonlib_  
+      CT_1.readPower(MyConfParam.v_CT_adjustment, MyConfParam.v_CT_saveThreshold);
+      CT_1.DisplayPower(display, mqttClient);
+      if (mqttClient.connected()) {
+        // "{'msg':{'source':'[SOURCE]','data':[{'voltage':'[VOLTAGE]', 'wh':'[WH]', 'MTD_wh':'[MTD_WH]', 'YTD_wh':'[YTD_WH]'}]}}"
+        // mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.resx);
+        mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.jsonPost.c_str());        
+        }        
+      #ifdef AppleHK
+        hap_val_t new_val;
+        new_val.f = CT_1.amps;
+        hap_char_update_val(hcx_temp, &new_val);
+      #endif   
+      if (CT_1.amps > MyConfParam.v_CT_MaxAllowed_current) {
+        if (RelayCToff.enabled == false) {
+          Serial.println(F("[CT     ] timer off runing - High consumption detected"));
+          RelayCToff.start(); 
+          // RelayCTon.stop();
+        }
+      }        
+    #endif 
+
     #ifdef _pressureSensor_
       TL136.read(500);
-      TL136.DisplayLevel(display, WiFi.isConnected(), mqttClient.connected());
-      if (MyConfParam.v_Sonar_distance != "0") {
+      #ifdef OLED_1306
+      TL136.DisplayLevel(display, WiFi.isConnected(), mqttClient.connected(),MyConfParam.v_Screen_orientation);
+      
+      #endif
+      if (MyConfParam.maSTopic != "0") {
         if (mqttClient.connected()) {
           mqttClient.publish(TL136.maSTopic.c_str(), QOS2, RETAINED, TL136.jsonPost.c_str()); 
         }
       }
     #endif
 
-    //#ifndef _pressureSensor_
-        #ifdef _emonlib_  
-          CT_1.readPower(MyConfParam.v_CT_adjustment, MyConfParam.v_CT_saveThreshold);
-          CT_1.DisplayPower(display, mqttClient);
-          if (mqttClient.connected()) {
-            // "{'msg':{'source':'[SOURCE]','data':[{'voltage':'[VOLTAGE]', 'wh':'[WH]', 'MTD_wh':'[MTD_WH]', 'YTD_wh':'[YTD_WH]'}]}}"
-            // mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.resx);
-            mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.jsonPost.c_str());        
-            }        
-          #ifdef AppleHK
-            hap_val_t new_val;
-            new_val.f = CT_1.amps;
-            hap_char_update_val(hcx_temp, &new_val);
-          #endif   
-          if (CT_1.amps > MyConfParam.v_CT_MaxAllowed_current) {
-            if (RelayCToff.enabled == false) {
-              Serial.println(F("[CT     ] timer off runing - High consumption detected"));
-              RelayCToff.start(); 
-              // RelayCTon.stop();
-            }
-          }        
-        #endif 
-    // #endif       
 
     #ifdef OLED_1306
           display.display();

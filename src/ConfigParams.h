@@ -26,8 +26,8 @@
 #include <IPAddress.h>
 
  #ifdef HWESP32
-    #define led       02 // led on IO2  
-    #define RelayPin  25 // relay on IO25
+    #define led                 02 // led on IO2  
+    #define RelayPin            25 // relay on IO25
     #define HomeKitt_PIN_SWITCH 25 // Homekit is on (Relay0 = RelayPin) pin only
 
     // #ifndef _emonlib_
@@ -211,6 +211,7 @@ typedef struct TConfigParams {
   uint16_t v_CT_MaxAllowed_current;      
   float v_CT_adjustment;
   uint8_t v_CT_saveThreshold;  
+  uint8_t v_Screen_orientation;  
   
   uint16_t maSensor_L_Calibration, maSensor_HighCalibration, maSensor_max_range;  
   String maSTopic ;
@@ -248,6 +249,7 @@ int8_t R10;
   void relayon(void* obj);
 
   #include <RelayClass.h>
+
 
 
 #endif //CONFIGPARAMS_H

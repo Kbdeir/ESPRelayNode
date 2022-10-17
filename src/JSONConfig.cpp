@@ -130,7 +130,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_CT_MaxAllowed_current          = (json["CT_MaxAllowed_current"].as<String>()!="") ? json["CT_MaxAllowed_current"].as<uint16_t>() : 30;  
   ConfParam.v_CT_adjustment                  = (json["CT_adjustment"].as<String>()!="") ? json["CT_adjustment"].as<float_t>() : 0.05;
   ConfParam.v_CT_saveThreshold               = (json["CT_saveThreshold"].as<String>()!="") ? json["CT_saveThreshold"].as<uint8_t>() : 10;
-  
+  ConfParam.v_Screen_orientation             = (json["Screen_orientation"].as<String>()!="") ? json["Screen_orientation"].as<uint8_t>() : 0; 
 
   configFile.close();
 
@@ -224,8 +224,9 @@ bool saveConfig(TConfigParams &ConfParam){
     json[F("ToleranceOnTime")]                = ConfParam.v_ToleranceOnTime; 
     json[F("ToleranceOffTime")]               = ConfParam.v_ToleranceOffTime;        
     json[F("CT_adjustment")]                  = ConfParam.v_CT_adjustment;       
-    json[F("CT_saveThreshold")]                  = ConfParam.v_CT_saveThreshold;       
-        
+    json[F("CT_saveThreshold")]               = ConfParam.v_CT_saveThreshold;        
+    json[F("Screen_orientation")]             = ConfParam.v_Screen_orientation;        
+
     json[F("CT_MaxAllowed_current")]          = ConfParam.v_CT_MaxAllowed_current;
 
     if (serializeJsonPretty(json, configFile) == 0) {
@@ -341,6 +342,8 @@ bool saveDefaultConfig(){
   json[F("CurrentTransformerTopic")]        = "/home/Controller" + CID() + "/CT";   
   json[F("CT_adjustment")]                  = 0.05;    
   json[F("CT_saveThreshold")]               = 10;      
+  json[F("Screen_orientation")]               = 0;      
+  
       
 
   //SPIFFS.remove("/config.json");

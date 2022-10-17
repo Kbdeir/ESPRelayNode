@@ -62,15 +62,17 @@ CTPROCESSOR::~CTPROCESSOR(){
   int CTPROCESSOR::readPower(float adjustment, uint8_t savethreshold) {
       amps = emon1.calcIrms(150) + adjustment; // Calculate Irms only (150 is optimal)
       if (amps < 0) amps = 0;
+      /*
       Serial.print (F("[CT     ] Amps "));
       Serial.print (amps);
       Serial.print (F(" | offsetI  "));
       Serial.println (emon1.offsetI);
+      */
       dtostrf(amps, 6, 2, resx); // Leave room for too large numbers!   
 
-      emon1.calcVI(20,500);                    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
-      Serial.print(F("[CT     ]"));
-      emon1.serialprint();            
+      emon1.calcVI(20,500,1);                    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
+      // Serial.print(F("[CT     ]"));
+      // emon1.serialprint();            
       
       realPower       = emon1.realPower;        //extract Real Power into variable
       apparentPower   = emon1.apparentPower;    //extract Apparent Power into variable
@@ -110,7 +112,7 @@ CTPROCESSOR::~CTPROCESSOR(){
           (Chronos::DateTime::now().month() == 1) ) YTD_Wh = 0;                
 
       Stabilized ++;
-      Serial.printf ("[CT     ] CT Values wh= %f | PreviousWh wh= %f | DIFF= %f \n", wh, PreviousWh, wh-PreviousWh );       
+    //  Serial.printf ("[CT     ] CT Values wh= %f | PreviousWh wh= %f | DIFF= %f \n", wh, PreviousWh, wh-PreviousWh );       
       if (Stabilized > 5) {
         if (CTSaveThreshold > savethreshold) { //CTSaveThreshold_value) {
           CTSaveThreshold = 0;
@@ -122,6 +124,8 @@ CTPROCESSOR::~CTPROCESSOR(){
 
   int CTPROCESSOR::DisplayPower(Adafruit_SSD1306 &display, AsyncMqttClient &mqttClient){
      #ifdef OLED_1306
+        display.setRotation(2); // 1 = upsidedown
+        display.cp437(true); 
         display.clearDisplay();
         display.setTextSize(1);
         #define StartRow 22 
