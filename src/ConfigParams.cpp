@@ -49,10 +49,9 @@ void relayon(void* obj){
   if (obj != NULL) {
     Relay * rly = static_cast<Relay *>(obj);
     rly->mdigitalWrite(rly->getRelayPin(), HIGH);
-    rly->ticker_relay_tta->stop();
+    rly->stop_tta_timer();
   }
 }
-
 
 
 /*

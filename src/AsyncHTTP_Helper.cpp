@@ -68,7 +68,7 @@ AsyncWebServer AsyncWeb_server(80);
 // AsyncEventSource events("/events"); // https://randomnerdtutorials.com/esp32-web-server-sent-events-sse/
 // AsyncWebSocket ws("/test");
 
-bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
+
 //File cf;
 
 
@@ -242,6 +242,7 @@ String processor(const String& var)
 
   if(var == F( "CurrentTransformer_max_current" ))  return String( MyConfParam.v_CurrentTransformer_max_current);
   if(var == F( "calibration" ))  return String( MyConfParam.v_calibration);    
+  if(var == F( "PhaseCal" ))  return String( MyConfParam.v_PhaseCal);     
   if(var == F( "CurrentTransformerTopic" ))  return String( MyConfParam.v_CurrentTransformerTopic);   
   if(var == F( "ToleranceOffTime" ))  return String( MyConfParam.v_ToleranceOffTime);   
   if(var == F( "CT_adjustment" ))  return String( MyConfParam.v_CT_adjustment);     
@@ -402,11 +403,11 @@ void SetAsyncHTTP(){
             String msg = request->getParam("RELAYACTION")->value();
             if (msg == "ON") {
               Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
-              rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+              rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH); 
             }
             if (msg == "OFF") {
               Relay * rtmp =  getrelaybynumber(AppliedRelayNumber);
-              rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+              rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW); 
             }
           }
           }
@@ -425,14 +426,14 @@ void SetAsyncHTTP(){
               if (request->hasParam("RELAYACTION")) {
                 String msg = request->getParam("RELAYACTION")->value();
                 if (msg == "ON") {
-                  rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);
+                  rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH); 
                   #ifdef StepperMode
                   steperrun = ! steperrun;
                   shadeStepper.setCurrentPosition(0);
                   #endif
                 }
                 if (msg == "OFF") {
-                  rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW);
+                 rtmp->mdigitalWrite(rtmp->getRelayPin(),LOW); 
                 }
               }
             } else {

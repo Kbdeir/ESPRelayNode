@@ -123,7 +123,8 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("samsam12"));  
   ConfParam.v_Reboot_on_WIFI_Disconnection  =  json["RWD"].as<uint16_t>();  
   ConfParam.v_CurrentTransformer_max_current = (json["CurrentTransformer_max_current"].as<String>()!="") ? json["CurrentTransformer_max_current"].as<uint8_t>() : 0;
-  ConfParam.v_calibration                    = (json["calibration"].as<String>()!="") ? json["calibration"].as<uint16_t>() : 1908;
+  ConfParam.v_calibration                    = (json["calibration"].as<String>()!="") ? json["calibration"].as<double>() : 1908;
+  ConfParam.v_PhaseCal                        = (json["PhaseCal"].as<String>()!="") ? json["PhaseCal"].as<double>() : 1.7;
   ConfParam.v_CurrentTransformerTopic        = (json["CurrentTransformerTopic"].as<String>()!="") ? json["CurrentTransformerTopic"].as<String>() : String(F(""));  
   ConfParam.v_ToleranceOffTime               = (json["ToleranceOffTime"].as<String>()!="") ? json["ToleranceOffTime"].as<uint16_t>() : 10;
   ConfParam.v_ToleranceOnTime                = (json["ToleranceOnTime"].as<String>()!="") ? json["ToleranceOnTime"].as<uint16_t>() : 30;  
@@ -220,6 +221,7 @@ bool saveConfig(TConfigParams &ConfParam){
 
     json[F("CurrentTransformer_max_current")] = ConfParam.v_CurrentTransformer_max_current;
     json[F("calibration")]                    = ConfParam.v_calibration; 
+    json[F("PhaseCal")]                       = ConfParam.v_PhaseCal;     
     json[F("CurrentTransformerTopic")]        = ConfParam.v_CurrentTransformerTopic;        
     json[F("ToleranceOnTime")]                = ConfParam.v_ToleranceOnTime; 
     json[F("ToleranceOffTime")]               = ConfParam.v_ToleranceOffTime;        
@@ -335,14 +337,14 @@ bool saveDefaultConfig(){
   json[F("Update_now")]=0;
 
   json[F("CurrentTransformer_max_current")] = 50;
-  json[F("calibration")]                    = 1906; 
+  json[F("calibration")]                    = 185; 
   json[F("ToleranceOffTime")]               = 10; 
   json[F("ToleranceOnTime")]                = 30;
   json[F("CT_MaxAllowed_current")]          = 30;      
   json[F("CurrentTransformerTopic")]        = "/home/Controller" + CID() + "/CT";   
-  json[F("CT_adjustment")]                  = 0.05;    
+  json[F("CT_adjustment")]                  = 0;    
   json[F("CT_saveThreshold")]               = 10;      
-  json[F("Screen_orientation")]               = 0;      
+  json[F("Screen_orientation")]             = 0;      
   
       
 

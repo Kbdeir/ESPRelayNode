@@ -17,6 +17,8 @@
 #include <TaskScheduler.h>
 #include <QueueArray.h>
 
+int freeMemory();
+
 #if defined (ARDUINO_ARCH_AVR)
 #include <MemoryFree.h>
 #elif defined(__arm__)
@@ -25,8 +27,11 @@ static int freeMemory() {
   char top = 't';
   return &top - reinterpret_cast<char*>(sbrk(0));
 }
+#elif defined (ARDUINO_ARCH_ESP8266) || defined (ARDUINO_ARCH_ESP32)
+int freeMemory() { return ESP.getFreeHeap();}
 #else
-int freeMemory(); // supply your own
+//  Supply your own freeMemory method
+int freeMemory() { return 0;}
 #endif
 
 Scheduler ts;

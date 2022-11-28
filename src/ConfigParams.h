@@ -13,6 +13,15 @@
     D10 = GPIO1;
     LED_BUILTIN = GPIO16 (auxiliary constant for the board LED, not a board pin);
 */
+#ifdef ESP32
+extern "C"
+{
+  #include <lwip/icmp.h> // needed for icmp packet definitions
+	 #include "freertos/FreeRTOS.h"
+	 #include "freertos/timers.h"  
+}
+#endif
+
 
 #define softwareVersion  " - SW 1.1"
 
@@ -105,6 +114,11 @@
 #define TOG "tog"
 #define TOG_MODE 0
 #define BTN_MODE 1
+
+#define blink_normal  1000
+#define blink_connecting  50
+#define blink_APMode  100
+
 
 const uint16_t MaxWifiTrials = 500;
 
@@ -204,7 +218,8 @@ typedef struct TConfigParams {
   uint16_t v_Reboot_on_WIFI_Disconnection;  
 
   uint8_t v_CurrentTransformer_max_current ;
-  uint16_t v_calibration;
+  double v_calibration;
+  double v_PhaseCal;
   String v_CurrentTransformerTopic ;
   uint16_t v_ToleranceOffTime;
   uint16_t v_ToleranceOnTime;    
@@ -247,6 +262,11 @@ int8_t R10;
   extern String  MAC;
   String CID();
   void relayon(void* obj);
+  
+  #ifdef ESP32
+  void fnTTL_CallBack(TimerHandle_t xTimer, void* obj);  
+  void fnTTA_CallBack(TimerHandle_t xTimer, void* obj);
+  #endif
 
   #include <RelayClass.h>
 

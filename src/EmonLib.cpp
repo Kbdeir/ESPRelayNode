@@ -64,6 +64,140 @@ void EnergyMonitor::currentTX(unsigned int _channel, double _ICAL)
 // From a sample window of the mains AC voltage and current.
 // The Sample window length is defined by the number of half wavelengths or crossings we choose to measure.
 //--------------------------------------------------------------------------------------
+void EnergyMonitor::calcVI(unsigned int crossings, unsigned int timeout)
+{
+  #if defined emonTxV3
+  int SupplyVoltage=3300;
+  #else
+  int SupplyVoltage = readVcc();
+  #endif
+
+  unsigned int crossCount = 0;                             //Used to measure number of times threshold is crossed.
+  unsigned int numberOfSamples = 0;                        //This is now incremented
+
+  //-------------------------------------------------------------------------------------------------------------------------
+  // 1) Waits for the waveform to be close to 'zero' (mid-scale adc) part in sin curve.
+  //-------------------------------------------------------------------------------------------------------------------------
+  unsigned long start = millis();    //millis()-start makes sure it doesnt get stuck in the loop if there is an error.
+
+  while(1)                                   //the while loop...
+  {
+    startV = analogRead(inPinV);                    //using the voltage waveform
+    if ((startV < (ADC_COUNTS*0.55)) && (startV > (ADC_COUNTS*0.45))) {
+      // Serial.printf ("\nZero cross - breaking %u", startV);
+      break;  //check its within range
+    }
+    if ((millis()-start)>timeout) break;
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------------
+  // 2) Main measurement loop
+  //-------------------------------------------------------------------------------------------------------------------------
+  start = millis();
+
+  while ((crossCount < crossings) && ((millis()-start)<timeout))
+  {
+    numberOfSamples++;                       //Count number of times looped.
+    lastFilteredV = filteredV;               //Used for delay/phase compensation
+
+    //-----------------------------------------------------------------------------
+    // A) Read in raw voltage and current samples
+    //-----------------------------------------------------------------------------
+
+    int numsamples = 20;
+
+    //sampleV = analogRead(inPinV);                 //Read in raw voltage signal
+
+      double sumxi = 0;
+      double sumxv = 0;
+   
+      for (unsigned int nn = 0; nn < numsamples; nn++)
+        {  
+              sampleV = analogRead(inPinV);        //Read in raw voltage signal
+              sumxv = sumxv + sampleV*sampleV;     //Read in raw current signal
+              offsetV = (offsetV + (sampleV-offsetV)/(ADC_COUNTS));
+
+              sampleI = analogRead(inPinI);
+              sumxi = sumxi + sampleI*sampleI;
+              offsetI = (offsetI + (sampleI-offsetI)/(ADC_COUNTS));
+        }  
+     
+    sampleI =sqrt(sumxi/numsamples);
+    sampleV =sqrt(sumxv/numsamples);  
+
+    //sampleI = analogRead(inPinI);                 //Read in raw current signal
+
+    //-----------------------------------------------------------------------------
+    // B) Apply digital low pass filters to extract the 2.5 V or 1.65 V dc offset,
+    //     then subtract this - signal is now centred on 0 counts.
+    //-----------------------------------------------------------------------------
+  //  offsetV = offsetV + ((sampleV-offsetV)/ADC_COUNTS);
+    filteredV = sampleV - offsetV;
+  //  offsetI = offsetI + ((sampleI-offsetI)/ADC_COUNTS);
+    filteredI = sampleI - offsetI;
+
+    //-----------------------------------------------------------------------------
+    // C) Root-mean-square method voltage
+    //-----------------------------------------------------------------------------
+    sqV= filteredV * filteredV;                 //1) square voltage values
+    sumV += sqV;                                //2) sum
+
+    //-----------------------------------------------------------------------------
+    // D) Root-mean-square method current
+    //-----------------------------------------------------------------------------
+    sqI = filteredI * filteredI;                //1) square current values
+    sumI += sqI;                                //2) sum
+
+    //-----------------------------------------------------------------------------
+    // E) Phase calibration
+    //-----------------------------------------------------------------------------
+    phaseShiftedV = lastFilteredV + PHASECAL * (filteredV - lastFilteredV);
+
+    //-----------------------------------------------------------------------------
+    // F) Instantaneous power calc
+    //-----------------------------------------------------------------------------
+    instP = phaseShiftedV * filteredI;          //Instantaneous Power
+    sumP +=instP;                               //Sum
+
+    //-----------------------------------------------------------------------------
+    // G) Find the number of times the voltage has crossed the initial voltage
+    //    - every 2 crosses we will have sampled 1 wavelength
+    //    - so this method allows us to sample an integer number of half wavelengths which increases accuracy
+    //-----------------------------------------------------------------------------
+    lastVCross = checkVCross;
+    if (sampleV > startV) checkVCross = true;
+                     else checkVCross = false;
+    if (numberOfSamples==1) lastVCross = checkVCross;
+
+    if (lastVCross != checkVCross) crossCount++;
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------------
+  // 3) Post loop calculations
+  //-------------------------------------------------------------------------------------------------------------------------
+  //Calculation of the root of the mean of the voltage and current squared (rms)
+  //Calibration coefficients applied.
+
+  double V_RATIO = VCAL *((SupplyVoltage/1000.0) / (ADC_COUNTS));
+  Vrms = V_RATIO * sqrt(sumV / numberOfSamples);
+
+  double I_RATIO = ICAL *((SupplyVoltage/1000.0) / (ADC_COUNTS));
+  Irms = I_RATIO * sqrt(sumI / numberOfSamples);
+
+  //Calculation power values
+  realPower = V_RATIO * I_RATIO * sumP / numberOfSamples;
+  apparentPower = Vrms * Irms;
+  powerFactor = realPower / apparentPower;
+
+  //Reset accumulators
+  //Serial.printf ("\nZero cross count  %u", crossCount);
+  sumV = 0;
+  sumI = 0;
+  sumP = 0;
+
+//--------------------------------------------------------------------------------------
+}
+/*
 void EnergyMonitor::calcVI(unsigned int crossings, unsigned int timeout, uint8_t readtype )
 {
   #if defined emonTxV3
@@ -181,6 +315,7 @@ if (readtype > 1) {
   sumP = 0;
 //--------------------------------------------------------------------------------------
 }
+*/
 
 
 
@@ -275,19 +410,17 @@ double EnergyMonitor::calcIrms(unsigned int Number_of_Samples)
   for (unsigned int n = 0; n < Number_of_Samples; n++)
   {
       sumxi = 0;
-      //float start=millis();      
+   
       for (unsigned int nn = 0; nn < numsamples; nn++)
         {  
           sampleI = analogRead(inPinI);
           sumxi = sumxi + sampleI*sampleI;
           offsetI = (offsetI + (sampleI-offsetI)/(ADC_COUNTS));
         }  
-    //float end = millis();        
+     
     sampleI =sqrt(sumxi/numsamples);
 
-    //Serial.printf ("\n sampling time for %i sub-samples was %f",numsamples, end-start );
-
-    
+    //Serial.printf ("\n sampling time for %i sub-samples was %f",numsamples, end-start );   
     //sampleI = analogRead(inPinI);
 
     // Digital low pass filter extracts the 2.5 V or 1.65 V dc offset,
@@ -319,6 +452,7 @@ double EnergyMonitor::calcIrms(unsigned int Number_of_Samples)
 
 void EnergyMonitor::serialprint()
 {
+  /*
   Serial.print(realPower);
   Serial.print(' ');
   Serial.print(apparentPower);
@@ -329,7 +463,10 @@ void EnergyMonitor::serialprint()
   Serial.print(' ');
   Serial.print(powerFactor);
   Serial.println(' ');
-  delay(100);
+  */
+
+  Serial.printf ("\n realPower= %f, apparentPower= %f, Vrms= %f, Irms= %f, powerFactor= %f",realPower,apparentPower,Vrms,Irms,powerFactor);
+  // delay(100);
 }
 
 //thanks to http://hacking.majenko.co.uk/making-accurate-adc-readings-on-arduino

@@ -37,7 +37,7 @@ class TLPressureSensor
 
   private:
     uint8_t SPin;
-    String jsonPost_temp = F("json:{'msg':{'source':'[SOURCE]','data':[{'ADC':'[ADC]', 'cm':'[cm]', 'fp':'[fp]', 'max_tank':'[max_tank]', 'max_sensor':'[max_sensor]'}]}}");  
+    String jsonPost_temp = F("json:{'msg':{'source':'[SOURCE]','data':[{'ADC':'[ADC]', 'cm':'[cm]', 'fp':'[fp]', 'max_tank':'[max_tank]', 'max_sensor':'[max_sensor]', 'IP':'[IP]'}]}}");  
     float mapf(float x, float in_min, float in_max, float out_min, float out_max);    
 };
 

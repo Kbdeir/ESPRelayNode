@@ -1,5 +1,6 @@
+arkhipenko/TaskScheduler@^3.7.0
 vintlabs/FauxmoESP@^3.4
-https://github.com/PaulStoffregen/OneWire
+ESPAsyncTCP
 https://github.com/me-no-dev/ESPAsyncWebServer
 painlessmesh/painlessMesh@^1.5.0
-ESPAsyncTCP
+https://github.com/PaulStoffregen/OneWire

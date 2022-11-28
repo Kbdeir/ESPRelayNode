@@ -12,6 +12,10 @@ enum ksb_status_t {STOPPED_, RUNNING_, PAUSED_};
 typedef void (*fptr)();
 typedef void (*fnptr_a)(void* t);
 
+#ifdef ESP32
+typedef void (*fnptr_a_xtimer)( TimerHandle_t xTimer, void* obj);
+#endif
+
 class Schedule_timer {
 
 private:

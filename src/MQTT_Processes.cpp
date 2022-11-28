@@ -52,6 +52,8 @@ extern String APssid;
 
 AsyncMqttClient mqttClient;
 
+
+
 void connectToMqtt() {
 
   #ifndef DEBUG_DISABLED
@@ -246,11 +248,14 @@ void onMqttUnsubscribe(uint16_t packetId) {
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
 
   String temp = String(payload).substring(0,len);
+  
+  /*
   Serial.print(F("[MQTT   ] Received"));
   Serial.print(F("  topic: "));
   Serial.print(topic);
 	Serial.print(F("  payload: "));
   Serial.println(temp);
+  */
 
   /*
   Serial.print(F("  qos: "));
@@ -268,9 +273,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
   #endif
 
-
   String tp = String(topic);
-
   Relay * rly = nullptr;
   Relay * rtemp = nullptr;
 
@@ -279,73 +282,44 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   for (auto it : relays)  {
     rtemp = static_cast<Relay *>(it);
     if (rtemp) {
-      if ((rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) ||
-          (rtemp->RelayConfParam->v_i_ttl_PUB_TOPIC == tp)) {
+      if ((rtemp->RelayConfParam->v_STATE_PUB_TOPIC == tp) || (rtemp->RelayConfParam->v_CURR_TTL_PUB_TOPIC == tp)) {
+          // Serial.printf("\n[MQTT   ] exiting %s, --- %s \n", rtemp->RelayConfParam->v_PUB_TOPIC1.c_str(), tp.c_str());
+          // Serial.printf("[MQTT   ] exiting %s, --- %s \n", rtemp->RelayConfParam->v_PUB_TOPIC1.c_str(), tp.c_str());
+          return;
+      }
+      if ((rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) || (rtemp->RelayConfParam->v_i_ttl_PUB_TOPIC == tp)) {
             rly = rtemp;
             break;
-      }
+      } 
     }
   }
 
 
-  /*  
-    for (int i=0; i<MAX_RELAYS; i++){
-      rtemp = static_cast<Relay *>(mrelays[i]);
-      //if (rtemp) {
-        //Serial.println("");
-        //Serial.println(rtemp->RelayConfParam->v_PUB_TOPIC1);
-      //}
-      if (rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) {
-        rly = rtemp;
-        break;
-      }
-    }
-  */
-
   if (rly) {
-    // String temp = String(payload).substring(0,len);
-    if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
-      if (temp == ON) {
-          rly->mdigitalWrite(rly->getRelayPin(),HIGH);
-      } else if (temp == OFF) {
-          rly->mdigitalWrite(rly->getRelayPin(),LOW);
-      } else if (temp = TOG) {
-          rly->mdigitalWrite(rly->getRelayPin(),!rly->readrelay());
+      if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
+        if (temp == ON) {
+            rly->mdigitalWrite(rly->getRelayPin(),HIGH);
+        } else if (temp == OFF) {
+            rly->stop_ttl_timer();
+            rly->mdigitalWrite(rly->getRelayPin(),LOW);
+        } else if (temp = TOG) {
+            rly->mdigitalWrite(rly->getRelayPin(),!rly->readrelay());
+        }
       }
-    }
-    else
-    {
-      // sync mqtt state to the actual pin state
-      mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, (digitalRead(rly->getRelayPin()) == HIGH) ? ON : OFF); 
 
-      // sync mqtt state to the actual pin state
-      /*
-      if (digitalRead(rly->getRelayPin()) == HIGH) {
-          if (temp == OFF) {
-            mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, ON);
-          }
+      if (tp == rly->RelayConfParam->v_i_ttl_PUB_TOPIC) {
+        String pld = String(payload);
+        if (isValidNumber(pld)) {
+          //String ttl = pld.substring(0,len);
+          if (rly->RelayConfParam->v_ttl != pld.substring(0,len).toInt()) {
+            rly->RelayConfParam->v_ttl = pld.substring(0,len).toInt();
+            rly->ticker_relay_ttl->interval(rly->RelayConfParam->v_ttl*1000);
+            saveRelayConfig(rly->RelayConfParam);
+            mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED, String(rly->RelayConfParam->v_ttl).c_str());    
+          }      
+        }
       }
-      if (digitalRead(rly->getRelayPin()) == LOW) {
-          if (temp == ON) {
-            mqttClient.publish( rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, OFF);
-          }
-      }
-      */
-    }
 
-    if (tp == rly->RelayConfParam->v_i_ttl_PUB_TOPIC) {
-      String pld = String(payload);
-      if (isValidNumber(pld)) {
-        //String ttl = pld.substring(0,len);
-        rly->RelayConfParam->v_ttl = pld.substring(0,len).toInt();
-        rly->ticker_relay_ttl->interval(rly->RelayConfParam->v_ttl*1000);
-        saveRelayConfig(rly->RelayConfParam);
-        mqttClient.publish( rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), 2, RETAINED,
-            String(rly->RelayConfParam->v_ttl).c_str());
-
-           
-      }
-    }
   }
 }
 

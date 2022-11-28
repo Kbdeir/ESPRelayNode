@@ -1,3 +1,4 @@
+#ifdef ESP_MESH
 #include <Arduino.h>
 #include <ksbMesh.h>
 #include <defines.h>
@@ -137,3 +138,4 @@ void setup_mesh()
  #endif 
 
   }
+#endif

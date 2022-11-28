@@ -53,12 +53,14 @@ void TLPressureSensor::preparejson() {
         jsonPost.replace(F("[ADC]"),String(sampleI));   
         jsonPost.replace(F("[cm]"),String(measure,1));  
         jsonPost.replace(F("[fp]"),String((measure/max_tank_capacity)*100,1));  
+        jsonPost.replace(F("[IP]"),WiFi.localIP().toString());  
   }
 
 void TLPressureSensor::preparejsontemplate() {
         jsonPost_temp.replace(F("[SOURCE]"),"Controller_CT");        
         jsonPost_temp.replace(F("[max_tank]")  , String(max_tank_capacity));    
         jsonPost_temp.replace(F("[max_sensor]"), String(max_sensor_measurment_capacity));
+
   }
 
 config_read_error_t TLloadconfig(char* filename, TLPressureSensor &para_PressureSensorConfig){
@@ -150,8 +152,8 @@ config_read_error_t TLsaveconfig(AsyncWebServerRequest *request){
         display.drawRect(0,StartRow,rect_width,rect_height, WHITE);
  
         display.setCursor(0, 0);
-        display.println("Water Level Readings");      
-        display.printf("%.1f percent", (measure/max_tank_capacity)*100);                        
+        display.println(F("Water Level Readings"));      
+        display.printf("%.1f %%", (measure/max_tank_capacity)*100);                        
         
         display.setCursor(40, StartRow);
         display.println(F("Level"));
@@ -160,18 +162,19 @@ config_read_error_t TLsaveconfig(AsyncWebServerRequest *request){
         display.setTextSize(2); 
         display.printf("%.1f",measure);
         display.setTextSize(1);        
-        display.print(" cm");
+        display.print(F(" cm"));
+
 
         display.setCursor(1,54);  // col,row      
         display.setTextColor(BLACK,WHITE);
         display.print(WiFi.localIP().toString());
         display.setTextColor(WHITE);
-        display.setCursor(120,54);  // col,row    
-        if (wificonnected)  display.print("*");   
-        if (!wificonnected) display.print("x");  
+        display.setCursor(100,54);  // col,row    
+        if (wificonnected)  display.print(F("*"));   
+        if (!wificonnected) display.print(F("x"));  
         display.setCursor(110,54);  // col,row   
-        if (mqttconnected) display.print("M");   
-        if (!mqttconnected) display.print("m");    
+        if (mqttconnected) display.print(F("M"));   
+        if (!mqttconnected) display.print(F("m"));    
       #endif    
   }
 

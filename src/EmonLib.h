@@ -33,15 +33,12 @@
 // include the following line in main sketch inside setup() function:
 //  analogReadResolution(ADC_BITS);
 // otherwise will default to 10 bits, as in regular Arduino-based boards.
-#if defined(__arm__)
+#if defined(__arm__) || (defined ESP32)
 #define ADC_BITS    12
 #else
 #define ADC_BITS    10
 #endif
 
-#if defined(ESP32)
-#define ADC_BITS    12
-#endif
 
 #define ADC_COUNTS  (1<<ADC_BITS)
 
@@ -56,7 +53,7 @@ class EnergyMonitor
     void voltageTX(double _VCAL, double _PHASECAL);
     void currentTX(unsigned int _channel, double _ICAL);
 
-    void calcVI(unsigned int crossings, unsigned int timeout, uint8_t readtype );
+    void calcVI(unsigned int crossings, unsigned int timeout);//, uint8_t readtype );
     double ReadVoltage(unsigned int crossings, unsigned int timeout, uint8_t readtype );
     double calcIrms(unsigned int NUMBER_OF_SAMPLES);
     void serialprint();
@@ -68,7 +65,7 @@ class EnergyMonitor
       powerFactor,
       Vrms,
       Irms;
-    double offsetI;                          //Low-pass filter output      
+
 
   private:
 
@@ -85,12 +82,13 @@ class EnergyMonitor
     // Variable declaration for emon_calc procedure
     //--------------------------------------------------------------------------------------
     int sampleV;                        //sample_ holds the raw analog read value
-    int sampleI;
+    double sampleI; //int sampleI;
 
     double lastFilteredV,filteredV;          //Filtered_ is the raw analog value minus the DC offset
     double filteredI;
     double offsetV;                          //Low-pass filter output
- 
+    double offsetI = ADC_COUNTS / 2;                          //Low-pass filter output      
+    
     double phaseShiftedV;                             //Holds the calibrated phase shifted voltage.
 
     double sqV,sumV,sqI,sumI,instP,sumP;              //sq = squared, sum = Sum, inst = instantaneous

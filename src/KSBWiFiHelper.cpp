@@ -2,6 +2,7 @@
 #include <TimerClass.h>
 #include <defines.h>
 
+
 #ifdef ESP_MESH
     #include <ksbMesh.h>
 #endif
@@ -17,14 +18,17 @@
     #endif
 #endif
 
-
+bool started_in_confMode = false;
 extern void thingsTODO_on_WIFI_Connected();
 extern Schedule_timer Wifireconnecttimer;
 extern void startsoftAP();
-extern long blinkInterval; // blinkInterval at which to blink (milliseconds)
+extern long blinkInterval; // blinkInterval at which to blink wifi led (milliseconds)
 extern unsigned long lastMillis_2;
 extern unsigned long previousMillis;
-extern int ledState;             					// ledState used to set the LED
+extern int ledState;    // ledState used to set the LED
+
+
+
 
 void ScanMyWiFi(void) {
   Serial.println("scan start");
@@ -63,7 +67,7 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
     Serial.print("[WIFI   ] IP address: ");
     Serial.println(IPAddress(info.got_ip.ip_info.ip.addr));
     thingsTODO_on_WIFI_Connected();
-    blinkInterval = 1000;
+    blinkInterval = blink_normal;
     Wifireconnecttimer.stop();
     lastMillis_2 = 0;
     
@@ -84,16 +88,19 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 {
     Serial.println("[WIFI   ] * Event: WiFi disconnected * ");
     WiFi.disconnect();
-    //if (blinkInterval > 50)
-    //{
+    if (blinkInterval > blink_connecting)
+    {
+        if (!started_in_confMode) {
         Wifireconnecttimer.start();
         Serial.println(F("[WIFI   ] Starting reconnection timer\n"));
-   // }
-    blinkInterval = 50;
+        }
+    }
+    blinkInterval = blink_connecting;
     if (digitalRead(ConfigInputPin) == LOW)
     {
+        started_in_confMode = true;
         Wifireconnecttimer.stop();
-        Serial.println(F("[WIFI   ] Starting AP_STA mode\n"));
+        Serial.println(F("[WIFI   ] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Starting AP_STA mode\n"));
         WiFi.mode(WIFI_AP_STA);
         if ((WiFi.status() != WL_CONNECTED))
         {
@@ -109,7 +116,6 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
         Serial.print(F("\n[WIFI   ] Station connected, IP: "));
         Serial.println(WiFi.localIP());
         thingsTODO_on_WIFI_Connected();
-        blinkInterval = 1000;
         Wifireconnecttimer.stop();
         lastMillis_2 = 0; 
 
@@ -128,12 +134,14 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
     });
     WiFiEventHandler disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected &event)
     {
+        if (!started_in_confMode) {
         Serial.println(F("\n[WIFI   ] Station disconnected\n"));
-            if (blinkInterval > 50) {
+            if (blinkInterval > blink_connecting) {
             Wifireconnecttimer.start();
             Serial.println(F("[WIFI   ] Starting reconnection timer\n"));
         }
-        blinkInterval = 50;
+        }
+        blinkInterval = blink_connecting;
         if (digitalRead(ConfigInputPin) == LOW){
             Wifireconnecttimer.stop();
             Serial.println(F("[WIFI   ] Starting AP_STA mode\n"));
@@ -145,30 +153,44 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
     });
 #endif
 
-void blinkled(){
-	unsigned long currentMillis = millis();
-	if (currentMillis - previousMillis >= blinkInterval) {
-		previousMillis = currentMillis;
+void blinkledTask(){
 		if (ledState == LOW) {
 			ledState = HIGH;
 		} else {
 			ledState = LOW;
 		}
 		digitalWrite(led, ledState);
-	}
 }
 
-void blinkledtimed(void* obj){
-		if (ledState == LOW) {
-			ledState = HIGH;
-		} else {
-			ledState = LOW;
-		}
-		digitalWrite(led, ledState);
-      #ifdef HWver03_4R
-    		// digitalWrite(led2, ledState);
-      #endif  
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,5 +1,6 @@
 #ifndef _MESH_H_
 #define _MESH_H_
+#ifdef ESP_MESH
     #include "painlessMesh.h"
 
     #define   MESH_PREFIX     "ksbMesh"
@@ -22,5 +23,5 @@ void nodeTimeAdjustedCallback(int32_t offset) ;
 void onNodeDelayReceived(uint32_t nodeId, int32_t delay);
 IPAddress getlocalIP() ;
 void setup_mesh() ;    
-
+#endif
 #endif
