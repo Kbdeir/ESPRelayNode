@@ -83,7 +83,7 @@ void InputSensor::watch() {
        for (void* it : attachedrelays) {
        //for (std::vector<void *>::iterator it = attachedrelays.begin(); it != attachedrelays.end(); ++it)  {
          rtemp = static_cast<Relay *>(it);
-         if (rtemp) {
+         if (rtemp != nullptr) {
            if (fclickmode==INPUT_COPY_TO_RELAY) {
               if (this->Input_debouncer->fell() || this->Input_debouncer->rose()) {
                if (onInputChange_RelayServiceRoutine != nullptr) {onInputChange_RelayServiceRoutine(rtemp, this);}

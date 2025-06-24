@@ -21,7 +21,7 @@ class TLPressureSensor
     int SupplyVoltage = 3290;
     String jsonPost = " ";
 
-    String  maSTopic = "\\controller\pressure";
+    String maSTopic = "\\controller\pressure";
     uint16_t maSLC = 72;
     uint16_t maSHC = 945;
     uint16_t BurdenResistorValue = 51;          
@@ -31,13 +31,13 @@ class TLPressureSensor
     TLPressureSensor(uint8_t _Pin, uint16_t _max_sensor_measurment_capacity_meters, uint16_t _max_tank_capacity_meters, uint16_t _BurdenResistorValue);
     ~TLPressureSensor();  
     float read(unsigned int nsamples);
-    int DisplayLevel(Adafruit_SSD1306 &display, bool wificonnected, bool mqttconnected, uint8_t sco) ;
+    void DisplayLevel(Adafruit_SSD1306 &display, bool wificonnected, bool mqttconnected, uint8_t sco) ;
     void preparejson();
     void preparejsontemplate();
 
   private:
     uint8_t SPin;
-    String jsonPost_temp = F("json:{'msg':{'source':'[SOURCE]','data':[{'ADC':'[ADC]', 'cm':'[cm]', 'fp':'[fp]', 'max_tank':'[max_tank]', 'max_sensor':'[max_sensor]', 'IP':'[IP]'}]}}");  
+    String jsonPost_temp = F("json:{'msg':{'source':'[SOURCE]','data':[{'ADC':'[ADC]','cm':'[cm]','fp':'[fp]','max_tank':'[max_tank]','max_sensor':'[max_sensor]','IP':'[IP]','voltage':'[VOLTAGE]'}]}}");  
     float mapf(float x, float in_min, float in_max, float out_min, float out_max);    
 };
 

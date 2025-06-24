@@ -1,0 +1,556 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Page</title>
+<meta name="generator" content="WYSIWYG Web Builder 17 - http://www.wysiwygwebbuilder.com">
+<style>
+body
+{
+   background-color: #FFFFFF;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-size: 13px;
+   line-height: 1.1875;
+   margin: 0;
+   padding: 0;
+}
+a
+{
+   color: #0000FF;
+   text-decoration: underline;
+}
+a:visited
+{
+   color: #800080;
+}
+a:active
+{
+   color: #FF0000;
+}
+a:hover
+{
+   color: #0000FF;
+   text-decoration: underline;
+}
+input:focus, textarea:focus, select:focus
+{
+   outline: none;
+}
+#wb_Form2
+{
+   background-color: #808080;
+   background-image: none;
+   border: 1px solid #4F4F4F;
+   border-radius: 0px;
+}
+#wb_Text30 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: center;
+}
+#wb_Text30 div
+{
+   text-align: center;
+}
+#wb_Text24 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #DCDCDC;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text24 div
+{
+   text-align: left;
+}
+#wb_Form1
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #CCCCCC;
+   border-radius: 0px;
+}
+#wb_Text64 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text64 div
+{
+   text-align: right;
+}
+#wb_Text61 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text61 div
+{
+   text-align: left;
+}
+#wb_Text65 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text65 div
+{
+   text-align: right;
+}
+#edt_Res2
+{
+   border: 1px solid #CCCCCC;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   line-height: 18px;
+   padding: 4px 4px 4px 4px;
+   margin: 0;
+   text-align: left;
+}
+#edt_Res2:focus
+{
+   border-color: #66AFE9;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Button2
+{
+   border: 1px solid #2E6DA4;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   padding: 0;
+   text-align: center;
+   -webkit-appearance: none;
+   margin: 0;
+}
+#btnSave
+{
+   border: 1px solid #2E6DA4;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   padding: 0;
+   text-align: center;
+   -webkit-appearance: none;
+   margin: 0;
+}
+#wb_Text2 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text2 div
+{
+   text-align: left;
+}
+#wb_Text5 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text5 div
+{
+   text-align: left;
+}
+#wb_Text4 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text4 div
+{
+   text-align: right;
+}
+#edt_Multiplier
+{
+   border: 1px solid #CCCCCC;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   line-height: 18px;
+   padding: 4px 4px 4px 4px;
+   margin: 0;
+   text-align: left;
+}
+#edt_Multiplier:focus
+{
+   border-color: #66AFE9;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text6 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: left;
+}
+#wb_Text6 div
+{
+   text-align: left;
+}
+#edt_Res1
+{
+   border: 1px solid #CCCCCC;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   line-height: 16px;
+   padding: 4px 4px 4px 4px;
+   margin: 0;
+   text-align: left;
+}
+#edt_Res1:focus
+{
+   border-color: #66AFE9;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text1 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text1 div
+{
+   text-align: right;
+}
+#Editbox3
+{
+   border: 1px solid #CCCCCC;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   line-height: 16px;
+   padding: 4px 4px 4px 4px;
+   margin: 0;
+   text-align: left;
+}
+#Editbox3:focus
+{
+   border-color: #66AFE9;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#Editbox4
+{
+   border: 1px solid #CCCCCC;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   line-height: 18px;
+   padding: 4px 4px 4px 4px;
+   margin: 0;
+   text-align: left;
+}
+#Editbox4:focus
+{
+   border-color: #66AFE9;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text3 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text3 div
+{
+   text-align: right;
+}
+#Editbox5
+{
+   border: 1px solid #CCCCCC;
+   border-radius: 4px;
+   background-color: #FFFFFF;
+   background-image: none;
+   color: #000000;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   line-height: 18px;
+   padding: 4px 4px 4px 4px;
+   margin: 0;
+   text-align: left;
+}
+#Editbox5:focus
+{
+   border-color: #66AFE9;
+   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
+   outline: 0;
+}
+#wb_Text7 
+{
+   background-color: transparent;
+   background-image: none;
+   border: 0px solid #000000;
+   border-radius: 0px;
+   padding: 0;
+   margin: 0;
+   text-align: right;
+}
+#wb_Text7 div
+{
+   text-align: right;
+}
+#Button1
+{
+   border: 1px solid #2E6DA4;
+   border-radius: 4px;
+   background-color: #3370B7;
+   background-image: none;
+   color: #FFFFFF;
+   font-family: Arial;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 13px;
+   padding: 1px 6px 1px 6px;
+   text-align: center;
+   -webkit-appearance: none;
+   margin: 0;
+}
+</style>
+    
+</head>
+<body>
+
+<div id="wb_Form2" style="position:absolute;left:15px;top:10px;width:464px;height:93px;z-index:22;">
+<form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
+<div id="wb_Text30" style="position:absolute;left:56px;top:51px;width:325px;height:15px;text-align:center;z-index:0;">
+<span style="color:#DCDCDC;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
+<div id="wb_Text24" style="position:absolute;left:75px;top:14px;width:367px;height:27px;z-index:1;">
+<span style="color:#F5F5F5;font-family:Arial;font-size:24px;">ADS 11x5 ADC Configuration</span></div>
+</form>
+</div>
+<div id="wb_Form1" style="position:absolute;left:15px;top:105px;width:466px;height:587px;z-index:23;">
+<form name="Form1" method="get" action="ADS11x5ConfigSave.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
+<div id="wb_Text64" style="position:absolute;left:38px;top:88px;width:192px;height:15px;text-align:right;z-index:2;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Resistor 1 Divider Value</span></div>
+<div id="wb_Text61" style="position:absolute;left:38px;top:15px;width:391px;height:21px;z-index:3;">
+<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Analog to Digital Conversion </strong></span></div>
+<div id="wb_Text65" style="position:absolute;left:26px;top:122px;width:205px;height:15px;text-align:right;z-index:4;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Resistor 2 Divider Value</span></div>
+<input type="number" id="edt_Res2" style="position:absolute;left:252px;top:115px;width:91px;height:18px;z-index:5;" name="Res2" value="%Res2%" spellcheck="false">
+<input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:26px;top:544px;width:90px;height:25px;z-index:6;">
+<input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:353px;top:544px;width:79px;height:25px;z-index:7;">
+<div id="wb_Text2" style="position:absolute;left:361px;top:122px;width:43px;height:15px;z-index:8;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">ohms</span></div>
+<div id="wb_Text5" style="position:absolute;left:17px;top:278px;width:433px;height:30px;z-index:9;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Resistance divider calculations. Check actual resistors values on the board and enter above.</span></div>
+<div id="wb_Text4" style="position:absolute;left:47px;top:152px;width:178px;height:30px;text-align:right;z-index:10;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Divider multipliyer value R2/(R1+R2)</span></div>
+<input type="text" id="edt_Multiplier" style="position:absolute;left:252px;top:153px;width:91px;height:18px;z-index:11;" name="ResMultiplier" value="%ResMultiplier%" spellcheck="false">
+<div id="wb_Text6" style="position:absolute;left:361px;top:88px;width:43px;height:15px;z-index:12;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">ohms</span></div>
+<input type="text" id="edt_Res1" style="position:absolute;left:253px;top:82px;width:89px;height:16px;z-index:13;" name="Res1" value="%Res1%" spellcheck="false">
+<div id="wb_Text1" style="position:absolute;left:40px;top:57px;width:192px;height:15px;text-align:right;z-index:14;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">ADS Number</span></div>
+<input type="text" id="Editbox3" style="position:absolute;left:253px;top:51px;width:89px;height:16px;z-index:15;" name="ADSNB" value="%ADSNB%" spellcheck="false">
+<div id="wb_Text3" style="position:absolute;left:27px;top:198px;width:205px;height:15px;text-align:right;z-index:16;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Relay 1</span></div>
+<input type="text" id="Editbox4" style="position:absolute;left:251px;top:191px;width:91px;height:18px;z-index:17;" name="TRelay1" value="%TRelay1%" spellcheck="false">
+<div id="wb_Text7" style="position:absolute;left:25px;top:231px;width:205px;height:15px;text-align:right;z-index:18;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Relay 2</span></div>
+<input type="text" id="Editbox5" style="position:absolute;left:251px;top:224px;width:91px;height:18px;z-index:19;" name="TRelay2" value="%TRelay2%" spellcheck="false">
+<input type="button" id="Button1" onclick="calcMultiplier(this);return false;" name="Calc" value="Calc" style="position:absolute;left:361px;top:155px;width:53px;height:24px;z-index:20;">
+</form>
+</div>
+<script>
+function submitForm1()
+{
+   var regexp;
+   var edt_Res2 = document.getElementById('edt_Res2');
+   if (!(edt_Res2.disabled || edt_Res2.style.display === 'none' || edt_Res2.style.visibility === 'hidden'))
+   {
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (!regexp.test(edt_Res2.value))
+      {
+         alert("Calibration factor");
+         edt_Res2.focus();
+         return false;
+      }
+      if (edt_Res2.value == "")
+      {
+         alert("Calibration factor");
+         edt_Res2.focus();
+         return false;
+      }
+      if (edt_Res2.value != "" && !(edt_Res2.value > 5 && edt_Res2.value <= 1000000))
+      {
+         alert("Calibration factor");
+         edt_Res2.focus();
+         return false;
+      }
+   }
+   var edt_Multiplier = document.getElementById('edt_Multiplier');
+   if (!(edt_Multiplier.disabled || edt_Multiplier.style.display === 'none' || edt_Multiplier.style.visibility === 'hidden'))
+   {
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (!regexp.test(edt_Multiplier.value))
+      {
+         alert("Calibration factor");
+         edt_Multiplier.focus();
+         return false;
+      }
+      if (edt_Multiplier.value == "")
+      {
+         alert("Calibration factor");
+         edt_Multiplier.focus();
+         return false;
+      }
+      if (edt_Multiplier.value != "" && !(edt_Multiplier.value > 5 && edt_Multiplier.value <= 5000))
+      {
+         alert("Calibration factor");
+         edt_Multiplier.focus();
+         return false;
+      }
+   }
+   var Editbox4 = document.getElementById('Editbox4');
+   if (!(Editbox4.disabled || Editbox4.style.display === 'none' || Editbox4.style.visibility === 'hidden'))
+   {
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (!regexp.test(Editbox4.value))
+      {
+         alert("Calibration factor");
+         Editbox4.focus();
+         return false;
+      }
+      if (Editbox4.value == "")
+      {
+         alert("Calibration factor");
+         Editbox4.focus();
+         return false;
+      }
+      if (Editbox4.value != "" && !(Editbox4.value >= 1 && Editbox4.value <= 2))
+      {
+         alert("Calibration factor");
+         Editbox4.focus();
+         return false;
+      }
+   }
+   var Editbox5 = document.getElementById('Editbox5');
+   if (!(Editbox5.disabled || Editbox5.style.display === 'none' || Editbox5.style.visibility === 'hidden'))
+   {
+      regexp = /^[-+]?\d*\.?\d*$/;
+      if (!regexp.test(Editbox5.value))
+      {
+         alert("Calibration factor");
+         Editbox5.focus();
+         return false;
+      }
+      if (Editbox5.value == "")
+      {
+         alert("Calibration factor");
+         Editbox5.focus();
+         return false;
+      }
+      if (Editbox5.value != "" && !(Editbox5.value >= 1 && Editbox5.value <= 2))
+      {
+         alert("Calibration factor");
+         Editbox5.focus();
+         return false;
+      }
+   }
+   return true;
+}
+</script>
+<script>
+      function calcMultiplier(selectObject) {
+         var r1 = Number(document.getElementById("edt_Res1").value);
+         var r2 = Number(document.getElementById("edt_Res2").value);
+         document.getElementById("edt_Multiplier").value = (r2/(r1+r2))*1000; 
+      }
+    </script>
+</body>
+</html>

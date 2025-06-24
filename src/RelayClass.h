@@ -18,8 +18,6 @@ extern "C"
 }
 #endif
 
-
-
 typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);

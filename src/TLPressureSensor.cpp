@@ -3,9 +3,13 @@
 #include "Arduino.h"
 #include "TLPressureSensor.h"
 #include "esp_adc_cal.h" 
+#include "CT_ProcessPower.h"
 
 #define Tbuffer_size  500
 extern bool webing;
+#ifdef _emonlib_ 
+extern CTPROCESSOR CT_1;
+#endif
 
 esp_adc_cal_characteristics_t chars;
 
@@ -43,6 +47,7 @@ float TLPressureSensor::read(unsigned int nsamples) {
         // measure2 =  (sampleI-maSLC) * (max_sensor_measurment_capacity/(top - maSLC));      //277 / 169; // maSLC = 553 
         measure = mapf(sampleI, maSLC, top ,0 , max_sensor_measurment_capacity);
         preparejson();
+        return measure;
         // Serial.printf("[CT136  ]  ADC reading = %.1f , measurment by maping ADC reading - cm: = %.1f, voltage1 %.2f, top %f \n",sampleI, measure,  top);      
  }
 }
@@ -54,6 +59,12 @@ void TLPressureSensor::preparejson() {
         jsonPost.replace(F("[cm]"),String(measure,1));  
         jsonPost.replace(F("[fp]"),String((measure/max_tank_capacity)*100,1));  
         jsonPost.replace(F("[IP]"),WiFi.localIP().toString());  
+        #ifdef _emonlib_ 
+        jsonPost.replace(F("[VOLTAGE]"),String(CT_1.supplyVoltage,0));       
+        #endif
+        #ifdef _pressureSensor_
+        jsonPost.replace(F("[VOLTAGE]"),"NA");   
+        #endif
   }
 
 void TLPressureSensor::preparejsontemplate() {
@@ -139,7 +150,7 @@ config_read_error_t TLsaveconfig(AsyncWebServerRequest *request){
 
 
 
-  int TLPressureSensor::DisplayLevel(Adafruit_SSD1306 &display, bool wificonnected, bool mqttconnected, uint8_t sco ){
+  void TLPressureSensor::DisplayLevel(Adafruit_SSD1306 &display, bool wificonnected, bool mqttconnected, uint8_t sco ){
      #ifdef OLED_1306
         display.setRotation(sco); // 1 = upsidedown
         display.cp437(true); 

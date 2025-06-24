@@ -64,16 +64,18 @@ extern "C"
 #endif
 
 
- #ifdef HWver03
-    #define led         16
-    #define InputPin02  02 
-    #define SwitchButtonPin2 12 // revert to 12 when done testing  
-  #endif
+
 
   #ifdef HWver02
     #define led         02 
     #define SwitchButtonPin2 13 // revert to 12 when done testing
  #endif
+
+  #ifdef HWver03
+    #define led         16
+    #define InputPin02  02 
+    #define SwitchButtonPin2 12 // revert to 12 when done testing  
+  #endif
 
  #if defined (HWver02)  || defined (HWver03)
     #define RelayPin 05
@@ -125,7 +127,7 @@ const uint16_t MaxWifiTrials = 500;
 
 typedef struct IPAdr {
   uint8_t bytes[4];
-}IPAdr;
+} IPAdr;
 
 typedef struct Trelayconf {
   uint8_t v_relaynb;
@@ -230,6 +232,7 @@ typedef struct TConfigParams {
   
   uint16_t maSensor_L_Calibration, maSensor_HighCalibration, maSensor_max_range;  
   String maSTopic ;
+  uint8_t v_PRST;
 
 } TConfigParams;
 
@@ -295,4 +298,12 @@ GPIO15 	 8
 GPIO16 	 0
 */
 
+
+typedef enum {
+  ACTION_DISPALY_1,  
+  ACTION_DISPALY_2,   
+  ACTION_DISPALY_3, 
+  ACTION_DISPALY_4  
+} 
+DisplayActions;
 

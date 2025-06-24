@@ -1,7 +1,7 @@
 #ifndef _PINGS_
 #define _PINGS_
 
-#include "Arduino.h";
+#include "Arduino.h"
 #include "ConfigParams.h"
 
 #ifdef ESP32

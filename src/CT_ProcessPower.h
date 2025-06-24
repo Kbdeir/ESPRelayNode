@@ -57,7 +57,7 @@ class CTPROCESSOR
   float PreviousWh, CTSaveThreshold = 0;
   double Stabilized = 0;
   float saved_Wh, saved_MTD_Wh, saved_YTD_Wh = 0;
-  String jsonPost_template = F("json:{\"msg\":{\"source\":\"[SOURCE]\",\"data\":[{\"voltage\":\"[VOLTAGE]\",\"amps\":\"[AMPS]\", \"power\":\"[POWER]\", \"r_power\":\"[R_POWER]\", \"wh\":\"[WH]\", \"MTD_wh\":\"[MTD_WH]\", \"YTD_wh\":\"[YTD_WH]\",\"PF\":\"[PF]\", \"PFC\":\"[PFC]\",\"IP\":\"[IP]\",\"R1\":\"[R1]\",\"R2\":\"[R2]\"}]}}");
+  String jsonPost_template = F("json:{\"msg\":{\"source\":\"[SOURCE]\",\"data\":[{\"voltage\":\"[VOLTAGE]\",\"amps\":\"[AMPS]\", \"power\":\"[POWER]\", \"r_power\":\"[R_POWER]\", \"wh\":\"[WH]\", \"MTD_wh\":\"[MTD_WH]\", \"YTD_wh\":\"[YTD_WH]\",\"PF\":\"[PF]\", \"Volts2\":\"[VOLTS2]\",\"Volts3\":\"[VOLTS3]\",\"HST_Amps\":\"[HST_AMPS]\",\"DCAmps\":\"[DCAMPS]\",\"PFC\":\"[PFC]\", \"IP\":\"[IP]\",\"R1\":\"[R1]\",\"R2\":\"[R2]\"}]}}");
   String jsonPost = " ";
  // char resx[8];
 

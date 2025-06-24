@@ -1,22 +1,36 @@
-// uncomment to select the bord model
+// uncomment to select the board model
 // **********************************************************
+
 #ifndef ESP32                           // if esp8266 based hardware
-// #define HWver02                      // original board design; one relay, no inputs
- #define HWver03                        // V03 board design, one relay, input header
- #define HWver03_4R                     // AliExpress 4 relays board
+    // #define HWver02                  // original board design; one relay, no inputs
+    // #define HWver03                  // V03 board design, one relay, input header
+    // #define HWver03_4R               // AliExpress 4 relays board
+    
 #else
- #define HWESP32                        // ESP32 based board. 1 relay, 6 inputs
- #define ESP32_2RBoard
-// #define ESP32_3RBoard
-// #define ESP32_4RBoard
- #define OLED_1306                    // OLED only available on ESP32
-// #define OLED_ThingPulse
- #define _emonlib_  // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
-#define _pressureSensor_
+    #define HWESP32                  // ESP32 based board. 1 relay, 6 inputs
+     #define ESP32_2RBoard            // for 2 relays based boards
+    // #define ESP32_3RBoard            // for 3 relays based boards
+    // #define ESP32_4RBoard            // for 4 relays based boards
+    
+     #define OLED_1306                // OLED only available on ESP32
+    // #define OLED_ThingPulse
+    // #define _emonlib_                // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
+     #define _pressureSensor_         // uncomment to activate 4-20ma pressure sensor
+    //   #define _ADS1X15_                // uncomment to activate a default to ADS1115
+    //   #define _ADS1015_                // uncomment to if using ADS1015
+    //   #define _ADS_ASYNC_              // uncomment to use lib
+    // #define _ADS1X15_CURRENT_        // uncomment to use ADS to measure current
+    // #define _ADS1X15_VOLTAGE_        // uncomment to use ADS to measure voltage
+    // #define _ADS1X15_DC_Current_     // uncomment to use ADS to measure DC current on same pin used for _ADS1X15_CURRENT_ - these are exclusive
+    // #define _HST_                    // Uncomment to use DC Hall sensor
+    #define WaterFlowSensor
 
-#define PULLMODE_ INPUT_PULLUP
+    // #define _NEWMETHOD_
 
-// #define PULLMODE_ INPUT_PULLDOWN
+    #define PULLMODE_ INPUT_PULLUP
+    // #define PULLMODE_ INPUT_PULLDOWN
+
+    // #define DEBUG_ENABLED               // enable debug messages theough TELNET port 23
 #endif
 
 // select feature type
@@ -27,7 +41,7 @@
 // #define StepperMode
 // #define blockingTime                 // better use blocking for ESP8266
 
-// #define DEBUG_DISABLED
+
 #define HK_name_len 30
 // #define ESP_NOW
 // #define ESP_MESH
@@ -40,8 +54,6 @@
 // #define INVERTERLINK
 // #define WEBSOCKETS
 // #define _ACS712_
-
-//Ecobank Nigeria limited
 
 #ifdef INVERTERLINK
   #ifdef ESP32

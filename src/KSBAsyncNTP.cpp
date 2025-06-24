@@ -11,7 +11,7 @@ time_t epoch_t_;
 // send an NTP request to the time server at the given address
 void createNTPpacket(void)
 {
-   Serial.println(F("[NTP    ] Updating NTP time"));
+   Serial.println(F("\n[NTP    ] Updating NTP time"));
 
   // set all bytes in the buffer to 0
   memset(packetBuffer_, 0, NTP_PACKET_SIZE_);
@@ -66,6 +66,8 @@ void parsePacket(AsyncUDPPacket packet)
     // now convert NTP time into )everyday time:
     Serial.print(F("[NTP    ] Epoch/Unix time = "));
     
+
+ 
     // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
     const unsigned long seventyYears = 2208988800UL;
     
@@ -73,6 +75,8 @@ void parsePacket(AsyncUDPPacket packet)
     // unsigned long epoch = secsSince1900 - seventyYears;
     // epoch_t_ = epoch + MyConfParam.v_ntptz * 3600;   //secsSince1900 - seventyYears;
     epoch_t_ = (secsSince1900 - seventyYears) + MyConfParam.v_ntptz * 3600;   //secsSince1900 - seventyYears;
+
+    
     ftimesynced = true;
     
     // print Unix time:
@@ -84,6 +88,7 @@ void parsePacket(AsyncUDPPacket packet)
     ts = *localtime(&epoch_t_);
     strftime(buf, sizeof(buf), "%a %Y-%m-%d %H:%M:%S %Z", &ts);
     Serial.println(buf);
+    
 
 }
 

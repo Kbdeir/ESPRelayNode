@@ -14,7 +14,7 @@ public:
   TempSensor();
   TempSensor(uint8_t _pin);
   ~TempSensor();
-  void tempbegin(uint8_t _pin);
+  void tempbegin();
   float getCurrentTemp(uint8_t index);
 
 private:

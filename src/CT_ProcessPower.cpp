@@ -9,6 +9,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <AsyncMqttClient.h>
+#include <Adafruit_ADS1X15.h>
 
 #include <Chronos.h>
 
@@ -23,12 +24,14 @@
   #include "esp_adc_cal.h"
 #endif
 
-#ifndef DEBUG_DISABLED
+#ifdef DEBUG_ENABLED
   #include "RemoteDebug.h"
   extern   RemoteDebug Debug;
 #endif
 
+extern DisplayActions CURRENT_Display_Action;
 extern bool saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh);
+extern   Adafruit_ADS1115 ads;
 
 
 CTPROCESSOR::CTPROCESSOR(uint8_t _CTPin, double _ICAL, uint8_t _inPinV, double _VCAL, double _PHASECAL,fnptr_a pThresholdHigh_callback, fnptr_a pThresholdLow_callback )
@@ -54,6 +57,7 @@ CTPROCESSOR::CTPROCESSOR(uint8_t _CTPin, double _ICAL, uint8_t _inPinV, double _
   analogReadResolution(12);
   adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11); 
   adc1_config_channel_atten(ADC1_CHANNEL_7, ADC_ATTEN_DB_11);   
+  analogReadResolution(12);
 
   emon1.voltage(inPinV, VCAL , PHASECAL);     // 382 Voltage: input pin, calibration, phase_shift ** voltage constant = alternating mains voltage ÷ alternating voltage at ADC input pin (alternating voltage at ADC input pin = voltage at the middle point of the resistor voltage divider)
   emon1.current(CTPin , ICAL);                // Current: input pin, calibration.  *** the current constant is the value of current you want to read when 1 V is produced at the analogue input  
@@ -132,7 +136,13 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
       // amps = emon1.calcIrms(5000) + adjustment; // Calculate Irms only (150 is optimal)      
       // if (amps < 0) amps = 0;
 
-      emon1.calcVI(100,2000);//,2);                    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
+      #ifdef _ADS1X15_CURRENT_
+      emon1.calcVI(50,2000);//,2); //emon1.calcVI(100,2000);//,2);    // Calculate all. No.of wavelengths, time-out// emon1.calcVI(20,5000); 
+      
+      #else
+      // amps = emon1.calcIrms(20) + adjustment; // Calculate Irms only (150 is optimal)
+      emon1.calcVI(50,2000);
+      #endif
 
       amps = emon1.Irms;
       
@@ -153,9 +163,10 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
       MTD_Wh += Instantaneous_Wh;
       YTD_Wh += Instantaneous_Wh;      
 
-      #ifndef DEBUG_DISABLED
-        debugV (" Vrms= %f, Irms= %f, apparentPower= %f, realPower= %f, powerFactor= %f",emon1.Vrms, emon1.Irms, apparentPower, emon1.realPower ,emon1.powerFactor);   
-        debugV (" Vrms= %f, Adjusted Amps= %f, ApparentPower adjusted amps (V*Aa)= %f, powerFactor2= %f",emon1.Vrms,amps, apparentPower_2,powerFactor2);   
+      #ifdef DEBUG_ENABLED
+      //  debugV (" Vrms= %f, Irms= %f, apparentPower= %f, realPower= %f, powerFactor= %f",emon1.Vrms, emon1.Irms, apparentPower, emon1.realPower ,emon1.powerFactor);   
+      //  debugV (" Vrms= %f, Adjusted Amps= %f, ApparentPower adjusted amps (V*Aa)= %f, powerFactor2= %f",emon1.Vrms,amps, apparentPower_2,powerFactor2);   
+      //  Serial.printf ("\nVrms= %f, Irms= %f, offsetI= %f, apparentPower= %f, realPower= %f, powerFactor= %f",emon1.Vrms, emon1.Irms, emon1.offsetI, apparentPower, emon1.realPower ,emon1.powerFactor);   
       #endif        
 
       jsonPost = jsonPost_template; 
@@ -171,9 +182,9 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
       jsonPost.replace("[PFC]",String(powerFactor2));      
       jsonPost.replace("[IP]",WiFi.localIP().toString());  
       jsonPost.replace("[R1]",digitalRead(RelayPin) == HIGH ? ON : OFF);  
+      #ifdef ESP32_2RBoard
       jsonPost.replace("[R2]",digitalRead(Relay1Pin) == HIGH ? ON : OFF);   
-
-
+      #endif
 
 
       if (this->amps > MyConfParam.v_CT_MaxAllowed_current) {
@@ -220,7 +231,7 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
         if (CTSaveThreshold > savethreshold) { 
           CTSaveThreshold = 0;
           saveCTReadings(wh, MTD_Wh, YTD_Wh);
-          Serial.printf ("[CT **  ] Saved CT Values %f Wh | %f MTD_Wh | %f YTD_Wh \n",wh, MTD_Wh, YTD_Wh ); 
+          Serial.printf ("\n[CT **  ] Saved CT Values %f Wh | %f MTD_Wh | %f YTD_Wh \n",wh, MTD_Wh, YTD_Wh ); 
         }
       }      
   }
@@ -230,8 +241,7 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
 
 
   int CTPROCESSOR::readVoltage() {
-      supplyVoltage = emon1.ReadVoltage(20,500,0);
-
+     supplyVoltage = emon1.ReadVoltage(20,500,0); 
   }
 
 
@@ -260,6 +270,7 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
         display.setCursor(60,12);        
         display.print(String(YTD_Wh/1000) + " YTD");        
         
+        if (CURRENT_Display_Action == ACTION_DISPALY_1) {
         display.setCursor(8, StartRow + 2);
         display.println(F("Current"));
         display.setTextColor(SSD1306_WHITE);
@@ -277,18 +288,27 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
         display.setTextSize(1);              
         display.setTextColor(WHITE);
         display.println(" V");   
+        }
 
+        if (CURRENT_Display_Action == ACTION_DISPALY_2) {
+        display.setCursor(8, StartRow + 2);
+        display.println(F("P Factor"));
+        display.setTextColor(SSD1306_WHITE);
+        display.setCursor(10,StartRow + 16);       
+        display.setTextSize(1.5); 
+        display.print(String(powerFactor));
+        display.setTextSize(1);        
+ 
 
-        display.setCursor(1,54);  // col,row      
-        display.setTextColor(BLACK,WHITE);
-        display.print(WiFi.localIP().toString());
-        display.setTextColor(WHITE);      
-        display.setCursor(100,54);  // col,row    
-        if ((WiFi.status() == WL_CONNECTED))  display.print(F("*"));   
-        if ((WiFi.status() != WL_CONNECTED)) display.print(F("x"));  
-        display.setCursor(110,54);  // col,row   
-        if (mqttClient.connected()) display.print(F("M"));   
-        if (!mqttClient.connected()) display.print(F("m"));    
+        display.setCursor(rect_width + 10 ,StartRow + 2 );    
+        display.println(F("R Power"));
+        display.setCursor(rect_width + 8,StartRow + 16 );   
+        display.setTextSize(1.5);                  
+        display.print(String(realPower));
+        display.setTextSize(1);              
+        display.setTextColor(WHITE);
+  
+        }
 
       #endif    
   }

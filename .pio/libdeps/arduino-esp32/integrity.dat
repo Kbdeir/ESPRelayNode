@@ -1,15 +1,21 @@
-bblanchon/ArduinoJson@^6.19.2
-arkhipenko/TaskScheduler@^3.6.0
-adafruit/Adafruit SSD1306@^2.5.4
-aircoookie/Espalexa@^2.7.0
-painlessmesh/painlessMesh@^1.5.0
-arkhipenko/TaskScheduler@^3.7.0
-brawrdon/ESP32 HomeKit SDK for Arduino@^1.1.0
-openenergymonitor/EmonLib@^1.1.0
-https://github.com/me-no-dev/ESPAsyncWebServer.git
-AsyncTCP
-thingpulse/ESP8266 and ESP32 OLED driver for SSD1306 displays@^4.3.0
-joaolopesf/RemoteDebug@^3.0.5
-AsyncMqttClient
-vintlabs/FauxmoESP@^3.4
 marian-craciunescu/ESP32Ping@^1.7
+https://github.com/me-no-dev/ESPAsyncWebServer.git
+painlessmesh/painlessMesh@^1.5.0
+AsyncMqttClient
+robtillaart/ADS1X15@^0.3.9
+alexcajas/WrapperFreeRTOS@^1.0.1
+adafruit/Adafruit SSD1306@^2.5.4
+vintlabs/FauxmoESP@^3.4
+alexcajas/EmbeddedMqttBroker@^1.0.3
+paulstoffregen/OneWire@^2.3.8
+adafruit/Adafruit ADS1X15@^2.4.0
+arkhipenko/TaskScheduler@^3.6.0
+arkhipenko/TaskScheduler@^3.7.0
+aircoookie/Espalexa@^2.7.0
+paulstoffregen/Time@^1.6.1
+bblanchon/ArduinoJson@^6.19.2
+AsyncTCP
+joaolopesf/RemoteDebug@^3.0.5
+brawrdon/ESP32 HomeKit SDK for Arduino@^1.1.0
+thingpulse/ESP8266 and ESP32 OLED driver for SSD1306 displays@^4.3.0
+openenergymonitor/EmonLib@^1.1.0

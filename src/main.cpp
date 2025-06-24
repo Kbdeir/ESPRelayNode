@@ -4,15 +4,15 @@
 
 
 #include <defines.h>
-
+#include <Wire.h>
 #ifdef ESP32
 #include "esp_adc_cal.h"
 #endif
 
-#ifndef DEBUG_DISABLED
-  #include <RemoteDebug.h>
-  #define HOST_NAME "remotedebug"
-  RemoteDebug Debug;
+#ifdef DEBUG_ENABLED
+ // #include <RemoteDebug.h>
+ // #define HOST_NAME "remotedebug"
+ // RemoteDebug Debug;
 #endif 
 
 #ifdef AppleHK
@@ -42,10 +42,19 @@
 #include <TempSensor.h>
 
 #include <TempConfig.h>
+#include <ADS11x5Config.h>
+#include <HSTConfig.h>
+
 #ifdef ESP32
   #include <ESP32Ping.h>
 #else
  // #include "AsyncPing.h"
+#endif
+
+#ifdef ESP32
+#ifdef WaterFlowSensor
+#include <WaterFlowSensor.h>;
+#endif
 #endif
 
 #include "Pings.h"
@@ -73,63 +82,137 @@ extern AsyncPing Pings;
 #include <AccelStepper.h>
 #include <SimpleTimer.h>
 
+
+OneButton MYbutton(ConfigInputPin, true);
+DisplayActions CURRENT_Display_Action = ACTION_DISPALY_1; // DISPLAY SCREEN 1 ON STARTUP
+
 #ifndef ESP32
   #ifndef ESP_MESH
   #include <TaskScheduler.h>
   #endif
-  Scheduler ts;
+  Scheduler Scheduler_ts;
 #endif
+
+
 
 #ifdef ESP32
   #ifndef ESP_MESH
   #include <TaskScheduler.h>
   #endif
-      #define _TASK_SLEEP_ON_IDLE_RUN
-      #define _TASK_PRIORITY
-      #define _TASK_WDT_IDS
-      #define _TASK_TIMECRITICAL  
-  Scheduler ts;
+    //  #define _TASK_SLEEP_ON_IDLE_RUN
+    //  #define _TASK_PRIORITY
+    //  #define _TASK_WDT_IDS
+    //  #define _TASK_TIMECRITICAL  
+  Scheduler Scheduler_ts;
 #endif
+
+
+#ifdef _HST_
+  HSTConfig PAHSTConfig(1);
+#endif  
+
+#ifdef _ADS1X15_
+
+  ADS11x5Config PADS11x5Config(1);
+  #ifndef _ADS_ASYNC_
+  #include <Adafruit_ADS1X15.h>
+    #ifdef _ADS1015_
+      Adafruit_ADS1015 ads;
+    #else
+      Adafruit_ADS1115 ads;
+    #endif
+  #else
+    #include "ADS1X15.h"
+    #ifdef  _ADS1015_
+      ADS1015 ADS1(0x48);
+    #else
+      ADS1115 ADS1(0x48);
+    #endif
+  #endif
+
+  #ifdef _ADS1X15_DC_Current_ /* variable used for DC current routine*/
+          /* 0- General */
+
+          int decimalPrecision = 2;                   // decimal places for all values shown in LED Display & Serial Monitor
+
+          /* 1- AC Current Measurement */
+
+          int currentAnalogInputPin = 1 ;             // USE PIN 1 on ADS for current
+          int calibrationPin = 0;                    // USE ADS PIN 0 for REF
+          float manualOffset = 0;                      // Key in value to manually offset the initial value
+          float mVperAmpValue = 12.5;                 // If using "Hall-Effect" Current Transformer, key in value using this formula: mVperAmp = maximum voltage range (in milli volt) / current rating of CT
+                                                      // For example, a 20A Hall-Effect Current Transformer rated at 20A, 2.5V +/- 0.625V, mVperAmp will be 625 mV / 20A = 31.25mV/A 
+                                                      // For example, a 50A Hall-Effect Current Transformer rated at 50A, 2.5V +/- 0.625V, mVperAmp will be 625 mV / 50A = 12.5 mV/A
+          float supplyVoltage = 6144;                 // Analog input pin maximum supply voltage, Arduino Uno or Mega is 5000mV while Arduino Nano or Node MCU is 3300mV
+          float offsetSampleRead = 0;                 /* to read the value of a sample for offset purpose later */
+          float currentSampleRead  = 0;               /* to read the value of a sample including currentOffset1 value*/
+          float currentLastSample  = 0;               /* to count time for each sample. Technically 1 milli second 1 sample is taken */
+          float currentSampleSum   = 0;               /* accumulation of sample readings */
+          float currentSampleCount = 0;               /* to count number of sample. */
+          int maxsamplecount = 50;
+          float currentMean ;                         /* to calculate the average value from all samples, in analog values*/ 
+          float RMSCurrentMean ;                      /* square roof of currentMean, in analog values */   
+          float FinalRMSCurrent ;                     /* the final RMS current reading*/
+
+          float FinalDCCurrent ;                     /* the final DC current reading*/          
+          float currentSampleSum_DC = 0;
+          float currentMean_DC ;                     /* to calculate the average value from all samples, for DC mode, in analog values*/           
+  #endif 
+
+  void tskfn_ADSRead();
+  Task tskADSRead(1000, TASK_FOREVER, &tskfn_ADSRead, &Scheduler_ts, false);   
+
+#endif   
+
 
 #if defined (_emonlib_)  || defined (_pressureSensor_) 
   #include "CT_ProcessPower.h"
   #ifdef _emonlib_
-    #include "EmonLib.h"             // Include Emon Library
-    #define CurrentPin A5
-    #define VoltagePin A7 
-    #ifdef ESP32_2RBoard
-      #define CurrentPin A7
-      #define VoltagePin A6
-    #endif  
+      #include "EmonLib.h"             // Include Emon Library
+      #define CurrentPin A5
+      #define VoltagePin A7 
+      #ifdef ESP32_2RBoard
+        #define CurrentPin A7
+        #define VoltagePin A6
+      #endif  
 
-    void RelayCT_NormalConsumption_func (void* obj);
-    void RelayCT_HighConsumption_func (void* obj);
-    CTPROCESSOR CT_1(CurrentPin,30,VoltagePin,382/2 ,1.7 , RelayCT_HighConsumption_func, RelayCT_NormalConsumption_func);
-    void tskfn_EmonPublisher();
-    Task tskEmonPublisher(5000, TASK_FOREVER, &tskfn_EmonPublisher, &ts, false); 
-  #endif  
+      void RelayCT_NormalConsumption_func (void* obj);
+      void RelayCT_HighConsumption_func (void* obj);
+      // CTPROCESSOR CT_1(CurrentPin,30,VoltagePin,382/2 ,1.7 , RelayCT_HighConsumption_func, RelayCT_NormalConsumption_func);
+      CTPROCESSOR CT_1(CurrentPin ,30,VoltagePin,382/2 ,1.7 , RelayCT_HighConsumption_func, RelayCT_NormalConsumption_func);
+       
+  #endif    
+  void tskfn_EmonPublisher();
+  Task tskEmonPublisher(5000, TASK_FOREVER, &tskfn_EmonPublisher, &Scheduler_ts, false); 
   void tskfn_emon_reader();
-  Task tskEmonReader(1000, TASK_FOREVER, &tskfn_emon_reader, &ts, false);   
+  Task tskEmonReader(2000, TASK_FOREVER, &tskfn_emon_reader, &Scheduler_ts, false);  
+
+
+  #ifdef _NEWMETHOD_
+  void tskfn_PF();
+  Task tskADSReadPF(1000, TASK_FOREVER, &tskfn_PF, &Scheduler_ts, false);   
+  #endif  
 #endif
 
 
-#ifdef _ESP_ALEXA_
+#if defined  _ESP_ALEXA_ || defined _ALEXA_
   void tskfn_espAlexaStateUpdate();
-  Task tskespAlexaStateUpdate(5000, TASK_FOREVER, &tskfn_espAlexaStateUpdate, &ts, false);   
+  Task tskespAlexaStateUpdate(5000, TASK_FOREVER, &tskfn_espAlexaStateUpdate, &Scheduler_ts, false);   
 #endif
 
 #ifdef OLED_1306
-#include <SSD1306.h>
-void tskfn_OLEDUpdate();
-  Task tskOLEDUpdate(1000, TASK_FOREVER, &tskfn_OLEDUpdate, &ts, false);   
+  #include <SSD1306.h>
+  void tskfn_OLEDUpdate();
+  Task tskOLEDUpdate(1000, TASK_FOREVER, &tskfn_OLEDUpdate, &Scheduler_ts, false);   
 #endif    
 
 
 #ifdef OLED_ThingPulse
-#include <Wire.h>
-#include <SSD1306Wire.h>
-SSD1306Wire display(0x3c,SDA,SCL);
+  #include <Wire.h>
+  #include <SSD1306Wire.h>
+  SSD1306Wire display(0x3c,SDA,SCL);
 #endif
+
 
 #ifdef blockingTime
   #include <KSBNTP.h>
@@ -182,13 +265,14 @@ extern bool started_in_confMode;
 
 #endif
 
-
+#ifdef ESP32
 extern "C"
 {
   #include <lwip/icmp.h> // needed for icmp packet definitions
 	#include "freertos/FreeRTOS.h"
   #include "freertos/timers.h"  
 }
+#endif
 
 char HAName_Bridge[HK_name_len]  = "MyBridge_____\0";
 char HAName_SW[HK_name_len]      = "MySwitch_____\0";
@@ -208,11 +292,9 @@ extern "C"
 
 #include <KSBWiFiHelper.h>
 
-extern AsyncMqttClient mqttClient;
-
-long blinkInterval = blink_normal ;                          // blinkInterval at which to blink (milliseconds)
-Task blinker(blinkInterval, TASK_FOREVER, &blinkledTask, &ts, true); 
-Task tskPinger(17000, TASK_FOREVER, &servicePings, &ts, false); 
+long blinkInterval = blink_normal ;           // blinkInterval at which to blink (milliseconds)
+Task blinker(blinkInterval, TASK_FOREVER, &blinkledTask, &Scheduler_ts, true); 
+Task tskPinger(17000, TASK_FOREVER, &servicePings, &Scheduler_ts, false); 
 
 int ledState = LOW;             					    // ledState used to set the LED
 unsigned long previousMillis = 0;             // will store last time LED was updated
@@ -242,6 +324,8 @@ unsigned long lastMillis3000 = 0;
 #include <time.h>
 #include <MQTT_Processes.h>
 #include <AsyncHTTP_Helper.h>
+
+extern AsyncMqttClient mqttClient;
 
 bool homekitNotInitialised = true;
 bool HomespanInitiated = false;
@@ -353,10 +437,20 @@ float MCelcius;
 float MCelcius2;
 
 #if defined (HWver02)  || defined (HWver03) || defined (HWESP32)
- #if not defined _emonlib_ && not defined _pressureSensor_
-  static TempSensor tempsensor(TempSensorPin);
-#endif  
+  #if not defined _emonlib_ && not defined _pressureSensor_
+   static TempSensor tempsensor(TempSensorPin);
+  #endif  
   static TempSensor TempSensorSecond(SecondTempSensorPin);
+/*
+          // GPIO where the DS18B20 is connected to
+          const int oneWireBus = 16;     
+
+          // Setup a oneWire instance to communicate with any OneWire devices
+          OneWire oneWire(oneWireBus);
+
+          // Pass our oneWire reference to Dallas Temperature sensor 
+          DallasTemperature sensors(&oneWire);
+*/
 #endif
 
 #ifdef _ACS712_
@@ -420,8 +514,66 @@ struct_message myData;
             if (rtmp) rtmp->mdigitalWrite(rtmp->getRelayPin(),myData.SwitchState);
         }
     #endif
-
  #endif
+
+
+#if defined (_emonlib_)  || defined (_pressureSensor_) 
+void tskEmonPublisher_setEnableSts(bool sts){
+  if (sts) tskEmonPublisher.enable();
+  if (!sts) tskEmonPublisher.disable();
+  
+}
+#endif
+
+
+#ifdef ESP32
+#ifdef WaterFlowSensor
+      long currentMillis_WFS=0;
+      long previousMillis_WFS=0;
+      int interval=1000;
+      volatile byte pulseCount;
+      byte pulse1Sec = 0;
+      float flowRate;
+      unsigned int flowMilliLitres;
+      unsigned long totalMilliLitres;
+
+
+void IRAM_ATTR pulseCounter() // Interupt function for WaterFlowSensor
+{
+  pulseCount++;
+}
+#endif
+#endif
+
+
+void myClickFunction() {
+  Serial.print(F("\n[INFO   ] >>>>> Conf Button Clicked <<<<< \n")); //MYbUTTON
+  #ifdef OLED_1306
+  display.clearDisplay();
+  if (CURRENT_Display_Action == ACTION_DISPALY_1) {
+    CURRENT_Display_Action = ACTION_DISPALY_2;
+    display.setCursor(0,0);    
+    display.println(">> Page 2 <<");
+    Serial.print(F("\n[INFO   ] >>>>> PAGE 2 <<<<< \n")); 
+  } else if (CURRENT_Display_Action == ACTION_DISPALY_2) {
+    CURRENT_Display_Action = ACTION_DISPALY_3;
+    Serial.print(F("\n[INFO   ] >>>>> PAGE 3 <<<<< \n")); 
+    display.setCursor(0,0);    
+    display.println(">> Page 3 <<");    
+  } else if (CURRENT_Display_Action == ACTION_DISPALY_3) {
+    CURRENT_Display_Action = ACTION_DISPALY_4;
+    Serial.print(F("\n[INFO   ] >>>>> PAGE 4 <<<<< \n")); 
+    display.setCursor(0,0);    
+    display.println(">> Page 4 <<");    
+  } else if (CURRENT_Display_Action == ACTION_DISPALY_4) {
+    CURRENT_Display_Action = ACTION_DISPALY_1;
+    Serial.print(F("\n[INFO   ] >>>>> PAGE 1 <<<<< \n")); 
+    display.setCursor(0,0);    
+    display.println(">> Page 1 <<");    
+  } 
+  #endif
+} 
+
 
 int getpinMode(uint8_t pin) 
 {
@@ -572,7 +724,7 @@ void onRelaychangeInterruptSvc(void *relaySender)
     
     // post ON/OFF 
     mqttClient.publish(rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), QOS2, RETAINED, rly->readrelay() == HIGH ? ON : OFF );
-    #ifndef DEBUG_DISABLED
+    #ifdef DEBUG_ENABLED
       debugV("* posting status: %s %s", rly->RelayConfParam->v_STATE_PUB_TOPIC.c_str(), rly->readrelay() == HIGH ? ON : OFF );
     #endif    
 
@@ -582,7 +734,9 @@ void onRelaychangeInterruptSvc(void *relaySender)
         if (rly->RelayConfParam->v_ttl > 0) {
             rly->start_ttl_timer();
             // post v_ttl value once on "on", post v_curr_ttl in the timer
+            Serial.println(F("[INFO   ] posting interrupt *on*"));
             mqttClient.publish(rly->RelayConfParam->v_ttl_PUB_TOPIC.c_str(), QOS2, RETAINED, String(rly->RelayConfParam->v_ttl).c_str()); 
+            Serial.println(F("[INFO   ] posting interrupt *on* done"));
         }
     }
     else
@@ -596,36 +750,6 @@ void onRelaychangeInterruptSvc(void *relaySender)
   
       //}
 
-  #ifdef _ALEXA_
-    // notify all relays status
-    Relay *rtemp = nullptr;
-    for (auto it : relays)
-    {
-      rtemp = static_cast<Relay *>(it);
-      if (rtemp)
-      {
-          fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(), digitalRead(rtemp->getRelayPin()) == HIGH, 1);
-      }
-    }
-  #endif // _ALEXA_
-  #ifdef _ESP_ALEXA_
-    Relay *rtemp = nullptr;
-    int n = 0;
-    for (auto it : relays)
-    {
-      rtemp = static_cast<Relay *>(it);
-      if (rtemp)
-      {
-          // fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(),digitalRead(rtemp->getRelayPin()) == HIGH,1);
-          if ((strcmp(espalexa.getDevice(n)->getName().c_str(), rtemp->getRelayConfig()->v_AlexaName.c_str()) == 0))
-          {
-              espalexa.getDevice(n)->setState(digitalRead(rtemp->getRelayPin()) == HIGH);
-          }
-      }
-      n++;
-    }
-
-  #endif
 
   #ifdef AppleHK
   #ifndef ESP32
@@ -804,6 +928,7 @@ void tiker_WIFI_CONNECT_func (void* obj) {
             WiFi.setSleep(WIFI_PS_NONE);
             Serial.print(F("\n[WIFI   ] Begining WiFi connection"));  
             blinker.setInterval(50);
+            blinker.enable();
             WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); 
             WiFi.printDiag(Serial); 
           #endif 
@@ -1254,12 +1379,12 @@ void thingsTODO_on_WIFI_Connected() {
     IP_info();
 
     blinkInterval = blink_normal;
-    #ifndef ESP32
+    //#ifndef ESP32
     blinker.setInterval(blink_normal);  
-    #endif    
+    blinker.enable();
+    //#endif    
     Serial.print(F("[WIFI   ] IP assigned by DHCP = "));
     Serial.println(WiFi.localIP());   
-
     Serial.print(F("[WIFI   ] Channel: "));
     Serial.println(WiFi.channel());
     Serial.println(F("[INFO   ] Starting UDP"));
@@ -1291,16 +1416,16 @@ void thingsTODO_on_WIFI_Connected() {
     // MDNS.addServiceTxt("http", "tcp","MQTT server", MyConfParam.v_MQTT_BROKER.toString().c_str());
     // MDNS.addServiceTxt("http", "tcp","Chip", String(MAC.c_str()) + " - Chip id: " + CID());
 
-  #ifdef blockingTime
-    setSyncProvider(getNtpTime);
-  #else
-    setSyncProvider(timeprovider); // [time]
-    setSyncInterval(10); 
-  #endif
+    #ifdef blockingTime
+      setSyncProvider(getNtpTime);
+    #else
+      setSyncProvider(timeprovider); // [time]
+      setSyncInterval(10); 
+    #endif
 
-  #ifndef DEBUG_DISABLED
-    debugV("* Starting MQTT connection timer, 5 seconds period");
-  #endif
+    #ifdef DEBUG_ENABLED
+      debugV("* Starting MQTT connection timer, 5 seconds period");
+    #endif
 
     // tiker_MQTT_CONNECT.start(); // timer will retry to connect every 5s.  
     SetAsyncHTTP();
@@ -1320,82 +1445,77 @@ void thingsTODO_on_WIFI_Connected() {
 
     homekitNotInitialised = true;
 
-#ifdef _ESP_ALEXA_
-//our callback functions
-if (!Alexa_initialised) {
-    Alexa_initialised = true;
-    for (auto it : relays)  {
-      Serial.printf("[MAIN] Adding relays to ESPAlexa");      
-      Relay * rtemp = static_cast<Relay *>(it);
-        if (rtemp) {
-          if (rtemp->getRelayConfig()->v_AlexaName !="null") {
-          espalexa.addDevice(rtemp->getRelayConfig()->v_AlexaName.c_str(), alphaChanged);
-          }
-        }  
-    }   
-    // EspalexaDevice* device3; //this is optional
-    espalexa.begin(&AsyncWeb_server); //give espalexa a pointer to your server object so it can use your server instead of creating its own
-}
-#endif
-
-
-#ifdef _ALEXA_
-    Serial.println("[ALEXA  ] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  Starting Alexa server");
-  if (!Alexa_initialised) {
-    Alexa_initialised = true;
-    Serial.println("[ALEXA  ] Starting Alexa server");
-    // mySwitch.enableReceive(RF_RECEIVER);  // Receiver on interrupt 0 => that is pin #2
-
-    // By default, fauxmoESP creates it's own webserver on the defined port
-    // The TCP port must be 80 for gen3 devices (default is 1901)
-    // This has to be done before the call to enable()
-    // fauxmo.createServer(true); // not needed, this is the default value
-    fauxmo.setPort(80); // This is required for gen3 devices
-
-    // You have to call enable(true) once you have a WiFi connection
-    // You can enable or disable the library at any moment
-    // Disabling it will prevent the devices from being discovered and switched
-    fauxmo.enable(true);
-    // You can use different ways to invoke alexa to modify the devices state:
-    // "Alexa, turn lamp two on"
-
-    for (auto it : relays)  {
-      Serial.printf("[MAIN   ] Adding relays to fauxmo");      
-      Relay * rtemp = static_cast<Relay *>(it);
-        if (rtemp) {
-          if (rtemp->getRelayConfig()->v_AlexaName != "null") {
-           fauxmo.addDevice(rtemp->getRelayConfig()->v_AlexaName.c_str());
-          } else {
-            // fauxmo.enable(false);
-            }
-        }  
-    }     
-
-    fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
-      // Callback when a command from Alexa is received. 
-      // You can use device_id or device_name to choose the element to perform an action onto (relay, LED,...)
-      // State is a boolean (ON/OFF) and value a number from 0 to 255 (if you say "set kitchen light to 50%" you will receive a 128 here).
-      // Just remember not to delay too much here, this is a callback, exit as soon as possible.
-      // If you have to do something more involved here set a flag and process it in your main loop.
-              
-      Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);
-      for (auto it : relays)  {
-        // if ( (strcmp(device_name, relay0.getRelayConfig()->v_AlexaName.c_str()) == 0) ) {      
-          Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);      
-            Relay * rtemp = static_cast<Relay *>(it);
+    #ifdef _ESP_ALEXA_
+    //our callback functions
+    if (!Alexa_initialised) {
+        Alexa_initialised = true;
+        for (auto it : relays)  {
+          Serial.printf("[MAIN] Adding relays to ESPAlexa");      
+          Relay * rtemp = static_cast<Relay *>(it);
             if (rtemp) {
-              if ( (strcmp(device_name, rtemp->getRelayConfig()->v_AlexaName.c_str()) == 0) ) { 
-                    if (state) {
-                    rtemp->mdigitalWrite(rtemp->getRelayPin(),HIGH);
-                    } else {
-                        rtemp->mdigitalWrite(rtemp->getRelayPin(),LOW);
-                    }
-            } 
+              if (rtemp->getRelayConfig()->v_AlexaName !="null") {
+              espalexa.addDevice(rtemp->getRelayConfig()->v_AlexaName.c_str(), alphaChanged);
+              }
             }  
-      } 
-    } );
-  }
-#endif    
+        }   
+        // EspalexaDevice* device3; //this is optional
+        espalexa.begin(&AsyncWeb_server); //give espalexa a pointer to your server object so it can use your server instead of creating its own
+    }
+    #endif
+
+    #ifdef _ALEXA_
+        Serial.println("[ALEXA  ] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  Starting Alexa server");
+      if (!Alexa_initialised) {
+        Alexa_initialised = true;
+        Serial.println("[ALEXA  ] Starting Alexa server");
+        // mySwitch.enableReceive(RF_RECEIVER);  // Receiver on interrupt 0 => that is pin #2
+
+        // By default, fauxmoESP creates it's own webserver on the defined port
+        // The TCP port must be 80 for gen3 devices (default is 1901)
+        // This has to be done before the call to enable()
+        // fauxmo.createServer(true); // not needed, this is the default value
+        fauxmo.setPort(80); // This is required for gen3 devices
+
+        // You have to call enable(true) once you have a WiFi connection
+        // You can enable or disable the library at any moment
+        // Disabling it will prevent the devices from being discovered and switched
+        fauxmo.enable(true);
+        // You can use different ways to invoke alexa to modify the devices state:
+        // "Alexa, turn lamp two on"
+
+        for (auto it : relays)  {
+          Serial.printf("[MAIN   ] Adding relays to fauxmo\n");      
+          Relay * rtemp = static_cast<Relay *>(it);
+            if (rtemp) {
+              if (rtemp->getRelayConfig()->v_AlexaName != "null") {
+              fauxmo.addDevice(rtemp->getRelayConfig()->v_AlexaName.c_str());
+              Serial.printf("[MAIN   ] Added relay:[ %s ]:to fauxmo" , rtemp->getRelayConfig()->v_AlexaName.c_str());
+              } else {
+                // fauxmo.enable(false);
+                }
+            }  
+        }     
+
+        fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state, unsigned char value) {
+          // Callback when a command from Alexa is received. 
+          // You can use device_id or device_name to choose the element to perform an action onto (relay, LED,...)
+          // State is a boolean (ON/OFF) and value a number from 0 to 255 (if you say "set kitchen light to 50%" you will receive a 128 here).
+          // Just remember not to delay too much here, this is a callback, exit as soon as possible.
+          // If you have to do something more involved here set a flag and process it in your main loop.
+                  
+          for (auto it : relays)  {
+            // if ( (strcmp(device_name, relay0.getRelayConfig()->v_AlexaName.c_str()) == 0) ) {      
+              Serial.printf("[MAIN] Device #%d (%s) state: %s value: %d\n", device_id, device_name, state ? "ON" : "OFF", value);      
+                Relay * rtemp = static_cast<Relay *>(it);
+                if (rtemp) {
+                  if ( (strcmp(device_name, rtemp->getRelayConfig()->v_AlexaName.c_str()) == 0) ) { 
+                    rtemp->mdigitalWrite(rtemp->getRelayPin(),state ? HIGH : LOW );
+                  } 
+                }  
+          } 
+        } );
+      }
+    #endif    
 
 } // thingsTODO_on_WIFI_Connected
 
@@ -1448,10 +1568,10 @@ void Wifi_connect()
 #endif
 
 void setupInputs(){
-#ifdef _pressureSensor_
-  config_read_error_t res = TLloadconfig("/PressureSensorConfig.json", TL136);
-  TL136.preparejsontemplate();
-#endif 
+  #ifdef _pressureSensor_
+    config_read_error_t res = TLloadconfig("/PressureSensorConfig.json", TL136);
+    TL136.preparejsontemplate();
+  #endif 
   #ifndef StepperMode
     #if defined (HWver02)  || defined (HWver03)
     Inputsnsr14.initialize(InputPin14,process_Input,INPUT_NONE);
@@ -1481,14 +1601,13 @@ void setupInputs(){
       Inputsnsr13.fclickmode = static_cast <input_mode>(MyConfParam.v_IN2_INPUTMODE);    
     #endif
     #ifdef HWver03
-    Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
-    Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
-    Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
-    Inputsnsr02.post_mqtt = true;
-    Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
-    Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
+      Inputsnsr02.initialize(InputPin02,process_Input,INPUT_NONE);
+      Inputsnsr02.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
+      Inputsnsr02.onInputClick_RelayServiceRoutine = buttonclick;
+      Inputsnsr02.post_mqtt = true;
+      Inputsnsr02.mqtt_topic = MyConfParam.v_InputPin12_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
+      Inputsnsr02.fclickmode = static_cast <input_mode>(MyConfParam.v_IN1_INPUTMODE);
     #endif
-
     #if defined (HWver02)  || defined (HWver03)
       Inputsnsr12.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
       Inputsnsr12.onInputClick_RelayServiceRoutine = buttonclick;
@@ -1557,59 +1676,68 @@ void setupInputs(){
       Inputsnsr05.mqtt_topic = MyConfParam.v_InputPin05_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
       Inputsnsr05.fclickmode = static_cast <input_mode>(MyConfParam.v_IN5_INPUTMODE);
 
+      #ifndef WaterFlowSensor
       Inputsnsr06.initialize(InputPin06,process_Input,INPUT_NONE,PULLMODE_);
       Inputsnsr06.onInputChange_RelayServiceRoutine = onchangeSwitchInterruptSvc;
       Inputsnsr06.onInputClick_RelayServiceRoutine = buttonclick;
       Inputsnsr06.post_mqtt = true;
       Inputsnsr06.mqtt_topic = MyConfParam.v_InputPin06_STATE_PUB_TOPIC; // currently it posts to the same as InputPin12, reads its config from IN1, same as input12
       Inputsnsr06.fclickmode = static_cast <input_mode>(MyConfParam.v_IN6_INPUTMODE);
+      #endif
+      #ifdef WaterFlowSensor
+        pinMode(InputPin06, INPUT_PULLUP);
+        pulseCount = 0;
+        flowRate = 0.0;
+        flowMilliLitres = 0;
+        totalMilliLitres = 0;
+        previousMillis = 0;
+        attachInterrupt(InputPin06, pulseCounter, FALLING);
+      #endif
+
 
     #endif//HWESP32
-
   #endif //StepperMode
 }
 
 
 /*
 #ifdef StepperMode
-
-void processStepper()
-{
-  if (newPosition > currentPosition)
+  void processStepper()
   {
-    shadeStepper.sleepON();
-    shadeStepper.move(4144, BACKWARD);
-    currentPosition++;
-  }
-  if (newPosition < currentPosition)
-  {
-    shadeStepper.sleepON();
-    shadeStepper.move(4144, FORWARD);
-    currentPosition--;
-  }
-  if (newPosition == currentPosition)
-  {
-    if (currentPosition == 0 || currentPosition == unrolled)
+    if (newPosition > currentPosition)
     {
-      shadeStepper.sleepOFF();
+      shadeStepper.sleepON();
+      shadeStepper.move(4144, BACKWARD);
+      currentPosition++;
     }
+    if (newPosition < currentPosition)
+    {
+      shadeStepper.sleepON();
+      shadeStepper.move(4144, FORWARD);
+      currentPosition--;
+    }
+    if (newPosition == currentPosition)
+    {
+      if (currentPosition == 0 || currentPosition == unrolled)
+      {
+        shadeStepper.sleepOFF();
+      }
+    }
+
+    Serial.print(F("\n[INFO   ] NEW Position: "));
+    Serial.println(newPosition);
+    Serial.print(F("\n[INFO   ] Current Position: "));
+    Serial.println(currentPosition);       
   }
 
-              Serial.print(F("\n[INFO   ] NEW Position: "));
-              Serial.println(newPosition);
-              Serial.print(F("\n[INFO   ] Current Position: "));
-              Serial.println(currentPosition);
-              
-}
 
-
-void checkIn()
-{
- // char topic[40];
- // strcpy(topic, "checkIn/");
- // strcat(topic, mqtt_client_id);
- // client.publish(topic, "OK"); 
-}
+  void checkIn()
+  {
+  // char topic[40];
+  // strcpy(topic, "checkIn/");
+  // strcat(topic, mqtt_client_id);
+  // client.publish(topic, "OK"); 
+  }
 #endif
 */
 
@@ -1640,12 +1768,36 @@ void setup() {
 #endif
 */
 
+
+
   #ifndef ESP32
     definePingsCallbacks();
   #endif  
 
   #ifndef ESP32
   ESP.wdtDisable();
+  #endif
+
+  #ifdef _ADS1X15_
+  #ifndef _ADS_ASYNC_
+    #ifdef _ADS1015_
+      ads.setDataRate(RATE_ADS1015_3300SPS);
+    #else
+      ads.setDataRate(RATE_ADS1115_860SPS); 
+    #endif
+    ads.setGain(GAIN_TWOTHIRDS);
+    //ads.setGain(GAIN_ONE);
+    ads.begin();
+  #else
+    ADS1.setGain(0);        // 6.144 volt
+    ADS1.setDataRate(7);    // medium
+    // single shot mode
+    // ADS1.setMode(0); //for ADS1115
+    ADS1.setMode(1); ///for ADS1115
+    ADS1.begin();
+    // ADS1.setDataRate(7);    // medium
+  #endif  
+    
   #endif
 
   Serial.begin(115200);
@@ -1705,8 +1857,10 @@ void setup() {
         #endif        
     #endif    
 
+  
   /*
   uint32_t Freq = 0;
+  setCpuFrequencyMhz(240);
   Freq = getCpuFrequencyMhz();
   Serial.print("CPU Freq = ");
   Serial.print(Freq);
@@ -1720,11 +1874,13 @@ void setup() {
   Serial.print(Freq);
   Serial.println(" Hz");    
   */
+  
 
         #ifdef OLED_1306
               SSD_1306();
               DSS1306_text(0,0,1,"booting...");
               #ifdef _emonlib_
+                DSS1306_text(0,10,1,"loading CT Readings...");
                 loadCTReadings(CT_1.saved_Wh,CT_1.saved_MTD_Wh,CT_1.saved_YTD_Wh);
                 Serial.printf ("[CT     ] Loaded CT Values %f KWh - %f MTD_KWh - %f YTD_KWh \n",
                 CT_1.saved_Wh, CT_1.saved_MTD_Wh, CT_1.saved_YTD_Wh );              
@@ -1733,30 +1889,34 @@ void setup() {
                 CT_1.YTD_Wh     = CT_1.saved_YTD_Wh;
                 CT_1.PreviousWh = CT_1.saved_Wh; 
                 CT_1.CTSaveThreshold = 0;
+              #else
+
               #endif
               
-        #endif       
-          
+        #endif
+
+         
         /*
           only need to format SPIFFS the first time we run a
           test or else use the SPIFFS plugin to create a partition
           https://github.com/me-no-dev/arduino-esp32fs-plugin
         */        
         #ifdef ESP32
+        // SPIFFS.format();
           if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
             Serial.println(F("SPIFFS Mount Failed"));
-        //    if(SPIFFS.format()) { Serial.println("File System Formated"); }
+           if(SPIFFS.format()) { Serial.println("File System Formated"); }
             return;
           }
           listDir(SPIFFS, "/", 0);  
-          #else
+        #else
           // SPIFFS.format();
           SPIFFS.begin();
         //  if(!SPIFFS.begin()){
         //    if(SPIFFS.format()) { Serial.println("File System Formated"); }
         //      else { Serial.println("File System Formatting Error"); } 
         //  }
-          #endif
+        #endif
         //wifimode = WIFI_CLT_MODE;
 
         #ifdef USEPREF
@@ -1767,10 +1927,13 @@ void setup() {
           delay(2000);
           ESP.restart();
         };
-        
-        //ScanMyWiFi();
-        //delay(2000);
 
+        #ifdef ESP32
+        #ifdef WaterFlowSensor
+          loadconfigWFS("/WaterFlowSensorConfig.json"); 
+        #endif
+        #endif
+        
         WiFi.mode(WIFI_STA); 
         WiFi.setSleep(WIFI_PS_NONE);
             
@@ -1793,6 +1956,7 @@ void setup() {
             if (!started_in_confMode) {
               Serial.println(F("[WIFI   ] Starting WIFI in Station mode"));              
               WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); 
+              //WiFi.begin( "ksba" , "samsam12" ); 
             }  
             #else
                 Serial.println(F("[INFO   ] calling setup_mesh()"));                  
@@ -1801,8 +1965,9 @@ void setup() {
           #else
             if (!started_in_confMode) {
               Serial.println(F("[WIFI   ] assigning WIFI Events"));            
-              WiFi.onEvent(WiFiGotIP, WiFiEvent_t::SYSTEM_EVENT_STA_GOT_IP);
-              WiFi.onEvent(WiFiDisconnected, WiFiEvent_t::SYSTEM_EVENT_STA_DISCONNECTED);  
+              WiFi.onEvent(WiFiGotIP, WiFiEvent_t::
+              ARDUINO_EVENT_WIFI_STA_GOT_IP);
+              WiFi.onEvent(WiFiDisconnected, WiFiEvent_t::ARDUINO_EVENT_WIFI_STA_DISCONNECTED);  
               #ifndef ESP_MESH      
                 WiFi.begin( MyConfParam.v_ssid.c_str() , MyConfParam.v_pass.c_str() ); 
                 WiFi.printDiag(Serial); 
@@ -1834,7 +1999,7 @@ void setup() {
         mb.addCoil(LAMP1_COIL);
         mb.addCoil(LAMP2_COIL);
 
-        #ifndef DEBUG_DISABLED
+        #ifdef DEBUG_ENABLED
 	      Debug.begin(HOST_NAME); // Initialize the WiFi server
         Debug.setResetCmdEnabled(true); // Enable the reset command
       	Debug.showProfiler(true); // Profiler (Good to measure times, to optimize codes)
@@ -1950,7 +2115,7 @@ void setup() {
         if (relay0.RelayConfParam->v_TemperatureValue != "0") {
             loadTempConfig("/tempconfig.json",PTempConfig);      
         } else {
-            Serial.println(F("[INFO TP] v_TemperatureValue = 0; skiping"));
+            Serial.println(F("[INFO TP] v_TemperatureValue = 0; disabling temperature processing"));
         }
 
        #ifdef _ACS712_
@@ -1979,7 +2144,7 @@ void setup() {
 
 
   #ifdef SR04_SERIAL
-  delay(2000);
+   delay(2000);
    beginSerialSR04();
   #endif
 
@@ -1991,17 +2156,23 @@ void setup() {
 
   #ifdef _emonlib_
     if (!started_in_confMode){
-    xTimerStop(CT_1.ThresholdCossHighTimer,0);
-    xTimerStop(CT_1.ThresholdCossLowTimer,0);
-    CT_1.emon1.current(CurrentPin, MyConfParam.v_CurrentTransformer_max_current);
-    CT_1.emon1.voltage(VoltagePin, MyConfParam.v_calibration, MyConfParam.v_PhaseCal);
+      xTimerStop(CT_1.ThresholdCossHighTimer,0);
+      xTimerStop(CT_1.ThresholdCossLowTimer,0);
+      CT_1.emon1.current(CurrentPin, MyConfParam.v_CurrentTransformer_max_current);
+      CT_1.emon1.voltage(VoltagePin, MyConfParam.v_calibration, MyConfParam.v_PhaseCal);
 
-    tskEmonReader.enable();    
-    tskEmonPublisher.enable();
+      tskEmonReader.enable();    
+      tskEmonPublisher.enable();
     }
   #endif
 
-  #ifdef _ESP_ALEXA_
+#ifdef _pressureSensor_
+  tskEmonReader.enable();    
+#endif
+
+
+
+  #if defined  _ESP_ALEXA_ || defined _ALEXA_
     if (!started_in_confMode){
     tskespAlexaStateUpdate.enable(); 
     }
@@ -2009,25 +2180,53 @@ void setup() {
 
   #ifdef OLED_1306
     tskOLEDUpdate.enable();
-  #endif    
+  #endif   
 
+  #ifdef _ADS1X15_
+    loadADS11x5Config("/ADS11x5Config.json",PADS11x5Config);  
+    tskADSRead.enable();
+  #endif       
+
+  #ifdef _HST_
+    loadHSTConfig("/HSTConfig.json",PAHSTConfig);  
+  #endif         
+
+  #ifdef _NEWMETHOD_
+  tskADSReadPF.enable();
+  #endif
+
+  // link the myClickFunction function to be called on a click event.   
+  // MYbutton.setClickTicks(500);
+  MYbutton.attachClick(myClickFunction); 
+
+  if (relay0.RelayConfParam->v_TemperatureValue != "0") {
+    #if not defined _emonlib_ && not defined _pressureSensor_
+    tempsensor.tempbegin();
+    #endif
+    TempSensorSecond.tempbegin();
+  }
 }
 
 
 void loop() {
 
-  ts.execute();
-
-  for (auto it : relays)  {
-    Relay * rtemp = static_cast<Relay *>(it);
-    if (rtemp) {
-        rtemp->watch();
-    }
-  }
+  MYbutton.tick(&MYbutton); 
 
   #ifdef _ALEXA_
     fauxmo.handle();
   #endif
+
+  Scheduler_ts.execute();
+
+  for (auto it : relays)  {
+    Relay * rtemp = static_cast<Relay *>(it);
+    if (rtemp != nullptr) {
+        rtemp->watch();
+    }
+  }
+  
+
+
     
   #ifdef _ESP_ALEXA_
    espalexa.loop();
@@ -2045,7 +2244,7 @@ void loop() {
   }
   #endif 
 
-  #ifndef DEBUG_DISABLED
+  #ifdef DEBUG_ENABLED
   Debug.handle();
   yield();
   #endif
@@ -2062,7 +2261,13 @@ void loop() {
    if (restartRequired){
       Serial.println(F("\n[SYSTEM ] Restarting\n\r"));
       restartRequired = false;
-      delay(2500);
+            delay(4000);
+               if (MyConfParam.v_PRST == 1) {
+                   Serial.println(F("\n[SYSTEM ] Restarting with Toggle\n\r"));
+                   Relay * rtmp =  getrelaybynumber(0) ;         
+                   digitalWrite(rtmp->getRelayPin(),LOW);                     
+                }
+            delay(1000);
       ESP.restart();
    }
 
@@ -2104,15 +2309,58 @@ void loop() {
     #ifdef HWESP32
      #if not defined _emonlib_ && not defined _pressureSensor_
       Inputsnsr01.watch();
-    #endif  
-    #ifdef ESP32_2RBoard
+     #endif  
+     #ifdef ESP32_2RBoard
       Inputsnsr01.watch();
-    #endif
+     #endif
       Inputsnsr02.watch();     
       Inputsnsr03.watch();           
       Inputsnsr04.watch();
-      Inputsnsr05.watch();     
+      Inputsnsr05.watch();    
+      #ifndef WaterFlowSensor 
       Inputsnsr06.watch();         
+      #endif
+
+      #ifdef WaterFlowSensor
+          currentMillis_WFS = millis();
+          if (currentMillis_WFS - previousMillis_WFS > interval) {
+            pulse1Sec = pulseCount;
+            pulseCount = 0;
+            // Because this loop may not complete in exactly 1 second intervals we calculate
+            // the number of milliseconds that have passed since the last execution and use
+            // that to scale the output. We also apply the calibrationFactor to scale the output
+            // based on the number of pulses per second per units of measure (litres/minute in
+            // this case) coming from the sensor.
+            flowRate = ((1000.0 / (millis() - previousMillis_WFS)) * pulse1Sec) / calibrationFactor;
+            previousMillis_WFS = millis();
+            // Divide the flow rate in litres/minute by 60 to determine how many litres have
+            // passed through the sensor in this 1 second interval, then multiply by 1000 to
+            // convert to millilitres.
+            flowMilliLitres = (flowRate / 60) * 1000;
+            // Add the millilitres passed in this second to the cumulative total
+            totalMilliLitres += flowMilliLitres;
+            // Print the flow rate for this second in litres / minute
+            Serial.print("Flow rate: ");
+            Serial.print(int(flowRate));  // Print the integer part of the variable
+            Serial.print("L/min");
+            Serial.print("\t");       // Print tab space
+            // Print the cumulative total of litres flowed since starting
+            Serial.print("Output Liquid Quantity: ");
+            Serial.print(totalMilliLitres);
+            Serial.print("mL / ");
+            double totalLiters;
+            totalLiters = totalMilliLitres / 1000;
+            Serial.print(totalLiters);
+            Serial.println("L");
+            char res[8]; 
+            char res2[8]; 
+            dtostrf(flowRate, 6, 1, res); // Leave room for too large numbers!
+            mqttClient.publish(WaterFlowSensor_Topic.c_str(), QOS2, RETAINED, res); // String(TSolarPanel).c_str());   
+            dtostrf(totalLiters, 6, 1, res2); // Leave room for too large numbers!
+            mqttClient.publish("TotalLiters", QOS2, RETAINED, res2); // String(TSolarPanel).c_str());   
+          }
+      #endif
+
     #endif    
 
   #endif
@@ -2261,11 +2509,23 @@ void loop() {
   #if defined (HWver02)  || defined (HWver03) || defined (HWESP32)
     #ifndef SR04 // have to stop it because it uses the same pins as the temp sensors
     if (relay0.RelayConfParam->v_TemperatureValue != "0") {
+
+      /*
+      sensors.requestTemperatures(); 
+      float temperatureC = sensors.getTempCByIndex(0);
+      Serial.print(temperatureC);
+      Serial.println("ºC");
+      */
+
+    
       #if not defined _emonlib_ && not defined _pressureSensor_
       if (millis() - lastMillis5000 > 5000) {
       //  pinMode(TempSensorPin,  INPUT_PULLUP );  
       //  pinMode(SecondTempSensorPin,  INPUT_PULLUP );        
         lastMillis5000 = millis();
+        
+        pinMode ( TempSensorPin, INPUT_PULLUP);
+        pinMode ( SecondTempSensorPin, INPUT_PULLUP);
         tempsensor.getCurrentTemp(0); // this is assigned to tank
         xtries = 0;
         while ((xtries < 4) && (tempsensor.Celcius < 0)) {
@@ -2281,7 +2541,7 @@ void loop() {
 
         Serial.print(F("[INFO   ] Temperature Sensor #1: "));
         Serial.println(MCelcius); // tempsensor.getCurrentTemp(0));
-        #ifndef DEBUG_DISABLED
+        #ifdef DEBUG_ENABLED
           debugV("[INFO   ] TempSensor1 %.2f C ", TSolarTank);
         #endif
       
@@ -2300,7 +2560,7 @@ void loop() {
         float TSolarPanel = roundf(TempSensorSecond.Celcius);
         Serial.print(F("[INFO   ] Temperature Sensor #2: "));
         Serial.println(MCelcius2); //TempSensorSecond.getCurrentTemp(0)); 
-        #ifndef DEBUG_DISABLED
+        #ifdef DEBUG_ENABLED
           debugV("[INFO   ] TempSensor2 %.2f C ", TSolarPanel);
         #endif
         dtostrf(TSolarPanel, 6, 1, res); // Leave room for too large numbers!
@@ -2315,8 +2575,38 @@ void loop() {
         #else
         #endif
 
+        #ifdef OLED_1306
+        if (CURRENT_Display_Action == ACTION_DISPALY_4){
+              display.clearDisplay();
+              int8_t StartRow = 22;
+              int8_t rect_width = 60;
+              display.drawRect(0,StartRow,rect_width,30, WHITE);
+              display.drawRect(rect_width + 2 ,StartRow,rect_width,30, WHITE);
+
+              display.setCursor(8, StartRow + 2);
+              display.println(F("TEMP 1"));
+              display.setTextColor(SSD1306_WHITE);
+              display.setCursor(10,StartRow + 16);       
+              display.setTextSize(1.5); 
+              display.print(String(MCelcius));
+              display.setTextSize(1);        
+      
+
+              display.setCursor(rect_width + 10 ,StartRow + 2 );    
+              display.println(F("TEMP 2"));
+              display.setCursor(rect_width + 8,StartRow + 16 );   
+              display.setTextSize(1.5);                  
+              display.print(String(MCelcius2));
+              display.setTextSize(1);              
+              display.setTextColor(WHITE);
+        }
+
+        #endif
+
+
       }
       #endif //emonlib
+      
     }
     #endif
   #endif 
@@ -2345,65 +2635,80 @@ void loop() {
 
 
 #if defined (_emonlib_)  || defined (_pressureSensor_) 
-#ifdef _emonlib_
-void tskfn_EmonPublisher() {
-    if (!started_in_confMode){
-      if (mqttClient.connected()) {
-        mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.jsonPost.c_str());        
-      }  
-}
-}
-#endif
+    #ifdef _emonlib_
+    void tskfn_EmonPublisher() {
+        if (!started_in_confMode){
+          if (mqttClient.connected()) {
+            mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.jsonPost.c_str());        
+          }  
+    }
+    }
+    #endif
+    #ifdef _pressureSensor_
+    void tskfn_EmonPublisher() {
 
-void tskfn_emon_reader(){
-    #ifdef _emonlib_  
-    #ifndef _pressureSensor_
-      if (!MyConfParam.v_CurrentTransformerTopic.startsWith("disabled:")) {
-        CT_1.readPower(MyConfParam.v_CT_adjustment, MyConfParam.v_CT_saveThreshold);
-        #if not defined _pressureSensor_
-          CT_1.DisplayPower(display, mqttClient, MyConfParam.v_Screen_orientation);
+    }
+    #endif    
+
+    void tskfn_emon_reader(){
+        #ifdef _emonlib_ 
+            #ifndef _pressureSensor_
+              if (!MyConfParam.v_CurrentTransformerTopic.startsWith("disabled:")) {
+                CT_1.readPower(MyConfParam.v_CT_adjustment, MyConfParam.v_CT_saveThreshold);
+                #if not defined _pressureSensor_
+                if ((CURRENT_Display_Action == ACTION_DISPALY_1) || (CURRENT_Display_Action == ACTION_DISPALY_2)) {
+                  #ifdef OLED_1306
+                  CT_1.DisplayPower(display, mqttClient, MyConfParam.v_Screen_orientation);
+                  #endif
+                  }
+                #endif 
+                
+                #ifdef AppleHK
+                  // this is still experimental, post volatge as dim value!
+                  hap_val_t new_val;
+                  new_val.f = CT_1.amps;
+                  hap_char_update_val(hcx_temp, &new_val);
+                #endif   
+                
+                if (CT_1.amps > MyConfParam.v_CT_MaxAllowed_current) {
+                  #ifdef ESP32
+                  #else
+                    if (RelayCToff.enabled == false) {
+                      Serial.println(F("[CT     ] timer off runing - High consumption detected"));
+                      RelayCToff.start(); 
+                    }
+                  #endif
+                }        
+              }
+            #else
+              CT_1.readVoltage(); 
+            #endif
         #endif 
-        
-        #ifdef AppleHK
-          // this is still experimental, post volatge as dim value!
-          hap_val_t new_val;
-          new_val.f = CT_1.amps;
-          hap_char_update_val(hcx_temp, &new_val);
-        #endif   
-        if (CT_1.amps > MyConfParam.v_CT_MaxAllowed_current) {
-          #ifdef ESP32
-          #else
-          if (RelayCToff.enabled == false) {
-            Serial.println(F("[CT     ] timer off runing - High consumption detected"));
-            RelayCToff.start(); 
+
+        #ifdef _pressureSensor_
+          TL136.read(500);
+          #ifdef OLED_1306
+            if (CURRENT_Display_Action == ACTION_DISPALY_1) {
+              TL136.DisplayLevel(display, WiFi.isConnected(), mqttClient.connected(),MyConfParam.v_Screen_orientation);
+            }
+            #ifdef _emonlib_
+              display.setCursor(90,10);    
+              display.print(String(CT_1.supplyVoltage,0) + " v");
+            #endif    
+          #endif
+          if (MyConfParam.maSTopic != "0") {
+            if (mqttClient.connected()) {
+              mqttClient.publish(TL136.maSTopic.c_str(), QOS2, RETAINED, TL136.jsonPost.c_str()); 
+            }
           }
         #endif
-        }        
-      }
-     #else
-      CT_1.readVoltage(); 
-     #endif
-    #endif 
-    #ifdef _pressureSensor_
-      TL136.read(500);
-      #ifdef OLED_1306
-        TL136.DisplayLevel(display, WiFi.isConnected(), mqttClient.connected(),MyConfParam.v_Screen_orientation);
-        #ifdef _emonlib_
-          display.setCursor(90,10);    
-          display.print(String(CT_1.supplyVoltage,0) + " v");
-        #endif    
-      #endif
-      if (MyConfParam.maSTopic != "0") {
-        if (mqttClient.connected()) {
-          mqttClient.publish(TL136.maSTopic.c_str(), QOS2, RETAINED, TL136.jsonPost.c_str()); 
-        }
-      }
-    #endif
-}
+    }
 #endif
 
-#ifdef _ESP_ALEXA_
+#if defined  _ESP_ALEXA_ || defined _ALEXA_
 void tskfn_espAlexaStateUpdate(){
+  Serial.println(F("[ALEXA   ] notifying ALEXA"));
+  #ifdef  _ESP_ALEXA_
         if (Alexa_initialised) {
           int n = 0;
           for (auto it : relays)  {
@@ -2419,12 +2724,390 @@ void tskfn_espAlexaStateUpdate(){
           }
           n = 0;
         }
+
+  #endif 
+  #ifdef _ALEXA_
+    // notify all relays status
+    Relay *rtemp = nullptr;
+    for (auto it : relays)
+    {
+      rtemp = static_cast<Relay *>(it);
+      if (rtemp)
+      {
+          fauxmo.setState(rtemp->RelayConfParam->v_AlexaName.c_str(), digitalRead(rtemp->getRelayPin()) == HIGH, 1);
+      }
+    }
+  #endif 
 }    
 #endif
 
 
 #ifdef OLED_1306
 void tskfn_OLEDUpdate() {
-  display.display();
+    display.setCursor(1,54);  // col,row      
+    display.setTextColor(BLACK,WHITE);
+    display.print(WiFi.localIP().toString());
+    display.setTextColor(WHITE);      
+    display.setCursor(100,54);  // col,row    
+    if ((WiFi.status() == WL_CONNECTED))  display.print(F("*"));   
+    if ((WiFi.status() != WL_CONNECTED)) display.print(F("x"));  
+    display.setCursor(110,54);  // col,row   
+    if (mqttClient.connected()) display.print(F("M"));   
+    if (!mqttClient.connected()) display.print(F("m"));   
+
+    MYbutton.tick(&MYbutton); 
+    display.display();
 }  
 #endif    
+
+
+#ifdef _ADS1X15_
+  void tskfn_ADSRead() {  
+    
+      int16_t adc0, adc1, adc2, adc3;
+      float Voltage0 = 0.0;
+      float Voltage1 = 0.0;
+      float Voltage2 = 0.0;
+      float Voltage3 = 0.0;
+
+      float R1 = 100000;
+      float R2 = 3300;
+      float mutiplyer = PADS11x5Config.ResMultiplier; // 31.37709; //(R2/(R1+R2)) * 1000;
+      
+      // Serial.println("Getting single-ended readings from AIN0..3");
+      // Serial.println("ADC Range: +/- 6.144V (1 bit = 3mV/ADS1015, 0.1875mV/ADS1115)");
+      // https://microcontrollerslab.com/wp-content/uploads/2019/05/ADS1115-external-ADC-with-ESP32.jpg
+      // https://microcontrollerslab.com/ads1115-external-adc-with-esp32/
+
+
+    #ifndef _ADS_ASYNC_
+        float ADSStep = 0;
+        #ifdef _ADS1015_
+        if (ads.getGain() == ADS1X15_REG_CONFIG_PGA_4_096V) ADSStep = 2;
+        if (ads.getGain() == ADS1X15_REG_CONFIG_PGA_6_144V) ADSStep = 3;
+        #else
+        if (ads.getGain() == ADS1X15_REG_CONFIG_PGA_4_096V) ADSStep = 0.125;
+        if (ads.getGain() == ADS1X15_REG_CONFIG_PGA_6_144V) ADSStep = 0.1875;
+        #endif
+  
+        adc0 = ads.readADC_SingleEnded(0);
+        Voltage0 = (adc0 * ADSStep)/1000;  
+        Serial.printf("\nADS 1115 Volatge 0 = %f, %u", Voltage0, adc0);
+
+        adc1 = ads.readADC_SingleEnded(1);
+        Voltage1 = (adc1 * ADSStep)/1000;  
+        Serial.printf("\nADS 1115 Volatge 1 = %f, %u, %.2f", Voltage1, adc1);
+  
+        adc2 = ads.readADC_SingleEnded(2);
+        Voltage2 = (adc2 * ADSStep)/1000;  
+        Serial.printf("\nADS 1115 Volatge 2 = %f, %u, %.2f", Voltage2, adc2, (Voltage2 * mutiplyer));
+
+        adc3 = ads.readADC_SingleEnded(3);
+        Voltage3 = (adc3 * ADSStep)/1000;  
+        Serial.printf("\nADS 1115 Volatge 3 = %f, %u, %.2f", Voltage3, adc3, (Voltage3 * mutiplyer));
+      
+    #else
+        //int16_t val_0 = ADS1.readADC(0);  
+        //int16_t val_1 = ADS1.readADC(1);  
+        int16_t val_2 = ADS1.readADC(2);  
+        int16_t val_3 = ADS1.readADC(3);  
+        float ADSStep = 0;
+        #ifdef _ADS1015_
+        ADSStep = 3; 
+        #else
+        ADSStep = 0.1875;
+        #endif
+        //Voltage0 = (val_0 * ADSStep)/1000;  
+        //Serial.printf("\nADS 1115 Volatge 0 = %f, %u, %.2f, ADS1.toVoltage %f", Voltage0, val_0, (Voltage0 * mutiplyer), ADS1.toVoltage(ADS1.readADC(0)) * mutiplyer);
+        
+        Voltage2 = (val_2 * ADSStep)/1000;  
+        #ifdef _emonlib_
+        CT_1.jsonPost.replace("[VOLTS2]", String(Voltage2 * mutiplyer));
+        #endif
+        //Serial.printf("\nADS 1115 Volatge 2 = %f, %u, %.2f, ADS1.toVoltage %f", Voltage2, val_2, (Voltage2 * mutiplyer), ADS1.toVoltage(ADS1.readADC(2)) * mutiplyer);
+        Voltage3 = (val_3 * ADSStep)/1000;  
+        #ifdef _emonlib_
+        CT_1.jsonPost.replace("[VOLTS3]",String(Voltage3 * mutiplyer));
+        #endif
+        //Serial.printf("\nADS 1115 ADS1.toVoltage 3 = %f, %u, %.2f, ADS1.toVoltage %f", Voltage3, val_3, (Voltage3 * mutiplyer), ADS1.toVoltage(ADS1.readADC(3)) * mutiplyer);
+
+
+        #ifdef _ADS1X15_DC_Current_   /* read DC current */
+          #ifndef _ADS1X15_CURRENT_   /* make sure pin is not used for _ADS1X5_CURRENT_*/
+                mVperAmpValue = PAHSTConfig.AmpsVoltsRatio; 
+                while (currentSampleCount < maxsamplecount )                                           
+                  { 
+                //    unsigned int tt = micros();
+                    currentSampleRead = ADS1.readADC_Differential_0_1();     //ADS1.readADC(currentAnalogInputPin);                                       /* read the sample value including offset value*/
+                    //delay(1);
+                 //   float callibrationvalue = ADS1.readADC(calibrationPin)-1;
+                    //Serial.printf("\n Actual value %f, vref %f", currentSampleRead, callibrationvalue);
+                 //  currentSampleRead -=  callibrationvalue;
+                 //   Serial.printf ("\n2 ADC measurment time = %u", micros() - tt);
+                    // SerialDebug.print(" currentAnalogInputPin value is: "); SerialDebug.println(analogRead(currentAnalogInputPin));
+                    // SerialDebug.print(" calibrationPin value is: "); SerialDebug.print(analogRead(calibrationPin));
+                    // SerialDebug.println(" currentSampleRead value is: "); SerialDebug.print(analogRead(currentSampleRead));
+                    float csq = currentSampleRead * currentSampleRead;
+                    currentSampleSum += csq ;                                                         /* accumulate total analog values for each sample readings*/
+                    currentSampleSum_DC +=  currentSampleRead;
+                    currentSampleCount += 1;                                                        /* to count and move on to the next following count */  
+                  }
+
+                  if (currentSampleCount == maxsamplecount){
+                    currentMean = currentSampleSum/currentSampleCount;                                                /* average accumulated squared analog values*/
+                    RMSCurrentMean = sqrt(currentMean);                                                             
+
+                    currentMean_DC = currentSampleSum_DC /currentSampleCount;                                         /* average accumulated analog values*/
+
+                    Serial.printf("\n >>>>> Sample msqt value is: %f", RMSCurrentMean);
+                    Serial.printf("\n >>>>> Sample msqt DCvalue is: %f", currentMean_DC);
+                    FinalRMSCurrent = (((RMSCurrentMean /2047) *supplyVoltage) /mVperAmpValue)- manualOffset;         /* calculate the final RMS current*/
+                    FinalDCCurrent =  (((currentMean_DC /2047) *supplyVoltage) /mVperAmpValue)- manualOffset;         /* calculate the final RMS current*/
+                    if(FinalRMSCurrent <= (625/mVperAmpValue/100))                                                    /* if the current detected is less than or up to 1%, set current value to 0A*/
+                    { FinalRMSCurrent =0; } 
+
+                    Serial.printf(" \nThe Current RMS value is: %f", FinalRMSCurrent);
+                    Serial.printf(" \nThe Current DC value is: %f", FinalDCCurrent);
+
+                    currentSampleSum = 0;
+                    currentSampleSum_DC = 0;                    
+                    currentSampleCount = 0;
+
+                    CT_1.jsonPost.replace("[HST_AMPS]",String(FinalRMSCurrent));
+                    CT_1.jsonPost.replace("[DCAMPS]",String(FinalDCCurrent));
+
+                  }
+  
+
+          #endif
+        #endif
+
+
+            if (CURRENT_Display_Action == ACTION_DISPALY_3) {
+              display.clearDisplay();
+              int8_t StartRow = 22;
+              int8_t rect_width = 60;
+              display.drawRect(0,StartRow,rect_width,30, WHITE);
+              display.drawRect(rect_width + 2 ,StartRow,rect_width,30, WHITE);
+
+              #ifdef _ADS1X15_DC_Current_ 
+                  display.setCursor(1, 1);
+                  display.print(F("HST Amps: "));
+                  display.println(String(FinalRMSCurrent));
+                  display.print(F("DC Amps: "));
+                  display.println(String(FinalDCCurrent));                                    
+              #endif
+
+              display.setCursor(8, StartRow + 2);
+              display.println(F("ADC 3"));
+              display.setTextColor(SSD1306_WHITE);
+              display.setCursor(10,StartRow + 16);       
+              display.setTextSize(1.5); 
+              display.print(String(ADS1.toVoltage(ADS1.readADC(2)) * mutiplyer));
+              display.setTextSize(1);        
+      
+
+              display.setCursor(rect_width + 10 ,StartRow + 2 );    
+              display.println(F("ADC 4"));
+              display.setCursor(rect_width + 8,StartRow + 16 );   
+              display.setTextSize(1.5);                  
+              display.print(String(ADS1.toVoltage(ADS1.readADC(3)) * mutiplyer));
+              display.setTextSize(1);              
+              display.setTextColor(WHITE);
+             } 
+
+
+      
+    #endif
+  }    
+#endif
+
+#ifdef _NEWMETHOD_
+  void tskfn_PF() {  
+
+      Serial.print("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PF TASK: ");
+
+      // Serial.println("Getting single-ended readings from AIN0..3");
+      // Serial.println("ADC Range: +/- 6.144V (1 bit = 3mV/ADS1015, 0.1875mV/ADS1115)");
+      // https://microcontrollerslab.com/wp-content/uploads/2019/05/ADS1115-external-ADC-with-ESP32.jpg
+      // https://microcontrollerslab.com/ads1115-external-adc-with-esp32/
+
+
+        /* 0- General */
+
+        int decimalPrecision = 2;                   // decimal places for all values shown in LED Display & Serial Monitor
+
+
+        /* 1 - Phase Angle, Frequency and Power Factor measurement */
+
+        int expectedFrequency = 50;                 // Key in frequency for main grid (50 / 60 hz)
+        int analogInputPin1PA = VoltagePin;                 // The input pin for analogRead1 sensor. Use voltage sensor as primary reference here.
+        int analogInputPin2PA = CurrentPin;                 // The input pin for analogRead2 sensor. Use current or voltage as secondary reference.
+        float voltageAnalogOffset =4;               // This is to offset analog value for analogInput1
+        float currentAnalogOffset =-12;             // This is to offset analog value for analogInput2
+        unsigned long startMicrosPA;                /* start counting time for Phase Angle and Period (in micro seconds)*/
+        unsigned long vCurrentMicrosPA;             /* current time for analogInput1 (voltage) (in micro seconds). AnalogInput1 is used for reference for phase angle*/
+        unsigned long iCurrentMicrosPA;             /* current time for analogInput2 (current/voltage) (in micro seconds).*/
+        unsigned long periodMicrosPA;               /* current time for record period of wave */
+        float vAnalogValue =0;                      /* is the analog value for voltage sensor / analogInput1 and center at 0 value */
+        float iAnalogValue =0;                      /* is the analog value for current sensor / analogInput2 and center at 0 value */
+        float previousValueV =0;                    /* use to record peak value for voltage sensor*/
+        float previousValueI =0;                    /* use to record peak value for current sensro*/
+        float previousphaseAngleSample=0;           /* previous sample reading to replace false value less than 100 micro seconds*/
+        float phaseAngleSample =0;                  /* is the time difference between 2 sensor values (in micro seconds) */
+        float phaseAngleAccumulate =0;              /* is the accumulate time difference for accumulate samples*/
+        float periodSample=0;                       /* is the time difference for a period of wave for a sample (in micro seconds)*/
+        float periodSampleAccumulate = 0;           /* is the accumulate time difference for accumulate samples */
+        float phaseDifference =0;                   /* is the averaged set of time difference of 2 sensors*/
+        float phaseAngle =0;                        /* is the phase angle in degree (out of 360)*/
+        float frequency = 0;                        /* is the frequency of the voltage sensor wave*/
+        float voltagePhaseAngle=0;                  /* is the time recorded from begining to reach peak value for analogInput1 in micro seconds*/
+        float currentPhaseAngle=0;                  /* is the time recorded from begining to reach peak value for analogInput2 in micro seconds*/
+        float averagePeriod =0;                     /* is the average set of time recorded for a period of wave */
+        int sampleCount = 0;                        /* to count how many set of samples */
+        float averageVp = 0 ;                       /* Average vp ksb*/
+        int a = 3;                                  /* use for switching operation*/
+        float powerFactor;                          /* to calculate power factor */
+
+        float previousValueVAccumulate = 0;         /* Accumulated max Vp ksb*/
+        float ADC_djuster = 3.3/4096;               /*3.3v over 4096 ADC steps = volts per step*/
+        float resdividerFactor = 7500.0 / (7500.0 + 100000.0);
+        float transformerRatio = (240.0 / 13.7);
+
+      int t = millis();
+      while((sampleCount != expectedFrequency)){
+
+      MYbutton.tick(&MYbutton); 
+      /* 1 - Phase Angle, Frequency and Power Factor measurement */
+        
+        vAnalogValue = analogRead(analogInputPin1PA) - 1975 + voltageAnalogOffset;       /* read analogInput1 with center adjusted*/
+        //  Serial.print(vAnalogValue);
+        //  Serial.print(";");
+        iAnalogValue = analogRead(analogInputPin2PA) - 1930 + currentAnalogOffset;       /* read analogInput2 with center adjusted*/
+        // Serial.print(iAnalogValue);
+        if((vAnalogValue>0) && a == 3)                                          /* initial begining stage of measurement when analogInput1 wave larger than 0 */
+        {
+          a=0;                                                                  /* allow to change to the next stage */
+        }
+        
+        if((vAnalogValue<=0) && a ==0)                                          /* when analog value of analogInput1 smaller or equal than 0*/
+        {
+          startMicrosPA = micros();                                             /* start counting time for all*/
+          a=1;                                                                  /* allow to change to the next stage */
+        }
+        
+        if((vAnalogValue>0) && a ==1)                                           /* when analog value of analogInput1 larger than 0*/
+        {
+          a = 2;                                                                /* allow to change to the next stage */
+          previousValueV = 0;                                                   /* reset value. This value to be compared to measure peak value for analogInput1 */
+          previousValueI = 0;                                                   /* reset value. This value to be compared to measure peak value for analogInput2 */
+        }  
+     
+        if((vAnalogValue > previousValueV ) && a==2)                            /* if current measured value larger than previous peak value of analogInput1 */
+        {
+          previousValueV = vAnalogValue ;                                       /* record current measure value replace previous peak value */
+          vCurrentMicrosPA = micros();                                          /* record current time for analogInput1 */
+        }
+        
+        if((iAnalogValue > previousValueI) && a==2)                             /* if current measured value larger than previous peak value of analogInput2 */
+        {
+          previousValueI = iAnalogValue ;                                       /* record current measure value replace previous peak value */
+          iCurrentMicrosPA = micros();                                          /* record current time for analogInput2 */
+        }
+  
+        if((vAnalogValue <=0) && a==2)                                          /* when analog value of analogInput1 smaller or equal than 0*/
+        {
+          periodMicrosPA = micros();                                            /* record current time for 1 period */
+          periodSample = periodMicrosPA - startMicrosPA;                        /* period wave is the current time minus the starting time (for 1 sample)*/
+          periodSampleAccumulate = periodSampleAccumulate + periodSample;       /* accumulate or add up time for all sample readings of period wave */
+          previousValueVAccumulate = previousValueVAccumulate + previousValueV; /* Accumulate Vp*/
+          voltagePhaseAngle = vCurrentMicrosPA - startMicrosPA;                 /* time taken for analogInput1 from 0 (down wave) to peak value (up wave)*/
+          currentPhaseAngle = iCurrentMicrosPA - startMicrosPA;                 /* time taken for analogInput2 from 0 (down wave) to peak value (up wave)*/
+          phaseAngleSample = currentPhaseAngle - voltagePhaseAngle;             /* time difference between analogInput1 peak value and analogInput2 peak value*/
+          if(phaseAngleSample>=100)                                             /* if time difference more than 100 micro seconds*/
+          {
+          previousphaseAngleSample = phaseAngleSample;                          /* replace previous value using new current value */ 
+          }
+          if(phaseAngleSample<100)                                              /* if time difference less than 100 micro seconds (might be noise or fake values)*/
+          {
+          phaseAngleSample = previousphaseAngleSample;                          /* take previous value instead using low value*/
+          }
+          phaseAngleAccumulate = phaseAngleAccumulate + phaseAngleSample;       /* accumulate or add up time for all sample readings of time difference */
+          sampleCount = sampleCount + 1;                                        /* count sample number */
+          startMicrosPA = periodMicrosPA;                                       /* reset begining time */
+          a=1;                                                                  /* reset stage mode */
+          previousValueV = 0;                                                   /* reset peak value for analogInput1 for next set */
+          previousValueI = 0;                                                   /* reset peak value for analogInput2 for next set */
+        }
+      }
+
+        if(sampleCount == expectedFrequency)                                          /* if number of total sample recorded equal 50 by default */
+        {
+          averageVp = previousValueVAccumulate/sampleCount;                           /* avverage Vp ksb*/
+          averagePeriod = periodSampleAccumulate/sampleCount;                         /* average time for a period of wave from all the sample readings*/
+          frequency = 1000000 / averagePeriod;                                        /* the calculated frequency value */
+          phaseDifference = phaseAngleAccumulate / sampleCount;                       /* average time difference between 2 sensor peak values from all the sample readings */
+          phaseAngle = ((phaseDifference*360) / averagePeriod);                       /* the calculated phase angle in degree (out of 360)*/
+          powerFactor = cos(phaseAngle*0.017453292);                                  /* power factor. Cos is in radian, the formula on the left has converted the degree to rad. */
+
+          float adjusted_Vp = averageVp * ADC_djuster * 0.707 ;
+          adjusted_Vp = adjusted_Vp / resdividerFactor;
+          adjusted_Vp = adjusted_Vp * transformerRatio;
+
+          //float V_RATIO = ((0.57 * ((3300/1000.0) / (4096)))/resdivider) * transformerRatio; 
+          float averageV = adjusted_Vp;// * 0.85713; // adjustment for component errors and deviations
+
+          debugV ("\nPhase Angle : %f, Frequency : %f, Power Factor : %f Average Vpeak : %f, Voltage : %f" , phaseAngle, frequency , powerFactor, averageVp, averageV);   
+
+          Serial.print("Time taken :");
+          Serial.print(millis() - t);
+          Serial.print("ms ");
+          Serial.print("Phase Angle :");
+          Serial.print(phaseAngle,decimalPrecision);
+          Serial.print("Â°  ");
+          Serial.print("Frequency :");
+          Serial.print(frequency,decimalPrecision);
+          Serial.print("Hz  ");
+          Serial.print("Power Factor :");
+          Serial.print(powerFactor,decimalPrecision);
+          Serial.print(" Average Vpeak :");
+          Serial.println(averageVp,decimalPrecision);          
+          Serial.print(" Voltage :");
+          Serial.println(averageV,decimalPrecision);   
+
+          sampleCount = 0;                                                            /* reset the sample counting quantity */
+          periodSampleAccumulate = 0;                                                 /* reset the accumulated time for period wave from all samples */
+          phaseAngleAccumulate = 0;                                                   /* reset the accumulated time for time difference from all samples*/
+          previousValueVAccumulate = 0;
+
+            if (CURRENT_Display_Action == ACTION_DISPALY_4) {
+              #ifdef OLED_1306
+              display.clearDisplay();
+              int8_t StartRow = 22;
+              int8_t rect_width = 60;
+              display.drawRect(0,StartRow,rect_width,30, WHITE);
+              display.drawRect(rect_width + 2 ,StartRow,rect_width,30, WHITE);
+
+              display.setCursor(8, StartRow + 2);
+              display.println(F("PF"));
+              display.setTextColor(SSD1306_WHITE);
+              display.setCursor(10,StartRow + 16);       
+              display.setTextSize(1.5); 
+              display.print(String(powerFactor));
+              display.setTextSize(1);        
+      
+              display.setCursor(rect_width + 10 ,StartRow + 2 );    
+              display.println(F("Freq.HZ."));
+              display.setCursor(rect_width + 8,StartRow + 16 );   
+              display.setTextSize(1.5);                  
+              display.print(String(frequency));
+              display.setTextSize(1);              
+              display.setTextColor(WHITE);
+              #endif
+             } 
+
+        }   
+
+  }    
+#endif
+

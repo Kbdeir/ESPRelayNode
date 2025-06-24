@@ -26,8 +26,9 @@ extern long blinkInterval; // blinkInterval at which to blink wifi led (millisec
 extern unsigned long lastMillis_2;
 extern unsigned long previousMillis;
 extern int ledState;    // ledState used to set the LED
-
-
+#if defined (_emonlib_)  || defined (_pressureSensor_) 
+extern void tskEmonPublisher_setEnableSts(bool sts);
+#endif
 
 
 void ScanMyWiFi(void) {
@@ -67,10 +68,12 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
     Serial.print("[WIFI   ] IP address: ");
     Serial.println(IPAddress(info.got_ip.ip_info.ip.addr));
     thingsTODO_on_WIFI_Connected();
-    blinkInterval = blink_normal;
     Wifireconnecttimer.stop();
     lastMillis_2 = 0;
-    
+    blinkInterval = blink_normal;
+    #if defined (_emonlib_)  || defined (_pressureSensor_) 
+    tskEmonPublisher_setEnableSts(true);
+    #endif
     #ifdef ESP_NOW
                 if (esp_now_init() != ESP_OK) {
                     Serial.println("Error initializing ESP-NOW");
@@ -88,6 +91,9 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 {
     Serial.println("[WIFI   ] * Event: WiFi disconnected * ");
     WiFi.disconnect();
+    #if defined (_emonlib_)  || defined (_pressureSensor_) 
+    tskEmonPublisher_setEnableSts(false);
+    #endif
     if (blinkInterval > blink_connecting)
     {
         if (!started_in_confMode) {
@@ -159,7 +165,7 @@ void blinkledTask(){
 		} else {
 			ledState = LOW;
 		}
-		digitalWrite(led, ledState);
+		digitalWrite(led, !ledState);
 }
 
 

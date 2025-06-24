@@ -40,6 +40,7 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request);
 bool saveConfig(TConfigParams &ConfParam);
 bool saveDefaultConfig();
 
+
 bool saveIRMapConfig(AsyncWebServerRequest *request);
 config_read_error_t loadIRMapConfig(TIRMap &IRMap);
 
@@ -48,4 +49,5 @@ bool saveRelayConfig(AsyncWebServerRequest *request);
 bool saveRelayConfig(Trelayconf *RConfParam);
 bool saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh);
 bool loadCTReadings(float &KWh,  float &MTD_KWh, float &YTD_KWh);
+
 #endif

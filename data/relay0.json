@@ -1,0 +1,20 @@
+{
+  "RELAYNB": 0,
+  "PhyLoc": "NA",
+  "PUB_TOPIC1": "/home/Controller1325431/Coils/C0",
+  "STATE_PUB_TOPIC": "/home/Controller1325431/Coils/State/C0",
+  "TemperatureValue": "0",
+  "ACS_Sensor_Model": "30",
+  "ttl": "0",
+  "ttl_PUB_TOPIC": "/home/Controller1325431/sts/VTTL0",
+  "i_ttl_PUB_TOPIC": "/home/Controller1325431/i/TTL0",
+  "ACS_AMPS": "/home/Controller1325431/Coils/C1/Amps0",
+  "CURR_TTL_PUB_TOPIC": "/home/Controller1325431/sts/CURRVTTL0",
+  "tta": "0",
+  "ACS_elasticity": "0",
+  "Max_Current": "10",
+  "LWILL_TOPIC": "/home/Controller1325431/LWT0",
+  "SUB_TOPIC1": "/home/Controller1325431/#",
+  "ACS_Active": "0"
+}
+ÿÿÿ

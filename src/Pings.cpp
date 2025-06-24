@@ -31,6 +31,12 @@ void definePingsCallbacks() {
                     Serial.print(restartRequired_counter);
                     Serial.print("\n");
                     if (restartRequired_counter > MyConfParam.v_Reboot_on_WIFI_Disconnection)  {
+                      if (MyConfParam.v_PRST == 1) {
+                            Relay * rtmp =  getrelaybynumber(0);
+                            Serial.print(F("\n[PING   ] Flipping Relay "));          
+                            Serial.print(String(MyConfParam.v_PRST));                   
+                            rtmp->mdigitalWrite(rtmp->getRelayPin(),HIGH);                      
+                      }
                       restartRequired = true;
                     }     
                   }

@@ -5,8 +5,8 @@
 #include <RelayClass.h>
 #include <InputClass.h>
 
-#define DEBUG_DISABLED
-#ifndef DEBUG_DISABLED
+
+#ifdef DEBUG_ENABLED
 #include <RemoteDebug.h>
 extern RemoteDebug Debug;
 #endif 
@@ -56,7 +56,7 @@ AsyncMqttClient mqttClient;
 
 void connectToMqtt() {
 
-  #ifndef DEBUG_DISABLED
+  #ifdef DEBUG_ENABLED
   debugV("[MQTT] Connecting");
   #endif 
   mqttClient.disconnect();
@@ -79,12 +79,12 @@ void connectToMqtt() {
 
 void tiker_MQTT_CONNECT_func (void* obj) {
 
-  #ifndef DEBUG_DISABLED
+  #ifdef DEBUG_ENABLED
   debugV("[MQTT] waiting for WIFI ");
   #endif
   if  (WiFi.status() == WL_CONNECTED)  {
-    Serial.println("[MQTT   ] WIFI IS CONNECTED - CONNECTING TO MQTT ");
-    #ifndef DEBUG_DISABLED
+    Serial.println("\n[MQTT   ] WIFI IS CONNECTED - CONNECTING TO MQTT ");
+    #ifdef DEBUG_ENABLED
     debugV("[MQTT] WIFI CONNECTED - CONNECTING TO MQTT ");
     #endif
     connectToMqtt();
@@ -116,18 +116,17 @@ void onMqttConnect(bool sessionPresent) {
   Serial.print(F("[MQTT   ] Connected to MQTT - "));
   Serial.print(F("Session present: "));
   Serial.println(sessionPresent);  
-  #ifndef DEBUG_DISABLED
+  #ifdef DEBUG_ENABLED
   debugV("[MQTT] Connected to MQTT");
   #endif
   String ControllerIDBirth = "/home/Controller" + CID() + "/Birth" ;
   mqttClient.publish( ControllerIDBirth.c_str(), QOS2, false,"online");
 
-
 	//uint16_t packetIdSub = mqttClient.subscribe(relay0.RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
   Relay * rtemp = nullptr;
   for (auto it : relays)  {
     rtemp = static_cast<Relay *>(it);
-    if (rtemp) {
+    if (rtemp!= nullptr) {
         uint16_t packetIdSub = mqttClient.subscribe(rtemp->RelayConfParam->v_SUB_TOPIC1.c_str(), 2);
     }
   }
@@ -269,8 +268,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Serial.print(F("\n"));
   */
 
-  #ifndef DEBUG_DISABLED
-    debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
+  #ifdef DEBUG_ENABLED
+  //  debugV("[MQTT] received  topic: %s - Payload: %s" , topic, payload);
   #endif
 
   String tp = String(topic);
@@ -281,15 +280,14 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   //for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)
   for (auto it : relays)  {
     rtemp = static_cast<Relay *>(it);
-    if (rtemp) {
+    if (rtemp != nullptr) {
       if ((rtemp->RelayConfParam->v_STATE_PUB_TOPIC == tp) || (rtemp->RelayConfParam->v_CURR_TTL_PUB_TOPIC == tp)) {
           // Serial.printf("\n[MQTT   ] exiting %s, --- %s \n", rtemp->RelayConfParam->v_PUB_TOPIC1.c_str(), tp.c_str());
-          // Serial.printf("[MQTT   ] exiting %s, --- %s \n", rtemp->RelayConfParam->v_PUB_TOPIC1.c_str(), tp.c_str());
           return;
       }
       if ((rtemp->RelayConfParam->v_PUB_TOPIC1 == tp) || (rtemp->RelayConfParam->v_i_ttl_PUB_TOPIC == tp)) {
-            rly = rtemp;
-            break;
+          rly = rtemp;
+          break;
       } 
     }
   }
@@ -299,10 +297,12 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       if (tp == rly->RelayConfParam->v_PUB_TOPIC1) {
         if (temp == ON) {
             rly->mdigitalWrite(rly->getRelayPin(),HIGH);
-        } else if (temp == OFF) {
+        } else 
+        if (temp == OFF) {
             rly->stop_ttl_timer();
             rly->mdigitalWrite(rly->getRelayPin(),LOW);
-        } else if (temp = TOG) {
+        } else 
+        if (temp = TOG) {
             rly->mdigitalWrite(rly->getRelayPin(),!rly->readrelay());
         }
       }

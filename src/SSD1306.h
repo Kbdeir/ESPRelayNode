@@ -348,7 +348,6 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h) {
 void SSD_1306() {
 
 #ifdef OLED_1306
-  Serial.begin(115200);
   Serial.println(F("SSD1306 allocation starting"));
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) { 

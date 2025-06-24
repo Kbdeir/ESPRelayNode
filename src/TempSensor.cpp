@@ -13,8 +13,8 @@ TempSensor::TempSensor(uint8_t _pin) {
 }
 
 
-void TempSensor::tempbegin(uint8_t _pin) {
-
+void TempSensor::tempbegin() {
+  sensors->begin();
 }
 
 

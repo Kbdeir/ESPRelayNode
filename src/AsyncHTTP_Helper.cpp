@@ -7,10 +7,13 @@
 #include <RelayClass.h>
 #include <TimerClass.h>
 #include <TempConfig.h>
+#include <ADS11x5Config.h>
+#include <HSTConfig.h>
 #include <TLPressureSensor.h>
 #include <AccelStepper.h>
 #include <digitalClockDisplay.h>
 #include <ConfigParams.h>
+#include <WaterFlowSensor.h>
 
 #ifdef ESP32
   #ifdef AppleHK
@@ -31,6 +34,12 @@ extern fauxmoESP fauxmo;
 extern boolean CalendarNotInitiated ;
 extern NodeTimer NTmr;
 extern TempConfig PTempConfig;
+#ifdef _ADS1X15_
+extern ADS11x5Config PADS11x5Config;
+#endif
+#ifdef _HST_
+extern HSTConfig PAHSTConfig;
+#endif
 #ifdef _pressureSensor_
 extern TLPressureSensor TL136;
 #endif 
@@ -130,6 +139,35 @@ String TempConfProcessor(const String& var)
   return String();
 }
 
+#ifdef _ADS1X15_
+String ADS11x5ConfProcessor(const String& var)
+{
+
+  if(var == F( "ADSNB" ))               return String(PADS11x5Config.id);
+  if(var == F( "TRelay1" ))             return String(PADS11x5Config.relay1);
+  if(var == F( "TRelay2" ))             return String(PADS11x5Config.relay2);
+  if(var == F( "Res1" ))                return String(PADS11x5Config.Res1);
+  if(var == F( "Res2" ))                return String(PADS11x5Config.Res2);
+  if(var == F( "ResMultiplier" ))       return String(PADS11x5Config.ResMultiplier);  
+  if(var == F( "CEnabled" ))            { if (PADS11x5Config.enabled)             return "1\" checked=\"\""; };
+
+  return String();
+}
+#endif
+
+#ifdef _HST_
+String HSTConfProcessor(const String& var)
+{
+
+  if(var == F( "HSTNB" ))               return String(PAHSTConfig.id);
+  if(var == F( "AmpsVoltsRatio" ))      return String(PAHSTConfig.AmpsVoltsRatio);
+  if(var == F( "CEnabled" ))            { if (PAHSTConfig.enabled)   return "1\" checked=\"\""; };
+
+  return String();
+}
+#endif
+
+
 #ifdef _pressureSensor_
 String TLProcessor(const String& var)
 {
@@ -141,6 +179,16 @@ String TLProcessor(const String& var)
   if(var == F( "maBurdenResistor" ))      return String(TL136.BurdenResistorValue);  
   if(var == F( "systemtime" ))            return digitalClockDisplay();
   if(var == F( "ma_ADC" ))                return String(TL136.sampleI);  
+  return String();
+}
+#endif
+
+#ifdef WaterFlowSensor
+String WFSProcessor(const String& var)
+{
+  if(var == F( "wfs_Topic" ))             return WaterFlowSensor_Topic;
+  if(var == F( "wfs_Cal" ))               return String(calibrationFactor);
+  if(var == F( "systemtime" ))            return digitalClockDisplay();
   return String();
 }
 #endif
@@ -160,7 +208,8 @@ String processor(const String& var)
   if(var == F( "mqttUser" ))            return  String(MyConfParam.v_mqttUser.c_str());
   if(var == F( "mqttPass" ))            return String( MyConfParam.v_mqttPass.c_str());
 
-  if(var == F( "RWD" ))  return String( MyConfParam.v_Reboot_on_WIFI_Disconnection);
+  if(var == F( "RWD" ))   return String( MyConfParam.v_Reboot_on_WIFI_Disconnection);
+  if(var == F( "PRST" ))  return String( MyConfParam.v_PRST);        
 
   if(var == F( "PhyLoc" ))              return String( MyConfParam.v_PhyLoc.c_str());
   if(var == F( "MQTT_BROKER" ))         return String(MyConfParam.v_MQTT_BROKER.c_str()) ; // MyConfParam.v_MQTT_BROKER.toString();
@@ -188,15 +237,15 @@ String processor(const String& var)
     if(var == F( "ACS_Active" ))          { if (AppliedRelay->RelayConfParam->v_ACS_Active) return "1\" checked=\"\""; }; 
   }
 
-  if(var == F( "FRM_IP" ))              return MyConfParam.v_FRM_IP.toString();
-  if(var == F( "FRM_PRT" ))             return String( MyConfParam.v_FRM_PRT);
+  if(var == F( "FRM_IP" ))             return MyConfParam.v_FRM_IP.toString();
+  if(var == F( "FRM_PRT" ))            return String( MyConfParam.v_FRM_PRT);
 
-  if(var == F( "I12_STS_PTP"))          return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
-  if(var == F( "I14_STS_PTP"))          return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I12_STS_PTP"))         return String( MyConfParam.v_InputPin12_STATE_PUB_TOPIC.c_str());
+  if(var == F( "I14_STS_PTP"))         return String( MyConfParam.v_InputPin14_STATE_PUB_TOPIC.c_str());
 
   #ifdef ESP32
-    if(var == F( "I01_STS_PTP"))          return String( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str());
-    if(var == F( "I02_STS_PTP"))          return String( MyConfParam.v_InputPin02_STATE_PUB_TOPIC.c_str());
+    if(var == F( "I01_STS_PTP"))       return String( MyConfParam.v_InputPin01_STATE_PUB_TOPIC.c_str());
+    if(var == F( "I02_STS_PTP"))       return String( MyConfParam.v_InputPin02_STATE_PUB_TOPIC.c_str());
   #endif
 
   if(var == F( "I03_STS_PTP"))          return String( MyConfParam.v_InputPin03_STATE_PUB_TOPIC.c_str());
@@ -218,17 +267,17 @@ String processor(const String& var)
     return String(MCelcius);
   }();
 
-  if(var == F( "ACS" ))                return String(ACS_I_Current);
+  if(var == F( "ACS" ))                   return String(ACS_I_Current);
   //String(MCelcius);
   if(var == F( "TOGGLE_BTN_PUB_TOPIC" ))  return String( MyConfParam.v_TOGGLE_BTN_PUB_TOPIC.c_str());
   if(var == F( "I0MODE" ))                return String( MyConfParam.v_IN0_INPUTMODE);
   if(var == F( "I1MODE" ))                return String( MyConfParam.v_IN1_INPUTMODE);
   if(var == F( "I2MODE" ))                return String( MyConfParam.v_IN2_INPUTMODE);
 
-  if(var == F( "I3MODE" ))              return String( MyConfParam.v_IN3_INPUTMODE);
-  if(var == F( "I4MODE" ))              return String( MyConfParam.v_IN4_INPUTMODE);
-  if(var == F( "I5MODE" ))              return String( MyConfParam.v_IN5_INPUTMODE);
-  if(var == F( "I6MODE" ))              return String( MyConfParam.v_IN6_INPUTMODE);    
+  if(var == F( "I3MODE" ))                return String( MyConfParam.v_IN3_INPUTMODE);
+  if(var == F( "I4MODE" ))                return String( MyConfParam.v_IN4_INPUTMODE);
+  if(var == F( "I5MODE" ))                return String( MyConfParam.v_IN5_INPUTMODE);
+  if(var == F( "I6MODE" ))                return String( MyConfParam.v_IN6_INPUTMODE);    
 
   if(var == F( "RSTATE0" ))               return (getrelaybynumber(AppliedRelayNumber)->readrelay() == HIGH) ? "ON" : "OFF";
   if(var == F( "RSTATE1" ))               return [](){
@@ -237,8 +286,8 @@ String processor(const String& var)
     } else return "NA";
   }();
   
-  if(var == F( "Sonar_distance" ))      return String( MyConfParam.v_Sonar_distance.c_str());
-  if(var == F( "Sonar_distance_max" ))  return String( MyConfParam.v_Sonar_distance_max);
+  if(var == F( "Sonar_distance" ))        return String( MyConfParam.v_Sonar_distance.c_str());
+  if(var == F( "Sonar_distance_max" ))    return String( MyConfParam.v_Sonar_distance_max);
 
   if(var == F( "CurrentTransformer_max_current" ))  return String( MyConfParam.v_CurrentTransformer_max_current);
   if(var == F( "calibration" ))  return String( MyConfParam.v_calibration);    
@@ -250,7 +299,8 @@ String processor(const String& var)
   if(var == F( "CT_MaxAllowed_current" ))  return String( MyConfParam.v_CT_MaxAllowed_current);   
   if(var == F( "CT_saveThreshold" ))  return String( MyConfParam.v_CT_saveThreshold);         
   
-  if(var == F( "Screen_orientation" ))  return String( MyConfParam.v_Screen_orientation);              
+  if(var == F( "Screen_orientation" ))  return String( MyConfParam.v_Screen_orientation);           
+  
 
 
   return String();
@@ -392,6 +442,55 @@ void SetAsyncHTTP(){
     });
     #endif
 
+    #ifdef _ADS1X15_
+      AsyncWeb_server.on("/ADS11x5Config.html", HTTP_GET, [](AsyncWebServerRequest *request){
+          if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+          config_read_error_t res = loadADS11x5Config("/ADS11x5Config.json",PADS11x5Config); 
+          request->send(SPIFFS, "/ADS11x5Config.html", String(), false, ADS11x5ConfProcessor);
+        });
+
+      AsyncWeb_server.on("/ADS11x5ConfigSave.html", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        request->send(SPIFFS, "/ADS11x5ConfigSave.html");
+              saveADS11x5Config(request);
+              config_read_error_t res = loadADS11x5Config("/ADS11x5Config.json",PADS11x5Config);  
+      });
+    #endif  
+
+    #ifdef ESP32
+    #ifdef WaterFlowSensor
+    AsyncWeb_server.on("/WaterFlowSensor.html", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        loadconfigWFS("/WaterFlowSensorConfig.json"); 
+        request->send(SPIFFS, "/WaterFlowSensor.html", String(), false, WFSProcessor);
+      });
+
+    AsyncWeb_server.on("/WaterFlowSensorSave.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/WaterFlowSensorSave.html");
+            saveconfigWFS(request);
+            loadconfigWFS("/WaterFlowSensorConfig.json");  
+    });
+    #endif
+    #endif
+
+    #ifdef ESP32
+    #ifdef _HST_
+      AsyncWeb_server.on("/HSTConfig.html", HTTP_GET, [](AsyncWebServerRequest *request){
+          if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+          config_read_error_t res = loadHSTConfig("/HSTConfig.json",PAHSTConfig); 
+          request->send(SPIFFS, "/HSTConfig.html", String(), false, HSTConfProcessor);
+        });
+
+      AsyncWeb_server.on("/HSTConfigSave.html", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        request->send(SPIFFS, "/HSTConfigSave.html");
+              saveHSTConfig(request);
+              config_read_error_t res = loadHSTConfig("/HSTConfig.json",PAHSTConfig);  
+      });
+    #endif   
+    #endif   
+
     AsyncWeb_server.on("/wscontrol.html", HTTP_GET, [](AsyncWebServerRequest *request){
           if (!request->authenticate("user", "pass")) return request->requestAuthentication();
           AppliedRelayNumber = 0;
@@ -415,9 +514,9 @@ void SetAsyncHTTP(){
     });
 
     AsyncWeb_server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
         AppliedRelayNumber = 0;
-              webing = true;
+        webing = true;
         if (request->hasParam("GETRELAYNB")) {
             String t = request->getParam("GETRELAYNB")->value();
             AppliedRelayNumber = t.toInt();

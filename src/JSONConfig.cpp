@@ -9,11 +9,12 @@
 
 const char* filename      = "/config.json";
 const char* IRMapfilename = "/IRMAP.json";
+
 #ifndef ESP32
-#define buffer_size_2  1800 // 2048
+#define buffer_size_2  1900
 #endif
 #ifdef ESP32
-#define buffer_size_2  2400
+#define buffer_size_2  2000
 #endif
 #define buffer_size_IR  1000
 
@@ -22,7 +23,7 @@ extern void applyIRMap(int8_t Inpn, int8_t rlyn);
 
 config_read_error_t loadConfig(TConfigParams &ConfParam) {
 Serial.println(F("[INFO   ] loading SPIFFS"));
-  if(SPIFFS.begin())
+/*  if(SPIFFS.begin())
   {
     Serial.println(F("[INFO   ] SPIFFS Initialize....ok"));
   }
@@ -30,6 +31,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   {
     Serial.println(F("[INFO   ] SPIFFS Initialization...failed"));
   }
+  */
 
   Serial.println(F("[INFO   ] Opening config.json"));
   if (! SPIFFS.exists(filename)) {
@@ -46,7 +48,11 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
     return ERROR_OPENING_FILE;
   }
 
-  StaticJsonDocument<buffer_size_2> json;
+      Serial.println(F("[INFO   ] Allocating mem to open config.json"));
+      StaticJsonDocument<buffer_size_2> json;
+      Serial.println(F("[INFO   ] opening config.json after allocation"));
+
+
 
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(json, configFile);
@@ -122,6 +128,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_Sonar_distance_max  =  json["Sonar_distance_max"].as<uint16_t>();
   ConfParam.v_pass                = (json["pass"].as<String>()!="") ? json["pass"].as<String>() : String(F("samsam12"));  
   ConfParam.v_Reboot_on_WIFI_Disconnection  =  json["RWD"].as<uint16_t>();  
+  ConfParam.v_PRST                           = json["PRST"].as<uint8_t>();   
   ConfParam.v_CurrentTransformer_max_current = (json["CurrentTransformer_max_current"].as<String>()!="") ? json["CurrentTransformer_max_current"].as<uint8_t>() : 0;
   ConfParam.v_calibration                    = (json["calibration"].as<String>()!="") ? json["calibration"].as<double>() : 1908;
   ConfParam.v_PhaseCal                        = (json["PhaseCal"].as<String>()!="") ? json["PhaseCal"].as<double>() : 1.7;
@@ -132,6 +139,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   ConfParam.v_CT_adjustment                  = (json["CT_adjustment"].as<String>()!="") ? json["CT_adjustment"].as<float_t>() : 0.05;
   ConfParam.v_CT_saveThreshold               = (json["CT_saveThreshold"].as<String>()!="") ? json["CT_saveThreshold"].as<uint8_t>() : 10;
   ConfParam.v_Screen_orientation             = (json["Screen_orientation"].as<String>()!="") ? json["Screen_orientation"].as<uint8_t>() : 0; 
+
 
   configFile.close();
 
@@ -152,8 +160,9 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
 
 bool saveConfig(TConfigParams &ConfParam){
 
+      Serial.println(F("[INFO   ] Allocating mem to open config.json"));
   StaticJsonDocument<buffer_size_2> json;
-
+      Serial.println(F("[INFO   ] opening config.json"));
     File configFile = SPIFFS.open(filename, "w");
     if (!configFile) {
       Serial.println(F("[INFO   ] Failed to open config file for writing"));
@@ -217,7 +226,8 @@ bool saveConfig(TConfigParams &ConfParam){
     json[F("Update_now")]=ConfParam.v_Update_now;
     json[F("Sonar_distance")]=ConfParam.v_Sonar_distance;
     json[F("Sonar_distance_max")]=ConfParam.v_Sonar_distance_max; 
-    json[F("RWD")]=ConfParam.v_Reboot_on_WIFI_Disconnection;    
+    json[F("RWD")]  = ConfParam.v_Reboot_on_WIFI_Disconnection;    
+    json[F("PRST")] = ConfParam.v_PRST;      
 
     json[F("CurrentTransformer_max_current")] = ConfParam.v_CurrentTransformer_max_current;
     json[F("calibration")]                    = ConfParam.v_calibration; 
@@ -228,6 +238,7 @@ bool saveConfig(TConfigParams &ConfParam){
     json[F("CT_adjustment")]                  = ConfParam.v_CT_adjustment;       
     json[F("CT_saveThreshold")]               = ConfParam.v_CT_saveThreshold;        
     json[F("Screen_orientation")]             = ConfParam.v_Screen_orientation;        
+      
 
     json[F("CT_MaxAllowed_current")]          = ConfParam.v_CT_MaxAllowed_current;
 
@@ -344,7 +355,8 @@ bool saveDefaultConfig(){
   json[F("CurrentTransformerTopic")]        = "/home/Controller" + CID() + "/CT";   
   json[F("CT_adjustment")]                  = 0;    
   json[F("CT_saveThreshold")]               = 10;      
-  json[F("Screen_orientation")]             = 0;      
+  json[F("Screen_orientation")]             = 0;   
+  json[F("PRST")]                           = 0;          
   
       
 
@@ -718,6 +730,7 @@ bool saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
 
 bool loadCTReadings(float &KWh,  float &MTD_KWh, float &YTD_KWh) {
 Serial.println(F("[INFO   ] loading SPIFFS"));
+
   if(SPIFFS.begin())
   {
     Serial.println(F("[INFO   ] SPIFFS Initialize....ok"));
@@ -726,8 +739,9 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
   {
     Serial.println(F("[INFO   ] SPIFFS Initialization...failed"));
   }
+  
 
-  Serial.println(F("[INFO   ] Opening config.json"));
+  Serial.println(F("[INFO   ] Opening /AccumulatedPower.json"));
   if (! SPIFFS.exists("/AccumulatedPower.json")) {
     Serial.println(F("[INFO   ] AccumulatedPower file does not exist!"));
     KWh      =  0;
@@ -736,7 +750,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
     return false;
   }
 
-  Serial.println(F("[INFO   ] Starting config.json parsing"));
+  Serial.println(F("[INFO   ] Starting /AccumulatedPower.json parsing"));
   File configFile = SPIFFS.open("/AccumulatedPower.json", "r");
   if (!configFile) {
     Serial.println(F("[INFO   ] Failed to open AccumulatedPower.json file"));
@@ -746,7 +760,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
     return false;
   }
 
-  StaticJsonDocument<200> json;
+  StaticJsonDocument<500> json;
 
   // Deserialize the JSON document
   DeserializationError error = deserializeJson(json, configFile);

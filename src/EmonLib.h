@@ -13,6 +13,7 @@
 #if defined(ARDUINO) && ARDUINO >= 100
 
 #include "Arduino.h"
+#include "defines.h"
 
 #else
 
@@ -33,15 +34,27 @@
 // include the following line in main sketch inside setup() function:
 //  analogReadResolution(ADC_BITS);
 // otherwise will default to 10 bits, as in regular Arduino-based boards.
+
+
 #if defined(__arm__) || (defined ESP32)
-#define ADC_BITS    12
-#else
-#define ADC_BITS    10
+  #define ADC_BITS    12
+  #else
+  #define ADC_BITS    10
 #endif
 
 
-#define ADC_COUNTS  (1<<ADC_BITS)
+#if defined (_ADS1X15_CURRENT_) 
+  #ifdef _ADS1015_
+    #define ADC_BITS_ADS1X15 11 
+  #else
+    #define ADC_BITS_ADS1X15 15
+  #endif
+#define ADC_COUNTS_ADS1X15  (1<<ADC_BITS_ADS1X15) 
+#endif
 
+#define ADC_COUNTS  (1<<ADC_BITS) 
+
+// typedef void (*fnptr_b)(int, void* t);
 
 class EnergyMonitor
 {
@@ -56,6 +69,7 @@ class EnergyMonitor
     void calcVI(unsigned int crossings, unsigned int timeout);//, uint8_t readtype );
     double ReadVoltage(unsigned int crossings, unsigned int timeout, uint8_t readtype );
     double calcIrms(unsigned int NUMBER_OF_SAMPLES);
+
     void serialprint();
 
     long readVcc();
@@ -65,9 +79,12 @@ class EnergyMonitor
       powerFactor,
       Vrms,
       Irms;
-
+      double offsetI = ADC_COUNTS / 2;                          //Low-pass filter output      
 
   private:
+    int16_t analogread_volts(unsigned int _inPinI);
+    int16_t analogread_amps(unsigned int _inPinI);
+    void setupparams();
 
     //Set Voltage and current input pins
     unsigned int inPinV;
@@ -82,19 +99,15 @@ class EnergyMonitor
     // Variable declaration for emon_calc procedure
     //--------------------------------------------------------------------------------------
     int sampleV;                        //sample_ holds the raw analog read value
-    double sampleI; //int sampleI;
+    int sampleI;             //int sampleI;
 
     double lastFilteredV,filteredV;          //Filtered_ is the raw analog value minus the DC offset
     double filteredI;
     double offsetV;                          //Low-pass filter output
-    double offsetI = ADC_COUNTS / 2;                          //Low-pass filter output      
-    
+
     double phaseShiftedV;                             //Holds the calibrated phase shifted voltage.
-
     double sqV,sumV,sqI,sumI,instP,sumP;              //sq = squared, sum = Sum, inst = instantaneous
-
     int startV;                                       //Instantaneous voltage at start of sample window.
-
     boolean lastVCross, checkVCross;                  //Used to measure number of times threshold is crossed.
     
 
