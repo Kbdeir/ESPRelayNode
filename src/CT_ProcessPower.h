@@ -64,9 +64,9 @@ class CTPROCESSOR
   CTPROCESSOR(uint8_t _CTPin, double _ICAL, uint8_t _inPinV, double _VCAL, double _PHASECAL,
               fnptr_a pThresholdHigh_callback = nullptr, fnptr_a pThresholdLow_callback = nullptr);
   ~CTPROCESSOR();  
-  int readPower(float adjustment, uint8_t savethreshold);
-  int readVoltage();  
-  int DisplayPower(Adafruit_SSD1306 &display, AsyncMqttClient &mqttClient, uint8_t sco);
+  void readPower(float adjustment, uint8_t savethreshold);
+  void readVoltage();  
+  void DisplayPower(Adafruit_SSD1306 &display, AsyncMqttClient &mqttClient, uint8_t sco);
 
   bool ThresholdCossHighTimerActive() ;
   bool ThresholdCossHighTimerStart() ;

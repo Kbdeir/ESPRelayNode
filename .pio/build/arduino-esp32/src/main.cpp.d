@@ -233,8 +233,7 @@
  lib/DallasTemperature_ID54/DallasTemperature.h src/TempConfig.h \
  src/ADS11x5Config.h src/HSTConfig.h \
  .pio/libdeps/arduino-esp32/ESP32Ping/ESP32Ping.h \
- .pio/libdeps/arduino-esp32/ESP32Ping/ping.h src/WaterFlowSensor.h \
- src/Pings.h \
+ .pio/libdeps/arduino-esp32/ESP32Ping/ping.h src/Pings.h \
  C:/Users/kbdeir/.platformio/lib/AccelStepper/src/AccelStepper.h \
  lib/SimpleTimer/SimpleTimer.h \
  .pio/libdeps/arduino-esp32/TaskScheduler/src/TaskScheduler.h \
@@ -334,4 +333,4 @@
  lib/Chronos_ID920/src/chronosinc/schedule/Calendar.h \
  lib/Chronos_ID920/src/chronosinc/schedule/../../chronosinc/schedule/ScheduledEvent.h \
  lib/Chronos_ID920/src/chronosinc/schedule/../timeTypes.h \
- lib/Chronos_ID920/src/chronosinc/test.h src/TLPressureSensor.h
+ lib/Chronos_ID920/src/chronosinc/test.h

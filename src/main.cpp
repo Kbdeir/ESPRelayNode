@@ -1876,24 +1876,7 @@ void setup() {
   */
   
 
-        #ifdef OLED_1306
-              SSD_1306();
-              DSS1306_text(0,0,1,"booting...");
-              #ifdef _emonlib_
-                DSS1306_text(0,10,1,"loading CT Readings...");
-                loadCTReadings(CT_1.saved_Wh,CT_1.saved_MTD_Wh,CT_1.saved_YTD_Wh);
-                Serial.printf ("[CT     ] Loaded CT Values %f KWh - %f MTD_KWh - %f YTD_KWh \n",
-                CT_1.saved_Wh, CT_1.saved_MTD_Wh, CT_1.saved_YTD_Wh );              
-                CT_1.wh         = CT_1.saved_Wh;
-                CT_1.MTD_Wh     = CT_1.saved_MTD_Wh;
-                CT_1.YTD_Wh     = CT_1.saved_YTD_Wh;
-                CT_1.PreviousWh = CT_1.saved_Wh; 
-                CT_1.CTSaveThreshold = 0;
-              #else
 
-              #endif
-              
-        #endif
 
          
         /*
@@ -1922,6 +1905,25 @@ void setup() {
         #ifdef USEPREF
           ReadParams(MyConfParam, preferences);
         #endif
+
+        #ifdef OLED_1306
+              SSD_1306();
+              DSS1306_text(0,0,1,"booting...");
+              #ifdef _emonlib_
+                DSS1306_text(0,10,1,"loading CT Readings...");
+                loadCTReadings(CT_1.saved_Wh,CT_1.saved_MTD_Wh,CT_1.saved_YTD_Wh);
+                Serial.printf ("[CT     ] Loaded CT Values %f KWh - %f MTD_KWh - %f YTD_KWh \n",
+                CT_1.saved_Wh, CT_1.saved_MTD_Wh, CT_1.saved_YTD_Wh );              
+                CT_1.wh         = CT_1.saved_Wh;
+                CT_1.MTD_Wh     = CT_1.saved_MTD_Wh;
+                CT_1.YTD_Wh     = CT_1.saved_YTD_Wh;
+                CT_1.PreviousWh = CT_1.saved_Wh; 
+                CT_1.CTSaveThreshold = 0;
+              #else
+
+              #endif
+              
+        #endif        
 
         while (loadConfig(MyConfParam) != SUCCESS) {
           delay(2000);

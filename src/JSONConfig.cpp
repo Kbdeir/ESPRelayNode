@@ -694,7 +694,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
 
 
 
-bool saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
+void saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
   StaticJsonDocument<200> json;
 
     json[F("KWh")]=String(KWh);
@@ -705,13 +705,13 @@ bool saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
     File configFile = SPIFFS.open("/AccumulatedPower.json", "w");
     if (!configFile) {
       Serial.println(F("\n[INFO   ] Failed to write relay Power file"));
-      return false;
+      //return false;
     }
 
   if (serializeJsonPretty(json, configFile) == 0) {
     Serial.println(F("[INFO   ] Failed to write Power values to file"));
     configFile.close();
-    return false;        
+    //return false;        
   }
 
   // configFile.println("\n\n");
@@ -722,13 +722,13 @@ bool saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
   }*/
   configFile.close();
 
-  return true;
+  //return true;
   }
 
 
 
 
-bool loadCTReadings(float &KWh,  float &MTD_KWh, float &YTD_KWh) {
+void loadCTReadings(float &KWh,  float &MTD_KWh, float &YTD_KWh) {
 Serial.println(F("[INFO   ] loading SPIFFS"));
 
   if(SPIFFS.begin())
@@ -747,7 +747,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
     KWh      =  0;
     MTD_KWh  =  0;
     YTD_KWh  =  0;
-    return false;
+    //return false;
   }
 
   Serial.println(F("[INFO   ] Starting /AccumulatedPower.json parsing"));
@@ -757,7 +757,7 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
     KWh      =  0;
     MTD_KWh  =  0;
     YTD_KWh  =  0;
-    return false;
+    //return false;
   }
 
   StaticJsonDocument<500> json;
@@ -769,13 +769,13 @@ Serial.println(F("[INFO   ] loading SPIFFS"));
     KWh      =  0;
     MTD_KWh  =  0;
     YTD_KWh  =  0;
-    return false;    
+    //return false;    
   }
 
   KWh      = (json["KWh"].as<String>()!="")     ? json["KWh"].as<float>() : 0;
   MTD_KWh  = (json["MTD_KWh"].as<String>()!="") ? json["MTD_KWh"].as<float>() : 0;
   YTD_KWh  = (json["YTD_KWh"].as<String>()!="") ? json["YTD_KWh"].as<float>() : 0;
 
-  return true;
+  //return true;
 }
 

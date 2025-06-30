@@ -14,8 +14,8 @@
     
      #define OLED_1306                // OLED only available on ESP32
     // #define OLED_ThingPulse
-    // #define _emonlib_                // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
-     #define _pressureSensor_         // uncomment to activate 4-20ma pressure sensor
+     #define _emonlib_                // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
+    // #define _pressureSensor_         // uncomment to activate 4-20ma pressure sensor
     //   #define _ADS1X15_                // uncomment to activate a default to ADS1115
     //   #define _ADS1015_                // uncomment to if using ADS1015
     //   #define _ADS_ASYNC_              // uncomment to use lib
@@ -23,7 +23,7 @@
     // #define _ADS1X15_VOLTAGE_        // uncomment to use ADS to measure voltage
     // #define _ADS1X15_DC_Current_     // uncomment to use ADS to measure DC current on same pin used for _ADS1X15_CURRENT_ - these are exclusive
     // #define _HST_                    // Uncomment to use DC Hall sensor
-    #define WaterFlowSensor
+    // #define WaterFlowSensor
 
     // #define _NEWMETHOD_
 

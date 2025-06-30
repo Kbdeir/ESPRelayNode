@@ -30,7 +30,7 @@
 #endif
 
 extern DisplayActions CURRENT_Display_Action;
-extern bool saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh);
+extern void saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh);
 extern   Adafruit_ADS1115 ads;
 
 
@@ -87,9 +87,11 @@ bool CTPROCESSOR::ThresholdCossHighTimerStop() {
   #ifdef ESP32
       xTimerStop(this->ThresholdCossHighTimer,0);
       ThresholdCossHighTimerCounter = 0; 
+      return true;
    #else
-    	return false;
+
   #endif    
+
 }
 
 bool CTPROCESSOR::ThresholdCossHighTimerActive() {
@@ -106,6 +108,7 @@ bool CTPROCESSOR::ThresholdCossHighTimerActive() {
 bool CTPROCESSOR::ThresholdCossLowTimerStart() {
   #ifdef ESP32
       xTimerStart(this->ThresholdCossLowTimer,0);
+      return true;
   #else
     	return false;
   #endif    
@@ -115,6 +118,7 @@ bool CTPROCESSOR::ThresholdCossLowTimerStop() {
   #ifdef ESP32
       xTimerStop(this->ThresholdCossLowTimer,0);
       ThresholdCossLowTimerCounter = 0; 
+      return true;
    #else
     	return false;
   #endif    
@@ -131,7 +135,7 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
 }
 
 
-  int CTPROCESSOR::readPower(float adjustment, uint8_t savethreshold) {
+  void CTPROCESSOR::readPower(float adjustment, uint8_t savethreshold) {
       // amps = emon1.calcIrms(20) + adjustment; // Calculate Irms only (150 is optimal)
       // amps = emon1.calcIrms(5000) + adjustment; // Calculate Irms only (150 is optimal)      
       // if (amps < 0) amps = 0;
@@ -240,12 +244,12 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
 
 
 
-  int CTPROCESSOR::readVoltage() {
+  void CTPROCESSOR::readVoltage() {
      supplyVoltage = emon1.ReadVoltage(20,500,0); 
   }
 
 
-  int CTPROCESSOR::DisplayPower(Adafruit_SSD1306 &display, AsyncMqttClient &mqttClient, uint8_t sco){
+  void CTPROCESSOR::DisplayPower(Adafruit_SSD1306 &display, AsyncMqttClient &mqttClient, uint8_t sco){
      #ifdef OLED_1306
         display.setRotation(sco); 
         display.cp437(true); 
