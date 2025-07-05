@@ -238,7 +238,8 @@
  lib/SimpleTimer/SimpleTimer.h \
  .pio/libdeps/arduino-esp32/TaskScheduler/src/TaskScheduler.h \
  .pio/libdeps/arduino-esp32/TaskScheduler/src/TaskSchedulerDeclarations.h \
- src/CT_ProcessPower.h src/EmonLib.h src/defines.h \
+ .pio/libdeps/arduino-esp32/ADS1X15/ADS1X15.h src/CT_ProcessPower.h \
+ src/EmonLib.h src/defines.h \
  C:/Users/kbdeir/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
  C:/Users/kbdeir/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
  .pio/libdeps/arduino-esp32/Adafruit\ GFX\ Library/Adafruit_GFX.h \

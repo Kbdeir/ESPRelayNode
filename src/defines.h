@@ -16,13 +16,13 @@
     // #define OLED_ThingPulse
      #define _emonlib_                // https://learn.openenergymonitor.org/electricity-monitoring/ctac/ct-and-ac-power-adaptor-installation-and-calibration-theory   Available on ESP32 only
     // #define _pressureSensor_         // uncomment to activate 4-20ma pressure sensor
-    //   #define _ADS1X15_                // uncomment to activate a default to ADS1115
+       #define _ADS1X15_                // uncomment to activate a default to ADS1115, ADS1115 is a 16-bit ADC, offering higher precision, while the ADS1015 is a 12-bit ADC with a higher maximum sample rate
     //   #define _ADS1015_                // uncomment to if using ADS1015
-    //   #define _ADS_ASYNC_              // uncomment to use lib
-    // #define _ADS1X15_CURRENT_        // uncomment to use ADS to measure current
-    // #define _ADS1X15_VOLTAGE_        // uncomment to use ADS to measure voltage
-    // #define _ADS1X15_DC_Current_     // uncomment to use ADS to measure DC current on same pin used for _ADS1X15_CURRENT_ - these are exclusive
-    // #define _HST_                    // Uncomment to use DC Hall sensor
+       #define _ADS_ASYNC_              // uncomment to use lib
+     //#define _ADS1X15_CURRENT_        // uncomment to use ADS to measure current
+     //#define _ADS1X15_VOLTAGE_        // uncomment to use ADS to measure voltage
+     #define _ADS1X15_DC_Current_     // uncomment to use ADS to measure DC current on same pin used for _ADS1X15_CURRENT_ - these are exclusive
+     #define _HST_                    // Uncomment to use DC Hall sensor
     // #define WaterFlowSensor
 
     // #define _NEWMETHOD_
@@ -35,6 +35,7 @@
 
 // select feature type
 // *******************
+// #define MQTTPostInitStatus             // until further granual dev. this allows/diallows posting of initial status of Inputsnsr02
 // #define SR04                         // utrasonic sensor code 
 // #define SR04_SERIAL 
 // #define SolarHeaterControllerMode    // solar Water Heater Controller Mode. Relay on/off within temp sensors interval

@@ -75,19 +75,19 @@ CTPROCESSOR::~CTPROCESSOR(){
     }
 
 
-bool CTPROCESSOR::ThresholdCossHighTimerStart() {
+void CTPROCESSOR::ThresholdCossHighTimerStart() {
   #ifdef ESP32
       xTimerStart(this->ThresholdCossHighTimer,0);
   #else
-    	return false;
+    	// return false;
   #endif    
 }
 
-bool CTPROCESSOR::ThresholdCossHighTimerStop() {
+void CTPROCESSOR::ThresholdCossHighTimerStop() {
   #ifdef ESP32
       xTimerStop(this->ThresholdCossHighTimer,0);
       ThresholdCossHighTimerCounter = 0; 
-      return true;
+      // return true;
    #else
 
   #endif    
@@ -105,20 +105,20 @@ bool CTPROCESSOR::ThresholdCossHighTimerActive() {
 }
 
 
-bool CTPROCESSOR::ThresholdCossLowTimerStart() {
+void CTPROCESSOR::ThresholdCossLowTimerStart() {
   #ifdef ESP32
       xTimerStart(this->ThresholdCossLowTimer,0);
-      return true;
+      // return true;
   #else
     	return false;
   #endif    
 }
 
-bool CTPROCESSOR::ThresholdCossLowTimerStop() {
+void CTPROCESSOR::ThresholdCossLowTimerStop() {
   #ifdef ESP32
       xTimerStop(this->ThresholdCossLowTimer,0);
       ThresholdCossLowTimerCounter = 0; 
-      return true;
+      // return true;
    #else
     	return false;
   #endif    

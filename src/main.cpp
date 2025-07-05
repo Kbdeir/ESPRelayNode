@@ -804,7 +804,7 @@ void process_Input(void * inputSender, void * obj){
 void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
   Relay * rly = static_cast<Relay *>(relaySender);
   InputSensor * input = static_cast<InputSensor *>(inputSender);
-  // Serial.print("\n onchangeSwitchInterruptSvc");
+  Serial.print("\n [INFO ] onchangeSwitchInterruptSvc");
   Serial.print("\n "); Serial.print(digitalRead(input->pin));
   rly->mdigitalWrite(rly->getRelayPin(),digitalRead(input->pin)); //rly->getRelaySwithbtnState());
   mqttClient.publish(input->mqtt_topic.c_str(), QOS2, RETAINED,digitalRead(input->pin) == HIGH ? ON : OFF);
@@ -813,7 +813,7 @@ void onchangeSwitchInterruptSvc(void* relaySender, void* inputSender){
 
 // this function will be called when button is clicked.
 void buttonclick(void* relaySender, void* inputSender) {
-  Serial.print(F("\n buttonclick"));
+  Serial.print(F("\n [INFO ] buttonclick"));
   if (relaySender){
     Relay * rly = static_cast<Relay *>(relaySender);
     InputSensor * input;

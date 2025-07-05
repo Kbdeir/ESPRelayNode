@@ -69,12 +69,12 @@ class CTPROCESSOR
   void DisplayPower(Adafruit_SSD1306 &display, AsyncMqttClient &mqttClient, uint8_t sco);
 
   bool ThresholdCossHighTimerActive() ;
-  bool ThresholdCossHighTimerStart() ;
-  bool ThresholdCossHighTimerStop() ;
+  void ThresholdCossHighTimerStart() ;
+  void ThresholdCossHighTimerStop() ;
 
   bool ThresholdCossLowTimerActive() ;
-  bool ThresholdCossLowTimerStart() ;
-  bool ThresholdCossLowTimerStop() ;
+  void ThresholdCossLowTimerStart() ;
+  void ThresholdCossLowTimerStop() ;
 
   fnptr_a fThresholdHigh_callback;
   fnptr_a fThresholdLow_callback;
