@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -52,11 +52,11 @@ input[type="submit"]:hover,input[type="button"]:hover{background:var(--teal-dark
     <div>
       <div style="margin:0;font-size:24px;font-weight:700;color:#fff;">Pressure Sensor Configuration</div>
       <div class="sub">4&ndash;20 mA sensor &mdash; MQTT topic, range, and ADC calibration.</div>
-      <div class="sub">System time: %systemtime%</div>
+      <div class="sub">System time: <span id="st-val">—</span></div>
       <div class="sub">Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
     </div>
     <div class="live-panel">
-      <div class="live-tile"><span class="lbl">ADC Steps</span><span class="val" id="liveADC">%ma_ADC%</span><span class="unit">raw</span></div>
+      <div class="live-tile"><span class="lbl">ADC Steps</span><span class="val" id="liveADC">&mdash;</span><span class="unit">raw</span></div>
       <div class="live-tile"><span class="lbl">Level</span><span class="val" id="liveCM">&mdash;</span><span class="unit" id="liveFP">&mdash;&nbsp;&#37;</span></div>
     </div>
   </div>
@@ -78,12 +78,12 @@ input[type="submit"]:hover,input[type="button"]:hover{background:var(--teal-dark
 
     <form method="get" action="PressureSensorSave.html" id="Form1" onsubmit="return submitForm1()">
       <div class="form-grid">
-        <div class="field full"><label for="maSTopic">MQTT Publish Topic</label><input type="text" id="maSTopic" name="maSTopic" value="%maSTopic%" maxlength="64"></div>
-        <div class="field"><label for="paramEmptyValue">Value at 4 mA &mdash; empty (cm)</label><input type="number" id="paramEmptyValue" name="paramEmptyValue" value="%paramEmptyValue%"><span class="hint">Reading when tank is empty (ADC at 4 mA). Usually 0.</span></div>
-        <div class="field"><label for="paramFullValue">Value at 20 mA &mdash; full (cm)</label><input type="number" id="paramFullValue" name="paramFullValue" value="%paramFullValue%" min="1" max="50000"><span class="hint">Reading when tank is full (ADC at 20 mA). E.g. 400.</span></div>
-        <div class="field"><label for="maSLC">4 mA Calibration (ADC steps at 4 mA)</label><input type="number" id="maSLC" name="maSLC" value="%maSLC%" min="1" max="4096"></div>
-        <div class="field"><label for="maSHC">20 mA Calibration (ADC steps at 20 mA)</label><input type="number" id="maSHC" name="maSHC" value="%maSHC%" min="6" max="5000"></div>
-        <div class="field"><label for="maBurdenResistor">Burden Resistor (ohms)</label><input type="number" id="maBurdenResistor" name="maBurdenResistor" value="%maBurdenResistor%" min="6" max="5000"></div>
+        <div class="field full"><label for="maSTopic">MQTT Publish Topic</label><input type="text" id="maSTopic" name="maSTopic" value="" maxlength="64"></div>
+        <div class="field"><label for="paramEmptyValue">Value at 4 mA &mdash; empty (cm)</label><input type="number" id="paramEmptyValue" name="paramEmptyValue" value=""><span class="hint">Reading when tank is empty (ADC at 4 mA). Usually 0.</span></div>
+        <div class="field"><label for="paramFullValue">Value at 20 mA &mdash; full (cm)</label><input type="number" id="paramFullValue" name="paramFullValue" value="" min="1" max="50000"><span class="hint">Reading when tank is full (ADC at 20 mA). E.g. 400.</span></div>
+        <div class="field"><label for="maSLC">4 mA Calibration (ADC steps at 4 mA)</label><input type="number" id="maSLC" name="maSLC" value="" min="1" max="4096"></div>
+        <div class="field"><label for="maSHC">20 mA Calibration (ADC steps at 20 mA)</label><input type="number" id="maSHC" name="maSHC" value="" min="6" max="5000"></div>
+        <div class="field"><label for="maBurdenResistor">Burden Resistor (ohms)</label><input type="number" id="maBurdenResistor" name="maBurdenResistor" value="" min="6" max="5000"></div>
       </div>
 
       <div class="subhead">Calibration Calculator</div>
@@ -91,8 +91,8 @@ input[type="submit"]:hover,input[type="button"]:hover{background:var(--teal-dark
       <div class="form-grid">
         <div class="field"><label for="Vref_edt">ADC Full-Scale Vmax (mV)</label><input type="number" id="Vref_edt" value="3179" min="2800" max="3600"></div>
         <div class="field"><label>&nbsp;</label><span class="hint" style="padding-top:4px;display:block;">Derive yours: Vmax = (R &times; 0.02 &times; 1000) &times; 4096 / ADC<sub>20mA</sub>.</span></div>
-        <div class="field"><label for="maSLC_edt">4 mA result (writes to field above)</label><input type="number" id="maSLC_edt" disabled></div>
-        <div class="field"><label for="maSHC_edt">20 mA result (writes to field above)</label><input type="number" id="maSHC_edt" disabled></div>
+        <div class="field"><label for="maSLC_edt">4 mA result (writes to field above)</label><input type="number" id="maSLC_edt" oninput="document.getElementById('maSLC').value=this.value"></div>
+        <div class="field"><label for="maSHC_edt">20 mA result (writes to field above)</label><input type="number" id="maSHC_edt" oninput="document.getElementById('maSHC').value=this.value"></div>
         <div class="field full"><input type="button" onclick="calcCalibration();return false;" value="Calculate and apply calibration factors"></div>
       </div>
 
@@ -137,6 +137,20 @@ function calcCalibration(){
   document.getElementById('maSLC').value=slc;document.getElementById('maSHC').value=shc;
 }
 (function(){
+  fetch('/api/psconfig').then(function(r){return r.json();}).then(function(d){
+    var f=function(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;};
+    f('maSTopic',d.maSTopic);
+    f('paramEmptyValue',d.paramEmptyValue);
+    f('paramFullValue',d.paramFullValue);
+    f('maSLC',d.maSLC);f('maSLC_edt',d.maSLC);
+    f('maSHC',d.maSHC);f('maSHC_edt',d.maSHC);
+    f('maBurdenResistor',d.maBurdenResistor);
+    var s=document.getElementById('st-val');if(s)s.textContent=d.systemtime||'—';
+  }).catch(function(){
+    var s=document.getElementById('st-val');if(s)s.textContent='(unavailable)';
+  });
+}());
+(function(){
   function refresh(){
     var req=new XMLHttpRequest();req.open('GET','/PressureSensor.json',true);
     req.onreadystatechange=function(){
@@ -149,9 +163,10 @@ function calcCalibration(){
     };req.send();
   }
   document.addEventListener('DOMContentLoaded',function(){refresh();setInterval(refresh,1000);});
-})();
+}());
 </script>
 <script>
 (function(){function ph(){fetch('/api/heap').then(function(r){return r.json();}).then(function(d){var f=document.getElementById('hb-free'),m=document.getElementById('hb-min'),b=document.getElementById('hb-blk');if(f&&d.heap!=null)f.textContent=Number(d.heap).toLocaleString();if(m&&d.heapMin!=null)m.textContent=Number(d.heapMin).toLocaleString();if(b&&d.heapMaxBlk!=null)b.textContent=Number(d.heapMaxBlk).toLocaleString();}).catch(function(){});}ph();setInterval(ph,30000);}());
-</script></body>
+</script>
+</body>
 </html>

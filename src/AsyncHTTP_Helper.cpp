@@ -32,6 +32,7 @@
 #include "esp_core_dump.h"
 #include "esp_heap_caps.h"
 #include "mbedtls/base64.h"
+#include "esp_ota_ops.h"
 // Cached heapMaxBlk sampled from loop() without active TCP buffers (see main.cpp).
 extern uint32_t g_heapMaxBlkCached;
 #else
@@ -1443,15 +1444,32 @@ void SetAsyncHTTP(){
     #ifdef _pressureSensor_
     AsyncWeb_server.on("/PressureSensorConfig.html", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-        config_read_error_t res = TLloadconfig("/PressureSensorConfig.json",TL136); 
-        request->send(SPIFFS, "/PressureSensorConfig.html", String(), false, TLProcessor);
-      });      
+        TLloadconfig("/PressureSensorConfig.json", TL136);
+        request->send(SPIFFS, "/PressureSensorConfig.html");
+      });
+
+    AsyncWeb_server.on("/api/psconfig", HTTP_GET, [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        char buf[384];
+        char st[28];
+        digitalClockDisplay(st, sizeof(st));
+        StaticJsonDocument<384> doc;
+        doc["maSTopic"]        = TL136.maSTopic;
+        doc["paramEmptyValue"] = (int)TL136.paramEmptyValue;
+        doc["paramFullValue"]  = (int)TL136.paramFullValue;
+        doc["maSLC"]           = (unsigned)TL136.maSLC;
+        doc["maSHC"]           = (unsigned)TL136.maSHC;
+        doc["maBurdenResistor"]= (unsigned)TL136.BurdenResistorValue;
+        doc["systemtime"]      = st;
+        serializeJson(doc, buf, sizeof(buf));
+        request->send(200, "application/json", buf);
+    });
 
     AsyncWeb_server.on("/PressureSensorSave.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      TLsaveconfig(request);
+      TLloadconfig("/PressureSensorConfig.json", TL136);
       request->send(SPIFFS, "/PressureSensorSave.html");
-            TLsaveconfig(request);
-            config_read_error_t res = TLloadconfig("/PressureSensorConfig.json",TL136);
     });
 
     AsyncWeb_server.on("/PressureSensor.json", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -1859,6 +1877,7 @@ void SetAsyncHTTP(){
     AsyncWeb_server.on("/CurrentConfig.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       AsyncWebServerResponse *r = request->beginResponse(SPIFFS, "/CurrentConfig.html", "text/html");
+      if (!r) { request->send(503, "text/plain", "File not found — reflash filesystem"); return; }
       r->addHeader("Cache-Control", "max-age=60");
       request->send(r);
     });
@@ -1866,6 +1885,7 @@ void SetAsyncHTTP(){
     AsyncWeb_server.on("/InputsConfig.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       AsyncWebServerResponse *r = request->beginResponse(SPIFFS, "/InputsConfig.html", "text/html");
+      if (!r) { request->send(503, "text/plain", "File not found — reflash filesystem"); return; }
       r->addHeader("Cache-Control", "max-age=60");
       request->send(r);
     });
@@ -2338,6 +2358,7 @@ void SetAsyncHTTP(){
     AsyncWeb_server.on("/coredump.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       AsyncWebServerResponse *r = request->beginResponse(SPIFFS, "/coredump.html", "text/html");
+      if (!r) { request->send(503, "text/plain", "File not found — reflash filesystem"); return; }
       r->addHeader("Cache-Control", "no-store");
       request->send(r);
     });
@@ -2982,6 +3003,7 @@ void SetAsyncHTTP(){
         return;
       }
       AsyncWebServerResponse *r = request->beginResponse(SPIFFS, path, "text/plain");
+      if (!r) { request->send(503, "text/plain", "File not found — reflash filesystem"); return; }
       r->addHeader("Cache-Control", "no-store");
       request->send(r);
     });
@@ -3571,7 +3593,8 @@ void SetAsyncHTTP(){
         // This enables AsyncWebServer's built-in ETag/304 handling and allows
         // the browser to cache the HTML shell (dynamic config data comes from
         // /GetConfig.json via JS, so caching the HTML is always safe).
-        { AsyncWebServerResponse *r = request->beginResponse(SPIFFS, "/Config.html", "text/html");
+        { AsyncWebServerResponse *r = request->beginResponse(SPIFFS, "/config.html", "text/html");
+          if (!r) { request->send(503, "text/plain", "File not found — reflash filesystem"); return; }
           r->addHeader("Cache-Control", "max-age=60");
           request->send(r); }
         webing = false;
@@ -3581,6 +3604,7 @@ void SetAsyncHTTP(){
     AsyncWeb_server.on("/LiveReadings.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       AsyncWebServerResponse *r = request->beginResponse(SPIFFS, "/LiveReadings.html", "text/html");
+      if (!r) { request->send(503, "text/plain", "File not found — reflash filesystem"); return; }
       r->addHeader("Cache-Control", "max-age=60");
       request->send(r);
     });
@@ -3588,6 +3612,7 @@ void SetAsyncHTTP(){
     AsyncWeb_server.on("/LiveReadingsRest.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       AsyncWebServerResponse *r = request->beginResponse(SPIFFS, "/LiveReadingsRest.html", "text/html");
+      if (!r) { request->send(503, "text/plain", "File not found — reflash filesystem"); return; }
       r->addHeader("Cache-Control", "max-age=60");
       request->send(r);
     });
@@ -4028,6 +4053,66 @@ void SetAsyncHTTP(){
           execOTA(MyConfParam.v_FRM_IP,MyConfParam.v_FRM_PRT.toInt());
           });
           */
+
+    AsyncWeb_server.on("/updatefs", HTTP_POST, [](AsyncWebServerRequest *request){
+        const bool ok = !Update.hasError();
+        AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", ok ? "OK" : "FAIL");
+        response->addHeader("Connection", "close");
+        restartRequired = true;
+        request->send(response);
+      }, [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final){
+        if (!index) {
+          Serial.printf("[SYSTEM  ] filesystem upload started: %s\n", filename.c_str());
+          if (!Update.begin(UPDATE_SIZE_UNKNOWN, U_SPIFFS)) {
+            Update.printError(Serial);
+          }
+        }
+        if (Update.write(data, len) != len) {
+          Update.printError(Serial);
+        }
+        if (final) {
+          if (Update.end(true)) {
+            Serial.printf("[SYSTEM  ] filesystem update success: %u bytes\n", (unsigned)(index + len));
+          } else {
+            Update.printError(Serial);
+          }
+        }
+    });
+
+    AsyncWeb_server.on("/api/filesystem/download", HTTP_GET, [](AsyncWebServerRequest *request){
+        const esp_partition_t* part = esp_partition_find_first(
+            ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_SPIFFS, NULL);
+        if (!part) { request->send(503, "text/plain", "No filesystem partition"); return; }
+        AsyncWebServerResponse *response = request->beginChunkedResponse(
+            "application/octet-stream",
+            [part](uint8_t *buf, size_t maxLen, size_t index) -> size_t {
+                if (index >= part->size) return 0;
+                size_t toRead = min(maxLen, part->size - index);
+                if (esp_partition_read(part, index, buf, toRead) != ESP_OK) return 0;
+                return toRead;
+            }
+        );
+        response->addHeader("Content-Disposition", "attachment; filename=\"littlefs.bin\"");
+        response->addHeader("Content-Length", String(part->size));
+        request->send(response);
+    });
+
+    AsyncWeb_server.on("/api/firmware/download", HTTP_GET, [](AsyncWebServerRequest *request){
+        const esp_partition_t* part = esp_ota_get_running_partition();
+        if (!part) { request->send(503, "text/plain", "No running partition"); return; }
+        AsyncWebServerResponse *response = request->beginChunkedResponse(
+            "application/octet-stream",
+            [part](uint8_t *buf, size_t maxLen, size_t index) -> size_t {
+                if (index >= part->size) return 0;
+                size_t toRead = min(maxLen, part->size - index);
+                if (esp_partition_read(part, index, buf, toRead) != ESP_OK) return 0;
+                return toRead;
+            }
+        );
+        response->addHeader("Content-Disposition", "attachment; filename=\"firmware.bin\"");
+        response->addHeader("Content-Length", String(part->size));
+        request->send(response);
+    });
 
 	  AsyncWeb_server.on("/restart.html", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();

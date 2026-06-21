@@ -38,12 +38,12 @@ TLPressureSensor::~TLPressureSensor(){
 
 float TLPressureSensor::read(unsigned int nsamples) {
       if (!webing) {
-        sampleI = 0;  // reset before accumulating — prevents carry-over from previous call
+        float acc = 0.0f;
         for (unsigned int nn = 0; nn < nsamples; nn++) {
-          sampleI += analogRead(SPin);
-          esp_task_wdt_reset();  // feed watchdog without blocking 1 ms per sample
+          acc += analogRead(SPin);
+          esp_task_wdt_reset();
         }
-        sampleI /= nsamples;
+        sampleI = acc / nsamples;
         measure = mapf(sampleI, maSLC, maSHC, paramEmptyValue, paramFullValue);
         preparejson();
         Serial.printf("[CT136  ] ADC=%.1f  cm=%.1f  empty=%d  full=%d\n", sampleI, measure, paramEmptyValue, paramFullValue);
@@ -137,11 +137,12 @@ config_read_error_t TLsaveconfig(AsyncWebServerRequest *request){
     return ERROR_OPENING_FILE;
   }
 
-  int args = request->args();
-  for(int i=0;i<args;i++){
-    Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
-    json[request->argName(i)] =  request->arg(i) ;
-  }
+  if (request->hasParam("maSTopic"))        json["maSTopic"]        = request->getParam("maSTopic")->value();
+  if (request->hasParam("paramEmptyValue")) json["paramEmptyValue"] = request->getParam("paramEmptyValue")->value().toInt();
+  if (request->hasParam("paramFullValue"))  json["paramFullValue"]  = request->getParam("paramFullValue")->value().toInt();
+  if (request->hasParam("maSLC"))           json["maSLC"]           = (uint16_t)request->getParam("maSLC")->value().toInt();
+  if (request->hasParam("maSHC"))           json["maSHC"]           = (uint16_t)request->getParam("maSHC")->value().toInt();
+  if (request->hasParam("maBurdenResistor")) json["maBurdenResistor"] = (uint16_t)request->getParam("maBurdenResistor")->value().toInt();
 
   if (serializeJson(json, configFile) == 0) {
     Serial.println(F("Failed to write to file"));

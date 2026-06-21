@@ -5,8 +5,8 @@
 
 // #define PROFILE_SINGLE_RELAY        // HWESP32 · 1 relay · ACS712 · no extra hardware
 // #define PROFILE_SINGLE_RELAY_AUTO   // HWESP32 · 1 relay · ACS712 · Automation Rules + Remote Sensors
-// #define PROFILE_WATER_PRESSURE      // HWESP32 + ESP32_2RBoard · pressure sensor · water flow · OLED
- #define PROFILE_SOLAR_VOLTMETER     // HWESP32 + ESP32_2RBoard · emonlib · ADS1X15 · solar heater · water flow
+ #define PROFILE_WATER_PRESSURE      // HWESP32 + ESP32_2RBoard · pressure sensor · water flow · OLED
+// #define PROFILE_SOLAR_VOLTMETER     // HWESP32 + ESP32_2RBoard · emonlib · ADS1X15 · solar heater · water flow
 
 // ============================================================
 

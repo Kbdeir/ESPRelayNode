@@ -296,6 +296,20 @@ button:hover,input[type="submit"]:hover,.button-link:hover{background:var(--teal
           <button type="button" id="EraseCoreDumpBtn" class="danger" style="min-width:100%;display:none;" onclick="eraseCoreDump()">Erase Core Dump</button>
         </div>
       </section>
+      <section class="card">
+        <h2>Filesystem Update</h2>
+        <form method="post" action="/updatefs" enctype="multipart/form-data" onsubmit="return uploadFilesystem(this)">
+          <div class="field">
+            <label for="FsFileUpload">Filesystem Image (.bin)</label>
+            <input type="file" name="update" id="FsFileUpload">
+            <div class="upload-progress" id="FsUploadProgress" style="display:none">
+              <div class="upload-progress-bar"><div class="upload-progress-fill" id="FsUploadFill"></div></div>
+              <div class="upload-progress-text" id="FsUploadText"></div>
+            </div>
+          </div>
+          <div class="actions"><input type="submit" value="Upload Filesystem"></div>
+        </form>
+      </section>
     </aside>
   </div>
 </main>
@@ -530,6 +544,49 @@ function initCollapsible(){
     if(prog)prog.style.display="none";
   };
 })();
+
+// Filesystem image upload
+(function(){
+  var PCT="\x25",_t=null,_p=0,_d=false;
+  function _bar(pct,lbl){
+    var fill=document.getElementById("FsUploadFill"),text=document.getElementById("FsUploadText");
+    _p=Math.max(0,Math.min(100,pct|0));
+    var bar=fill?fill.parentElement:document.getElementById("FsUploadProgress");
+    if(bar){var p=_p+PCT;bar.style.background="linear-gradient(to right,#0f766e "+p+",#eef4fa "+p+")";}
+    if(text)text.textContent=(lbl!==undefined)?lbl:(_p+PCT);
+  }
+  function _stop(){if(_t){clearInterval(_t);_t=null;}}
+  function _tick(cap,step,ms){_stop();_t=setInterval(function(){if(_p<cap)_bar(Math.min(cap,_p+step));},ms);}
+  function _fin(m){if(_d)return;_d=true;_stop();_bar(100,m);}
+  function _show(){var p=document.getElementById("FsUploadProgress");if(p)p.style.display="";}
+  window.uploadFilesystem=function(form){
+    var fi=document.getElementById("FsFileUpload");
+    if(!form||!fi)return true;
+    if(form.getAttribute("data-uploading")==="1")return false;
+    if(!fi.files||!fi.files.length){alert("Please choose a filesystem image file.");fi.focus();return false;}
+    _show();
+    form.setAttribute("data-uploading","1");
+    _p=0;_d=false;_bar(0,"Uploading...");_tick(90,1,600);
+    var xhr=new XMLHttpRequest();xhr.open("POST","/updatefs",true);
+    xhr.upload.onprogress=function(ev){if(!ev.lengthComputable||!ev.total)return;_stop();_bar(Math.round(ev.loaded/ev.total*90),"Uploading "+Math.round(ev.loaded/ev.total*100)+PCT);};
+    xhr.upload.onloadend=function(){_stop();_bar(Math.max(_p,90),"Flashing...");_tick(97,1,1200);};
+    xhr.onreadystatechange=function(){
+      if(xhr.readyState!==4)return;
+      var body=(xhr.responseText||"").trim();
+      if(xhr.status>=200&&xhr.status<300){
+        var ok=body.toUpperCase().indexOf("FAIL")===-1;
+        _fin(ok?"OK — Filesystem updated. Rebooting...":"FAILED — "+body);
+      }else if(xhr.status===0){
+        _fin("Connection closed — rebooting...");
+      }else{
+        _fin("Failed (HTTP "+xhr.status+(body?" — "+body:"")+")");
+        form.removeAttribute("data-uploading");
+      }
+    };
+    xhr.onerror=function(){_fin("Connection error.");form.removeAttribute("data-uploading");};
+    xhr.send(new FormData(form));return false;
+  };
+}());
 
 // Heap monitor
 (function(){
