@@ -1600,8 +1600,10 @@ void chronosInit() {
   // schedule data without opening LittleFS files on every poll.
   refreshAllTimerCache();
   Serial.println(F("[TIMERS ] Timer schedule cache refreshed"));
+  #ifdef _AUTOMATION_RULES_
   refreshAllAutomationRuleCache();
   Serial.println(F("[AUTOMAT] Automation rule cache refreshed"));
+  #endif
   LINE();
   PRINT(F("[NTP    ] Presumably got NTP time,"));
   PRINT(F(" right \"now\" it's: "));
