@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -56,8 +56,7 @@ button:hover,input[type="submit"]:hover,input[type="button"]:hover{background:va
       <h1>Water Flow Sensor</h1>
       <div class="hint">Configure the flow sensor MQTT topic and calibration factor.</div>
     </div>
-    <div class="meta"><div>System time: %systemtime%</div>      <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
-</div>
+    <div class="meta"><div>System time: <span id="st-val">—</span></div><div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div></div>
   </header>
 
   <section class="card" id="LiveCard">
@@ -77,10 +76,10 @@ button:hover,input[type="submit"]:hover,input[type="button"]:hover{background:va
     <section class="card">
       <h2>Sensor Settings <button type="button" class="help-toggle" id="HelpToggle" onclick="toggleHelp()">Show Help</button></h2>
       <div class="form-grid">
-        <div class="field full"><label for="Editbox44">Sensor MQTT Topic</label><input type="text" id="Editbox44" name="wfs_Topic" value="%wfs_Topic%" maxlength="64"></div>
+        <div class="field full"><label for="Editbox44">Sensor MQTT Topic</label><input type="text" id="Editbox44" name="wfs_Topic" value="" maxlength="64"></div>
         <div class="field">
           <label for="Editbox45">Flow Sensor Calibration Factor</label>
-          <input type="text" id="Editbox45" name="wfs_Cal" value="%wfs_Cal%" title="Calibration factor for pulse-to-volume conversion">
+          <input type="text" id="Editbox45" name="wfs_Cal" value="" title="Calibration factor for pulse-to-volume conversion">
           <div class="hint">Higher values reduce the reported flow rate; lower values increase it.</div>
         </div>
       </div>
@@ -108,6 +107,15 @@ function toggleHelp(){
   if(!h||!b)return;
   b.textContent=h.classList.toggle('hidden')?'Show Help':'Hide Help';
 }
+(function(){
+  fetch('/api/wfsconfig').then(function(r){return r.json();}).then(function(d){
+    var t=document.getElementById('Editbox44');if(t)t.value=d.wfs_Topic||'';
+    var c=document.getElementById('Editbox45');if(c)c.value=d.wfs_Cal||'';
+    var s=document.getElementById('st-val');if(s)s.textContent=d.systemtime||'—';
+  }).catch(function(){
+    var s=document.getElementById('st-val');if(s)s.textContent='(unavailable)';
+  });
+}());
 (function(){
   var prev=null;
   function poll(){

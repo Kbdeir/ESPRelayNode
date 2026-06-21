@@ -697,13 +697,7 @@ String TLProcessor(const String& var)
 #endif
 
 #ifdef WaterFlowSensor
-String WFSProcessor(const String& var)
-{
-  if(var == F( "wfs_Topic" ))             return WaterFlowSensor_Topic;
-  if(var == F( "wfs_Cal" ))               return String(calibrationFactor);
-  if(var == F( "systemtime" ))            return digitalClockDisplay();
-  return String();
-}
+// WFSProcessor removed — WaterFlowSensor.html now fetches config via /api/wfsconfig
 #endif
 
 
@@ -1797,9 +1791,19 @@ void SetAsyncHTTP(){
     #ifdef WaterFlowSensor
     AsyncWeb_server.on("/WaterFlowSensor.html", HTTP_GET, [](AsyncWebServerRequest *request){
         if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-        loadconfigWFS("/WaterFlowSensorConfig.json"); 
-        request->send(SPIFFS, "/WaterFlowSensor.html", String(), false, WFSProcessor);
+        loadconfigWFS("/WaterFlowSensorConfig.json");
+        request->send(SPIFFS, "/WaterFlowSensor.html");
       });
+
+    AsyncWeb_server.on("/api/wfsconfig", HTTP_GET, [](AsyncWebServerRequest *request){
+        char buf[200];
+        char st[28];
+        digitalClockDisplay(st, sizeof(st));
+        snprintf(buf, sizeof(buf),
+            "{\"wfs_Topic\":\"%s\",\"wfs_Cal\":%.4f,\"systemtime\":\"%s\"}",
+            WaterFlowSensor_Topic.c_str(), calibrationFactor, st);
+        request->send(200, "application/json", buf);
+    });
 
     AsyncWeb_server.on("/WaterFlowSensorSave.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();

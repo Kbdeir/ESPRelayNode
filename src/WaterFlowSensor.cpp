@@ -88,11 +88,8 @@ void saveconfigWFS(AsyncWebServerRequest *request){
     return;
   }
 
-  int args = request->args();
-  for(int i=0;i<args;i++){
-    Serial.printf("ARG[%s]: %s\n", request->argName(i).c_str(), request->arg(i).c_str());
-    json[request->argName(i)] =  request->arg(i) ;
-  }
+  if (request->hasParam("wfs_Topic")) json["wfs_Topic"] = request->getParam("wfs_Topic")->value();
+  if (request->hasParam("wfs_Cal"))   json["wfs_Cal"]   = request->getParam("wfs_Cal")->value().toFloat();
 
   // request->hasParam("CEnabled")   ? json["CEnabled"]   =  "1"   : json["CEnabled"]   = "0" ;
 
