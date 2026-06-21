@@ -10,16 +10,18 @@
  #include <ExecOTA.h> 
 #endif 
 #include <JSONConfig.h>
-#include <SPIFFSEditor.h>
 #include <MQTT_Processes.h>
 #include <RelayClass.h>
 #include <TimerClass.h>
 
 
 extern bool restartRequired;
+void initializeMissingConfigFiles();
 
 //String processor(const String& var);
 void SetAsyncHTTP();
+void firmwareOtaWatchdog();
+void wifiScanLoop();
 
 
 //#endif

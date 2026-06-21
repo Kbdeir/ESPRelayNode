@@ -13,7 +13,7 @@ typedef void (*fptr)();
 typedef void (*fnptr_a)(void* t);
 
 #ifdef ESP32
-typedef void (*fnptr_a_xtimer)( TimerHandle_t xTimer, void* obj);
+typedef void (*fnptr_a_xtimer)(TimerHandle_t xTimer);
 #endif
 
 class Schedule_timer {

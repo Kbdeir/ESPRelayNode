@@ -26,6 +26,7 @@ void Modbus::addReg(word address, word value) {
     TRegister *newreg;
 
 	newreg = (TRegister *) malloc(sizeof(TRegister));
+	if (!newreg) return;
 	newreg->address = address;
 	newreg->value		= value;
 	newreg->next		= 0;
@@ -176,7 +177,7 @@ uint8_t Modbus::receivePDU(byte* frame) {
         #endif
         default:
             this->exceptionResponse(fcode, MB_EX_ILLEGAL_FUNCTION);
-            return MB_FC_WRITE_COILS;
+            return 0; // 0 = unknown / exception — not MB_FC_WRITE_COILS
     }
 }
 

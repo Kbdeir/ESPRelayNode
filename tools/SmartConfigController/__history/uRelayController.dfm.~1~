@@ -1,0 +1,145 @@
+object FormSmartConfig: TFormSmartConfig
+  Left = 0
+  Top = 0
+  Caption = 'SmartConfig - Relay Controller'
+  ClientHeight = 500
+  ClientWidth = 880
+  Color = 15921906
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 15
+  object FPnlTop: TPanel
+    Left = 0
+    Top = 0
+    Width = 880
+    Height = 58
+    Align = alTop
+    BevelOuter = bvNone
+    Caption = ''
+    Color = 2960685
+    ParentBackground = False
+    TabOrder = 0
+    object FLblIP: TLabel
+      Left = 12
+      Top = 20
+      Width = 54
+      Height = 19
+      Caption = 'Board IP:'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+    object FLblStatus: TLabel
+      Left = 460
+      Top = 20
+      Width = 190
+      Height = 15
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Not connected'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 11184810
+      Font.Height = -11
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+    object FEdtIP: TEdit
+      Left = 78
+      Top = 15
+      Width = 160
+      Height = 27
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      Text = '192.168.1.100'
+    end
+    object FBtnConnect: TButton
+      Left = 248
+      Top = 15
+      Width = 90
+      Height = 27
+      Caption = 'Connect'
+      TabOrder = 1
+      OnClick = BtnConnectClick
+    end
+    object FChkAuto: TCheckBox
+      Left = 352
+      Top = 19
+      Width = 104
+      Height = 20
+      Caption = 'Auto-refresh'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 2
+      OnClick = ChkAutoClick
+    end
+  end
+  object FPnlPower: TPanel
+    Left = 670
+    Top = 58
+    Width = 210
+    Height = 418
+    Align = alRight
+    BevelOuter = bvNone
+    Caption = ''
+    Color = 15790069
+    ParentBackground = False
+    TabOrder = 1
+  end
+  object FPnlRelays: TScrollBox
+    Left = 0
+    Top = 58
+    Width = 670
+    Height = 418
+    Align = alClient
+    BevelInner = bvNone
+    BevelOuter = bvNone
+    BorderStyle = bsNone
+    Color = 15921906
+    ParentBackground = False
+    TabOrder = 2
+    object FLblNoConn: TLabel
+      Left = 20
+      Top = 28
+      Width = 390
+      Height = 17
+      Caption = 'Enter the board'#39's IP address above and click Connect.'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = 8947848
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+  end
+  object FStatusBar: TStatusBar
+    Left = 0
+    Top = 476
+    Width = 880
+    Height = 24
+    Panels = <
+      item
+        Width = 870
+        Text = 'Ready'
+      end>
+  end
+end

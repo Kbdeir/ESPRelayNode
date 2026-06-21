@@ -15,9 +15,9 @@
 #include "RemoteDebug.h"
 extern   RemoteDebug Debug;
 #endif
-#include "OneButton.h"
+//#include "OneButton.h"
 
-extern OneButton MYbutton;;
+//extern OneButton MYbutton;;
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
@@ -29,10 +29,18 @@ extern OneButton MYbutton;;
 #ifndef _ADS_ASYNC_
   #include <Wire.h>
   #include <Adafruit_ADS1X15.h>
-  extern Adafruit_ADS1115 ads;
+  #ifdef _ADS1015_
+    extern Adafruit_ADS1015 ads;
+  #else
+    extern Adafruit_ADS1115 ads;
+  #endif
 #else
   #include "ADS1X15.h"
-  extern ADS1115 ADS1;
+  #ifdef _ADS1015_
+    extern ADS1015 ADS1;
+  #else
+    extern ADS1115 ADS1;
+  #endif
 #endif
 #endif
 
@@ -57,8 +65,10 @@ void EnergyMonitor::setupparams() {
 
   #ifdef _ADS1X15_VOLTAGE_
     V_RATIO = VCAL *((SupplyVoltageADS1115/1000.0) / (ADC_COUNTS_ADS1X15)); //switch to ADS
+    ADCCOUNTS = ADC_COUNTS_ADS1X15;
   #else
     V_RATIO = VCAL *((SupplyVoltage/1000.0) / (ADC_COUNTS)); 
+    ADCCOUNTS = ADC_COUNTS;
   #endif  
 
   #ifdef _ADS1X15_CURRENT_
@@ -91,9 +101,15 @@ void EnergyMonitor::setupparams() {
     #else
 
       #ifdef _ADS1015_
-        SupplyVoltageADS1115 = 6144; offsetVADS = 544;  offsetIADS = 544; offsetI = 544; offsetV = 544;
+        SupplyVoltageADS1115 = 6144; offsetVADS = 544;  offsetIADS = 544; offsetI = 544;
+        #ifdef _ADS1X15_VOLTAGE_
+          offsetV = 544;
+        #endif
       #else
-        SupplyVoltageADS1115 = 6144; offsetVADS = 8718;  offsetIADS = 8718; offsetI = 8718; offsetV = 8718;
+        SupplyVoltageADS1115 = 6144; offsetVADS = 8718;  offsetIADS = 8718; offsetI = 8718;
+        #ifdef _ADS1X15_VOLTAGE_
+          offsetV = 8718;
+        #endif
         // SupplyVoltageADS1115 = 4096; offsetVADS = 13080; offsetIADS = 13080;offsetI = 13080;
       #endif
       ADCCOUNTS = ADC_COUNTS_ADS1X15;
@@ -118,7 +134,7 @@ int16_t EnergyMonitor::analogread_volts(unsigned int pin) {
   #endif 
   
   #ifndef _ADS1X15_VOLTAGE_
-   // res = analogRead(inPinV); 
+    res = analogRead(inPinV);
   #endif  
 
   return res;
@@ -142,6 +158,35 @@ int16_t EnergyMonitor::analogread_amps(unsigned int pin) {
   return res;
 }
 
+void EnergyMonitor::primeOffsets()
+{
+  const unsigned long startMs = millis();
+  const unsigned long primeMs = 220;
+  double sumVPrime = 0.0;
+  double sumIPrime = 0.0;
+  unsigned int samples = 0;
+
+  while ((millis() - startMs) < primeMs) {
+    sumVPrime += analogread_volts(0);
+    #ifdef _ADS1X15_CURRENT_
+      sumIPrime += analogread_amps(1);
+    #else
+      sumIPrime += analogRead(inPinI);
+    #endif
+    samples++;
+  }
+
+  if (samples > 0) {
+    offsetV = sumVPrime / samples;
+    offsetI = sumIPrime / samples;
+  }
+
+  lastFilteredV = 0.0;
+  filteredV = 0.0;
+  filteredI = 0.0;
+  offsetsPrimed = true;
+}
+
 
 
 
@@ -155,6 +200,7 @@ void EnergyMonitor::voltage(unsigned int _inPinV, double _VCAL, double _PHASECAL
   VCAL = _VCAL;
   PHASECAL = _PHASECAL;
   offsetV = ADC_COUNTS>>1;
+  offsetsPrimed = false;
   setupparams();
 }
 
@@ -163,6 +209,7 @@ void EnergyMonitor::current(unsigned int _inPinI, double _ICAL)
   inPinI = _inPinI;
   ICAL = _ICAL;
   offsetI = ADC_COUNTS>>1; 
+  offsetsPrimed = false;
   setupparams();
 }
 
@@ -211,6 +258,10 @@ void EnergyMonitor::calcVI(unsigned int crossings, unsigned int timeout)
   unsigned int crossCount = 0;                             //Used to measure number of times threshold is crossed.
   unsigned int numberOfSamples = 0;                        //This is now incremented
 
+  if (!offsetsPrimed) {
+    primeOffsets();
+  }
+
   //-------------------------------------------------------------------------------------------------------------------------
   // 1) Waits for the waveform to be close to 'zero' (mid-scale adc) part in sin curve.
   //-------------------------------------------------------------------------------------------------------------------------
@@ -218,24 +269,13 @@ void EnergyMonitor::calcVI(unsigned int crossings, unsigned int timeout)
   // Serial.printf("\nStart of Zero Cross identification @ %u",start);
   while(1)                                   //the while loop...
   {
-    #ifndef _ADS1X15_CURRENT_ 
-    startV = analogRead(inPinV); ; //analogread_volts(0);      
-    #else
-    startV = analogread_volts(0);     
-    #endif
+    startV = analogread_volts(0);
 
 
-      #ifdef _ADS1X15_CURRENT_
-        #ifdef _ADS1015_
-          //if ((startV < (ADCCOUNTS*0.55)) && (startV > (ADCCOUNTS*0.45))) { // for ADS_1015
-          if ((startV < (544*0.55)) && (startV > (544*0.45))) { // for ADS_1015
-        #else
-          if ((startV < (8718 + 100)) && (startV > (8718 - 100))) {   // for ADS_1115
-        #endif
-      #else
-        if ((startV < (1850)) && (startV > (1800))) { // for esp32
-        //if ((startV < (ADC_COUNTS*0.55)) && (startV > (ADC_COUNTS*0.45))) { // for esp32 OffsetV is the zero cross point
-      #endif
+      double zeroCrossTolerance = ADCCOUNTS * 0.02;
+      if (zeroCrossTolerance < 20.0) zeroCrossTolerance = 20.0;
+      if ((startV < (offsetV + zeroCrossTolerance)) &&
+          (startV > (offsetV - zeroCrossTolerance))) {
 
       //  Serial.printf("\n Zero Cross detected ----- %u", startV);
       //  Serial.printf("\n>>>>End of Zero Cross identification took @ %u ms",millis() - start);
@@ -258,49 +298,21 @@ void EnergyMonitor::calcVI(unsigned int crossings, unsigned int timeout)
     // A) Read in raw voltage and current samples
     //-----------------------------------------------------------------------------
 
+    // Keep voltage and current reads close together. Averaging multiple current
+    // reads here delays current relative to voltage and corrupts power factor.
     #ifndef _ADS1X15_CURRENT_
-     int numsamples = 32;//16; //was 16 for the stable version@nmeirieh 
-    #else
-     int numsamples = 1;
-    #endif 
-
-     unsigned int sumxi = 0;
-     unsigned int sumxv = 0;
-      
-     MYbutton.tick(&MYbutton); 
-
-    sampleV = analogRead(inPinV);    
-
-     #ifndef _ADS1X15_CURRENT_ 
-      for (unsigned int nn = 0; nn < numsamples; nn++)
-        {  
-              //sampleV = analogRead(inPinV);         //Read in raw voltage signal
-              sampleI = analogRead(inPinI);           //Read in raw current signal
-
-              //sumxv = sumxv + sampleV;//*sampleV;     
-              //offsetV = (offsetV + (sampleV-offsetV)/(ADC_COUNTS));
-
-              sumxi = sumxi + sampleI;//*sampleI;
-              offsetI = (offsetI + (sampleI-offsetI)/(1024)); 
-        }  
-      
-      
-    //sampleI =sqrt(sumxi/numsamples);
-        sampleI = sumxi >> 5; //(sumxi/numsamples);
-        // offsetI = (offsetI + (sampleI-offsetI)/(ADC_COUNTS)); 
-    //sampleV =sqrt(sumxv/numsamples);  
-        // sampleV = sumxv >> 5 ;// (sumxv/numsamples);  
-        // offsetV = (offsetV + (sampleV-offsetV)/(ADC_COUNTS));
+      sampleV = analogRead(inPinV);
+      sampleI = analogRead(inPinI);
+      offsetI = offsetI + ((sampleI-offsetI)/1024);
     #endif
     
 
-    #ifdef _ADS1X15_CURRENT_ 
+    #ifdef _ADS1X15_CURRENT_
       //t = millis();
       sampleV = analogread_volts(0);  //voltage
       //Serial.printf("\n>>>>>Voltage sample time took @ %u ms",millis() - t);
       sampleI = analogread_amps(1);   //current
 
-      offsetV = offsetV + ((sampleV-offsetV)/1024);
       offsetI = offsetI + ((sampleI-offsetI)/1024);
     #endif
 
@@ -385,7 +397,7 @@ void EnergyMonitor::calcVI(unsigned int crossings, unsigned int timeout)
   
   realPower = I_V_RATIO * ((sumP / numberOfSamples));
   apparentPower = Vrms * Irms;
-  powerFactor = realPower / apparentPower;
+  powerFactor = (apparentPower != 0.0) ? (realPower / apparentPower) : 0.0;
 
   //Reset accumulators
   sumV = 0;

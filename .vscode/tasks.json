@@ -1,0 +1,44 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "type": "shell",
+            "command": "platformio run -j 8",
+            "problemMatcher": [
+                "$platformio"
+            ],
+            "label": "Build 8 Cores",
+            "options": {
+                "env": {
+                    "PATH": "C:\\Users\\kbdeir\\.platformio\\penv\\Scripts;${env:PATH}"
+                }
+            }
+        },
+        {
+            "type": "shell",
+            "command": "platformio run -j 8 -t upload --disable-auto-clean",
+            "problemMatcher": [
+                "$platformio"
+            ],
+            "label": "Build and Upload 8 Cores",
+            "options": {
+                "env": {
+                    "PATH": "C:\\Users\\kbdeir\\.platformio\\penv\\Scripts;${env:PATH}"
+                }
+            }
+        },
+        {
+            "type": "shell",
+            "command": "platformio run -t nobuild -t upload --disable-auto-clean",
+            "problemMatcher": [
+                "$platformio"
+            ],
+            "label": "Upload No Build",
+            "options": {
+                "env": {
+                    "PATH": "C:\\Users\\kbdeir\\.platformio\\penv\\Scripts;${env:PATH}"
+                }
+            }
+        }
+    ]
+}

@@ -23,7 +23,9 @@ time_t getNtpTime()
   // ntpServerIP.fromString(MyConfParam.v_timeserver);
 
 
-  ntpServerIP=MyConfParam.v_timeserver;
+  if (!ntpServerIP.fromString(MyConfParam.v_timeserver)) {
+    WiFi.hostByName(MyConfParam.v_timeserver.c_str(), ntpServerIP);
+  }
   timeZone = MyConfParam.v_ntptz;
 
   Serial.print(F("\n[NTP    ]"));

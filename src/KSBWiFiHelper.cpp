@@ -9,11 +9,11 @@
 
 #ifdef ESP_NOW
     #ifndef ESP32
-        #include <espnow.h>  
+        #include <espnow.h>
         extern void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) ;
     #endif
     #ifdef ESP32
-       #include <esp_now.h> 
+       #include <esp_now.h>
        extern void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len);
     #endif
 #endif
@@ -21,6 +21,7 @@
 bool started_in_confMode = false;
 extern void thingsTODO_on_WIFI_Connected();
 extern Schedule_timer Wifireconnecttimer;
+extern int wifimode;
 extern void startsoftAP();
 extern long blinkInterval; // blinkInterval at which to blink wifi led (milliseconds)
 extern unsigned long lastMillis_2;
@@ -28,6 +29,9 @@ extern unsigned long previousMillis;
 extern int ledState;    // ledState used to set the LED
 #if defined (_emonlib_)  || defined (_pressureSensor_) 
 extern void tskEmonPublisher_setEnableSts(bool sts);
+#endif
+#ifdef OLED_1306
+extern void oledWake();
 #endif
 
 
@@ -62,18 +66,23 @@ void ScanMyWiFi(void) {
 
 
 #ifdef ESP32
+volatile bool pending_wifi_connected = false;
+
 void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
 {
+    #ifdef OLED_1306
+    oledWake();
+    #endif
     Serial.println("[WIFI   ] Event: WiFi connected");
     Serial.print("[WIFI   ] IP address: ");
     Serial.println(IPAddress(info.got_ip.ip_info.ip.addr));
-    thingsTODO_on_WIFI_Connected();
+    // Keep the Arduino WiFi event task light.  Startup work touches LittleFS,
+    // NTP, MDNS, WireGuard and MQTT; doing that here can overflow the small
+    // arduino_events stack.
+    pending_wifi_connected = true;
     Wifireconnecttimer.stop();
     lastMillis_2 = 0;
     blinkInterval = blink_normal;
-    #if defined (_emonlib_)  || defined (_pressureSensor_) 
-    tskEmonPublisher_setEnableSts(true);
-    #endif
     #ifdef ESP_NOW
                 if (esp_now_init() != ESP_OK) {
                     Serial.println("Error initializing ESP-NOW");
@@ -87,18 +96,30 @@ void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info)
     #endif  
                 
 }
+volatile bool pending_softap = false;
+
 void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
 {
+    #ifdef OLED_1306
+    oledWake();
+    #endif
     Serial.println("[WIFI   ] * Event: WiFi disconnected * ");
-    WiFi.disconnect();
-    #if defined (_emonlib_)  || defined (_pressureSensor_) 
+    pending_wifi_connected = false;
+    // Do NOT call WiFi.disconnect() here — it fires another WiFiDisconnected event,
+    // causing an event storm and double-starting the reconnect timer.
+    #if defined (_emonlib_)  || defined (_pressureSensor_)
     tskEmonPublisher_setEnableSts(false);
     #endif
     if (blinkInterval > blink_connecting)
     {
-        if (!started_in_confMode) {
-        Wifireconnecttimer.start();
-        Serial.println(F("[WIFI   ] Starting reconnection timer\n"));
+        // Skip the reconnect timer if a config AP mode is (or is about to be)
+        // active — startsoftAP() sets wifimode = WIFI_AP_MODE before calling
+        // WiFi.disconnect(), which fires this event. Without this check, the
+        // reconnect timer fires 10s later and calls WiFi.mode(WIFI_STA),
+        // tearing the just-started AP back down.
+        if (!started_in_confMode && wifimode != WIFI_AP_MODE) {
+            Wifireconnecttimer.start();
+            Serial.println(F("[WIFI   ] Starting reconnection timer\n"));
         }
     }
     blinkInterval = blink_connecting;
@@ -106,12 +127,12 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
     {
         started_in_confMode = true;
         Wifireconnecttimer.stop();
-        Serial.println(F("[WIFI   ] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Starting AP_STA mode\n"));
+        Serial.println(F("[WIFI   ] AP_STA mode requested — deferring startsoftAP() to loop()\n"));
         WiFi.mode(WIFI_AP_STA);
-        if ((WiFi.status() != WL_CONNECTED))
-        {
-            startsoftAP();
-        }
+        // startsoftAP() contains delay(1000) which must NOT run on the WiFi
+        // system event task — defer to loop() via the pending_softap flag.
+        if (WiFi.status() != WL_CONNECTED)
+            pending_softap = true;
     }
 }
 #endif
@@ -130,10 +151,11 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
                     Serial.println("Error initializing ESP-NOW");
                     return;
                 }
-                    Serial.println(" >>>>>  ESP-NOW");
+                    Serial.println(" >>>>>  ESP-NOW initiated");
                 
                 // Once ESPNow is successfully Init, we will register for recv CB to
                 // get recv packer info
+                esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
                 esp_now_register_recv_cb(OnDataRecv);
     #endif  
 

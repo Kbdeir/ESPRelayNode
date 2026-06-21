@@ -17,7 +17,8 @@ extern "C"
 {
   #include <lwip/icmp.h> // needed for icmp packet definitions
 	 #include "freertos/FreeRTOS.h"
-	 #include "freertos/timers.h"  
+	 #include "freertos/timers.h"
+	 #include "freertos/semphr.h"
 }
 #endif
 
@@ -30,19 +31,20 @@ class CTPROCESSOR
   #ifdef ESP32
    TimerHandle_t ThresholdCossHighTimer;
    TimerHandle_t ThresholdCossLowTimer;
+   SemaphoreHandle_t jsonPostMutex = nullptr;
   #endif  
 
   uint8_t CTPin, inPinV;
   double ICAL,VCAL,PHASECAL;
 
 
-  double realPower;
-  double apparentPower;
-  double apparentPower_2;  
-  double powerFactor ;
-  double supplyVoltage;
-  double Irms ;  
-  double amps = 0;
+  float realPower = 0.0f;
+  float apparentPower = 0.0f;
+  float apparentPower_2 = 0.0f;
+  float powerFactor = 0.0f;
+  float supplyVoltage = 0.0f;
+  float Irms = 0.0f;
+  float amps = 0.0f;
   bool CT_RelayForceOff = false;
 
   uint32_t ThresholdCossHighTimerCounter = 0; //in seconds
@@ -52,19 +54,22 @@ class CTPROCESSOR
   uint32_t time_on = 10; //in seconds
   uint32_t time_off = 10;   // in seconds
   unsigned long lwhtime = 0;            // Last watt hour time
-  float wh, Instantaneous_Wh = 0.0;     // Stores watt hour data  
-  float MTD_Wh, YTD_Wh = 0;
-  float PreviousWh, CTSaveThreshold = 0;
-  double Stabilized = 0;
-  float saved_Wh, saved_MTD_Wh, saved_YTD_Wh = 0;
-  String jsonPost_template = F("json:{\"msg\":{\"source\":\"[SOURCE]\",\"data\":[{\"voltage\":\"[VOLTAGE]\",\"amps\":\"[AMPS]\", \"power\":\"[POWER]\", \"r_power\":\"[R_POWER]\", \"wh\":\"[WH]\", \"MTD_wh\":\"[MTD_WH]\", \"YTD_wh\":\"[YTD_WH]\",\"PF\":\"[PF]\", \"Volts2\":\"[VOLTS2]\",\"Volts3\":\"[VOLTS3]\",\"HST_Amps\":\"[HST_AMPS]\",\"DCAmps\":\"[DCAMPS]\",\"PFC\":\"[PFC]\", \"IP\":\"[IP]\",\"R1\":\"[R1]\",\"R2\":\"[R2]\"}]}}");
-  String jsonPost = " ";
+  double wh = 0.0, Instantaneous_Wh = 0.0;
+  double MTD_Wh = 0.0, YTD_Wh = 0.0;
+  double PreviousWh = 0.0, CTSaveThreshold = 0.0;
+  uint32_t Stabilized = 0;
+  static const uint8_t WarmupReadings = 3;
+  bool voltageSmoothingPrimed = false;
+  float smoothedSupplyVoltage = 0.0f;
+  double saved_Wh = 0.0, saved_MTD_Wh = 0.0, saved_YTD_Wh = 0.0;
+  char jsonPost[512];
+
  // char resx[8];
 
   CTPROCESSOR(uint8_t _CTPin, double _ICAL, uint8_t _inPinV, double _VCAL, double _PHASECAL,
               fnptr_a pThresholdHigh_callback = nullptr, fnptr_a pThresholdLow_callback = nullptr);
   ~CTPROCESSOR();  
-  void readPower(float adjustment, uint8_t savethreshold);
+  void readPower(float adjustment, uint16_t savethreshold);
   void readVoltage();  
   void DisplayPower(Adafruit_SSD1306 &display, AsyncMqttClient &mqttClient, uint8_t sco);
 
@@ -78,6 +83,11 @@ class CTPROCESSOR
 
   fnptr_a fThresholdHigh_callback;
   fnptr_a fThresholdLow_callback;
+
+  int _last_reset_day   = -1;
+  int _last_reset_month = -1;
+  int _last_reset_year  = -1;
+
   private:
 
 };

@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core Dump Viewer</title>
+<style>
+:root{--page:#edf1f5;--ink:#152033;--muted:#687589;--panel:#fff;--panel-2:#f8fafc;--line:#d9e1ea;--field:#fdfefe;--teal:#0f766e;--teal-dark:#0a5f59;--blue:#2563eb;--amber:#b7791f;--amber-bg:#fffbeb;--amber-border:#fcd34d;--rose:#be123c;--green:#15803d;--slate:#475569;--shadow-sm:0 2px 8px rgba(21,32,51,.06);--shadow:0 18px 45px rgba(21,32,51,.12)}
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.42;background:linear-gradient(180deg,#dfe9f3 0,#edf1f5 320px),var(--page)}
+.shell{width:min(860px,calc(100vw - 32px));margin:0 auto;padding:24px 0 36px}
+.topbar{position:relative;overflow:hidden;color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:24px 26px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:linear-gradient(135deg,#152033,#103f49,#0f766e);box-shadow:var(--shadow)}
+.topbar h1{margin:0;font-size:28px;font-weight:700}
+.topbar .hint{margin-top:7px;color:#cfe0ea}
+.topbar .meta{min-width:230px;color:#e6eef5;font-size:13px;text-align:right;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);padding:18px;margin-top:16px}
+.card h2{position:relative;display:flex;align-items:center;gap:10px;margin:-2px 0 16px;padding-bottom:12px;color:var(--ink);border-bottom:1px solid var(--line);font-size:18px;font-weight:700}
+.card h2::before{content:"";width:10px;height:28px;border-radius:6px;background:var(--teal);flex:0 0 auto}
+.card.warn h2::before{background:var(--amber)}
+.card.danger h2::before{background:var(--rose)}
+.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.info-box{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.info-box .lbl{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;margin-bottom:4px}
+.info-box .val{font-size:14px;font-weight:700;font-family:monospace;overflow-wrap:anywhere}
+.no-dump{padding:20px;text-align:center;color:var(--muted);font-size:15px}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+button{min-height:36px;border:1px solid transparent;border-radius:8px;background:var(--teal);color:#fff;padding:7px 14px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(15,118,110,.2);transition:transform 120ms,box-shadow 120ms,background 120ms}
+button:hover{background:var(--teal-dark);box-shadow:0 6px 16px rgba(15,118,110,.28);transform:translateY(-1px)}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-secondary{background:var(--slate)!important;box-shadow:0 4px 12px rgba(71,85,105,.18)!important}
+.btn-danger{background:var(--rose)!important;box-shadow:0 4px 12px rgba(190,18,60,.2)!important}
+.back-link{color:#a8d8cf;font-size:13px;text-decoration:none;white-space:nowrap;margin-top:6px;display:inline-block}
+.back-link:hover{color:#fff}
+.progress-wrap{display:none;align-items:center;gap:10px;margin-bottom:14px}
+.progress-wrap.visible{display:flex}
+.progress-bar{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--teal);border-radius:4px;transition:width .2s}
+.progress-label{font-size:12px;color:var(--muted);white-space:nowrap}
+textarea#dump-content{width:100%;height:380px;font-family:"Courier New",Courier,monospace;font-size:11px;line-height:1.4;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:#0f172a;padding:10px;resize:vertical;white-space:pre;overflow-wrap:normal;overflow-x:scroll}
+.copy-status{font-size:12px;font-weight:700;color:var(--green);display:none}
+.warn-box{display:flex;gap:10px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:8px;padding:12px 14px;font-size:13px;color:#78350f;line-height:1.5;margin-bottom:14px}
+.warn-icon{font-size:18px;flex-shrink:0;line-height:1.3}
+@media(max-width:640px){.topbar{grid-template-columns:1fr}.topbar .meta{min-width:0;text-align:left}.info-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div>
+      <h1>Core Dump Viewer</h1>
+      <div class="hint">Retrieve and copy the crash dump for offline analysis.</div>
+    </div>
+    <div class="meta">
+      <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
+      <a class="back-link" href="/">&#8592; Back to Config</a>
+    </div>
+  </header>
+
+  <!-- Crash summary -->
+  <div class="card" id="card-status">
+    <h2>Crash Summary</h2>
+    <div id="status-body">
+      <div class="no-dump" id="no-dump-msg">Checking for stored crash dump&hellip;</div>
+      <div id="dump-info" style="display:none">
+        <div class="info-grid">
+          <div class="info-box"><div class="lbl">Crashed task</div><div class="val" id="s-task">—</div></div>
+          <div class="info-box"><div class="lbl">Exception cause</div><div class="val" id="s-cause">—</div></div>
+          <div class="info-box"><div class="lbl">EPC1</div><div class="val" id="s-epc1">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dump data -->
+  <div class="card" id="card-dump" style="display:none">
+    <h2>Raw Dump (Base64)</h2>
+
+    <div class="btn-row">
+      <button id="btn-load" onclick="loadDump()">&#8659; Load Core Dump</button>
+      <button id="btn-copy" class="btn-secondary" onclick="copyDump()" disabled>&#9111; Copy All</button>
+      <button id="btn-dl"   class="btn-secondary" onclick="downloadDump()" disabled>&#8595; Download .txt</button>
+      <button id="btn-erase" class="btn-danger" onclick="eraseDump()">&#128465; Erase</button>
+      <span class="copy-status" id="copy-status">Copied!</span>
+      <span id="erase-status" style="font-size:13px;font-weight:700"></span>
+    </div>
+
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <span class="progress-label" id="progress-label">Loading&hellip;</span>
+    </div>
+
+    <textarea id="dump-content" readonly placeholder="Press &quot;Load Core Dump&quot; to retrieve the dump data.&#10;&#10;The base64 content can then be copied and analysed offline."></textarea>
+  </div>
+
+
+</main>
+
+<script>
+var dumpLoaded = false;
+
+function showEl(id, show) {
+  var e = document.getElementById(id);
+  if (e) e.style.display = show ? '' : 'none';
+}
+
+/* ── Status ──────────────────────────────────────────────────────────── */
+function loadStatus() {
+  fetch('/CoreDumpStatus.json', {credentials:'same-origin'})
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      var msg = document.getElementById('no-dump-msg');
+      var info = document.getElementById('dump-info');
+      if (d.hasDump) {
+        if (msg) msg.style.display = 'none';
+        if (info) info.style.display = '';
+        setText('s-task',  d.task  || '—');
+        setText('s-cause', d.excCause !== undefined ? (d.excCause + ' (' + causeName(d.excCause) + ')') : '—');
+        setText('s-epc1',  d.epc1  ? '0x' + d.epc1.toString(16).toUpperCase().padStart(8,'0') : '—');
+        showEl('card-dump',  true);
+        showEl('card-erase', true);
+      } else {
+        if (msg) msg.textContent = 'No crash dump stored.';
+      }
+    })
+    .catch(function(){ document.getElementById('no-dump-msg').textContent = 'Failed to retrieve status.'; });
+}
+
+function causeName(c) {
+  var n = {0:'IllegalInstruction',6:'IntegerDivideByZero',28:'LoadProhibited',29:'StoreProhibited'};
+  return n[c] || 'cause ' + c;
+}
+
+function setText(id, v) {
+  var e = document.getElementById(id); if (e) e.textContent = v;
+}
+
+/* ── Load dump ───────────────────────────────────────────────────────── */
+function loadDump() {
+  if (dumpLoaded) return;
+  var btn = document.getElementById('btn-load');
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+  showEl('progress-wrap', true);
+  setProgress(0, 'Connecting…');
+
+  // Use XHR for progress events (fetch doesn't expose progress on all browsers)
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/api/coredump', true);
+  xhr.responseType = 'text';
+
+  xhr.onprogress = function(e) {
+    if (e.lengthComputable) {
+      var pct = Math.round(e.loaded / e.total * 100);
+      setProgress(pct, formatBytes(e.loaded) + ' / ' + formatBytes(e.total));
+    } else {
+      setProgress(-1, formatBytes(e.loaded) + ' received…');
+    }
+  };
+
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      var ta = document.getElementById('dump-content');
+      ta.value = '================= CORE DUMP START =================\n' +
+                 xhr.responseText.trim() + '\n' +
+                 '================= CORE DUMP END ===================\n';
+      dumpLoaded = true;
+      setProgress(100, 'Done — ' + formatBytes(xhr.responseText.length) + ' of base64');
+      document.getElementById('btn-copy').disabled = false;
+      document.getElementById('btn-dl').disabled   = false;
+      btn.textContent = '&#10003; Loaded';
+    } else if (xhr.status === 404) {
+      alert('No core dump stored on device.');
+      btn.disabled = false;
+      btn.textContent = 'Load Core Dump';
+      showEl('progress-wrap', false);
+    } else {
+      alert('Failed to load dump (HTTP ' + xhr.status + ').');
+      btn.disabled = false;
+      btn.textContent = 'Retry';
+    }
+  };
+
+  xhr.onerror = function() {
+    alert('Network error loading dump.');
+    btn.disabled = false;
+    btn.textContent = 'Retry';
+    showEl('progress-wrap', false);
+  };
+
+  xhr.send();
+}
+
+function setProgress(pct, label) {
+  var fill = document.getElementById('progress-fill');
+  if (fill) fill.style.width = (pct < 0 ? 0 : pct) + '%';
+  setText('progress-label', label || '');
+}
+
+function formatBytes(n) {
+  if (n < 1024) return n + ' B';
+  return (n / 1024).toFixed(1) + ' KB';
+}
+
+/* ── Copy / download ─────────────────────────────────────────────────── */
+function copyDump() {
+  var ta = document.getElementById('dump-content');
+  if (!ta || !ta.value) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(ta.value).then(flashCopied).catch(function(){
+      ta.select(); document.execCommand('copy'); flashCopied();
+    });
+  } else {
+    ta.select(); document.execCommand('copy'); flashCopied();
+  }
+}
+
+function flashCopied() {
+  var s = document.getElementById('copy-status');
+  if (!s) return;
+  s.style.display = 'inline';
+  setTimeout(function(){ s.style.display = 'none'; }, 2000);
+}
+
+function downloadDump() {
+  var ta = document.getElementById('dump-content');
+  if (!ta || !ta.value) return;
+  var blob = new Blob([ta.value], {type: 'text/plain'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href = url; a.download = 'coredump.txt'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ── Erase ───────────────────────────────────────────────────────────── */
+function eraseDump() {
+  if (!confirm('Erase the stored crash dump? This cannot be undone.\nCopy or download the dump first if you need it.')) return;
+  var btn = document.getElementById('btn-erase');
+  var st  = document.getElementById('erase-status');
+  if (btn) btn.disabled = true;
+  fetch('/EraseCoreDump.json', {method:'POST', credentials:'same-origin'})
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      if (d.ok) {
+        st.textContent = 'Erased.';
+        st.style.color = 'var(--green)';
+        showEl('card-dump', false);
+        document.getElementById('no-dump-msg').textContent = 'Core dump was erased.';
+        document.getElementById('no-dump-msg').style.display = '';
+        document.getElementById('dump-info').style.display = 'none';
+      } else {
+        st.textContent = d.message || 'Erase failed.';
+        st.style.color = 'var(--rose)';
+        if (btn) btn.disabled = false;
+      }
+    })
+    .catch(function(){
+      st.textContent = 'Network error.';
+      if (btn) btn.disabled = false;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', loadStatus);
+</script>
+<script>
+(function(){function ph(){fetch('/api/heap').then(function(r){return r.json();}).then(function(d){var f=document.getElementById('hb-free'),m=document.getElementById('hb-min'),b=document.getElementById('hb-blk');if(f&&d.heap!=null)f.textContent=Number(d.heap).toLocaleString();if(m&&d.heapMin!=null)m.textContent=Number(d.heapMin).toLocaleString();if(b&&d.heapMaxBlk!=null)b.textContent=Number(d.heapMaxBlk).toLocaleString();}).catch(function(){});}ph();setInterval(ph,30000);}());
+</script>
+</body>
+</html>

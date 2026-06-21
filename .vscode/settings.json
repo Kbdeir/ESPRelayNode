@@ -23,6 +23,11 @@
         "ostream": "cpp",
         "streambuf": "cpp",
         "new": "cpp",
-        "condition_variable": "cpp"
+        "condition_variable": "cpp",
+        "array": "cpp",
+        "ranges": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "initializer_list": "cpp"
     }
 }

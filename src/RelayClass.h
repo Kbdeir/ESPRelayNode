@@ -6,8 +6,8 @@
 #include "Arduino.h"
 #include <ConfigParams.h>
 #include <JSONConfig.h>
-#include <OneButton.h>
-#include <Bounce2.h>
+//#include <OneButton.h>
+//#include <Bounce2.h>
 // #include <InputClass.h>
 #ifdef ESP32
 extern "C"
@@ -23,7 +23,7 @@ typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 
 const int DEFLEN_ = 20;
-#define buffer_size 2000
+#define buffer_size 1200
 
 class Relay
 {
@@ -62,22 +62,42 @@ class Relay
     #ifdef ESP32
       TimerHandle_t ttltimer;
       TimerHandle_t ttatimer;
-    #endif   
+      portMUX_TYPE  timerFlagsMux;
+    #endif
     
     Schedule_timer *ticker_relay_tta;
     Schedule_timer *ticker_relay_ttl;
     Schedule_timer *freelock;    
 
-    uint32_t running_TTA = 0;
-    uint32_t running_TTL = 0;
-    
+    volatile uint32_t running_TTA = 0;
+    volatile uint32_t running_TTL = 0;
+
+    // Set by FreeRTOS timer callbacks; consumed by watch() on the Arduino task.
+    volatile bool ttl_expired = false;
+    volatile bool ttl_update  = false;
+    volatile bool tta_expired = false;
+
     Trelayconf *RelayConfParam;
-    boolean lockupdate;
-    boolean rchangedflag;
+    volatile boolean lockupdate;
+    volatile boolean rchangedflag;
     boolean timerpaused;
     boolean hastimerrunning;
     uint8_t r_in_mode;
-    uint8_t relay_previous_state;
+    uint8_t relay_previous_state = 0;
+    uint8_t       persistLastVal = 0xFF; // last value written to flash (0xFF = never written)
+
+    // Last ON/OFF value published to v_PUB_TOPIC1 (-1 = not yet published).
+    // v_PUB_TOPIC1 is also the subscribed command topic, so publishing to it
+    // causes the broker to echo the message back. Used to avoid republishing
+    // an unchanged value.
+    int8_t lastPub1State = -1;
+    // Number of v_PUB_TOPIC1 publishes made by us that are still awaiting
+    // their broker echo. onMqttMessage swallows that many ON/OFF messages on
+    // v_PUB_TOPIC1 (regardless of value/order) instead of re-applying them to
+    // the relay - otherwise an echo would re-trigger the state-change handler
+    // and the relay would cycle on/off forever, especially under rapid
+    // consecutive toggles where echoes can arrive out of order.
+    volatile uint8_t pendingEchoCount = 0;
 
 
     // Constructor

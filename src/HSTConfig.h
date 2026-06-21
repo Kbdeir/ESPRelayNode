@@ -22,6 +22,7 @@ typedef void (*fnptr_b)(int, void* t);
   public:
     uint8_t id;
     double AmpsVoltsRatio;
+    double manualOffset;
     boolean enabled;
 
     //char* Testchar;

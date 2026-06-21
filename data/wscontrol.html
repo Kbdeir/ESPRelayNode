@@ -1,214 +1,189 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Untitled Page</title>
-<meta name="generator" content="WYSIWYG Web Builder 17 - http://www.wysiwygwebbuilder.com">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relay Control</title>
 <style>
-div#container
-{
-   width: 994px;
-   position: relative;
-   margin: 0 auto 0 auto;
-   text-align: left;
-}
-body
-{
-   background-color: #FFFFFF;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-size: 13px;
-   line-height: 1.1875;
-   margin: 0;
-   text-align: center;
-}
-a
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-a:visited
-{
-   color: #800080;
-}
-a:active
-{
-   color: #FF0000;
-}
-a:hover
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-input:focus, textarea:focus, select:focus
-{
-   outline: none;
-}
-#wb_Form5
-{
-   background-color: #C0C0C0;
-   background-image: none;
-   border: 1px solid #CCCCCC;
-   border-radius: 0px;
-}
-#GETRELAYNB
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 32px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#GETRELAYNB:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Button11
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 5px 5px 10px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 64px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Button12
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 5px 5px 10px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 64px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Editbox34
-{
-   border: 0px dotted #FF4500;
-   border-radius: 5px;
-   background-color: #FF4500;
-   background-image: none;
-   color: #D3D3D3;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 27px;
-   line-height: 56px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: center;
-}
-#Editbox34:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text1 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text1 div
-{
-   text-align: left;
-}
+:root{--bg:#0f172a;--surface:#1e293b;--surface-2:#273244;--border:#334155;--ink:#f1f5f9;--muted:#94a3b8;--teal:#0f766e;--teal-light:#14b8a6;--green:#22c55e;--green-bg:rgba(34,197,94,.10);--green-border:rgba(34,197,94,.30);--red:#ef4444;--red-bg:rgba(239,68,68,.10);--red-border:rgba(239,68,68,.30);--shadow:0 16px 40px rgba(0,0,0,.50);--shadow-sm:0 2px 10px rgba(0,0,0,.30)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{min-height:100vh;color:var(--ink);font-family:system-ui,-apple-system,Arial,sans-serif;font-size:14px;line-height:1.5}
+.shell{width:min(460px,calc(100vw - 24px));margin:0 auto;padding:20px 0 40px}
+
+/* topbar */
+.topbar{border-radius:12px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,#1e293b,#0f3a47,#0f766e);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
+.topbar h1{margin:0;font-size:20px;font-weight:700;color:#f8fafc;letter-spacing:-.01em}
+.heap-chip{font-size:11px;color:#94a3b8;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:5px 9px;white-space:nowrap}
+
+/* card */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-sm);padding:20px;margin-top:14px}
+
+/* relay selector */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+select{min-height:44px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);color:var(--ink);padding:8px 12px;font:inherit;font-size:15px;cursor:pointer;touch-action:manipulation;transition:border-color 150ms ease,box-shadow 150ms ease;appearance:none;-webkit-appearance:none}
+select:focus{outline:none;border-color:var(--teal-light);box-shadow:0 0 0 3px rgba(20,184,166,.20)}
+
+/* state hero */
+.state-hero{border-radius:10px;padding:20px;background:var(--surface-2);border:1px solid var(--border);margin-bottom:16px;display:flex;align-items:center;gap:16px;transition:border-color 250ms ease,background-color 250ms ease}
+.state-hero.on{background:var(--green-bg);border-color:var(--green-border)}
+.state-hero.off{background:var(--red-bg);border-color:var(--red-border)}
+.state-pip{width:12px;height:12px;border-radius:6px;background:var(--muted);flex:0 0 auto;transition:background-color 250ms ease,box-shadow 250ms ease}
+.state-hero.on .state-pip{background:var(--green);box-shadow:0 0 8px rgba(34,197,94,.60)}
+.state-hero.off .state-pip{background:var(--red);box-shadow:0 0 8px rgba(239,68,68,.60)}
+.state-info{display:flex;flex-direction:column;gap:2px}
+.state-caption{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.state-value{font-size:26px;font-weight:700;color:var(--muted);line-height:1;transition:color 250ms ease}
+.state-hero.on .state-value{color:var(--green)}
+.state-hero.off .state-value{color:var(--red)}
+
+/* action buttons */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-on,.btn-off{min-height:72px;border:none;border-radius:10px;color:#fff;font:inherit;font-size:18px;font-weight:700;cursor:pointer;touch-action:manipulation;transition:opacity 150ms ease,transform 150ms ease,box-shadow 150ms ease}
+.btn-on{background:linear-gradient(160deg,#16a34a,#15803d);box-shadow:0 4px 16px rgba(34,197,94,.28)}
+.btn-on:hover:not(:disabled){box-shadow:0 6px 22px rgba(34,197,94,.40);transform:translateY(-1px)}
+.btn-off{background:linear-gradient(160deg,#dc2626,#b91c1c);box-shadow:0 4px 16px rgba(239,68,68,.26)}
+.btn-off:hover:not(:disabled){box-shadow:0 6px 22px rgba(239,68,68,.38);transform:translateY(-1px)}
+.btn-on:active,.btn-off:active{transform:translateY(0)}
+.btn-on:focus,.btn-off:focus{outline:none;box-shadow:0 0 0 3px rgba(20,184,166,.40)}
+.btn-on:disabled,.btn-off:disabled{opacity:.40;cursor:not-allowed;transform:none}
+
+/* back link */
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:8px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;touch-action:manipulation;transition:color 150ms ease,border-color 150ms ease}
+.back-link:hover{color:var(--ink);border-color:#4b6280}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:0;right:0;margin-left:auto;margin-right:auto;width:fit-content;max-width:calc(100vw - 32px);transform:translateY(12px);background:#f1f5f9;color:#0f172a;font-size:13px;font-weight:700;padding:10px 20px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.50);opacity:0;pointer-events:none;transition:opacity 180ms ease,transform 180ms ease;white-space:nowrap;z-index:100}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:480px){.btn-on,.btn-off{min-height:60px;font-size:16px}.state-value{font-size:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
-<body 
->
-<div id="container">
-<div id="wb_Form5" style="position:absolute;left:28px;top:20px;width:614px;height:746px;z-index:5;">
-<form name="Form2" method="get" action="/wscontrol.html" enctype="multipart/form-data" id="Form5">
-<select name="GETRELAYNB" size="1" id="GETRELAYNB" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:159px;top:25px;width:88px;height:48px;z-index:0;" autocomplete="off">
-<option value="0">0</option>
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-</select>
-<div id="wb_Text1" style="position:absolute;left:57px;top:31px;width:92px;height:36px;z-index:1;">
-<span style="color:#000000;font-family:Arial;font-size:32px;">Relay</span></div>
-<input type="submit" id="Button11" name="RELAYACTION" value="ON" style="position:absolute;left:55px;top:119px;width:500px;height:264px;z-index:2;">
-<input type="submit" id="Button12" name="RELAYACTION" value="OFF" style="position:absolute;left:55px;top:431px;width:500px;height:264px;z-index:3;">
-<input type="text" id="Editbox34" style="position:absolute;left:279px;top:17px;width:270px;height:56px;z-index:4;" name="RSTATE0" value="%RSTATE0%" readonly disabled spellcheck="false">
-</form>
-</div>
-</div>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <h1>Relay Control</h1>
+    <div class="heap-chip">Heap <strong>%heap%</strong> B</div>
+  </header>
+
+  <form class="card" id="relayForm" method="get" action="/wscontrol.html">
+
+    <div class="field">
+      <span class="field-label">Relay</span>
+      <select id="relaySelect" name="GETRELAYNB">%RELAYNB_OPTIONS%</select>
+    </div>
+
+    <div class="state-hero" id="stateDisplay" role="status" aria-live="polite">
+      <span class="state-pip"></span>
+      <div class="state-info">
+        <span class="state-caption">Current state</span>
+        <span class="state-value" id="stateText">%RSTATE_APPLIED%</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-on"  id="btnOn"  name="RELAYACTION" value="ON"  aria-label="Turn relay ON">ON</button>
+      <button class="btn-off" id="btnOff" name="RELAYACTION" value="OFF" aria-label="Turn relay OFF">OFF</button>
+    </div>
+
+  </form>
+
+  <a class="back-link" href="/">&larr; Back</a>
+</main>
+
+<div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+
 <script>
-/*
-var rainbowEnable = false;
-var connection = new WebSocket('ws://192.168.20.18/test', ['arduino']);
-connection.onopen = function () {
-  connection.send('Connect ' + new Date());
-};
-connection.onerror = function (error) {
-  console.log('WebSocket Error ', error);
-};
-connection.onmessage = function (e) {
-  console.log('Server: ', e.data);
-};
-connection.onclose = function () {
-  console.log('WebSocket connection closed');
-};
+var relaySelect  = document.getElementById('relaySelect');
+var relayForm    = document.getElementById('relayForm');
+var btnOn        = document.getElementById('btnOn');
+var btnOff       = document.getElementById('btnOff');
+var currentRelay = parseInt(relaySelect.value, 10) || 0;
+var apiAvailable = true;
+var pendingAction = '';
+var toastTimer   = null;
 
-        connection.onmessage = function (messageEvent) {
-            var wsMsg = messageEvent.data;
-            console.log("WebSocket MESSAGE: " + wsMsg);
-
-            if (wsMsg.includes("on") > 0) {
-             console.log("Processing MESSAGE: on" );
-             document.getElementById("btnON").disabled=true;
-             document.getElementById("btnOFF").disabled=false;
-            };
-
-            if (wsMsg.includes("off") > 0) {
-             console.log("Processing MESSAGE: off");
-             document.getElementById("btnON").disabled = false;
-             document.getElementById("btnOFF").disabled = true;
-            };
-        };
-
-
-function sendON () {
-  connection.send('on');
+function applyState(s) {
+  var disp = document.getElementById('stateDisplay');
+  var text = document.getElementById('stateText');
+  s = (s || 'NA').toString().trim().toUpperCase();
+  text.textContent = s;
+  disp.className = 'state-hero' + (s === 'ON' ? ' on' : s === 'OFF' ? ' off' : '');
 }
 
-function sendOFF() {
-  connection.send('off');
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show';
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.className = 'toast'; }, 2500);
 }
 
-*/
+function setButtonsBusy(busy) {
+  btnOn.disabled  = busy;
+  btnOff.disabled = busy;
+}
 
+applyState(document.getElementById('stateText').textContent.trim());
+
+relaySelect.addEventListener('change', function() {
+  currentRelay = parseInt(this.value, 10) || 0;
+  if (typeof fetch !== 'function') { window.location.href = legacyUrl(); return; }
+  poll(true);
+});
+
+function legacyUrl(action) {
+  var url = '/wscontrol.html?GETRELAYNB=' + encodeURIComponent(currentRelay);
+  if (action) url += '&RELAYACTION=' + encodeURIComponent(action);
+  return url;
+}
+
+function useLegacy(action) { apiAvailable = false; window.location.href = legacyUrl(action); }
+
+function sendAction(action) {
+  setButtonsBusy(true);
+  fetch('/api/relay', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ relay: currentRelay, state: action })
+  })
+  .then(function(r) { if (!r.ok) throw new Error('failed'); return r.json(); })
+  .then(function(d) {
+    if (d && d.state) { applyState(d.state); showToast('Relay ' + currentRelay + ': ' + d.state); }
+  })
+  .catch(function() { useLegacy(action); })
+  .finally(function() { setButtonsBusy(false); });
+}
+
+btnOn.addEventListener('click',  function() { pendingAction = 'ON'; });
+btnOff.addEventListener('click', function() { pendingAction = 'OFF'; });
+
+relayForm.addEventListener('submit', function(event) {
+  var action = pendingAction;
+  pendingAction = '';
+  if (typeof fetch !== 'function') { apiAvailable = false; return; }
+  if (!action || !apiAvailable) return;
+  event.preventDefault();
+  sendAction(action);
+});
+
+function poll(reloadOnFailure) {
+  if (typeof fetch !== 'function') { apiAvailable = false; return; }
+  fetch('/api/relay/state', { credentials: 'same-origin' })
+    .then(function(r) { if (!r.ok) throw new Error('failed'); return r.json(); })
+    .then(function(d) {
+      if (!d || !Array.isArray(d.relays)) return;
+      for (var i = 0; i < d.relays.length; i++) {
+        if (parseInt(d.relays[i].id, 10) === currentRelay) { applyState(d.relays[i].state); break; }
+      }
+    })
+    .catch(function() { apiAvailable = false; if (reloadOnFailure) window.location.href = legacyUrl(); });
+}
+
+if (typeof fetch === 'function') { setInterval(poll, 1000); poll(false); }
 </script>
 </body>
 </html>

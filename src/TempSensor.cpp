@@ -15,17 +15,25 @@ TempSensor::TempSensor(uint8_t _pin) {
 
 void TempSensor::tempbegin() {
   sensors->begin();
+  // Non-blocking mode: requestTemperatures() returns immediately;
+  // getTempCByIndex() reads the result of the previous conversion.
+  // Caller must wait >= 750 ms (12-bit) between requestTemp() and getCurrentTemp().
+  sensors->setWaitForConversion(false);
 }
 
-
-
-float TempSensor::getCurrentTemp(uint8_t index){
+// Trigger a conversion on all sensors on this bus. Returns immediately.
+void TempSensor::requestTemp() {
   if (this->sensors) {
     this->sensors->requestTemperatures();
-    Celcius=this->sensors->getTempCByIndex(0);
-  //  MCelcius = Celcius;
   }
-	return Celcius;
+}
+
+// Read the result of the last conversion. Call at least 750 ms after requestTemp().
+float TempSensor::getCurrentTemp(uint8_t index) {
+  if (this->sensors) {
+    Celcius = this->sensors->getTempCByIndex(index);
+  }
+  return Celcius;
 }
 
 TempSensor::~TempSensor(){

@@ -1,4107 +1,560 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<title>NODE CONFIGURATION</title>
-<meta name="generator" content="WYSIWYG Web Builder 17 - http://www.wysiwygwebbuilder.com">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Node Configuration</title>
 <style>
-body
-{
-   background-color: #FFFFFF;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-size: 13px;
-   line-height: 1.1875;
-   margin: 0;
-   padding: 0;
-}
-a
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-a:visited
-{
-   color: #800080;
-}
-a:active
-{
-   color: #FF0000;
-}
-a:hover
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-input:focus, textarea:focus, select:focus
-{
-   outline: none;
-}
-#wb_Form1
-{
-   background-color: #D3D3D3;
-   background-image: none;
-   border: 1px solid #3370B7;
-   border-radius: 0px;
-}
-#Button1
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text1 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text1 div
-{
-   text-align: right;
-}
-#Editbox1
-{
-   border: 1px dotted #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox1:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text2 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text2 div
-{
-   text-align: right;
-}
-#Editbox2
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox2:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text20 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text20 div
-{
-   text-align: right;
-}
-#Editbox14
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox14:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text7 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text7 div
-{
-   text-align: right;
-}
-#wb_Text4 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text4 div
-{
-   text-align: right;
-}
-#wb_Text6 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text6 div
-{
-   text-align: right;
-}
-#wb_Text3 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text3 div
-{
-   text-align: right;
-}
-#Editbox4
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox4:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox5
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox5:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox6
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #DC143C;
-   font-family: Arial;
-   font-weight: bold;
-   font-style: normal;
-   font-size: 16px;
-   line-height: 21px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox6:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text11 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text11 div
-{
-   text-align: right;
-}
-#wb_Text17 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text17 div
-{
-   text-align: right;
-}
-#Editbox13
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox13:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text18 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text18 div
-{
-   text-align: right;
-}
-#IN2_INPUTMODE_C
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #EEE8AA;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#IN2_INPUTMODE_C:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox9
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox9:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox10
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox10:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox11
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox11:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text8 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text8 div
-{
-   text-align: left;
-}
-#wb_Text21 
-{
-   background-color: #3370B7;
-   background-image: none;
-   border: 1px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: center;
-}
-#wb_Text21 div
-{
-   text-align: center;
-}
-#Button2
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Editbox3
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox3:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Checkbox2
-{
-   margin: 0;
-}
-#Editbox15
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox15:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text22 
-{
-   background-color: #3370B7;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: center;
-}
-#wb_Text22 div
-{
-   text-align: center;
-}
-#Button3
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Editbox7
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox7:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox8
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox8:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text25 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text25 div
-{
-   text-align: right;
-}
-#Checkbox7
-{
-   margin: 0;
-}
-#wb_Form2
-{
-   background-color: #FFFFA0;
-   background-image: none;
-   border: 1px solid #CCCCCC;
-   border-radius: 0px;
-}
-#FileUpload1
-{
-   border: 1px solid #A9A9A9;
-   border-radius: 0px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   margin: 0;
-}
-#Button5
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text26 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text26 div
-{
-   text-align: left;
-}
-#Editbox16
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox16:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox17
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox17:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#ACS_Sensor_Model
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #DCDCDC;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#ACS_Sensor_Model:focus
-{
-   border-color: #696969;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
-   outline: 0;
-}
-#wb_Text30 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text30 div
-{
-   text-align: right;
-}
-#Editbox19
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox19:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Form3
-{
-   background-color: #FFFFA0;
-   background-image: none;
-   border: 1px solid #CCCCCC;
-   border-radius: 0px;
-}
-#wb_Text32 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text32 div
-{
-   text-align: left;
-}
-#FileUpload2
-{
-   border: 1px solid #A9A9A9;
-   border-radius: 0px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   margin: 0;
-}
-#Button6
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Editbox20
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox20:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox21
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox21:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox18
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #EEE8AA;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox18:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox22
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #EEE8AA;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox22:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text29 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text29 div
-{
-   text-align: right;
-}
-#wb_Text35 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text35 div
-{
-   text-align: right;
-}
-#RelayEditBox
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#RelayEditBox:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Form4
-{
-   background-color: #D3D3D3;
-   background-image: none;
-   border: 1px solid #CCCCCC;
-   border-radius: 0px;
-}
-#RelayNb2
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#RelayNb2:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Button7
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text37 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text37 div
-{
-   text-align: right;
-}
-#wb_Text38 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text38 div
-{
-   text-align: right;
-}
-#wb_Text40 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text40 div
-{
-   text-align: right;
-}
-#wb_Text41 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text41 div
-{
-   text-align: right;
-}
-#wb_Text42 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text42 div
-{
-   text-align: right;
-}
-#wb_Text43 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text43 div
-{
-   text-align: right;
-}
-#wb_Text44 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text44 div
-{
-   text-align: right;
-}
-#wb_Text39 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text39 div
-{
-   text-align: right;
-}
-#wb_Text45 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text45 div
-{
-   text-align: right;
-}
-#wb_Text46 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text46 div
-{
-   text-align: right;
-}
-#wb_Text36 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text36 div
-{
-   text-align: right;
-}
-#Button8
-{
-   border: 1px solid #D2691E;
-   border-radius: 4px;
-   background-color: #D2691E;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 2px 3px 9px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Label2
-{
-   border: 0px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: transparent;
-   background-image: none;
-   color: #0000CD;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: right;
-   vertical-align: top;
-}
-#Editbox33
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #EEE8AA;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox33:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text52 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text52 div
-{
-   text-align: right;
-}
-#ACSmultiple
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#ACSmultiple:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#IN1_INPUTMODE_C
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #EEE8AA;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#IN1_INPUTMODE_C:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#I1MODE
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #DCDCDC;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#I1MODE:focus
-{
-   border-color: #696969;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
-   outline: 0;
-}
-#I2MODE
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #DCDCDC;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#I2MODE:focus
-{
-   border-color: #696969;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
-   outline: 0;
-}
-#GETRELAYNB
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#GETRELAYNB:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#I0MODE
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #DCDCDC;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#I0MODE:focus
-{
-   border-color: #696969;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
-   outline: 0;
-}
-#Editbox34
-{
-   border: 0px dotted #FF4500;
-   border-radius: 5px;
-   background-color: #FF4500;
-   background-image: none;
-   color: #D3D3D3;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: center;
-}
-#Editbox34:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Button9
-{
-   border: 1px solid #D2691E;
-   border-radius: 4px;
-   background-color: #D2691E;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 2px 3px 9px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#TemperatureValue_edt
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#TemperatureValue_edt:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text5 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text5 div
-{
-   text-align: right;
-}
-#wb_Text9 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text9 div
-{
-   text-align: right;
-}
-#wb_ACS_text 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 1px solid #FF4500;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: center;
-}
-#wb_ACS_text div
-{
-   text-align: center;
-}
-#Editbox23
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox23:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#IN0_INPUTMODE_C
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #EEE8AA;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#IN0_INPUTMODE_C:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Form5
-{
-   background-color: #696969;
-   background-image: none;
-   border: 1px solid #CCCCCC;
-   border-radius: 0px;
-}
-#Button10
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text10 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text10 div
-{
-   text-align: right;
-}
-#wb_Text12 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text12 div
-{
-   text-align: left;
-}
-#wb_Text13 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text13 div
-{
-   text-align: left;
-}
-#wb_Text14 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text14 div
-{
-   text-align: left;
-}
-#wb_Text15 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text15 div
-{
-   text-align: left;
-}
-#Button11
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 5px 5px 10px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Button12
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 5px 5px 10px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Editbox12
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox12:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Button4
-{
-   border: 1px solid #D2691E;
-   border-radius: 4px;
-   background-color: #D2691E;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text16 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text16 div
-{
-   text-align: right;
-}
-#Editbox24
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox24:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox25
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox25:focus
-{
-   border-color: #0000CD;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(0,0,205,0.60);
-   outline: 0;
-}
-#wb_Text19 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text19 div
-{
-   text-align: right;
-}
-#wb_Text24 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text24 div
-{
-   text-align: left;
-}
-#Editbox26
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox26:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#IN3_INPUTMODE_C
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#IN3_INPUTMODE_C:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox27
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox27:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#IN4_INPUTMODE_C
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#IN4_INPUTMODE_C:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#I3MODE
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #DCDCDC;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#I3MODE:focus
-{
-   border-color: #696969;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
-   outline: 0;
-}
-#I4MODE
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #DCDCDC;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#I4MODE:focus
-{
-   border-color: #696969;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
-   outline: 0;
-}
-#Editbox30
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox30:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#IN5_INPUTMODE_C
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#IN5_INPUTMODE_C:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox31
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox31:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#IN6_INPUTMODE_C
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   box-sizing: border-box;
-}
-#IN6_INPUTMODE_C:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#I5MODE
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #DCDCDC;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#I5MODE:focus
-{
-   border-color: #696969;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
-   outline: 0;
-}
-#I6MODE
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #DCDCDC;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#I6MODE:focus
-{
-   border-color: #696969;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(105,105,105,0.60);
-   outline: 0;
-}
-#wb_Text23 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text23 div
-{
-   text-align: right;
-}
-#wb_Text27 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text27 div
-{
-   text-align: right;
-}
-#wb_Text28 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text28 div
-{
-   text-align: right;
-}
-#wb_Text31 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text31 div
-{
-   text-align: right;
-}
-#Editbox28
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox28:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox29
-{
-   border: 1px dotted #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox29:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text33 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text33 div
-{
-   text-align: right;
-}
-#wb_Text34 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text34 div
-{
-   text-align: right;
-}
-#Editbox32
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox32:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text47 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text47 div
-{
-   text-align: right;
-}
-#wb_Text48 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text48 div
-{
-   text-align: left;
-}
-#wb_Text49 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text49 div
-{
-   text-align: right;
-}
-#wb_Text50 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text50 div
-{
-   text-align: right;
-}
-#Editbox35
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox35:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text51 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text51 div
-{
-   text-align: right;
-}
-#Editbox37
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox37:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox36
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox36:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox38
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox38:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text53 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text53 div
-{
-   text-align: right;
-}
-#Editbox39
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox39:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text54 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text54 div
-{
-   text-align: right;
-}
-#Editbox40
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox40:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text55 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text55 div
-{
-   text-align: right;
-}
-#wb_Text56 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text56 div
-{
-   text-align: right;
-}
-#wb_Text57 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text57 div
-{
-   text-align: right;
-}
-#wb_Text58 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text58 div
-{
-   text-align: right;
-}
-#Editbox41
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #87CEEB;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox41:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox42
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox42:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text59 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text59 div
-{
-   text-align: right;
-}
-#Editbox43
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox43:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text60 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text60 div
-{
-   text-align: right;
-}
-#Button13
-{
-   border: 1px solid #D2691E;
-   border-radius: 4px;
-   background-color: #D2691E;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 2px 3px 9px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text61 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text61 div
-{
-   text-align: right;
-}
-#Editbox44
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox44:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox45
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox45:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text62 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text62 div
-{
-   text-align: right;
-}
-#Button14
-{
-   border: 1px solid #D2691E;
-   border-radius: 4px;
-   background-color: #D2691E;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 2px 3px 9px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Button15
-{
-   border: 1px solid #D2691E;
-   border-radius: 4px;
-   background-color: #D2691E;
-   background-image: none;
-   color: #FFFFFF;
-   box-shadow: 2px 3px 9px #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text63 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text63 div
-{
-   text-align: right;
-}
-#Editbox46
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox46:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
+:root{--page:#edf1f5;--ink:#152033;--muted:#687589;--panel:#fff;--panel-2:#f8fafc;--line:#d9e1ea;--field:#fdfefe;--teal:#0f766e;--teal-dark:#0a5f59;--blue:#2563eb;--amber:#b7791f;--rose:#be123c;--green:#15803d;--slate:#475569;--shadow-sm:0 2px 8px rgba(21,32,51,.06);--shadow:0 18px 45px rgba(21,32,51,.12)}
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.42;background:linear-gradient(180deg,#dfe9f3 0,#edf1f5 320px),var(--page)}
+.shell{width:min(1220px,calc(100vw - 32px));margin:0 auto;padding:24px 0 36px}
+.topbar{position:relative;overflow:hidden;color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:24px 26px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:linear-gradient(135deg,#152033,#103f49,#0f766e);box-shadow:var(--shadow)}
+.topbar h1{margin:0;font-size:28px;font-weight:700}
+.topbar .hint{margin-top:7px;color:#cfe0ea}
+.topbar .meta{min-width:230px;color:#e6eef5;font-size:13px;text-align:right;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 12px}
+.status-row{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.status{position:relative;min-height:62px;background:rgba(255,255,255,.92);border:1px solid rgba(217,225,234,.95);border-radius:8px;padding:9px 11px;box-shadow:var(--shadow-sm)}
+.status::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--teal)}
+.status:nth-child(2)::before{background:var(--amber)}
+.status:nth-child(3)::before{background:var(--blue)}
+.status:nth-child(4)::before{background:var(--rose)}
+.status span{display:block;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase}
+.status strong{display:block;margin-top:4px;font-size:14px;overflow-wrap:anywhere}
+.status strong.status-ok{color:var(--green)}
+.status strong.status-bad{color:var(--rose)}
+.status strong .status-reading{display:inline;color:inherit;font-size:inherit;font-weight:inherit;text-transform:none}
+.status-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 9px;margin-top:5px}
+.status-values div{min-width:0}
+.status-values span{color:#7b8797;font-size:10px}
+.status-values strong{margin-top:2px}
+.mqtt-wide,.wireguard-wide,.location-wide{grid-column:span 2}
+.grid{margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:16px;align-items:start}
+aside{position:sticky;top:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);padding:18px;margin-bottom:16px}
+.card h2{position:relative;display:flex;align-items:center;gap:10px;margin:-2px 0 16px;padding-bottom:12px;color:var(--ink);border-bottom:1px solid var(--line);font-size:18px;font-weight:700}
+.card h2::before{content:"";width:10px;height:28px;border-radius:6px;background:var(--teal);flex:0 0 auto}
+.card:nth-of-type(2) h2::before{background:var(--blue)}
+.card h2.collapsible{cursor:pointer;user-select:none}
+.card h2.collapsible::after{content:"▾";margin-left:auto;font-size:16px;color:var(--muted);transition:transform 200ms ease}
+.card h2.collapsible.collapsed::after{transform:rotate(-90deg)}
+.card h2.collapsible.collapsed{margin-bottom:0;border-bottom-color:transparent;padding-bottom:0}
+.card-body{overflow:hidden;transition:max-height 260ms ease,opacity 200ms ease;max-height:1200px;opacity:1}
+.card-body.collapsed{max-height:0;opacity:0}
+.upload-progress{display:block;margin:10px 0 2px}
+.upload-progress-bar{height:10px;overflow:hidden;border:1px solid #b6c7d9;border-radius:999px;background:#eef4fa}
+.upload-progress-fill{width:100%;height:100%}
+.upload-progress-text{margin-top:5px;color:var(--muted);font-size:12px;font-weight:700}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.wifi-scan-row{display:grid;grid-template-columns:1fr auto;gap:8px}
+.wifi-scan-row button{min-width:92px}
+label{color:var(--muted);font-size:12px;font-weight:700}
+input[type="text"],input[type="number"],select{min-height:38px;border:1px solid #bac7d5;border-radius:8px;background:var(--field);color:var(--ink);padding:8px 10px;font:inherit;transition:border-color 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+input[type="file"]{min-height:38px;padding:8px;border:1px dashed #aab7c6;border-radius:8px;background:var(--panel-2)}
+input[type="checkbox"]{width:18px;height:18px;accent-color:var(--teal)}
+input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.16)}
+.check-row{min-height:38px;display:flex;align-items:center;gap:9px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+button,input[type="submit"],.button-link{min-height:38px;border:1px solid transparent;border-radius:8px;background:var(--teal);color:#fff;padding:8px 15px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;box-shadow:0 5px 14px rgba(15,118,110,.22);transition:transform 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+button:hover,input[type="submit"]:hover,.button-link:hover{background:var(--teal-dark);box-shadow:0 7px 18px rgba(15,118,110,.28);transform:translateY(-1px)}
+.secondary{background:var(--slate)!important;box-shadow:0 5px 14px rgba(71,85,105,.18)!important}
+.danger{background:var(--rose)!important}
+.button-link.disabled,input[type="submit"].disabled{opacity:.4;pointer-events:none;cursor:not-allowed;box-shadow:none!important;transform:none!important}
+.link-list{display:grid;gap:9px}
+.link-list .button-link{display:block;background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none;text-align:left}
+.link-list .button-link:hover{background:#f2f7fb;border-color:#bdd0df}
+.power-reset-row{grid-column:1/-1}
+.status-button{width:100%;min-height:28px;margin-top:2px;padding:4px 8px;border-radius:7px;font-size:12px;box-shadow:none}
+@media(max-width:920px){.grid,.status-row,.form-grid,.topbar{grid-template-columns:1fr}aside{position:static}.topbar .meta{min-width:0;text-align:left}}
 </style>
-    
 </head>
 <body>
-<div id="wb_Form1" style="position:absolute;left:3px;top:106px;width:529px;height:1476px;z-index:134;">
-<form name="Form1" method="get" action="Apply.html" enctype="multipart/form-data" id="Form1" onsubmit="return submitForm1()">
-<div id="wb_Text1" style="position:absolute;left:116px;top:77px;width:54px;height:15px;text-align:right;z-index:0;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">SSID</span></div>
-<input type="text" id="Editbox1" style="position:absolute;left:184px;top:69px;width:126px;height:16px;z-index:1;" name="ssid" value="%ssid%" spellcheck="false">
-<div id="wb_Text7" style="position:absolute;left:0px;top:140px;width:170px;height:18px;text-align:right;z-index:2;">
-<span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Time Server IP</strong></span></div>
-<div id="wb_Text2" style="position:absolute;left:104px;top:109px;width:67px;height:15px;text-align:right;z-index:3;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Password</span></div>
-<div id="wb_Text4" style="position:absolute;left:332px;top:142px;width:75px;height:15px;text-align:right;z-index:4;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Time Zone</span></div>
-<input type="text" id="Editbox2" style="position:absolute;left:184px;top:101px;width:126px;height:18px;z-index:5;" name="pass" value="%pass%" spellcheck="false">
-<input type="text" id="Editbox14" style="position:absolute;left:184px;top:37px;width:258px;height:18px;z-index:6;" name="PhyLoc" value="%PhyLoc%" spellcheck="false">
-<div id="wb_Text6" style="position:absolute;left:170px;top:347px;width:150px;height:15px;text-align:right;z-index:7;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Active</span></div>
-<div id="wb_Text3" style="position:absolute;left:14px;top:382px;width:209px;height:15px;text-align:right;z-index:8;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Server Address</span></div>
-<input type="text" id="Editbox4" style="position:absolute;left:231px;top:375px;width:173px;height:18px;z-index:9;" name="MQTT_BROKER" value="%MQTT_BROKER%" spellcheck="false">
-<input type="number" id="Editbox5" style="position:absolute;left:453px;top:375px;width:52px;height:18px;z-index:10;" name="MQTT_B_PRT" value="%MQTT_B_PRT%" spellcheck="false">
-<select name="IN2_INPUTMODE_C" size="1" id="IN2_INPUTMODE_C" onchange="FUNC_IN2_INPUTMODE(this);return false;" style="position:absolute;left:178px;top:692px;width:196px;height:28px;z-index:11;" autocomplete="off">
-<option value="1">Click Mode</option>
-<option value="2">Input Mode</option>
-<option value="3">Toggle Mode - Coil Connected</option>
-<option value="4">Copy Input to Coil</option>
-</select>
-<div id="wb_Text8" style="position:absolute;left:425px;top:382px;width:28px;height:15px;z-index:12;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Port</span></div>
-<input type="submit" id="Button1" name="Submit" value="save" style="position:absolute;left:36px;top:1416px;width:96px;height:25px;z-index:13;">
-<input type="text" id="Editbox3" style="position:absolute;left:184px;top:135px;width:126px;height:18px;z-index:14;" name="timeserver" value="%timeserver%" spellcheck="false">
-<input type="checkbox" id="Checkbox2" name="MQTT_Active" value="%MQTT_Active%" style="position:absolute;left:334px;top:343px;z-index:15;">
-<input type="number" id="Editbox15" style="position:absolute;left:422px;top:135px;width:52px;height:18px;z-index:16;" name="ntptz" value="%ntptz%" spellcheck="false">
-<input type="submit" id="Button3" onclick="window.location.href='restart.html';return false;" name="restart" value="restart" style="position:absolute;left:196px;top:1415px;width:96px;height:25px;z-index:17;">
-<div id="wb_Text20" style="position:absolute;left:8px;top:45px;width:164px;height:15px;text-align:right;z-index:18;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Physical location tag</span></div>
-<input type="submit" id="Button2" onclick="window.close();return false;" name="cancelbtn" value="cancel" style="position:absolute;left:347px;top:1415px;width:96px;height:25px;z-index:19;">
-<div id="wb_Text17" style="position:absolute;left:6px;top:1080px;width:166px;height:15px;text-align:right;z-index:20;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Sonar distance topic</span></div>
-<div id="wb_Text18" style="position:absolute;left:6px;top:1117px;width:169px;height:15px;text-align:right;z-index:21;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Sonar Max Distance (cm)</span></div>
-<input type="number" id="Editbox13" style="position:absolute;left:181px;top:1110px;width:54px;height:18px;z-index:22;" name="Sonar_distance_max" value="%Sonar_distance_max%" spellcheck="false">
-<input type="text" id="Editbox18" style="position:absolute;left:180px;top:582px;width:291px;height:18px;z-index:23;" name="I12_STS_PTP" value="%I12_STS_PTP%" spellcheck="false">
-<input type="text" id="Editbox22" style="position:absolute;left:178px;top:656px;width:291px;height:18px;z-index:24;" name="I14_STS_PTP" value="%I14_STS_PTP%" spellcheck="false">
-<input type="text" id="RelayEditBox" style="position:absolute;left:451px;top:178px;width:23px;visibility:hidden;height:18px;z-index:25;" name="RelayNB" value="1" spellcheck="false">
-<input type="text" id="Editbox33" style="position:absolute;left:181px;top:508px;width:291px;height:18px;z-index:26;" name="TOGGLE_BTN_PUB_TOPIC" value="%TOGGLE_BTN_PUB_TOPIC%" spellcheck="false">
-<select name="IN1_INPUTMODE_C" size="1" id="IN1_INPUTMODE_C" onchange="FUNC_IN1_INPUTMODE(this);return false;" style="position:absolute;left:178px;top:616px;width:196px;height:28px;z-index:27;" autocomplete="off">
-<option value="1">Click Mode</option>
-<option value="2">Input Mode</option>
-<option value="3">Toggle Mode - Coil Connected</option>
-<option value="4">Copy Input to Coil</option>
-</select>
-<input type="text" id="I1MODE" style="position:absolute;left:394px;top:616px;width:32px;height:18px;z-index:28;" name="I1MODE" value="%I1MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="I2MODE" style="position:absolute;left:394px;top:692px;width:32px;height:18px;z-index:29;" name="I2MODE" value="%I2MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="I0MODE" style="position:absolute;left:395px;top:544px;width:32px;height:18px;z-index:30;" name="I0MODE" value="%I0MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<select name="IN0_INPUTMODE_C" size="1" id="IN0_INPUTMODE_C" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:178px;top:544px;width:196px;height:28px;z-index:31;" autocomplete="off">
-<option value="2">Input Mode</option>
-<option value="3">Toggle Mode - Coil Connected</option>
-<option value="4">Copy Input to Coil</option>
-</select>
-<div id="wb_Text12" style="position:absolute;left:34px;top:343px;width:197px;height:21px;z-index:32;">
-<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>MQTT Server</strong></span></div>
-<div id="wb_Text13" style="position:absolute;left:20px;top:1048px;width:463px;height:21px;z-index:33;">
-<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Sonar Configuration - Water Level</strong></span></div>
-<div id="wb_Text14" style="position:absolute;left:19px;top:477px;width:248px;height:21px;z-index:34;">
-<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Inputs Configuration</strong></span></div>
-<div id="wb_Text15" style="position:absolute;left:23px;top:7px;width:325px;height:21px;z-index:35;">
-<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Wifi Configuration</strong></span></div>
-<input type="text" id="Editbox12" style="position:absolute;left:181px;top:1073px;width:291px;height:18px;z-index:36;" name="Sonar_distance" value="%Sonar_distance%" spellcheck="false">
-<input type="number" id="Editbox24" style="position:absolute;left:338px;top:218px;width:52px;height:18px;z-index:37;" name="RWD" value="%RWD%" spellcheck="false">
-<input type="text" id="Editbox25" style="position:absolute;left:130px;top:254px;width:105px;height:18px;z-index:38;" name="Pingserver" value="%Pingserver%" spellcheck="false">
-<select name="IN3_INPUTMODE_C" size="1" id="IN3_INPUTMODE_C" onchange="FUNC_IN3_INPUTMODE(this);return false;" style="position:absolute;left:180px;top:772px;width:196px;height:28px;z-index:39;" autocomplete="off">
-<option value="1">Click Mode</option>
-<option value="2">Input Mode</option>
-<option value="3">Toggle Mode - Coil Connected</option>
-<option value="4">Copy Input to Coil</option>
-</select>
-<select name="IN4_INPUTMODE_C" size="1" id="IN4_INPUTMODE_C" onchange="FUNC_IN4_INPUTMODE(this);return false;" style="position:absolute;left:180px;top:848px;width:196px;height:28px;z-index:40;" autocomplete="off">
-<option value="1">Click Mode</option>
-<option value="2">Input Mode</option>
-<option value="3">Toggle Mode - Coil Connected</option>
-<option value="4">Copy Input to Coil</option>
-</select>
-<input type="text" id="I3MODE" style="position:absolute;left:396px;top:772px;width:32px;height:18px;z-index:41;" name="I3MODE" value="%I3MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="I4MODE" style="position:absolute;left:396px;top:848px;width:32px;height:18px;z-index:42;" name="I4MODE" value="%I4MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="Editbox27" style="position:absolute;left:180px;top:812px;width:291px;height:18px;z-index:43;" name="I04_STS_PTP" value="%I04_STS_PTP%" spellcheck="false">
-<input type="text" id="Editbox26" style="position:absolute;left:182px;top:739px;width:291px;height:18px;z-index:44;" name="I03_STS_PTP" value="%I03_STS_PTP%" spellcheck="false">
-<select name="IN5_INPUTMODE_C" size="1" id="IN5_INPUTMODE_C" onchange="FUNC_IN5_INPUTMODE(this);return false;" style="position:absolute;left:180px;top:925px;width:196px;height:28px;z-index:45;" autocomplete="off">
-<option value="1">Click Mode</option>
-<option value="2">Input Mode</option>
-<option value="3">Toggle Mode - Coil Connected</option>
-<option value="4">Copy Input to Coil</option>
-</select>
-<select name="IN6_INPUTMODE_C" size="1" id="IN6_INPUTMODE_C" onchange="FUNC_IN6_INPUTMODE(this);return false;" style="position:absolute;left:180px;top:1001px;width:196px;height:28px;z-index:46;" autocomplete="off">
-<option value="1">Click Mode</option>
-<option value="2">Input Mode</option>
-<option value="3">Toggle Mode - Coil Connected</option>
-<option value="4">Copy Input to Coil</option>
-</select>
-<input type="text" id="I5MODE" style="position:absolute;left:396px;top:925px;width:32px;height:18px;z-index:47;" name="I5MODE" value="%I5MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="I6MODE" style="position:absolute;left:396px;top:1001px;width:32px;height:18px;z-index:48;" name="I6MODE" value="%I6MODE%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="text" id="Editbox31" style="position:absolute;left:180px;top:965px;width:291px;height:18px;z-index:49;" name="I06_STS_PTP" value="%I06_STS_PTP%" spellcheck="false">
-<input type="text" id="Editbox30" style="position:absolute;left:182px;top:892px;width:291px;height:18px;z-index:50;" name="I05_STS_PTP" value="%I05_STS_PTP%" spellcheck="false">
-<div id="wb_Text27" style="position:absolute;left:43px;top:818px;width:127px;height:15px;text-align:right;z-index:51;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Input 4&nbsp; publish topic</span></div>
-<div id="wb_Text28" style="position:absolute;left:42px;top:900px;width:127px;height:15px;text-align:right;z-index:52;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Input 5&nbsp; publish topic</span></div>
-<div id="wb_Text31" style="position:absolute;left:42px;top:971px;width:127px;height:15px;text-align:right;z-index:53;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Input 6&nbsp; publish topic</span></div>
-<div id="wb_Text23" style="position:absolute;left:38px;top:745px;width:132px;height:15px;text-align:right;z-index:54;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Input 3&nbsp; publish topic</span></div>
-<input type="text" id="Editbox28" style="position:absolute;left:322px;top:411px;width:126px;height:18px;z-index:55;" name="mqttPass" value="%mqttPass%" spellcheck="false">
-<input type="text" id="Editbox29" style="position:absolute;left:103px;top:412px;width:126px;height:16px;z-index:56;" name="mqttUser" value="%mqttUser%" spellcheck="false">
-<div id="wb_Text33" style="position:absolute;left:44px;top:416px;width:54px;height:15px;text-align:right;z-index:57;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">User</span></div>
-<div id="wb_Text34" style="position:absolute;left:249px;top:416px;width:61px;height:15px;text-align:right;z-index:58;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Password</span></div>
-<div id="wb_Text48" style="position:absolute;left:9px;top:1171px;width:386px;height:21px;z-index:59;">
-<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>External Current Transformer</strong></span></div>
-<div id="wb_Text49" style="position:absolute;left:9px;top:1207px;width:189px;height:15px;text-align:right;z-index:60;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Current Sensor Topic</span></div>
-<input type="number" id="Editbox35" style="position:absolute;left:209px;top:1232px;width:54px;height:18px;z-index:61;" name="CurrentTransformer_max_current" value="%CurrentTransformer_max_current%" spellcheck="false" title="0 - 100 Amps">
-<div id="wb_Text51" style="position:absolute;left:329px;top:1240px;width:82px;height:15px;text-align:right;z-index:62;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">VCal</span></div>
-<input type="number" id="Editbox37" style="position:absolute;left:423px;top:1233px;width:54px;height:18px;z-index:63;" name="calibration" value="%calibration%" spellcheck="false">
-<input type="text" id="Editbox36" style="position:absolute;left:207px;top:1201px;width:271px;height:16px;z-index:64;" name="CurrentTransformerTopic" value="%CurrentTransformerTopic%" spellcheck="false">
-<input type="number" id="Editbox38" style="position:absolute;left:209px;top:1298px;width:54px;height:18px;z-index:65;" name="ToleranceOffTime" value="%ToleranceOffTime%" spellcheck="false" title="0 to  3600 seconds">
-<div id="wb_Text53" style="position:absolute;left:20px;top:1305px;width:178px;height:15px;text-align:right;z-index:66;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Tolerance OFF time</span></div>
-<input type="number" id="Editbox39" style="position:absolute;left:209px;top:1330px;width:54px;height:18px;z-index:67;" name="ToleranceOnTime" value="%ToleranceOnTime%" spellcheck="false" title="Valid values: 0 - 3600 seconds. 0 = No auto re-activation of the relay.">
-<div id="wb_Text54" style="position:absolute;left:20px;top:1336px;width:178px;height:15px;text-align:right;z-index:68;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Tolerance ON time</span></div>
-<input type="number" id="Editbox40" style="position:absolute;left:209px;top:1266px;width:54px;height:18px;z-index:69;" name="CT_MaxAllowed_current" value="%CT_MaxAllowed_current%" spellcheck="false" title="0 to 50 Amps. If you draw more current than the value in this field, relay will be shut down after the number of seconds set in the &quot;Tolerance OFF time&quot; setting">
-<div id="wb_Text56" style="position:absolute;left:273px;top:1305px;width:60px;height:15px;text-align:right;z-index:70;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">seconds</span></div>
-<div id="wb_Text57" style="position:absolute;left:273px;top:1337px;width:60px;height:15px;text-align:right;z-index:71;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">seconds</span></div>
-<div id="wb_Text59" style="position:absolute;left:297px;top:1368px;width:117px;height:15px;text-align:right;z-index:72;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Adjustment (Amps)</span></div>
-<input type="text" id="Editbox42" style="position:absolute;left:430px;top:1361px;width:54px;height:18px;z-index:73;" name="CT_adjustment" value="%CT_adjustment%" spellcheck="false">
-<div id="wb_Text60" style="position:absolute;left:66px;top:1368px;width:137px;height:15px;text-align:right;z-index:74;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Save Threshold (wh)</span></div>
-<input type="number" id="Editbox43" style="position:absolute;left:209px;top:1361px;width:54px;height:18px;z-index:75;" name="CT_saveThreshold" value="%CT_saveThreshold%" spellcheck="false">
-<div id="wb_Text55" style="position:absolute;left:0px;top:1273px;width:201px;height:15px;text-align:right;z-index:76;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Max allowed Amps</span></div>
-<div id="wb_Text50" style="position:absolute;left:0px;top:1239px;width:200px;height:15px;text-align:right;z-index:77;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Sensor rating (A)</span></div>
-<div id="wb_Text61" style="position:absolute;left:95px;top:181px;width:150px;height:15px;text-align:right;z-index:78;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Screen orientation</span></div>
-<input type="number" id="Editbox44" style="position:absolute;left:259px;top:175px;width:52px;height:18px;z-index:79;" name="Screen_orientation" value="%Screen_orientation%" spellcheck="false">
-<div id="wb_Text62" style="position:absolute;left:292px;top:1273px;width:117px;height:15px;text-align:right;z-index:80;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">PhaseCal)</span></div>
-<input type="text" id="Editbox45" style="position:absolute;left:425px;top:1266px;width:54px;height:18px;z-index:81;" name="PhaseCal" value="%PhaseCal%" spellcheck="false">
-<div id="wb_Text63" style="position:absolute;left:257px;top:261px;width:187px;height:33px;text-align:right;z-index:82;">
-<span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Restart action</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;">, 0= nothing, 1=reset relay</span></div>
-<input type="number" id="Editbox46" style="position:absolute;left:455px;top:263px;width:43px;height:18px;z-index:83;" name="PRST" value="%PRST%" spellcheck="false">
-</form>
-</div>
-<div id="wb_Text21" style="position:absolute;left:3px;top:22px;width:529px;height:82px;text-align:center;z-index:135;">
-<span style="color:#DCDCDC;font-family:Arial;font-size:24px;letter-spacing:2.07px;line-height:41px;">NODE CONFIGURATION</span><span style="color:#FFFFFF;font-family:Arial;font-size:24px;letter-spacing:4.07px;line-height:41px;"><br></span></div>
-<div id="wb_Text22" style="position:absolute;left:27px;top:68px;width:504px;height:25px;text-align:center;z-index:136;">
-<span style="color:#FFFFFF;font-family:Arial;font-size:17px;line-height:19px;">Node ID: %NODEID% - MAC : %MACADDR%</span></div>
-<div id="wb_Form2" style="position:absolute;left:545px;top:993px;width:529px;height:119px;z-index:137;">
-<form name="Form2" method="post" action="/update" enctype="multipart/form-data" id="Form2">
-<input type="file" name="update" id="FileUpload1" style="position:absolute;left:12px;top:63px;width:309px;height:29px;line-height:29px;z-index:84;">
-<input type="submit" id="Button5" name="firmwareload" value="Upload & Update" style="position:absolute;left:353px;top:65px;width:126px;height:25px;z-index:85;">
-<div id="wb_Text26" style="position:absolute;left:14px;top:15px;width:336px;height:34px;z-index:86;">
-<span style="color:#000000;font-family:Arial;font-size:17px;"><strong>Firmware update</strong></span><span style="color:#000000;font-family:Arial;font-size:13px;"><br>Select firmware file to upload</span></div>
-</form>
-</div>
-<div id="wb_Text30" style="position:absolute;left:726px;top:32px;width:340px;height:15px;text-align:right;z-index:138;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
-<div id="wb_Form3" style="position:absolute;visibility:hidden;left:562px;top:965px;width:482px;height:158px;z-index:139;">
-<form name="Form2" method="post" action="/upload" enctype="multipart/form-data" id="Form3">
-<div id="wb_Text32" style="position:absolute;left:12px;top:24px;width:336px;height:16px;z-index:87;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Upload file:</span></div>
-<input type="file" name="update" id="FileUpload2" style="position:absolute;left:26px;top:49px;width:309px;height:29px;line-height:29px;z-index:88;">
-<input type="submit" id="Button6" name="UploadHTML" value="Upload" style="position:absolute;left:347px;top:51px;width:126px;height:25px;z-index:89;">
-</form>
-</div>
-<div id="wb_Text29" style="position:absolute;left:0px;top:696px;width:175px;height:15px;text-align:right;z-index:140;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Input 1&nbsp; publish topic</span></div>
-<div id="wb_Text35" style="position:absolute;left:0px;top:771px;width:175px;height:15px;text-align:right;z-index:141;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Input 2&nbsp; publish topic</span></div>
-<div id="wb_Form4" style="position:absolute;left:551px;top:167px;width:516px;height:693px;z-index:142;">
-<form name="Relay2Conf" method="get" action="ApplyRelay.html" enctype="text/plain" id="Form4" onsubmit="return submitRelay2Conf()">
-<input type="text" id="RelayNb2" style="position:absolute;left:443px;top:9px;width:20px;visibility:hidden;height:18px;z-index:90;" name="RelayNB" value="2" spellcheck="false">
-<input type="submit" id="Button7" name="Submit" value="save" style="position:absolute;left:34px;top:644px;width:96px;height:25px;z-index:91;">
-<div id="wb_Text38" style="position:absolute;left:35px;top:301px;width:145px;height:16px;text-align:right;z-index:92;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Last Will Topic</span></div>
-<div id="wb_Text42" style="position:absolute;left:16px;top:184px;width:164px;height:16px;text-align:right;z-index:93;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Current TTL Publish Topic</span></div>
-<div id="wb_Text44" style="position:absolute;left:10px;top:264px;width:170px;height:16px;text-align:right;z-index:94;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Amps Sensor Publish Topic</span></div>
-<div id="wb_Text45" style="position:absolute;left:6px;top:477px;width:253px;height:15px;text-align:right;z-index:95;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Time to Live (TTL) in seconds</span></div>
-<input type="text" id="Editbox6" style="position:absolute;left:189px;top:19px;width:34px;height:21px;z-index:96;" name="RELAYNB" value="%RELAYNB%" spellcheck="false">
-<input type="text" id="Editbox16" style="position:absolute;left:189px;top:98px;width:291px;height:18px;z-index:97;" name="STATE_PUB_TOPIC" value="%STATE_PUB_TOPIC%" spellcheck="false">
-<input type="text" id="Editbox17" style="position:absolute;left:189px;top:137px;width:291px;height:18px;z-index:98;" name="ttl_PUB_TOPIC" value="%TTL_PUB_TOPIC%" spellcheck="false">
-<input type="text" id="Editbox19" style="position:absolute;left:189px;top:176px;width:291px;height:18px;z-index:99;" name="CURR_TTL_PUB_TOPIC" value="%CURR_TTL_PUB_TOPIC%" spellcheck="false">
-<input type="text" id="Editbox20" style="position:absolute;left:189px;top:215px;width:291px;height:18px;z-index:100;" name="i_ttl_PUB_TOPIC" value="%i_ttl_PUB_TOPIC%" spellcheck="false">
-<input type="text" id="Editbox21" style="position:absolute;left:189px;top:254px;width:291px;height:18px;z-index:101;" name="ACS_AMPS" value="%ACS_AMPS%" spellcheck="false">
-<input type="text" id="Editbox7" style="position:absolute;left:189px;top:293px;width:291px;height:18px;z-index:102;" name="LWILL_TOPIC" value="%LWILL_TOPIC%" spellcheck="false">
-<div id="wb_Text11" style="position:absolute;left:0px;top:332px;width:180px;height:16px;text-align:right;z-index:103;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">MQTT Subscribtion Topic</span></div>
-<input type="text" id="Editbox8" style="position:absolute;left:189px;top:332px;width:291px;height:18px;z-index:104;" name="SUB_TOPIC1" value="%SUB_TOPIC1%" spellcheck="false">
-<input type="number" id="Editbox9" style="position:absolute;left:264px;top:471px;width:73px;height:18px;z-index:105;" name="ttl" value="%ttl%" spellcheck="false">
-<input type="number" id="Editbox10" style="position:absolute;left:263px;top:505px;width:73px;height:18px;z-index:106;" name="tta" value="%tta%" spellcheck="false">
-<input type="number" id="Editbox11" style="position:absolute;left:263px;top:542px;width:73px;height:18px;z-index:107;" name="Max_Current" value="%Max_Current%" maxlength="2" spellcheck="false">
-<select name="ACSmultiple" size="1" id="ACSmultiple" onchange="myFunction(this);return false;" style="position:absolute;left:250px;top:577px;width:97px;height:28px;z-index:108;" autocomplete="off">
-<option value="5">5 Amps</option>
-<option value="20">20 Amps</option>
-<option selected value="30">30 Amps</option>
-</select>
-<input type="text" id="ACS_Sensor_Model" style="position:absolute;left:350px;top:577px;width:44px;height:18px;z-index:109;" name="ACS_Sensor_Model" value="%ACS_Sensor_Model%" readonly autocomplete="off" spellcheck="false" title="AAA" type = "hidden">
-<input type="checkbox" id="Checkbox7" name="ACS_Active" value="%ACS_Active%" style="position:absolute;left:246px;top:617px;z-index:110;">
-<div id="wb_Text25" style="position:absolute;left:112px;top:620px;width:128px;height:15px;text-align:right;z-index:111;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Measure Current</span></div>
-<input type="text" id="Editbox34" style="position:absolute;left:374px;top:5px;width:112px;height:18px;z-index:112;" name="RSTATE0" value="%RSTATE0%" readonly disabled spellcheck="false">
-<input type="text" id="TemperatureValue_edt" style="position:absolute;left:189px;top:368px;width:253px;height:18px;z-index:113;" name="TemperatureValue" value="%TemperatureValue%" spellcheck="false">
-<div id="wb_Text5" style="position:absolute;left:0px;top:372px;width:180px;height:15px;text-align:right;z-index:114;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Temperature Value Topic</span></div>
-<div id="wb_Text39" style="position:absolute;left:18px;top:581px;width:224px;height:15px;text-align:right;z-index:115;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Select ACS Sensor Model</span></div>
-<div id="wb_ACS_text" style="position:absolute;left:278px;top:619px;width:220px;height:15px;text-align:center;z-index:116;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Current consumption: %ACS% Amps</span></div>
-<div id="wb_Text36" style="position:absolute;left:3px;top:540px;width:256px;height:30px;text-align:right;z-index:117;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Maximum current allowed before coil shutdown</span></div>
-<div id="wb_Text46" style="position:absolute;left:3px;top:511px;width:256px;height:15px;text-align:right;z-index:118;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Time to Activate (TTA) in seconds</span></div>
-<div id="wb_Text43" style="position:absolute;left:10px;top:222px;width:170px;height:16px;text-align:right;z-index:119;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Stored TTL Update Topic</span></div>
-<div id="wb_Text41" style="position:absolute;left:17px;top:142px;width:163px;height:16px;text-align:right;z-index:120;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">TTL Publish Topic</span></div>
-<div id="wb_Text40" style="position:absolute;left:0px;top:104px;width:180px;height:16px;text-align:right;z-index:121;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Coils State Publish Topic</span></div>
-<div id="wb_Text37" style="position:absolute;left:0px;top:64px;width:180px;height:16px;text-align:right;z-index:122;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Coil Value Publish Topic</span></div>
-<div id="wb_Text10" style="position:absolute;left:0px;top:27px;width:180px;height:16px;text-align:right;z-index:123;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Relay Number</span></div>
-<input type="text" id="Editbox23" style="position:absolute;left:189px;top:59px;width:291px;height:18px;z-index:124;" name="PUB_TOPIC1" value="%PUB_TOPIC1%" spellcheck="false">
-<input type="submit" id="Button4" onclick="window.location.href='./AdvancedTemperatureConf.html';return false;" name="AdvTempConf" value="..." style="position:absolute;left:460px;top:370px;width:28px;height:30px;z-index:125;">
-<input type="number" id="Editbox32" style="position:absolute;left:404px;top:504px;width:72px;height:18px;z-index:126;" name="ACS_elasticity" value="%ACS_elasticity%" spellcheck="false">
-<div id="wb_Text47" style="position:absolute;left:375px;top:487px;width:111px;height:15px;text-align:right;z-index:127;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Time Elasticity</span></div>
-<div id="wb_Text58" style="position:absolute;left:0px;top:427px;width:180px;height:15px;text-align:right;z-index:128;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Alexa Name</span></div>
-<input type="text" id="Editbox41" style="position:absolute;left:189px;top:420px;width:253px;height:18px;z-index:129;" name="AlexaName" value="%AlexaName%" spellcheck="false">
-</form>
-</div>
-<input type="submit" id="Button8" onclick="window.location.href='Timer1';return false;" name="" value="Timer configuration" style="position:absolute;left:556px;top:882px;width:509px;height:32px;z-index:143;">
-<label for="" id="Label2" onclick="window.location.href='/heap';return false;" style="position:absolute;left:866px;top:51px;width:195px;height:18px;line-height:18px;z-index:144;">System heap: %heap%</label>
-<div id="wb_Text52" style="position:absolute;left:1px;top:619px;width:176px;height:30px;text-align:right;z-index:145;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Toggle BTN Publish Topic<br>Input 0</span></div>
-<input type="submit" id="Button9" onclick="window.location.href='Input_Relays_Map';return false;" name="" value="Input to Relays Map" style="position:absolute;left:556px;top:930px;width:509px;height:32px;z-index:146;">
-<div id="wb_Text9" style="position:absolute;left:726px;top:86px;width:340px;height:15px;text-align:right;z-index:147;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Ambiant Temperature: %ATEMP% C</span></div>
-<div id="wb_Form5" style="position:absolute;left:551px;top:114px;width:516px;height:49px;z-index:148;">
-<form name="Form2" method="get" action="/" enctype="multipart/form-data" id="Form5">
-<input type="submit" id="Button10" name="GETRELAYNBBTN" value="Click to display relay configuration: " style="position:absolute;left:17px;top:12px;width:235px;height:25px;z-index:130;">
-<select name="GETRELAYNB" size="1" id="GETRELAYNB" onchange="FUNC_IN0_INPUTMODE(this);return false;" style="position:absolute;left:268px;top:10px;width:65px;height:28px;z-index:131;" autocomplete="off">
-<option value="0">0</option>
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-</select>
-<input type="submit" id="Button11" name="RELAYACTION" value="ON" style="position:absolute;left:353px;top:12px;width:65px;height:25px;z-index:132;">
-<input type="submit" id="Button12" name="RELAYACTION" value="OFF" style="position:absolute;left:429px;top:12px;width:65px;height:25px;z-index:133;">
-</form>
-</div>
-<div id="wb_Text16" style="position:absolute;left:0px;top:323px;width:333px;height:33px;text-align:right;z-index:149;">
-<span style="color:#000000;font-family:Arial;font-size:16px;"><strong>Reboot on WIF disconnection </strong></span><span style="color:#000000;font-family:Arial;font-size:13px;">- #Ping retries:<br>Retry period is 10 seconds, 0 = disabled</span></div>
-<div id="wb_Text19" style="position:absolute;left:3px;top:368px;width:117px;height:15px;text-align:right;z-index:150;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Ping Server IP</span></div>
-<div id="wb_Text24" style="position:absolute;left:562px;top:86px;width:129px;height:15px;z-index:151;" onclick="window.location.href='edit';return false;">
-<span style="color:#4169E1;font-family:Arial;font-size:13px;">Configuration files</span></div>
+<main class="shell">
+  <header class="topbar">
+    <div>
+      <h1>Node Configuration</h1>
+      <div class="hint">Configure networking, relays, sensing, and firmware updates.</div>
+      <div class="hint">Node ID: <span id="NODEID">-</span> &mdash; MAC: <span id="MACADDR">-</span></div>
+    </div>
+    <div class="meta">
+      <div>System time: <span id="topbar-time">-</span></div>
+      <div>Uptime: <span id="topbar-uptime">-</span></div>
+      <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
+    </div>
+  </header>
 
-<input type="submit" id="Button13" onclick="window.location.href='./PressureSensorConfig.html';return false;" name="" value="Pressure Sensor configuration" style="position:absolute;left:552px;top:1136px;width:509px;height:32px;z-index:153;">
-<input type="submit" id="Button14" onclick="window.location.href='./ADS11x5Config.html';return false;" name="" value="ADS11x5 configuration" style="position:absolute;left:552px;top:1176px;width:509px;height:32px;z-index:154;">
-<input type="submit" id="Button15" onclick="window.location.href='./HSTConfig.html';return false;" name="" value="HST Hall Sensor configuration" style="position:absolute;left:552px;top:1217px;width:509px;height:32px;z-index:155;">
+  <section class="status-row">
+    <div class="status">
+      <span>Temperature</span>
+      <div class="status-values">
+        <div><span>Sensor 1</span><strong><span class="status-reading" id="ATEMP1">-</span> C</strong></div>
+        <div><span>Sensor 2</span><strong><span class="status-reading" id="ATEMP2">-</span> C</strong></div>
+      </div>
+    </div>
+    <div class="status">
+      <span>Current consumption</span>
+      <div class="status-values">
+        <div><span>ACS 1</span><strong><span class="status-reading" id="ACS1">-</span> A</strong></div>
+        <div><span>ACS 2</span><strong><span class="status-reading" id="ACS2">-</span> A</strong></div>
+      </div>
+    </div>
+    <div class="status" id="card-emonlib">
+      <span>Power sensor</span>
+      <div class="status-values">
+        <div><span>Voltage</span><strong><span class="status-reading" id="CT_VOLTAGE">-</span> V</strong></div>
+        <div><span>Current</span><strong><span class="status-reading" id="CT_CURRENT">-</span> A</strong></div>
+        <div><span>Power</span><strong><span class="status-reading" id="CT_POWER">-</span> W</strong></div>
+        <div><span>Power factor</span><strong id="CT_PF">-</strong></div>
+        <div class="power-reset-row"><button type="button" class="danger status-button" id="ResetAccumulatedPowerButton">Reset accumulated power</button></div>
+      </div>
+    </div>
+    <div class="status">
+      <span>Relay state</span>
+      <div class="status-values">
+        <div><span>Relay 0</span><strong id="RSTATE0">-</strong></div>
+        <div><span>Relay 1</span><strong id="RSTATE1">-</strong></div>
+      </div>
+    </div>
+    <div class="status mqtt-wide">
+      <span>MQTT</span>
+      <div class="status-values">
+        <div><span>Status</span><strong id="MQTT_STATUS">-</strong></div>
+        <div><span>Route</span><strong id="MQTT_ROUTE">-</strong></div>
+        <div><span>Server</span><strong id="MQTT_SERVER">-</strong></div>
+        <div><span>Health</span><strong id="MQTT_HEALTH_TOPIC">-</strong></div>
+      </div>
+    </div>
+    <div class="status wireguard-wide">
+      <span>WireGuard</span>
+      <div class="status-values">
+        <div><span>Status</span><strong id="VPN_STATUS">Loading</strong></div>
+        <div><span>Address</span><strong id="VPN_ADDRESS">-</strong></div>
+        <div><span>Endpoint</span><strong id="VPN_ENDPOINT">-</strong></div>
+        <div><span>DNS</span><strong id="VPN_DNS">-</strong></div>
+      </div>
+    </div>
+    <div class="status location-wide">
+      <span>Location</span>
+      <div class="status-values">
+        <div><span>Tag</span><strong id="PhyLoc_tag">-</strong></div>
+        <div><span>WiFi</span><strong id="WIFI_STATUS">-</strong></div>
+        <div><span>IP</span><strong id="WIFI_IP">-</strong></div>
+        <div><span>Gateway</span><strong id="WIFI_GATEWAY">-</strong></div>
+        <div><span>DNS 1</span><strong id="WIFI_DNS1">-</strong></div>
+        <div><span>DNS 2</span><strong id="WIFI_DNS2">-</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <div>
+      <form method="get" action="Apply.html" onsubmit="return submitForm1()">
+        <section class="card">
+          <h2 class="collapsible" data-collapse="wifi-body">WiFi And System</h2>
+          <div class="card-body" id="wifi-body"><div class="form-grid">
+            <div class="field full"><label for="PhyLoc">Physical Location Tag</label><input type="text" id="PhyLoc" name="PhyLoc" maxlength="48"></div>
+            <div class="field"><label for="ssid">SSID</label><input type="text" id="ssid" name="ssid" maxlength="32"></div>
+            <div class="field">
+              <label>Available Networks</label>
+              <div class="wifi-scan-row">
+                <select id="WifiScanResults"><option value="">Scan to list networks</option></select>
+                <button type="button" id="WifiScanButton">Scan</button>
+              </div>
+            </div>
+            <div class="field"><label for="pass">Password</label><input type="text" id="pass" name="pass" maxlength="64"></div>
+            <div class="field"><label for="timeserver">Time Server Host/IP</label><input type="text" id="timeserver" name="timeserver" maxlength="64"></div>
+            <div class="field"><label>NTP Route</label><div class="check-row"><input type="checkbox" id="NTP_UseVPN" name="NTP_UseVPN" value="1"> <span>Use VPN tunnel</span></div></div>
+            <div class="field">
+              <label for="ntptz">Time Zone (UTC offset)</label>
+              <select id="ntptz" name="ntptz">
+                <option value="-12">UTC&minus;12 &mdash; Baker Island, Howland Island</option>
+                <option value="-11">UTC&minus;11 &mdash; American Samoa, Niue</option>
+                <option value="-10">UTC&minus;10 &mdash; Hawaii, Cook Islands</option>
+                <option value="-9">UTC&minus;9 &mdash; Alaska</option>
+                <option value="-8">UTC&minus;8 &mdash; Pacific Time (US/Canada)</option>
+                <option value="-7">UTC&minus;7 &mdash; Mountain Time (US/Canada)</option>
+                <option value="-6">UTC&minus;6 &mdash; Central Time (US/Canada), Mexico City</option>
+                <option value="-5">UTC&minus;5 &mdash; Eastern Time (US/Canada), Bogot&aacute;</option>
+                <option value="-4">UTC&minus;4 &mdash; Atlantic Time, Caracas</option>
+                <option value="-3">UTC&minus;3 &mdash; Buenos Aires, S&atilde;o Paulo</option>
+                <option value="-2">UTC&minus;2 &mdash; South Georgia Island</option>
+                <option value="-1">UTC&minus;1 &mdash; Azores, Cape Verde</option>
+                <option value="0">UTC&plusmn;0 &mdash; London (GMT), Reykjav&iacute;k</option>
+                <option value="1">UTC+1 &mdash; Central European Time, Lagos</option>
+                <option value="2">UTC+2 &mdash; Eastern European Time, Cairo, Beirut</option>
+                <option value="3">UTC+3 &mdash; Moscow, Riyadh, Nairobi</option>
+                <option value="4">UTC+4 &mdash; Dubai, Baku</option>
+                <option value="5">UTC+5 &mdash; Karachi, Tashkent</option>
+                <option value="6">UTC+6 &mdash; Dhaka, Almaty</option>
+                <option value="7">UTC+7 &mdash; Bangkok, Jakarta, Ho Chi Minh</option>
+                <option value="8">UTC+8 &mdash; Beijing, Singapore, Perth</option>
+                <option value="9">UTC+9 &mdash; Tokyo, Seoul</option>
+                <option value="10">UTC+10 &mdash; Sydney, Melbourne</option>
+                <option value="11">UTC+11 &mdash; Solomon Islands, Noum&eacute;a</option>
+                <option value="12">UTC+12 &mdash; Auckland, Fiji</option>
+                <option value="13">UTC+13 &mdash; Tonga, Samoa (DST)</option>
+                <option value="14">UTC+14 &mdash; Line Islands</option>
+              </select>
+            </div>
+            <div class="field"><label for="RWD">Failed Pings Before Reboot</label><input type="number" id="RWD" name="RWD"></div>
+            <div class="field"><label for="Pingserver">Ping Server IP</label><input type="text" id="Pingserver" name="Pingserver"></div>
+            <div class="field">
+              <label for="PRST">Restart Action</label>
+              <select id="PRST" name="PRST" onchange="updatePRSTNote()">
+                <option value="0">0 &mdash; No action</option>
+                <option value="1">1 &mdash; Pulse relay 0</option>
+              </select>
+              <span id="PRST_note" class="hint"></span>
+            </div>
+            <div class="field">
+              <label>Daily Restart</label>
+              <div class="check-row"><input type="checkbox" id="DailyRestartEnabled" name="DailyRestartEnabled" value="1"> <span>Enable daily restart</span></div>
+            </div>
+            <div class="field">
+              <label for="DailyRestartTime">Daily Restart Time</label>
+              <input type="time" id="DailyRestartTime" name="DailyRestartTime">
+              <span class="hint">Only restarts if max alloc heap is below 90 KB at that time.</span>
+            </div>
+            <div class="field" id="oled-hw-active-field"><label>OLED Hardware</label><div class="check-row"><input type="checkbox" id="OLED_HW_Active" name="OLED_HW_Active" value="1"> <span>OLED screen physically present</span></div></div>
+            <div class="field" id="ads-hw-active-field"><label>ADS Chip Hardware</label><div class="check-row"><input type="checkbox" id="ADS_HW_Active" name="ADS_HW_Active" value="1"> <span>ADS1X15 ADC chip physically present</span></div></div>
+            <div class="field" id="oled-screen-orientation">
+              <label for="Screen_orientation">Screen Orientation</label>
+              <select id="Screen_orientation" name="Screen_orientation" onchange="updateOrientationNote()">
+                <option value="0">0 &mdash; Normal (0&deg;)</option>
+                <option value="1">1 &mdash; Rotated 90&deg; CW</option>
+                <option value="2">2 &mdash; Upside down (180&deg;)</option>
+                <option value="3">3 &mdash; Rotated 270&deg; CW</option>
+              </select>
+              <span id="orientation_note" class="hint"></span>
+            </div>
+            <div class="field" id="oled-update-interval"><label for="OLEDUpdateIntervalMs">OLED Update Interval (ms)</label><input type="number" min="500" max="4000" step="100" id="OLEDUpdateIntervalMs" name="OLEDUpdateIntervalMs"></div>
+            <div class="field" id="oled-always-on-field"><label>OLED Power</label><div class="check-row"><input type="checkbox" id="OLEDAlwaysOn" name="OLEDAlwaysOn" value="1"> <span>OLED always on</span></div></div>
+          </div></div>
+        </section>
+        <section class="card">
+          <h2 class="collapsible" data-collapse="mqtt-body">MQTT Server</h2>
+          <div class="card-body" id="mqtt-body"><div class="form-grid">
+            <div class="field"><label>MQTT Active</label><div class="check-row"><input type="checkbox" id="MQTT_Active" name="MQTT_Active" value="1"> <span>Enable MQTT</span></div></div>
+            <div class="field"><label>MQTT Route</label><div class="check-row"><input type="checkbox" id="MQTT_UseVPN" name="MQTT_UseVPN" value="1"> <span>Use VPN tunnel</span></div></div>
+            <div class="field"><label for="MQTT_BROKER">Server Address</label><input type="text" id="MQTT_BROKER" name="MQTT_BROKER" maxlength="64"></div>
+            <div class="field"><label for="MQTT_B_PRT">Port</label><input type="number" id="MQTT_B_PRT" name="MQTT_B_PRT" min="1" max="65535" placeholder="1883"></div>
+            <div class="field"><label for="MQTT_KeepAliveSeconds">Keep Alive / Health Period (s)</label><input type="number" id="MQTT_KeepAliveSeconds" name="MQTT_KeepAliveSeconds" min="5" max="3600" placeholder="60"></div>
+            <div class="field"><label for="mqttUser">User</label><input type="text" id="mqttUser" name="mqttUser" maxlength="64"></div>
+            <div class="field"><label for="mqttPass">Password</label><input type="text" id="mqttPass" name="mqttPass" maxlength="64"></div>
+          </div></div>
+        </section>
+        <div class="actions">
+          <input type="submit" name="Submit" value="Save">
+          <input type="submit" class="secondary" onclick="window.location.href='restart.html';return false;" value="Restart">
+        </div>
+      </form>
+    </div>
+
+    <aside>
+      <section class="card">
+        <h2>Tools</h2>
+        <div class="link-list">
+          <a class="button-link" href="./LiveReadings.html">&#9679; Live Readings</a>
+          <a class="button-link" href="./RelayConfig.html">&#9670; Relay Configuration</a>
+          <a class="button-link" href="Timer1">&#9200; Schedule Relay Timers</a>
+          <a class="button-link" href="Automation">&#9881; Automation Rules</a>
+          <a class="button-link" href="RemoteSensors">&#128268; Remote Sensor Sources</a>
+          <a id="tool-advtemp" class="button-link" href="./AdvancedTemperatureConf.html" style="display:none">&#9832; Advanced Temperature Configuration</a>
+          <a class="button-link" href="./InputsConfig.html">&#9000; Input Configuration</a>
+          <a class="button-link" href="Input_Relays_Map">&#8644; Control Relays from Inputs</a>
+          <a id="tool-pressure"  class="button-link" href="./PressureSensorConfig.html">&#9650; Pressure Sensor Configuration</a>
+          <a id="tool-ads1x15"  class="button-link" href="./ADS11x5Config.html">&#9889; Battery Voltage Measurement</a>
+          <a id="tool-hst"      class="button-link" href="./HSTConfig.html">&#128267; Battery Current Measurement</a>
+          <a id="tool-sonarct"  class="button-link" href="./CurrentConfig.html">&#8767; Sonar &amp; Current Transformer</a>
+          <a id="tool-waterflow" class="button-link" href="./WaterFlowSensor.html">&#128167; Water Flow Sensor Calibration</a>
+          <a class="button-link" href="./VPNConfig.html">&#128274; VPN Configuration</a>
+          <a class="button-link" href="./SerialLogConfig.html">&#128220; Serial Log Settings</a>
+          <a class="button-link" href="./Backup.html">&#128190; Backup &amp; Restore</a>
+          <a class="button-link secondary" href="./Files.html">&#128193; File Manager</a>
+        </div>
+      </section>
+      <section class="card">
+        <h2>Firmware Update</h2>
+        <form method="post" action="/update" enctype="multipart/form-data" onsubmit="return uploadFirmware(this)">
+          <div class="field">
+            <label for="FileUpload1">Firmware File</label>
+            <input type="file" name="update" id="FileUpload1">
+            <div class="upload-progress" id="FirmwareUploadProgress" style="display:none">
+              <div class="upload-progress-bar"><div class="upload-progress-fill" id="FirmwareUploadFill"></div></div>
+              <div class="upload-progress-text" id="FirmwareUploadText"></div>
+            </div>
+            <div id="FirmwareDebug" style="display:none;font-size:11px;color:#555;margin-top:6px;font-family:monospace;white-space:pre-wrap;"></div>
+          </div>
+          <div class="actions"><input type="submit" name="firmwareload" value="Upload And Update"></div>
+        </form>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);">
+          <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">Core Dump</div>
+          <div id="CoreDumpStatus" style="font-size:12px;color:var(--muted);margin-bottom:8px;">Checking&hellip;</div>
+          <button type="button" id="EraseCoreDumpBtn" class="danger" style="min-width:100%;display:none;" onclick="eraseCoreDump()">Erase Core Dump</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+</main>
 <script>
-function submitForm1()
-{
-   var regexp;
-   var Editbox1 = document.getElementById('Editbox1');
-   if (!(Editbox1.disabled || Editbox1.style.display === 'none' || Editbox1.style.visibility === 'hidden'))
-   {
-      if (Editbox1.value == "")
-      {
-         alert("SSID required");
-         Editbox1.focus();
-         return false;
-      }
-   }
-   var Editbox2 = document.getElementById('Editbox2');
-   if (!(Editbox2.disabled || Editbox2.style.display === 'none' || Editbox2.style.visibility === 'hidden'))
-   {
-      if (Editbox2.value == "")
-      {
-         alert("password min 8 chars - max 50");
-         Editbox2.focus();
-         return false;
-      }
-      if (Editbox2.value.length < 8)
-      {
-         alert("password min 8 chars - max 50");
-         Editbox2.focus();
-         return false;
-      }
-      if (Editbox2.value.length > 50)
-      {
-         alert("password min 8 chars - max 50");
-         Editbox2.focus();
-         return false;
-      }
-   }
-   var Editbox14 = document.getElementById('Editbox14');
-   if (!(Editbox14.disabled || Editbox14.style.display === 'none' || Editbox14.style.visibility === 'hidden'))
-   {
-      if (Editbox14.value == "")
-      {
-         alert("Physical_Location");
-         Editbox14.focus();
-         return false;
-      }
-      if (Editbox14.value.length < 5)
-      {
-         alert("Physical_Location");
-         Editbox14.focus();
-         return false;
-      }
-      if (Editbox14.value.length > 100)
-      {
-         alert("Physical_Location");
-         Editbox14.focus();
-         return false;
-      }
-   }
-   var Editbox4 = document.getElementById('Editbox4');
-   if (!(Editbox4.disabled || Editbox4.style.display === 'none' || Editbox4.style.visibility === 'hidden'))
-   {
-      if (Editbox4.value == "")
-      {
-         alert("MQTT_BROKER required");
-         Editbox4.focus();
-         return false;
-      }
-      if (Editbox4.value.length < 5)
-      {
-         alert("MQTT_BROKER required");
-         Editbox4.focus();
-         return false;
-      }
-      if (Editbox4.value.length > 100)
-      {
-         alert("MQTT_BROKER required");
-         Editbox4.focus();
-         return false;
-      }
-   }
-   var Editbox5 = document.getElementById('Editbox5');
-   if (!(Editbox5.disabled || Editbox5.style.display === 'none' || Editbox5.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox5.value))
-      {
-         alert("Please enter only digit characters in the \"MQTT_B_PRT\" field.");
-         Editbox5.focus();
-         return false;
-      }
-      if (Editbox5.value == "")
-      {
-         alert("Please enter a value for the \"MQTT_B_PRT\" field.");
-         Editbox5.focus();
-         return false;
-      }
-      if (Editbox5.value != "" && !(Editbox5.value > 80 && Editbox5.value <= 60000))
-      {
-         alert("Please enter a value greater than \"80\" and less than or equal to \"60000\" in the \"MQTT_B_PRT\" field.");
-         Editbox5.focus();
-         return false;
-      }
-   }
-   var Editbox3 = document.getElementById('Editbox3');
-   if (!(Editbox3.disabled || Editbox3.style.display === 'none' || Editbox3.style.visibility === 'hidden'))
-   {
-      regexp = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
-      if (Editbox3.value.length != 0 && !regexp.test(Editbox3.value))
-      {
-         alert("The specified value is invalid.");
-         Editbox3.focus();
-         return false;
-      }
-   }
-   var Editbox15 = document.getElementById('Editbox15');
-   if (!(Editbox15.disabled || Editbox15.style.display === 'none' || Editbox15.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox15.value))
-      {
-         alert("Time zone values -12 to 12");
-         Editbox15.focus();
-         return false;
-      }
-      if (Editbox15.value == "")
-      {
-         alert("Time zone values -12 to 12");
-         Editbox15.focus();
-         return false;
-      }
-      if (Editbox15.value.length < -12)
-      {
-         alert("Time zone values -12 to 12");
-         Editbox15.focus();
-         return false;
-      }
-      if (Editbox15.value.length > 12)
-      {
-         alert("Time zone values -12 to 12");
-         Editbox15.focus();
-         return false;
-      }
-   }
-   var Editbox13 = document.getElementById('Editbox13');
-   if (!(Editbox13.disabled || Editbox13.style.display === 'none' || Editbox13.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox13.value))
-      {
-         alert("Sonar max must be 5 to 400 cm");
-         Editbox13.focus();
-         return false;
-      }
-      if (Editbox13.value == "")
-      {
-         alert("Sonar max must be 5 to 400 cm");
-         Editbox13.focus();
-         return false;
-      }
-      if (Editbox13.value != "" && !(Editbox13.value > 5 && Editbox13.value <= 400))
-      {
-         alert("Sonar max must be 5 to 400 cm");
-         Editbox13.focus();
-         return false;
-      }
-   }
-   var Editbox18 = document.getElementById('Editbox18');
-   if (!(Editbox18.disabled || Editbox18.style.display === 'none' || Editbox18.style.visibility === 'hidden'))
-   {
-      if (Editbox18.value == "")
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox18.focus();
-         return false;
-      }
-      if (Editbox18.value.length < 5)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox18.focus();
-         return false;
-      }
-      if (Editbox18.value.length > 100)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox18.focus();
-         return false;
-      }
-   }
-   var Editbox22 = document.getElementById('Editbox22');
-   if (!(Editbox22.disabled || Editbox22.style.display === 'none' || Editbox22.style.visibility === 'hidden'))
-   {
-      if (Editbox22.value == "")
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox22.focus();
-         return false;
-      }
-      if (Editbox22.value.length < 5)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox22.focus();
-         return false;
-      }
-      if (Editbox22.value.length > 100)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox22.focus();
-         return false;
-      }
-   }
-   var RelayEditBox = document.getElementById('RelayEditBox');
-   if (!(RelayEditBox.disabled || RelayEditBox.style.display === 'none' || RelayEditBox.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (RelayEditBox.value.length != 0 && !regexp.test(RelayEditBox.value))
-      {
-         alert("Please enter only digit characters in the \"RelayNB\" field.");
-         RelayEditBox.focus();
-         return false;
-      }
-   }
-   var I1MODE = document.getElementById('I1MODE');
-   if (!(I1MODE.disabled || I1MODE.style.display === 'none' || I1MODE.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (I1MODE.value.length != 0 && !regexp.test(I1MODE.value))
-      {
-         alert("Please enter only digit characters in the \"I1MODE\" field.");
-         I1MODE.focus();
-         return false;
-      }
-   }
-   var I2MODE = document.getElementById('I2MODE');
-   if (!(I2MODE.disabled || I2MODE.style.display === 'none' || I2MODE.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (I2MODE.value.length != 0 && !regexp.test(I2MODE.value))
-      {
-         alert("Please enter only digit characters in the \"I2MODE\" field.");
-         I2MODE.focus();
-         return false;
-      }
-   }
-   var I0MODE = document.getElementById('I0MODE');
-   if (!(I0MODE.disabled || I0MODE.style.display === 'none' || I0MODE.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (I0MODE.value.length != 0 && !regexp.test(I0MODE.value))
-      {
-         alert("Please enter only digit characters in the \"I0MODE\" field.");
-         I0MODE.focus();
-         return false;
-      }
-   }
-   var Editbox12 = document.getElementById('Editbox12');
-   if (!(Editbox12.disabled || Editbox12.style.display === 'none' || Editbox12.style.visibility === 'hidden'))
-   {
-      if (Editbox12.value == "")
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox12.focus();
-         return false;
-      }
-      if (Editbox12.value.length < 1)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox12.focus();
-         return false;
-      }
-      if (Editbox12.value.length > 100)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox12.focus();
-         return false;
-      }
-   }
-   var Editbox24 = document.getElementById('Editbox24');
-   if (!(Editbox24.disabled || Editbox24.style.display === 'none' || Editbox24.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox24.value))
-      {
-         alert("min = 0 (diabled), max = after 3600 seconds");
-         Editbox24.focus();
-         return false;
-      }
-      if (Editbox24.value == "")
-      {
-         alert("min = 0 (diabled), max = after 3600 seconds");
-         Editbox24.focus();
-         return false;
-      }
-      if (Editbox24.value != "" && !(Editbox24.value >= 0 && Editbox24.value <= 3600))
-      {
-         alert("min = 0 (diabled), max = after 3600 seconds");
-         Editbox24.focus();
-         return false;
-      }
-   }
-   var Editbox25 = document.getElementById('Editbox25');
-   if (!(Editbox25.disabled || Editbox25.style.display === 'none' || Editbox25.style.visibility === 'hidden'))
-   {
-      regexp = /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
-      if (Editbox25.value.length != 0 && !regexp.test(Editbox25.value))
-      {
-         alert("The specified value is invalid.");
-         Editbox25.focus();
-         return false;
-      }
-   }
-   var I3MODE = document.getElementById('I3MODE');
-   if (!(I3MODE.disabled || I3MODE.style.display === 'none' || I3MODE.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (I3MODE.value.length != 0 && !regexp.test(I3MODE.value))
-      {
-         alert("Please enter only digit characters in the \"I3MODE\" field.");
-         I3MODE.focus();
-         return false;
-      }
-   }
-   var I4MODE = document.getElementById('I4MODE');
-   if (!(I4MODE.disabled || I4MODE.style.display === 'none' || I4MODE.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (I4MODE.value.length != 0 && !regexp.test(I4MODE.value))
-      {
-         alert("Please enter only digit characters in the \"I4MODE\" field.");
-         I4MODE.focus();
-         return false;
-      }
-   }
-   var Editbox27 = document.getElementById('Editbox27');
-   if (!(Editbox27.disabled || Editbox27.style.display === 'none' || Editbox27.style.visibility === 'hidden'))
-   {
-      if (Editbox27.value == "")
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox27.focus();
-         return false;
-      }
-      if (Editbox27.value.length < 5)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox27.focus();
-         return false;
-      }
-      if (Editbox27.value.length > 100)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox27.focus();
-         return false;
-      }
-   }
-   var Editbox26 = document.getElementById('Editbox26');
-   if (!(Editbox26.disabled || Editbox26.style.display === 'none' || Editbox26.style.visibility === 'hidden'))
-   {
-      if (Editbox26.value == "")
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox26.focus();
-         return false;
-      }
-      if (Editbox26.value.length < 5)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox26.focus();
-         return false;
-      }
-      if (Editbox26.value.length > 100)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox26.focus();
-         return false;
-      }
-   }
-   var I5MODE = document.getElementById('I5MODE');
-   if (!(I5MODE.disabled || I5MODE.style.display === 'none' || I5MODE.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (I5MODE.value.length != 0 && !regexp.test(I5MODE.value))
-      {
-         alert("Please enter only digit characters in the \"I5MODE\" field.");
-         I5MODE.focus();
-         return false;
-      }
-   }
-   var I6MODE = document.getElementById('I6MODE');
-   if (!(I6MODE.disabled || I6MODE.style.display === 'none' || I6MODE.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (I6MODE.value.length != 0 && !regexp.test(I6MODE.value))
-      {
-         alert("Please enter only digit characters in the \"I6MODE\" field.");
-         I6MODE.focus();
-         return false;
-      }
-   }
-   var Editbox31 = document.getElementById('Editbox31');
-   if (!(Editbox31.disabled || Editbox31.style.display === 'none' || Editbox31.style.visibility === 'hidden'))
-   {
-      if (Editbox31.value == "")
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox31.focus();
-         return false;
-      }
-      if (Editbox31.value.length < 5)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox31.focus();
-         return false;
-      }
-      if (Editbox31.value.length > 100)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox31.focus();
-         return false;
-      }
-   }
-   var Editbox30 = document.getElementById('Editbox30');
-   if (!(Editbox30.disabled || Editbox30.style.display === 'none' || Editbox30.style.visibility === 'hidden'))
-   {
-      if (Editbox30.value == "")
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox30.focus();
-         return false;
-      }
-      if (Editbox30.value.length < 5)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox30.focus();
-         return false;
-      }
-      if (Editbox30.value.length > 100)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox30.focus();
-         return false;
-      }
-   }
-   var Editbox28 = document.getElementById('Editbox28');
-   if (!(Editbox28.disabled || Editbox28.style.display === 'none' || Editbox28.style.visibility === 'hidden'))
-   {
-      if (Editbox28.value.length < 0)
-      {
-         alert("Please enter at least 0 characters in the \"mqttPass\" field.");
-         Editbox28.focus();
-         return false;
-      }
-      if (Editbox28.value.length > 50)
-      {
-         alert("Please enter at most 50 characters in the \"mqttPass\" field.");
-         Editbox28.focus();
-         return false;
-      }
-   }
-   var Editbox35 = document.getElementById('Editbox35');
-   if (!(Editbox35.disabled || Editbox35.style.display === 'none' || Editbox35.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox35.value))
-      {
-         alert("Current Transformer Max Measurment Capacity - CT Ratio");
-         Editbox35.focus();
-         return false;
-      }
-      if (Editbox35.value == "")
-      {
-         alert("Current Transformer Max Measurment Capacity - CT Ratio");
-         Editbox35.focus();
-         return false;
-      }
-      if (Editbox35.value != "" && !(Editbox35.value >= 5 && Editbox35.value <= 100))
-      {
-         alert("Current Transformer Max Measurment Capacity - CT Ratio");
-         Editbox35.focus();
-         return false;
-      }
-   }
-   var Editbox37 = document.getElementById('Editbox37');
-   if (!(Editbox37.disabled || Editbox37.style.display === 'none' || Editbox37.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox37.value))
-      {
-         alert("Calibration factor");
-         Editbox37.focus();
-         return false;
-      }
-      if (Editbox37.value == "")
-      {
-         alert("Calibration factor");
-         Editbox37.focus();
-         return false;
-      }
-      if (Editbox37.value != "" && !(Editbox37.value > 0 && Editbox37.value <= 500))
-      {
-         alert("Calibration factor");
-         Editbox37.focus();
-         return false;
-      }
-   }
-   var Editbox38 = document.getElementById('Editbox38');
-   if (!(Editbox38.disabled || Editbox38.style.display === 'none' || Editbox38.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox38.value))
-      {
-         alert("Tolerance OFF time 0 - 3600");
-         Editbox38.focus();
-         return false;
-      }
-      if (Editbox38.value == "")
-      {
-         alert("Tolerance OFF time 0 - 3600");
-         Editbox38.focus();
-         return false;
-      }
-      if (Editbox38.value != "" && !(Editbox38.value >= 0 && Editbox38.value <= 3600))
-      {
-         alert("Tolerance OFF time 0 - 3600");
-         Editbox38.focus();
-         return false;
-      }
-   }
-   var Editbox39 = document.getElementById('Editbox39');
-   if (!(Editbox39.disabled || Editbox39.style.display === 'none' || Editbox39.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox39.value))
-      {
-         alert("Tolerance ON time 10 - 3600");
-         Editbox39.focus();
-         return false;
-      }
-      if (Editbox39.value == "")
-      {
-         alert("Tolerance ON time 10 - 3600");
-         Editbox39.focus();
-         return false;
-      }
-      if (Editbox39.value != "" && !(Editbox39.value >= 0 && Editbox39.value <= 3600))
-      {
-         alert("Tolerance ON time 10 - 3600");
-         Editbox39.focus();
-         return false;
-      }
-   }
-   var Editbox40 = document.getElementById('Editbox40');
-   if (!(Editbox40.disabled || Editbox40.style.display === 'none' || Editbox40.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox40.value))
-      {
-         alert("Max allowed Current draw on this relay 0 - 50");
-         Editbox40.focus();
-         return false;
-      }
-      if (Editbox40.value == "")
-      {
-         alert("Max allowed Current draw on this relay 0 - 50");
-         Editbox40.focus();
-         return false;
-      }
-      if (Editbox40.value != "" && !(Editbox40.value >= 5 && Editbox40.value <= 50))
-      {
-         alert("Max allowed Current draw on this relay 0 - 50");
-         Editbox40.focus();
-         return false;
-      }
-   }
-   var Editbox42 = document.getElementById('Editbox42');
-   if (!(Editbox42.disabled || Editbox42.style.display === 'none' || Editbox42.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox42.value))
-      {
-         alert("Calibration factor");
-         Editbox42.focus();
-         return false;
-      }
-      if (Editbox42.value == "")
-      {
-         alert("Calibration factor");
-         Editbox42.focus();
-         return false;
-      }
-      if (Editbox42.value.length < 0.001)
-      {
-         alert("Calibration factor");
-         Editbox42.focus();
-         return false;
-      }
-      if (Editbox42.value.length > 10)
-      {
-         alert("Calibration factor");
-         Editbox42.focus();
-         return false;
-      }
-   }
-   var Editbox43 = document.getElementById('Editbox43');
-   if (!(Editbox43.disabled || Editbox43.style.display === 'none' || Editbox43.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox43.value))
-      {
-         alert("Calibration factor");
-         Editbox43.focus();
-         return false;
-      }
-      if (Editbox43.value == "")
-      {
-         alert("Calibration factor");
-         Editbox43.focus();
-         return false;
-      }
-      if (Editbox43.value.length < 1)
-      {
-         alert("Calibration factor");
-         Editbox43.focus();
-         return false;
-      }
-      if (Editbox43.value.length > 100)
-      {
-         alert("Calibration factor");
-         Editbox43.focus();
-         return false;
-      }
-      if (Editbox43.value != "" && !(Editbox43.value > 1 && Editbox43.value <= 100))
-      {
-         alert("Calibration factor");
-         Editbox43.focus();
-         return false;
-      }
-   }
-   var Editbox44 = document.getElementById('Editbox44');
-   if (!(Editbox44.disabled || Editbox44.style.display === 'none' || Editbox44.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox44.value))
-      {
-         alert("Screen orientation must be between 0 to 3");
-         Editbox44.focus();
-         return false;
-      }
-      if (Editbox44.value == "")
-      {
-         alert("Screen orientation must be between 0 to 3");
-         Editbox44.focus();
-         return false;
-      }
-      if (Editbox44.value.length < 0)
-      {
-         alert("Screen orientation must be between 0 to 3");
-         Editbox44.focus();
-         return false;
-      }
-      if (Editbox44.value.length > 3)
-      {
-         alert("Screen orientation must be between 0 to 3");
-         Editbox44.focus();
-         return false;
-      }
-   }
-   var Editbox45 = document.getElementById('Editbox45');
-   if (!(Editbox45.disabled || Editbox45.style.display === 'none' || Editbox45.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox45.value))
-      {
-         alert("Phase Calibration factor");
-         Editbox45.focus();
-         return false;
-      }
-      if (Editbox45.value == "")
-      {
-         alert("Phase Calibration factor");
-         Editbox45.focus();
-         return false;
-      }
-      if (Editbox45.value.length < 0.001)
-      {
-         alert("Phase Calibration factor");
-         Editbox45.focus();
-         return false;
-      }
-      if (Editbox45.value.length > 10)
-      {
-         alert("Phase Calibration factor");
-         Editbox45.focus();
-         return false;
-      }
-   }
-   var Editbox46 = document.getElementById('Editbox46');
-   if (!(Editbox46.disabled || Editbox46.style.display === 'none' || Editbox46.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox46.value))
-      {
-         alert("must be between 0 and 1");
-         Editbox46.focus();
-         return false;
-      }
-      if (Editbox46.value == "")
-      {
-         alert("must be between 0 and 1");
-         Editbox46.focus();
-         return false;
-      }
-      if (Editbox46.value.length < 0)
-      {
-         alert("must be between 0 and 1");
-         Editbox46.focus();
-         return false;
-      }
-      if (Editbox46.value.length > 1)
-      {
-         alert("must be between 0 and 1");
-         Editbox46.focus();
-         return false;
-      }
-      if (Editbox46.value != "" && !(Editbox46.value >= 0 && Editbox46.value <= 1))
-      {
-         alert("must be between 0 and 1");
-         Editbox46.focus();
-         return false;
-      }
-   }
-   return true;
+// DOM helpers — global so all functions can share them
+function sv(id,v){var e=document.getElementById(id);if(e)e.value=(v!=null)?v:"";}
+function st(id,v){var e=document.getElementById(id);if(e){e.textContent=(v!=null&&v!=="")?String(v):"-";e.title=e.textContent;}}
+function sc(id,v){var e=document.getElementById(id);if(e)e.checked=(v===1||v==="1"||v===true);}
+function hi(id){var e=document.getElementById(id);if(e)e.style.display="none";}
+function sh(id){var e=document.getElementById(id);if(e)e.style.display="";}
+function updateOledHwVisibility(){var cb=document.getElementById("OLED_HW_Active"),on=cb&&cb.checked;(on?sh:hi)("oled-screen-orientation");(on?sh:hi)("oled-update-interval");(on?sh:hi)("oled-always-on-field");}
+function updateAdsHwVisibility(){var cb=document.getElementById("ADS_HW_Active"),on=cb&&cb.checked;(on?sh:hi)("tool-ads1x15");}
+function setCon(id,ok){
+  var e=document.getElementById(id);if(!e)return;
+  e.textContent=ok?"connected":"disconnected";e.title=e.textContent;
+  e.classList.toggle("status-ok",!!ok);e.classList.toggle("status-bad",!ok);
 }
-</script>
-<script>
-function submitRelay2Conf()
-{
-   var regexp;
-   var RelayNb2 = document.getElementById('RelayNb2');
-   if (!(RelayNb2.disabled || RelayNb2.style.display === 'none' || RelayNb2.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (RelayNb2.value.length != 0 && !regexp.test(RelayNb2.value))
-      {
-         alert("Please enter only digit characters in the \"RelayNB\" field.");
-         RelayNb2.focus();
-         return false;
-      }
-   }
-   var Editbox6 = document.getElementById('Editbox6');
-   if (!(Editbox6.disabled || Editbox6.style.display === 'none' || Editbox6.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox6.value))
-      {
-         alert("Relay number is  required");
-         Editbox6.focus();
-         return false;
-      }
-      if (Editbox6.value == "")
-      {
-         alert("Relay number is  required");
-         Editbox6.focus();
-         return false;
-      }
-      if (Editbox6.value.length < 1)
-      {
-         alert("Relay number is  required");
-         Editbox6.focus();
-         return false;
-      }
-      if (Editbox6.value.length > 2)
-      {
-         alert("Relay number is  required");
-         Editbox6.focus();
-         return false;
-      }
-      if (Editbox6.value != "" && !(Editbox6.value >= 0 && Editbox6.value <= 4))
-      {
-         alert("Relay number is  required");
-         Editbox6.focus();
-         return false;
-      }
-   }
-   var Editbox16 = document.getElementById('Editbox16');
-   if (!(Editbox16.disabled || Editbox16.style.display === 'none' || Editbox16.style.visibility === 'hidden'))
-   {
-      if (Editbox16.value == "")
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox16.focus();
-         return false;
-      }
-      if (Editbox16.value.length < 5)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox16.focus();
-         return false;
-      }
-      if (Editbox16.value.length > 100)
-      {
-         alert("MQTT_STATE_PUBLISH_TOPIC required");
-         Editbox16.focus();
-         return false;
-      }
-   }
-   var Editbox17 = document.getElementById('Editbox17');
-   if (!(Editbox17.disabled || Editbox17.style.display === 'none' || Editbox17.style.visibility === 'hidden'))
-   {
-      if (Editbox17.value == "")
-      {
-         alert("MQTT_TTL_PUBLISH_TOPIC required");
-         Editbox17.focus();
-         return false;
-      }
-      if (Editbox17.value.length < 5)
-      {
-         alert("MQTT_TTL_PUBLISH_TOPIC required");
-         Editbox17.focus();
-         return false;
-      }
-      if (Editbox17.value.length > 100)
-      {
-         alert("MQTT_TTL_PUBLISH_TOPIC required");
-         Editbox17.focus();
-         return false;
-      }
-   }
-   var Editbox19 = document.getElementById('Editbox19');
-   if (!(Editbox19.disabled || Editbox19.style.display === 'none' || Editbox19.style.visibility === 'hidden'))
-   {
-      if (Editbox19.value == "")
-      {
-         alert("CURR_TTL_PUBLISH_TOPIC required");
-         Editbox19.focus();
-         return false;
-      }
-      if (Editbox19.value.length < 5)
-      {
-         alert("CURR_TTL_PUBLISH_TOPIC required");
-         Editbox19.focus();
-         return false;
-      }
-      if (Editbox19.value.length > 100)
-      {
-         alert("CURR_TTL_PUBLISH_TOPIC required");
-         Editbox19.focus();
-         return false;
-      }
-   }
-   var Editbox20 = document.getElementById('Editbox20');
-   if (!(Editbox20.disabled || Editbox20.style.display === 'none' || Editbox20.style.visibility === 'hidden'))
-   {
-      if (Editbox20.value == "")
-      {
-         alert("MQTT_TTL_PUBLISH_TOPIC required");
-         Editbox20.focus();
-         return false;
-      }
-      if (Editbox20.value.length < 5)
-      {
-         alert("MQTT_TTL_PUBLISH_TOPIC required");
-         Editbox20.focus();
-         return false;
-      }
-      if (Editbox20.value.length > 100)
-      {
-         alert("MQTT_TTL_PUBLISH_TOPIC required");
-         Editbox20.focus();
-         return false;
-      }
-   }
-   var Editbox9 = document.getElementById('Editbox9');
-   if (!(Editbox9.disabled || Editbox9.style.display === 'none' || Editbox9.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox9.value))
-      {
-         alert("must be between 0 and 86400");
-         Editbox9.focus();
-         return false;
-      }
-      if (Editbox9.value == "")
-      {
-         alert("must be between 0 and 86400");
-         Editbox9.focus();
-         return false;
-      }
-      if (Editbox9.value.length < 0)
-      {
-         alert("must be between 0 and 86400");
-         Editbox9.focus();
-         return false;
-      }
-      if (Editbox9.value.length > 86400)
-      {
-         alert("must be between 0 and 86400");
-         Editbox9.focus();
-         return false;
-      }
-      if (Editbox9.value != "" && !(Editbox9.value >= 0 && Editbox9.value <= 86400))
-      {
-         alert("must be between 0 and 86400");
-         Editbox9.focus();
-         return false;
-      }
-   }
-   var Editbox10 = document.getElementById('Editbox10');
-   if (!(Editbox10.disabled || Editbox10.style.display === 'none' || Editbox10.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox10.value))
-      {
-         alert("must be between 0 and 86400");
-         Editbox10.focus();
-         return false;
-      }
-      if (Editbox10.value == "")
-      {
-         alert("must be between 0 and 86400");
-         Editbox10.focus();
-         return false;
-      }
-      if (Editbox10.value.length < 0)
-      {
-         alert("must be between 0 and 86400");
-         Editbox10.focus();
-         return false;
-      }
-      if (Editbox10.value.length > 86400)
-      {
-         alert("must be between 0 and 86400");
-         Editbox10.focus();
-         return false;
-      }
-      if (Editbox10.value != "" && !(Editbox10.value >= 0 && Editbox10.value <= 86400))
-      {
-         alert("must be between 0 and 86400");
-         Editbox10.focus();
-         return false;
-      }
-   }
-   var Editbox11 = document.getElementById('Editbox11');
-   if (!(Editbox11.disabled || Editbox11.style.display === 'none' || Editbox11.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox11.value))
-      {
-         alert("must be between 1 and 10");
-         Editbox11.focus();
-         return false;
-      }
-      if (Editbox11.value == "")
-      {
-         alert("must be between 1 and 10");
-         Editbox11.focus();
-         return false;
-      }
-      if (Editbox11.value.length < 0)
-      {
-         alert("must be between 1 and 10");
-         Editbox11.focus();
-         return false;
-      }
-      if (Editbox11.value.length > 30)
-      {
-         alert("must be between 1 and 10");
-         Editbox11.focus();
-         return false;
-      }
-      if (Editbox11.value != "" && !(Editbox11.value >= 0 && Editbox11.value <= 30))
-      {
-         alert("must be between 1 and 10");
-         Editbox11.focus();
-         return false;
-      }
-   }
-   var ACS_Sensor_Model = document.getElementById('ACS_Sensor_Model');
-   if (!(ACS_Sensor_Model.disabled || ACS_Sensor_Model.style.display === 'none' || ACS_Sensor_Model.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (ACS_Sensor_Model.value.length != 0 && !regexp.test(ACS_Sensor_Model.value))
-      {
-         alert("Please enter only digit characters in the \"ACS_Sensor_Model\" field.");
-         ACS_Sensor_Model.focus();
-         return false;
-      }
-      if (ACS_Sensor_Model.value != "" && !(ACS_Sensor_Model.value >= 5 && ACS_Sensor_Model.value <= 30))
-      {
-         alert("Please enter a value greater than or equal to \"5\" and less than or equal to \"30\" in the \"ACS_Sensor_Model\" field.");
-         ACS_Sensor_Model.focus();
-         return false;
-      }
-   }
-   var Editbox23 = document.getElementById('Editbox23');
-   if (!(Editbox23.disabled || Editbox23.style.display === 'none' || Editbox23.style.visibility === 'hidden'))
-   {
-      if (Editbox23.value == "")
-      {
-         alert("MQTT_PUBLISH_TOPIC1 required");
-         Editbox23.focus();
-         return false;
-      }
-      if (Editbox23.value.length < 5)
-      {
-         alert("MQTT_PUBLISH_TOPIC1 required");
-         Editbox23.focus();
-         return false;
-      }
-      if (Editbox23.value.length > 100)
-      {
-         alert("MQTT_PUBLISH_TOPIC1 required");
-         Editbox23.focus();
-         return false;
-      }
-   }
-   var Editbox32 = document.getElementById('Editbox32');
-   if (!(Editbox32.disabled || Editbox32.style.display === 'none' || Editbox32.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox32.value))
-      {
-         alert("must be between 0 and 86400");
-         Editbox32.focus();
-         return false;
-      }
-      if (Editbox32.value == "")
-      {
-         alert("must be between 0 and 86400");
-         Editbox32.focus();
-         return false;
-      }
-      if (Editbox32.value.length < 0)
-      {
-         alert("must be between 0 and 86400");
-         Editbox32.focus();
-         return false;
-      }
-      if (Editbox32.value.length > 86400)
-      {
-         alert("must be between 0 and 86400");
-         Editbox32.focus();
-         return false;
-      }
-      if (Editbox32.value != "" && !(Editbox32.value >= 0 && Editbox32.value <= 86400))
-      {
-         alert("must be between 0 and 86400");
-         Editbox32.focus();
-         return false;
-      }
-   }
-   var Editbox41 = document.getElementById('Editbox41');
-   if (!(Editbox41.disabled || Editbox41.style.display === 'none' || Editbox41.style.visibility === 'hidden'))
-   {
-      if (Editbox41.value.length < 4)
-      {
-         alert("Please enter at least 4 characters in the \"AlexaName\" field.");
-         Editbox41.focus();
-         return false;
-      }
-      if (Editbox41.value.length > 25)
-      {
-         alert("Please enter at most 25 characters in the \"AlexaName\" field.");
-         Editbox41.focus();
-         return false;
-      }
-   }
-   return true;
+function fetchJson(url,cb){
+  var req=new XMLHttpRequest();req.open("GET",url,true);
+  req.onreadystatechange=function(){if(req.readyState===4)cb(req.status===200?req.responseText:null);};
+  req.send();
 }
+
+function updateOrientationNote(){var e=document.getElementById("Screen_orientation"),n=document.getElementById("orientation_note");if(!e||!n)return;var notes=["Normal landscape — USB connector side down","Rotated 90\xb0 clockwise — portrait","Upside-down landscape — USB connector side up","Rotated 270\xb0 clockwise — portrait, flipped"];n.textContent=notes[parseInt(e.value)]||"";}
+function updatePRSTNote(){var e=document.getElementById("PRST"),n=document.getElementById("PRST_note");if(!e||!n)return;n.textContent=e.value==="1"?"Pulse relay 0 at restart":"No action";}
+function submitForm1(){var e=document.getElementById("ssid");if(e&&e.value.trim()===""){alert("Please enter an SSID.");e.focus();return false;}return true;}
+
+function applyConfigData(d){
+  st("NODEID",d.NODEID);st("MACADDR",d.MACADDR);
+  st("topbar-time",d.systemtime);st("topbar-uptime",d.uptime);
+  st("PhyLoc_tag",d.PhyLoc);
+  st("ATEMP1",d.ATEMP1);st("ATEMP2",d.ATEMP2);
+  st("ACS1",d.ACS1);st("ACS2",d.ACS2);
+  st("CT_VOLTAGE",d.CT_VOLTAGE);st("CT_CURRENT",d.CT_CURRENT);st("CT_POWER",d.CT_POWER);st("CT_PF",d.CT_PF);
+  st("RSTATE0",d.RSTATE0);st("RSTATE1",d.RSTATE1);
+  sv("PhyLoc",d.PhyLoc);sv("ssid",d.ssid);sv("pass",d.pass);sv("timeserver",d.timeserver);
+  sc("NTP_UseVPN",d.NTP_UseVPN);sv("ntptz",d.ntptz);sv("RWD",d.RWD);sv("Pingserver",d.Pingserver);sv("PRST",d.PRST);updatePRSTNote();
+  sc("DailyRestartEnabled",d.DailyRestartEnabled);sv("DailyRestartTime",d.DailyRestartTime);
+  sc("OLED_HW_Active",d.OLED_HW_Active);sc("ADS_HW_Active",d.ADS_HW_Active);
+  updateOledHwVisibility();updateAdsHwVisibility();
+  sv("Screen_orientation",d.Screen_orientation);updateOrientationNote();sv("OLEDUpdateIntervalMs",d.OLEDUpdateIntervalMs);sc("OLEDAlwaysOn",d.OLEDAlwaysOn);
+  sc("MQTT_Active",d.MQTT_Active);sc("MQTT_UseVPN",d.MQTT_UseVPN);
+  sv("MQTT_BROKER",d.MQTT_BROKER);sv("MQTT_B_PRT",d.MQTT_B_PRT);sv("MQTT_KeepAliveSeconds",d.MQTT_KeepAliveSeconds);
+  sv("mqttUser",d.mqttUser);sv("mqttPass",d.mqttPass);
+  if(d.WaterFlowSensor!==1)hi("tool-waterflow");
+  if(d.PressureSensor!==1)hi("tool-pressure");
+  if(d.ADS1X15!==1){hi("tool-ads1x15");hi("ads-hw-active-field");}
+  if(d.HST!==1)hi("tool-hst");
+  if(d.EmonLib!==1){hi("card-emonlib");hi("tool-sonarct");}
+  if(d.OLED1306!==1){hi("oled-hw-active-field");hi("oled-screen-orientation");hi("oled-update-interval");hi("oled-always-on-field");}
+  var al=document.getElementById("tool-advtemp");
+  if(al)al.classList.toggle("disabled",!(d.I1MODE==5&&d.I2MODE==5));
+}
+
+function fetchAndApplyConfig(){
+  fetchJson("/GetConfig.json",function(t){var d;try{d=JSON.parse(t);}catch(e){return;}if(d)applyConfigData(d);});
+}
+
+function refreshWifiStatus(){
+  fetchJson("/WifiStatus.json",function(t){
+    if(!t){setCon("WIFI_STATUS",false);return;}
+    var d={};try{d=JSON.parse(t);}catch(e){setCon("WIFI_STATUS",false);return;}
+    setCon("WIFI_STATUS",d.connected);st("WIFI_IP",d.ip);st("WIFI_GATEWAY",d.gateway);st("WIFI_DNS1",d.dns1);st("WIFI_DNS2",d.dns2);
+  });
+}
+function refreshVpnStatus(){
+  fetchJson("/WireGuardStatus.json",function(t){
+    if(!t){setCon("VPN_STATUS",false);return;}
+    var d={};try{d=JSON.parse(t);}catch(e){setCon("VPN_STATUS",false);return;}
+    setCon("VPN_STATUS",d.connected||d.networkUp);st("VPN_ADDRESS",d.address);st("VPN_ENDPOINT",d.endpoint);st("VPN_DNS",d.dns);
+  });
+}
+function refreshMqttStatus(){
+  fetchJson("/MqttStatus.json",function(t){
+    if(!t){setCon("MQTT_STATUS",false);return;}
+    var d={};try{d=JSON.parse(t);}catch(e){setCon("MQTT_STATUS",false);return;}
+    setCon("MQTT_STATUS",d.connected);st("MQTT_ROUTE",d.route);st("MQTT_SERVER",d.server);st("MQTT_HEALTH_TOPIC",d.healthTopic);
+  });
+}
+function refreshSensorStatus(){
+  fetchJson("/SensorStatus.json",function(t){
+    if(!t)return;
+    var d;try{d=JSON.parse(t);}catch(e){return;}
+    st("ATEMP1",d.ATEMP1);st("ATEMP2",d.ATEMP2);st("ACS1",d.ACS1);st("ACS2",d.ACS2);
+    st("CT_VOLTAGE",d.CT_VOLTAGE);st("CT_CURRENT",d.CT_CURRENT);st("CT_POWER",d.CT_POWER);st("CT_PF",d.CT_PF);
+    st("RSTATE0",d.RSTATE0);st("RSTATE1",d.RSTATE1);
+  });
+}
+function refreshStatus(){refreshWifiStatus();refreshVpnStatus();refreshMqttStatus();refreshSensorStatus();}
+
+function refreshFeatureFlags(){
+  fetchJson("/FeatureFlags.json",function(t){
+    if(!t)return;
+    var d={};try{d=JSON.parse(t);}catch(e){return;}
+    if(d.solarHeater){var a=document.getElementById("tool-advtemp");if(a)a.style.display="";}
+  });
+}
+
+function setWifiScanLoading(l){var b=document.getElementById("WifiScanButton");if(!b)return;b.disabled=l;b.textContent=l?"Scanning":"Scan";}
+function setWifiScanMessage(m){var s=document.getElementById("WifiScanResults");if(!s)return;s.innerHTML="";var o=document.createElement("option");o.value="";o.textContent=m;s.appendChild(o);}
+function refreshWifiScan(start){
+  var sel=document.getElementById("WifiScanResults");if(!sel)return;
+  setWifiScanLoading(true);setWifiScanMessage("Scanning...");
+  fetchJson("/WifiScan.json"+(start?"?start=1":""),function(t){
+    setWifiScanLoading(false);
+    if(!t){setWifiScanMessage("Scan unavailable");return;}
+    var d={};try{d=JSON.parse(t);}catch(e){setWifiScanMessage("Scan unavailable");return;}
+    if(d.scanning){setTimeout(function(){refreshWifiScan(false);},1200);return;}
+    sel.innerHTML="";
+    var nets=d.networks||[];
+    if(!nets.length){setWifiScanMessage("No networks found");return;}
+    nets.forEach(function(n){if(!n.ssid)return;var o=document.createElement("option");o.value=n.ssid;o.textContent=n.ssid+" ("+n.rssi+" dBm)";sel.appendChild(o);});
+  });
+}
+
+function resetAccumulatedPower(){
+  if(!confirm("Reset accumulated power values to zero?"))return;
+  if(!confirm("Please confirm again. This will erase KWh, MTD, and YTD accumulated power values."))return;
+  var btn=document.getElementById("ResetAccumulatedPowerButton");
+  if(btn){btn.disabled=true;btn.textContent="Resetting...";}
+  var req=new XMLHttpRequest();req.open("POST","/ResetAccumulatedPower.json",true);
+  req.onreadystatechange=function(){
+    if(req.readyState!==4)return;
+    if(btn){btn.disabled=false;btn.textContent="Reset accumulated power";}
+    var d={};try{d=JSON.parse(req.responseText||"{}");}catch(e){}
+    alert((req.status>=200&&req.status<300&&d.ok)?"Accumulated power values were reset.":(d.message||"Failed to reset accumulated power values."));
+  };req.send();
+}
+
+function refreshCoreDumpStatus(){
+  fetchJson("/CoreDumpStatus.json",function(t){
+    var el=document.getElementById("CoreDumpStatus"),btn=document.getElementById("EraseCoreDumpBtn");
+    if(!el)return;
+    if(!t){el.textContent="Status unavailable.";return;}
+    var d={};try{d=JSON.parse(t);}catch(e){}
+    if(d.hasDump){
+      el.textContent="Crash dump present — task: "+d.task+", cause: "+d.excCause+", EPC1: 0x"+(d.epc1>>>0).toString(16).toUpperCase();
+      el.style.color="var(--rose)";
+      if(btn)btn.style.display="";
+    }else{
+      el.textContent="No crash dump stored.";
+      el.style.color="var(--muted)";
+      if(btn)btn.style.display="none";
+    }
+  });
+}
+
+function eraseCoreDump(){
+  if(!confirm("Erase the stored crash dump from flash?"))return;
+  var btn=document.getElementById("EraseCoreDumpBtn");
+  if(btn){btn.disabled=true;btn.textContent="Erasing…";}
+  var req=new XMLHttpRequest();req.open("POST","/EraseCoreDump.json",true);
+  req.onreadystatechange=function(){
+    if(req.readyState!==4)return;
+    var d={};try{d=JSON.parse(req.responseText);}catch(e){}
+    if(btn){btn.disabled=false;btn.textContent="Erase Core Dump";}
+    alert(d.ok?"Core dump erased successfully.":(d.message||"Erase failed."));
+    refreshCoreDumpStatus();
+  };req.send();
+}
+
+function initCollapsible(){
+  document.querySelectorAll("h2.collapsible").forEach(function(h2){
+    var id=h2.getAttribute("data-collapse"),body=id&&document.getElementById(id);
+    if(!body)return;
+    var key="collapse:"+id,saved=localStorage.getItem(key);
+    if(saved==="1"){h2.classList.add("collapsed");body.classList.add("collapsed");}
+    h2.addEventListener("click",function(){
+      var c=h2.classList.toggle("collapsed");
+      body.classList.toggle("collapsed",c);
+      try{localStorage.setItem(key,c?"1":"0");}catch(e){}
+    });
+  });
+}
+
+// OTA firmware upload
+(function(){
+  var PCT="\x25",_t=null,_p=0,_d=false;
+  function _dbg(m){var e=document.getElementById("FirmwareDebug");if(e)e.textContent+=m+"\n";console.log("[OTA] "+m);}
+  function _bar(pct,lbl){
+    var fill=document.getElementById("FirmwareUploadFill"),text=document.getElementById("FirmwareUploadText");
+    _p=Math.max(0,Math.min(100,pct|0));
+    var bar=fill?fill.parentElement:document.getElementById("FirmwareUploadProgress");
+    if(bar){var p=_p+PCT;bar.style.background="linear-gradient(to right,#0f766e "+p+",#eef4fa "+p+")";}
+    if(text)text.textContent=(lbl!==undefined)?lbl:(_p+PCT);
+  }
+  function _stop(){if(_t){clearInterval(_t);_t=null;}}
+  function _tick(cap,step,ms){_stop();_t=setInterval(function(){if(_p<cap)_bar(Math.min(cap,_p+step));},ms);}
+  function _fin(m){if(_d){_dbg("(done: "+m+")");return;}_d=true;_stop();_bar(100,m);_dbg(m);}
+  function _show(){
+    var p=document.getElementById("FirmwareUploadProgress"),d=document.getElementById("FirmwareDebug");
+    if(p)p.style.display="";if(d)d.style.display="";
+  }
+  window.uploadFirmware=function(form){
+    var fi=document.getElementById("FileUpload1"),btn=document.getElementById("Button5");
+    if(!form||!fi)return true;
+    if(form.getAttribute("data-uploading")==="1")return false;
+    if(!fi.files||!fi.files.length){alert("Please choose a firmware file.");fi.focus();return false;}
+    _show();
+    _dbg("Uploading: "+fi.files[0].name+" ("+fi.files[0].size+" bytes)");
+    form.setAttribute("data-uploading","1");
+    if(btn){btn.disabled=true;btn.value="Uploading...";}
+    _p=0;_d=false;_bar(0,"Uploading...");_tick(90,1,600);
+    var xhr=new XMLHttpRequest();xhr.open("POST",form.action||"/update",true);
+    xhr.upload.onprogress=function(ev){if(!ev.lengthComputable||!ev.total)return;_stop();_bar(Math.round(ev.loaded/ev.total*90),"Uploading "+Math.round(ev.loaded/ev.total*100)+PCT);};
+    xhr.upload.onloadend=function(){_stop();_bar(Math.max(_p,90),"Flashing...");_tick(97,1,1200);};
+    xhr.onreadystatechange=function(){
+      if(xhr.readyState!==4)return;
+      var body=(xhr.responseText||"").trim();
+      _dbg("server: HTTP "+xhr.status+(body?" | "+body:""));
+      if(xhr.status>=200&&xhr.status<300){
+        var ok=(body.length===0)||body.toUpperCase().indexOf("OK")===0||(body.toUpperCase().indexOf("OK")!==-1&&body.toUpperCase().indexOf("FAIL")===-1);
+        _fin(ok?"200 OK — Update successful. Rebooting...":"Update FAILED — "+body);
+      }else if(xhr.status===0){
+        _fin("Connection closed — rebooting...");
+      }else{
+        _fin("Update failed (HTTP "+xhr.status+(body?" — "+body:"")+")");
+      }
+    };
+    xhr.onerror=function(){_fin("Connection error — rebooting...");};
+    xhr.send(new FormData(form));return false;
+  };
+  window.initFirmwareUploadProgress=function(){
+    _stop();_p=0;_d=false;
+    var fill=document.getElementById("FirmwareUploadFill"),text=document.getElementById("FirmwareUploadText"),dbg=document.getElementById("FirmwareDebug");
+    var prog=document.getElementById("FirmwareUploadProgress");
+    if(fill)fill.classList.remove("ota-active");
+    var bar=fill?fill.parentElement:prog;
+    if(bar)bar.style.background="";
+    if(text)text.textContent="";
+    if(dbg){dbg.textContent="";dbg.style.display="none";}
+    if(prog)prog.style.display="none";
+  };
+})();
+
+// Heap monitor
+(function(){
+  function ph(){fetch('/api/heap').then(function(r){return r.json();}).then(function(d){
+    var f=document.getElementById('hb-free'),m=document.getElementById('hb-min'),b=document.getElementById('hb-blk');
+    if(f&&d.heap!=null)f.textContent=Number(d.heap).toLocaleString();
+    if(m&&d.heapMin!=null)m.textContent=Number(d.heapMin).toLocaleString();
+    if(b&&d.heapMaxBlk!=null)b.textContent=Number(d.heapMaxBlk).toLocaleString();
+  }).catch(function(){});}
+  ph();setInterval(ph,30000);
+}());
+
+document.addEventListener("DOMContentLoaded",function(){
+  fetchAndApplyConfig();
+  var sb=document.getElementById("WifiScanButton"),sr=document.getElementById("WifiScanResults");
+  if(sb)sb.addEventListener("click",function(){refreshWifiScan(true);});
+  if(sr)sr.addEventListener("change",function(){if(sr.value)sv("ssid",sr.value);});
+  var rb=document.getElementById("ResetAccumulatedPowerButton");
+  if(rb)rb.addEventListener("click",resetAccumulatedPower);
+  var oledCb=document.getElementById("OLED_HW_Active"),adsCb=document.getElementById("ADS_HW_Active");
+  if(oledCb)oledCb.addEventListener("change",updateOledHwVisibility);
+  if(adsCb)adsCb.addEventListener("change",updateAdsHwVisibility);
+  initFirmwareUploadProgress();initCollapsible();refreshFeatureFlags();refreshStatus();refreshCoreDumpStatus();
+  setInterval(refreshStatus,3000);
+});
 </script>
-<script>
-      function myFunction(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("ACS_Sensor_Model").value=x ; 
-      }
-      function FUNC_IN1_INPUTMODE(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("I1MODE").value=x ; 
-      }
-      function FUNC_IN2_INPUTMODE(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("I2MODE").value=x ; 
-      }
-      function FUNC_IN0_INPUTMODE(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("I0MODE").value=x ; 
-      }
-     function FUNC_IN3_INPUTMODE(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("I3MODE").value=x ; 
-      }
-     function FUNC_IN4_INPUTMODE(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("I4MODE").value=x ; 
-      }
-     function FUNC_IN5_INPUTMODE(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("I5MODE").value=x ; 
-      }
-     function FUNC_IN6_INPUTMODE(selectObject) {
-        var x = selectObject.value;
-         document.getElementById("I6MODE").value=x ; 
-      }
-    </script>
 </body>
-</html><script> 
-document.getElementById("IN0_INPUTMODE_C").value= document.getElementById("I0MODE").value ;
-document.getElementById("IN1_INPUTMODE_C").value = document.getElementById("I1MODE").value ; 
-document.getElementById("IN2_INPUTMODE_C").value = document.getElementById("I2MODE").value ; 
-document.getElementById("IN3_INPUTMODE_C").value= document.getElementById("I3MODE").value ;
-document.getElementById("IN4_INPUTMODE_C").value = document.getElementById("I4MODE").value ; 
-document.getElementById("IN5_INPUTMODE_C").value = document.getElementById("I5MODE").value ; 
-document.getElementById("IN6_INPUTMODE_C").value = document.getElementById("I6MODE").value ; 
-document.getElementById("ACSmultiple").value=document.getElementById("ACS_Sensor_Model").value ; 
- </script>
+</html>

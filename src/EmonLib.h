@@ -21,6 +21,10 @@
 
 #endif
 
+#if (defined(_ADS1X15_CURRENT_) || defined(_ADS1X15_VOLTAGE_)) && !defined(_ADS1015_)
+#error "EmonLib AC power / power-factor measurement is supported only with ESP32 ADC or ADS1015. Do not use ADS1115 for _ADS1X15_CURRENT_ or _ADS1X15_VOLTAGE_."
+#endif
+
 // define theoretical vref calibration constant for use in readvcc()
 // 1100mV*1024 ADC steps http://openenergymonitor.org/emon/node/1186
 // override in your code with value for your specific AVR chip
@@ -85,6 +89,8 @@ class EnergyMonitor
     int16_t analogread_volts(unsigned int _inPinI);
     int16_t analogread_amps(unsigned int _inPinI);
     void setupparams();
+    void primeOffsets();
+    bool offsetsPrimed = false;
 
     //Set Voltage and current input pins
     unsigned int inPinV;

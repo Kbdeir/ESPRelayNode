@@ -5,8 +5,8 @@
   #include <Arduino.h>
   #include <ESPAsyncWebServer.h>
 
-//void SaveWifi_to_Preferences(Preferences preferences, String ssid, String pass)
-void SaveWifi_to_Preferences(Preferences preferences, String ssid, String pass)
+//void SaveWifi_to_Preferences(Preferences& preferences, String ssid, String pass)
+void SaveWifi_to_Preferences(Preferences& preferences, String ssid, String pass)
 {
   preferences.begin("Args_param", false);
   preferences.putString("ssid", ssid );
@@ -14,32 +14,20 @@ void SaveWifi_to_Preferences(Preferences preferences, String ssid, String pass)
   preferences.end();
 }
 
-void ReadParams(TConfigParams &ConfParam, Preferences preferences){
+void ReadParams(TConfigParams &ConfParam, Preferences& preferences){
     preferences.begin("Args_param", false);
-      ConfParam.v_ssid = preferences.getString("ssid");
-      ConfParam.v_pass =  preferences.getString("pass");
-  		ConfParam.v_PhyLoc =  preferences.getString("PhyLoc");
-  		ConfParam.v_MQTT_BROKER =  preferences.getString("MQTT_BROKER");
-  		ConfParam.v_MQTT_B_PRT =  preferences.getString("MQTT_B_PRT");
-  		ConfParam.v_PUB_TOPIC1 =  preferences.getString("PUB_TOPIC1");
-  		ConfParam.v_FRM_IP =  preferences.getString("FRM_IP");
-  		ConfParam.v_FRM_PRT =  preferences.getString("FRM_PRT");
-  		ConfParam.v_ASCmultiple =  preferences.getString("ACSmultiple");
-  		ConfParam.v_ttl =  preferences.getString("ttl");
-  		ConfParam.v_tta =  preferences.getString("tta");
-  		ConfParam.v_Max_Current =  preferences.getString("Max_Current");
-  		ConfParam.v_timeserver =  preferences.getString("timeserver"); 
-  		ConfParam.v_Pingserver =  preferences.getString("Pingserver");       
-  		//ConfParam.v_PIC_Active =  preferences.getString("PIC_Active");
-  		ConfParam.v_MQTT_Active =  preferences.getString("MQTT_Active");
-  		ConfParam.v_myppp =  preferences.getString("myppp");
-  		ConfParam.v_ntptz =  preferences.getString("ntptz");
-  		ConfParam.v_LWILL_TOPIC =  preferences.getString("LWILL_TOPIC");
-  		ConfParam.v_SUB_TOPIC1 =  preferences.getString("SUB_TOPIC1");
-  		ConfParam.v_GPIO12_TOG =  preferences.getString("GPIO12_TOG");
-  		ConfParam.v_Copy_IO =  preferences.getString("Copy_IO");
-  		ConfParam.v_ACS_Active =  preferences.getString("ACS_Active");
-  		ConfParam.v_Update_now =  preferences.getString("Update_now");
+      ConfParam.v_ssid        = preferences.getString("ssid");
+      ConfParam.v_pass        = preferences.getString("pass");
+      ConfParam.v_PhyLoc      = preferences.getString("PhyLoc");
+      ConfParam.v_MQTT_BROKER = preferences.getString("MQTT_BROKER");
+      ConfParam.v_MQTT_B_PRT  = (uint16_t)preferences.getString("MQTT_B_PRT").toInt();
+      ConfParam.v_FRM_PRT     = (uint16_t)preferences.getString("FRM_PRT").toInt();
+      ConfParam.v_timeserver  = preferences.getString("timeserver");
+      ConfParam.v_NTP_UseVPN  = (uint8_t)preferences.getString("NTP_UseVPN").toInt();
+      ConfParam.v_MQTT_Active = (uint8_t)preferences.getString("MQTT_Active").toInt();
+      ConfParam.v_MQTT_UseVPN = (uint8_t)preferences.getString("MQTT_UseVPN").toInt();
+      ConfParam.v_ntptz       = (signed char)preferences.getString("ntptz").toInt();
+      ConfParam.v_Update_now  = preferences.getString("Update_now").toInt() != 0;
 
       Serial.println("will connect to: " + preferences.getString("ssid"));
       Serial.println("with pass: " + preferences.getString("pass"));
@@ -54,8 +42,10 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
       Serial.println("tta:" + preferences.getString("tta"));
       Serial.println("Max_Current:" + preferences.getString("Max_Current"));
       Serial.println("timeserver:" + preferences.getString("timeserver"));
+      Serial.println("NTP_UseVPN:" + preferences.getString("NTP_UseVPN"));
       Serial.println("PIC_Active:" + preferences.getString("PIC_Active"));
       Serial.println("MQTT_Active:" + preferences.getString("MQTT_Active"));
+      Serial.println("MQTT_UseVPN:" + preferences.getString("MQTT_UseVPN"));
       Serial.println("myppp:" + preferences.getString("myppp"));
       Serial.println("ntptz:" + preferences.getString("ntptz"));
       Serial.println("LWILL_TOPIC:" + preferences.getString("LWILL_TOPIC"));
@@ -72,10 +62,12 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
 
 
 
-  void SaveParams(TConfigParams &ConfParam, Preferences preferences, AsyncWebServerRequest *request){
+  void SaveParams(TConfigParams &ConfParam, Preferences& preferences, AsyncWebServerRequest *request){
     preferences.begin("Args_param", false);
       preferences.putString("PIC_Active",  "0" );
       preferences.putString("MQTT_Active",  "0" );
+      preferences.putString("MQTT_UseVPN",  "0" );
+      preferences.putString("NTP_UseVPN",  "0" );
       preferences.putString("GPIO12_TOG",  "0" );
       preferences.putString("Copy_IO",  "0" );
       preferences.putString("ACS_Active",  "0" );
@@ -95,34 +87,26 @@ void ReadParams(TConfigParams &ConfParam, Preferences preferences){
 
       if(request->hasParam("PIC_Active")) preferences.putString("PIC_Active",  "1" );
       if(request->hasParam("MQTT_Active")) preferences.putString("MQTT_Active",  "1" );
+      if(request->hasParam("MQTT_UseVPN")) preferences.putString("MQTT_UseVPN",  "1" );
+      if(request->hasParam("NTP_UseVPN")) preferences.putString("NTP_UseVPN",  "1" );
       if(request->hasParam("GPIO12_TOG")) preferences.putString("GPIO12_TOG",  "1" );
       if(request->hasParam("Copy_IO")) preferences.putString("Copy_IO",  "1" );
       if(request->hasParam("ACS_Active")) preferences.putString("ACS_Active",  "1" );
       if(request->hasParam("myppp")) preferences.putString("myppp",  "1" );
       if(request->hasParam("Update_now")) preferences.putString("Update_now",  "1" );
 
-      ConfParam.v_ssid = preferences.getString("ssid");
-      ConfParam.v_pass =  preferences.getString("pass");
-  		ConfParam.v_PhyLoc =  preferences.getString("PhyLoc");
-  		ConfParam.v_MQTT_BROKER =  preferences.getString("MQTT_BROKER");
-  		ConfParam.v_MQTT_B_PRT =  preferences.getString("MQTT_B_PRT");
-  		ConfParam.v_PUB_TOPIC1 =  preferences.getString("PUB_TOPIC1");
-  		ConfParam.v_FRM_IP =  preferences.getString("FRM_IP");
-  		ConfParam.v_FRM_PRT =  preferences.getString("FRM_PRT");
-  		ConfParam.v_ASCmultiple =  preferences.getString("ACSmultiple");
-  		ConfParam.v_ttl =  preferences.getString("ttl");
-  		ConfParam.v_tta =  preferences.getString("tta");
-  		ConfParam.v_Max_Current =  preferences.getString("Max_Current");
-  		ConfParam.v_timeserver =  preferences.getString("timeserver");
-  		ConfParam.v_Pingserver =  preferences.getString("Pingserver");      
-  		//ConfParam.v_PIC_Active =  preferences.getString("PIC_Active");
-  		ConfParam.v_MQTT_Active =  preferences.getString("MQTT_Active");
-  		//ConfParam.v_myppp =  preferences.getString("myppp");
-  		ConfParam.v_ntptz =  preferences.getString("ntptz");
-  		ConfParam.v_LWILL_TOPIC =  preferences.getString("LWILL_TOPIC");
-  		ConfParam.v_SUB_TOPIC1 =  preferences.getString("SUB_TOPIC1");
-  		ConfParam.v_ACS_Active =  preferences.getString("ACS_Active");
-  		ConfParam.v_Update_now =  preferences.getString("Update_now");
+      ConfParam.v_ssid        = preferences.getString("ssid");
+      ConfParam.v_pass        = preferences.getString("pass");
+      ConfParam.v_PhyLoc      = preferences.getString("PhyLoc");
+      ConfParam.v_MQTT_BROKER = preferences.getString("MQTT_BROKER");
+      ConfParam.v_MQTT_B_PRT  = (uint16_t)preferences.getString("MQTT_B_PRT").toInt();
+      ConfParam.v_FRM_PRT     = (uint16_t)preferences.getString("FRM_PRT").toInt();
+      ConfParam.v_timeserver  = preferences.getString("timeserver");
+      ConfParam.v_NTP_UseVPN  = (uint8_t)preferences.getString("NTP_UseVPN").toInt();
+      ConfParam.v_MQTT_Active = (uint8_t)preferences.getString("MQTT_Active").toInt();
+      ConfParam.v_MQTT_UseVPN = (uint8_t)preferences.getString("MQTT_UseVPN").toInt();
+      ConfParam.v_ntptz       = (signed char)preferences.getString("ntptz").toInt();
+      ConfParam.v_Update_now  = preferences.getString("Update_now").toInt() != 0;
 
     preferences.end();
   }

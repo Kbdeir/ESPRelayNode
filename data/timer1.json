@@ -1,0 +1,23 @@
+{
+  "TNBT": "1",
+  "TMTYPEedit": "1",
+  "TNumber": "1",
+  "CEnabled": "1",
+  "TRelay": "1",
+  "Dfrom": "2026-05-01",
+  "DTo": "2026-08-16",
+  "MonthDay": "1",
+  "TFrom": "17:02",
+  "stop-mode": "time",
+  "TTo": "19:30",
+  "Mark_Hours": "0",
+  "Mark_Minutes": "0",
+  "TimerSave": "Save Timer",
+  "Su": "0",
+  "Mo": "0",
+  "Tu": "0",
+  "We": "0",
+  "Th": "0",
+  "Fr": "0",
+  "Sa": "0"
+}

@@ -1,0 +1,753 @@
+﻿unit uRelayController;
+
+{
+  SmartConfig ESP32 Relay Controller
+  API:
+    GET  /api/live                   -- full live status (Basic Auth)
+    POST /api/relay                  -- {"relay":N,"state":"ON"|"OFF"
+    POST /ResetAccumulatedPower.json -- reset energy counters
+  Credentials: user / pass  (board defaults)
+  Requires: Delphi XE5+
+}
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes, System.Math, System.Generics.Collections,
+  System.JSON,
+  REST.Client, REST.Types, REST.Authenticator.Basic,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls;
+
+const
+  BOARD_USER    = 'user';
+  BOARD_PASS    = 'pass';
+  POLL_INTERVAL = 2500;
+
+  CLR_NAVY     = $00213A5C;
+  CLR_DIVIDER  = $00D8DFE8;
+  CLR_CAPTION  = $009098A4;
+  CLR_VALUE    = $00213A5C;
+  CLR_ACCENT   = $00C46200;   // orange  -- used for Real Power
+  CLR_GREEN    = $00006600;
+  CLR_RED      = clRed;
+
+type
+  TRelayRow = class
+  public
+    Index    : Integer;
+    PnlRow   : TPanel;
+    ShpLed   : TShape;
+    LblNum   : TLabel;
+    LblState : TLabel;
+    BtnOn    : TButton;
+    BtnOff   : TButton;
+  end;
+
+  TFormSmartConfig = class(TForm)
+    { ── DFM-bound components (published) ── }
+    FPnlTop    : TPanel;
+      FLblIP     : TLabel;
+      FEdtIP     : TEdit;
+      FBtnConnect: TButton;
+      FChkAuto   : TCheckBox;
+      FLblStatus : TLabel;
+    FPnlPower  : TPanel;          // alRight – populated at runtime in BuildPowerPanel
+    FPnlRelays : TScrollBox;
+      FLblNoConn : TLabel;
+    FStatusBar : TStatusBar;
+
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure BtnConnectClick(Sender: TObject);
+    procedure ChkAutoClick(Sender: TObject);
+
+  private
+    { REST }
+    FRESTClient : TRESTClient;
+    FRESTAuth   : THTTPBasicAuthenticator;
+    FRequest    : TRESTRequest;
+    FResponse   : TRESTResponse;
+
+    { Polling }
+    FTimer     : TTimer;
+    FRelayRows : TObjectList<TRelayRow>;
+    FBusy      : Boolean;
+
+    { Power panel value labels (set in BuildPowerPanel, updated in UpdatePowerPanel) }
+    FLblVoltVal : TLabel;
+    FLblCurrVal : TLabel;
+    FLblPowVal  : TLabel;
+    FLblPFVal   : TLabel;
+    FLblWhVal   : TLabel;
+    FLblMtdVal  : TLabel;
+    FLblYtdVal  : TLabel;
+    FLblPwrNA   : TLabel;
+    FBtnReset   : TButton;
+
+    procedure ConfigureREST;
+    procedure FetchAndUpdate;
+    procedure SendRelayCommand(RelayIndex: Integer; const NewState: string);
+
+    procedure BuildRelayRows(RelayCount: Integer);
+    procedure ClearRelayRows;
+    procedure ApplyRelayState(Row: TRelayRow; const State: string);
+
+    { Power panel builders }
+    procedure BuildPowerPanel;
+    function  MakeDivider(ATop: Integer; const AText: string): TPanel;
+    function  MakeCard(ATop: Integer; const ACaption: string): TLabel;
+    function  MakeRow(ATop: Integer; const ACaption: string): TLabel;
+    procedure UpdatePowerPanel(PwrObj: TJSONObject; EmonEnabled: Boolean);
+
+    procedure BtnOnClick(Sender: TObject);
+    procedure BtnOffClick(Sender: TObject);
+    procedure BtnResetClick(Sender: TObject);
+    procedure TimerTick(Sender: TObject);
+    procedure SetStatus(const Msg: string; IsError: Boolean = False);
+  end;
+
+var
+  FormSmartConfig: TFormSmartConfig;
+
+implementation
+
+{$R *.dfm}
+
+{ ══════════════════════════════════════════════════════════════════
+  REST helpers
+  ══════════════════════════════════════════════════════════════════ }
+
+procedure TFormSmartConfig.ConfigureREST;
+begin
+  FRESTClient.BaseURL := 'http://' + Trim(FEdtIP.Text);
+  FRequest.Client     := FRESTClient;
+  FRequest.Response   := FResponse;
+end;
+
+procedure TFormSmartConfig.SetStatus(const Msg: string; IsError: Boolean);
+begin
+  FLblStatus.Caption    := Msg;
+  FLblStatus.Font.Color := IfThen(IsError, Integer(CLR_RED), Integer($00BBBBBB));
+  FStatusBar.Panels[0].Text := FormatDateTime('hh:nn:ss', Now) + '   ' + Msg;
+end;
+
+{ ══════════════════════════════════════════════════════════════════
+  Form lifecycle
+  ══════════════════════════════════════════════════════════════════ }
+
+procedure TFormSmartConfig.FormCreate(Sender: TObject);
+begin
+  FRelayRows := TObjectList<TRelayRow>.Create(True);
+
+  FRESTAuth          := THTTPBasicAuthenticator.Create(Self);
+  FRESTAuth.Username := BOARD_USER;
+  FRESTAuth.Password := BOARD_PASS;
+
+  FRESTClient               := TRESTClient.Create(Self);
+  FRESTClient.Authenticator := FRESTAuth;
+  FRESTClient.Accept        := 'application/json';
+
+  FResponse := TRESTResponse.Create(Self);
+
+  FRequest          := TRESTRequest.Create(Self);
+  FRequest.Client   := FRESTClient;
+  FRequest.Response := FResponse;
+  FRequest.Timeout  := 5000;
+
+  FTimer          := TTimer.Create(Self);
+  FTimer.Interval := POLL_INTERVAL;
+  FTimer.Enabled  := False;
+  FTimer.OnTimer  := TimerTick;
+
+  BuildPowerPanel;
+end;
+
+procedure TFormSmartConfig.FormDestroy(Sender: TObject);
+begin
+  FTimer.Enabled := False;
+  FRelayRows.Free;
+end;
+
+{ ══════════════════════════════════════════════════════════════════
+  Power panel construction
+  (FPnlPower is an empty alRight panel defined in the DFM;
+   all content is added here at runtime)
+
+  Layout (Y coords relative to FPnlPower):
+    0  ..  38   dark navy header
+   38  ..  58   "LIVE READINGS" divider
+   58  .. 107   Voltage card
+  108  .. 157   Current card
+  158  .. 207   Real Power card
+  208  .. 257   Power Factor card
+  258  .. 278   "ENERGY" divider
+  278  .. 306   Session row
+  307  .. 335   Month row
+  336  .. 364   Year row
+  370  .. 396   Reset button
+  ══════════════════════════════════════════════════════════════════ }
+
+{ Grey divider bar with a small bold caption. Returns the panel (not used by callers). }
+function TFormSmartConfig.MakeDivider(ATop: Integer; const AText: string): TPanel;
+var
+  Pnl : TPanel;
+  Lbl : TLabel;
+begin
+  Pnl              := TPanel.Create(Self);
+  Pnl.Parent       := FPnlPower;
+  Pnl.SetBounds(0, ATop, FPnlPower.Width, 20);
+  Pnl.BevelOuter  := bvNone;
+  Pnl.Color       := CLR_DIVIDER;
+  Pnl.Caption     := '';
+
+  Lbl              := TLabel.Create(Self);
+  Lbl.Parent       := Pnl;
+  Lbl.SetBounds(10, 3, 190, 14);
+  Lbl.Caption      := AText;
+  Lbl.Font.Size    := 7;
+  Lbl.Font.Style   := [fsBold];
+  Lbl.Font.Color   := CLR_CAPTION;
+
+  Result := Pnl;
+end;
+
+{ White card (49 px tall) with a small caption and a large value label.
+  Returns the value label so the caller can store and update it. }
+function TFormSmartConfig.MakeCard(ATop: Integer; const ACaption: string): TLabel;
+var
+  Pnl    : TPanel;
+  LblCap : TLabel;
+  LblVal : TLabel;
+begin
+  Pnl             := TPanel.Create(Self);
+  Pnl.Parent      := FPnlPower;
+  Pnl.SetBounds(0, ATop, FPnlPower.Width, 49);
+  Pnl.BevelOuter  := bvNone;
+  Pnl.BevelInner  := bvLowered;
+  Pnl.BevelKind   := bkFlat;
+  Pnl.Color       := clWhite;
+  Pnl.Caption     := '';
+
+  LblCap           := TLabel.Create(Self);
+  LblCap.Parent    := Pnl;
+  LblCap.SetBounds(10, 5, 190, 12);
+  LblCap.Caption   := UpperCase(ACaption);
+  LblCap.Font.Size := 7;
+  LblCap.Font.Color := CLR_CAPTION;
+
+  LblVal            := TLabel.Create(Self);
+  LblVal.Parent     := Pnl;
+  LblVal.SetBounds(10, 18, 190, 26);
+  LblVal.Caption    := '--';
+  LblVal.Font.Size  := 15;
+  LblVal.Font.Style := [fsBold];
+  LblVal.Font.Color := CLR_VALUE;
+
+  Result := LblVal;
+end;
+
+{ Compact 28 px row: caption on the left, right-aligned value on the right.
+  Returns the value label. }
+function TFormSmartConfig.MakeRow(ATop: Integer; const ACaption: string): TLabel;
+var
+  Pnl    : TPanel;
+  LblCap : TLabel;
+  LblVal : TLabel;
+begin
+  Pnl             := TPanel.Create(Self);
+  Pnl.Parent      := FPnlPower;
+  Pnl.SetBounds(0, ATop, FPnlPower.Width, 28);
+  Pnl.BevelOuter  := bvNone;
+  Pnl.BevelInner  := bvLowered;
+  Pnl.BevelKind   := bkFlat;
+  Pnl.Color       := clWhite;
+  Pnl.Caption     := '';
+
+  LblCap            := TLabel.Create(Self);
+  LblCap.Parent     := Pnl;
+  LblCap.SetBounds(10, 6, 100, 15);
+  LblCap.Caption    := ACaption;
+  LblCap.Font.Size  := 9;
+  LblCap.Font.Color := CLR_CAPTION;
+
+  LblVal            := TLabel.Create(Self);
+  LblVal.Parent     := Pnl;
+  LblVal.AutoSize   := False;
+  LblVal.SetBounds(0, 6, FPnlPower.Width - 10, 15);
+  LblVal.Alignment  := taRightJustify;
+  LblVal.Caption    := '--';
+  LblVal.Font.Size  := 9;
+  LblVal.Font.Style := [fsBold];
+  LblVal.Font.Color := CLR_VALUE;
+
+  Result := LblVal;
+end;
+
+procedure TFormSmartConfig.BuildPowerPanel;
+var
+  PnlHdr : TPanel;
+  LblHdr : TLabel;
+begin
+  { ── Dark navy header ── }
+  PnlHdr            := TPanel.Create(Self);
+  PnlHdr.Parent     := FPnlPower;
+  PnlHdr.SetBounds(0, 0, FPnlPower.Width, 38);
+  PnlHdr.BevelOuter := bvNone;
+  PnlHdr.Color      := CLR_NAVY;
+  PnlHdr.Caption    := '';
+
+  LblHdr             := TLabel.Create(Self);
+  LblHdr.Parent      := PnlHdr;
+  LblHdr.Align       := alClient;
+  LblHdr.Caption     := 'CT Power Monitor';
+  LblHdr.Alignment   := taCenter;
+  LblHdr.Layout      := tlCenter;
+  LblHdr.Font.Color  := clWhite;
+  LblHdr.Font.Size   := 10;
+  LblHdr.Font.Style  := [fsBold];
+
+  { ── Live readings section ── }
+  MakeDivider(38, 'LIVE READINGS');
+
+  FLblVoltVal := MakeCard(58,  'Voltage');
+  FLblCurrVal := MakeCard(108, 'Current');
+  FLblPowVal  := MakeCard(158, 'Real Power');
+  FLblPFVal   := MakeCard(208, 'Power Factor');
+
+  { Real Power always shows in orange }
+  FLblPowVal.Font.Color := CLR_ACCENT;
+
+  { ── Energy section ── }
+  MakeDivider(258, 'ENERGY');
+
+  FLblWhVal  := MakeRow(278, 'Session');
+  FLblMtdVal := MakeRow(307, 'This Month');
+  FLblYtdVal := MakeRow(336, 'This Year');
+
+  { ── Reset button ── }
+  FBtnReset            := TButton.Create(Self);
+  FBtnReset.Parent     := FPnlPower;
+  FBtnReset.SetBounds(10, 370, FPnlPower.Width - 20, 26);
+  FBtnReset.Caption    := 'Reset Energy Counters';
+  FBtnReset.Font.Size  := 8;
+  FBtnReset.Font.Color := $00660000;
+  FBtnReset.Enabled    := False;
+  FBtnReset.OnClick    := BtnResetClick;
+
+  { ── "Feature not enabled" overlay (hidden by default) ── }
+  FLblPwrNA           := TLabel.Create(Self);
+  FLblPwrNA.Parent    := FPnlPower;
+  FLblPwrNA.SetBounds(10, 90, FPnlPower.Width - 20, 80);
+  FLblPwrNA.AutoSize  := False;
+  FLblPwrNA.WordWrap  := True;
+  FLblPwrNA.Alignment := taCenter;
+  FLblPwrNA.Caption   := 'CT sensor not enabled on this board firmware';
+  FLblPwrNA.Font.Size := 9;
+  FLblPwrNA.Font.Color := CLR_CAPTION;
+  FLblPwrNA.Visible   := False;
+end;
+
+{ ══════════════════════════════════════════════════════════════════
+  Update power panel from parsed JSON
+  ══════════════════════════════════════════════════════════════════ }
+
+procedure TFormSmartConfig.UpdatePowerPanel(PwrObj: TJSONObject;
+  EmonEnabled: Boolean);
+
+  function GetF(const Key: string): Double;
+  var JV: TJSONValue;
+  begin
+    Result := 0;
+    if PwrObj = nil then Exit;
+    JV := PwrObj.GetValue(Key);
+    if JV <> nil then Result := StrToFloatDef(JV.Value, 0);
+  end;
+
+  function FmtWh(Wh: Double): string;
+  begin
+    if Wh >= 1000 then
+      Result := Format('%.2f kWh', [Wh / 1000])
+    else
+      Result := Format('%.1f Wh', [Wh]);
+  end;
+
+var
+  PF: Double;
+begin
+  FLblPwrNA.Visible := not EmonEnabled;
+
+  if not EmonEnabled or (PwrObj = nil) then
+  begin
+    FLblVoltVal.Caption := '--';
+    FLblCurrVal.Caption := '--';
+    FLblPowVal.Caption  := '--';
+    FLblPFVal.Caption   := '--';
+    FLblWhVal.Caption   := '--';
+    FLblMtdVal.Caption  := '--';
+    FLblYtdVal.Caption  := '--';
+    FBtnReset.Enabled   := False;
+    Exit;
+  end;
+
+  FLblVoltVal.Caption := Format('%.1f V',  [GetF('voltage')]);
+  FLblCurrVal.Caption := Format('%.2f A',  [GetF('current')]);
+  FLblPowVal.Caption  := Format('%.0f W',  [GetF('realPower')]);
+  FLblWhVal.Caption   := FmtWh(GetF('wh'));
+  FLblMtdVal.Caption  := FmtWh(GetF('mtdWh'));
+  FLblYtdVal.Caption  := FmtWh(GetF('ytdWh'));
+
+  PF := GetF('powerFactor');
+  FLblPFVal.Caption   := Format('%.2f', [PF]);
+
+  { Power Factor colour: green >= 0.9, orange >= 0.7, red < 0.7 }
+  if      PF >= 0.9 then FLblPFVal.Font.Color := CLR_GREEN
+  else if PF >= 0.7 then FLblPFVal.Font.Color := CLR_ACCENT
+  else                   FLblPFVal.Font.Color := CLR_RED;
+
+  FBtnReset.Enabled := True;
+end;
+
+{ ══════════════════════════════════════════════════════════════════
+  Relay rows
+  ══════════════════════════════════════════════════════════════════ }
+
+procedure TFormSmartConfig.ClearRelayRows;
+begin
+  FRelayRows.Clear;
+  while FPnlRelays.ControlCount > 0 do
+    FPnlRelays.Controls[0].Free;
+end;
+
+procedure TFormSmartConfig.BuildRelayRows(RelayCount: Integer);
+const
+  ROW_H   = 56;
+  ROW_GAP = 6;
+var
+  ROW_W : Integer;
+  i     : Integer;
+  Row   : TRelayRow;
+  TopY  : Integer;
+begin
+  ROW_W := FPnlRelays.ClientWidth - 16;
+  if ROW_W < 300 then ROW_W := 300;
+
+  ClearRelayRows;
+
+  if RelayCount = 0 then
+  begin
+    with TLabel.Create(Self) do
+    begin
+      Parent     := FPnlRelays;
+      SetBounds(20, 28, 300, 20);
+      Caption    := 'Board returned no relays.';
+      Font.Color := $00888888;
+      Font.Size  := 11;
+    end;
+    Exit;
+  end;
+
+  TopY := 10;
+  for i := 0 to RelayCount - 1 do
+  begin
+    Row       := TRelayRow.Create;
+    Row.Index := i;
+    FRelayRows.Add(Row);
+
+    Row.PnlRow            := TPanel.Create(Self);
+    Row.PnlRow.Parent     := FPnlRelays;
+    Row.PnlRow.SetBounds(8, TopY, ROW_W, ROW_H);
+    Row.PnlRow.BevelOuter := bvNone;
+    Row.PnlRow.BevelInner := bvRaised;
+    Row.PnlRow.BevelWidth := 1;
+    Row.PnlRow.Color      := clWhite;
+    Row.PnlRow.Caption    := '';
+
+    Row.ShpLed             := TShape.Create(Self);
+    Row.ShpLed.Parent      := Row.PnlRow;
+    Row.ShpLed.SetBounds(14, 16, 24, 24);
+    Row.ShpLed.Shape       := stCircle;
+    Row.ShpLed.Brush.Color := $00CCCCCC;
+    Row.ShpLed.Pen.Color   := $00999999;
+
+    Row.LblNum            := TLabel.Create(Self);
+    Row.LblNum.Parent     := Row.PnlRow;
+    Row.LblNum.SetBounds(50, 8, 160, 20);
+    Row.LblNum.Caption    := 'Relay ' + IntToStr(i);
+    Row.LblNum.Font.Size  := 12;
+    Row.LblNum.Font.Style := [fsBold];
+
+    Row.LblState             := TLabel.Create(Self);
+    Row.LblState.Parent      := Row.PnlRow;
+    Row.LblState.SetBounds(50, 31, 120, 15);
+    Row.LblState.Caption     := '---';
+    Row.LblState.Font.Size   := 9;
+    Row.LblState.Font.Color  := $00888888;
+
+    Row.BtnOn              := TButton.Create(Self);
+    Row.BtnOn.Parent       := Row.PnlRow;
+    Row.BtnOn.SetBounds(ROW_W - 196, 12, 86, 30);
+    Row.BtnOn.Caption      := 'Turn ON';
+    Row.BtnOn.Tag          := i;
+    Row.BtnOn.OnClick      := BtnOnClick;
+    Row.BtnOn.Font.Color   := CLR_GREEN;
+
+    Row.BtnOff             := TButton.Create(Self);
+    Row.BtnOff.Parent      := Row.PnlRow;
+    Row.BtnOff.SetBounds(ROW_W - 100, 12, 86, 30);
+    Row.BtnOff.Caption     := 'Turn OFF';
+    Row.BtnOff.Tag         := i;
+    Row.BtnOff.OnClick     := BtnOffClick;
+    Row.BtnOff.Font.Color  := $00770000;
+
+    Inc(TopY, ROW_H + ROW_GAP);
+  end;
+end;
+
+procedure TFormSmartConfig.ApplyRelayState(Row: TRelayRow; const State: string);
+begin
+  Row.LblState.Caption := State;
+  if SameText(State, 'ON') then
+  begin
+    Row.ShpLed.Brush.Color  := $0000BB00;
+    Row.ShpLed.Pen.Color    := $00007700;
+    Row.LblState.Font.Color := CLR_GREEN;
+    Row.BtnOn.Enabled  := False;
+    Row.BtnOff.Enabled := True;
+  end
+  else if SameText(State, 'OFF') then
+  begin
+    Row.ShpLed.Brush.Color  := $00CC4444;
+    Row.ShpLed.Pen.Color    := $00882222;
+    Row.LblState.Font.Color := $00880000;
+    Row.BtnOn.Enabled  := True;
+    Row.BtnOff.Enabled := False;
+  end
+  else
+  begin
+    Row.ShpLed.Brush.Color  := $00CCCCCC;
+    Row.ShpLed.Pen.Color    := $00999999;
+    Row.LblState.Font.Color := $00888888;
+    Row.BtnOn.Enabled  := True;
+    Row.BtnOff.Enabled := True;
+  end;
+end;
+
+{ ══════════════════════════════════════════════════════════════════
+  GET /api/live
+  ══════════════════════════════════════════════════════════════════ }
+
+procedure TFormSmartConfig.FetchAndUpdate;
+var
+  Root        : TJSONObject;
+  RelaysArr   : TJSONArray;
+  RelayObj    : TJSONObject;
+  JVal        : TJSONValue;
+  FeatObj     : TJSONObject;
+  PwrObj      : TJSONObject;
+  i           : Integer;
+  Location    : string;
+  BoardTime   : string;
+  StateStr    : string;
+  EmonEnabled : Boolean;
+begin
+  if FBusy then Exit;
+  FBusy := True;
+  try
+    ConfigureREST;
+    FRequest.Method   := rmGET;
+    FRequest.Resource := 'api/live';
+    FRequest.Params.Clear;
+    try
+      FRequest.Execute;
+    except
+      on E: Exception do
+      begin
+        SetStatus('Connection failed: ' + E.Message, True);
+        Exit;
+      end;
+    end;
+
+    if FResponse.StatusCode <> 200 then
+    begin
+      SetStatus(Format('HTTP %d -- check IP / credentials',
+                       [FResponse.StatusCode]), True);
+      Exit;
+    end;
+
+    Root := FResponse.JSONValue as TJSONObject;
+    if Root = nil then
+    begin
+      SetStatus('Could not parse board response', True);
+      Exit;
+    end;
+
+    { Relays }
+    JVal := Root.GetValue('relays');
+    if JVal is TJSONArray then
+    begin
+      RelaysArr := TJSONArray(JVal);
+      if RelaysArr.Count <> FRelayRows.Count then
+      begin
+        FLblNoConn.Visible := False;
+        BuildRelayRows(RelaysArr.Count);
+      end;
+      for i := 0 to RelaysArr.Count - 1 do
+      begin
+        RelayObj := RelaysArr.Items[i] as TJSONObject;
+        StateStr := '';
+        JVal := RelayObj.GetValue('state');
+        if JVal <> nil then StateStr := JVal.Value;
+        if i < FRelayRows.Count then
+          ApplyRelayState(FRelayRows[i], StateStr);
+      end;
+    end;
+
+    { Feature flags }
+    EmonEnabled := False;
+    JVal := Root.GetValue('features');
+    if JVal is TJSONObject then
+    begin
+      FeatObj := TJSONObject(JVal);
+      JVal := FeatObj.GetValue('emonlib');
+      if JVal <> nil then
+        EmonEnabled := SameText(JVal.Value, 'true');
+    end;
+
+    { Power }
+    PwrObj := nil;
+    JVal := Root.GetValue('power');
+    if JVal is TJSONObject then
+      PwrObj := TJSONObject(JVal);
+    UpdatePowerPanel(PwrObj, EmonEnabled);
+
+    { Status bar }
+    Location  := '';
+    BoardTime := '';
+    JVal := Root.GetValue('system');
+    if JVal is TJSONObject then
+    begin
+      JVal := TJSONObject(JVal).GetValue('location');
+      if JVal <> nil then Location := JVal.Value;
+      JVal := (Root.GetValue('system') as TJSONObject).GetValue('time');
+      if JVal <> nil then BoardTime := JVal.Value;
+    end;
+    SetStatus(Format('%d relay(s)   %s   Board: %s',
+                     [FRelayRows.Count, Location, BoardTime]));
+  finally
+    FBusy := False;
+  end;
+end;
+
+{ ══════════════════════════════════════════════════════════════════
+  POST /api/relay
+  ══════════════════════════════════════════════════════════════════ }
+
+procedure TFormSmartConfig.SendRelayCommand(RelayIndex: Integer;
+  const NewState: string);
+begin
+  if FBusy then Exit;
+  FBusy := True;
+  try
+    ConfigureREST;
+    FRequest.Method   := rmPOST;
+    FRequest.Resource := 'api/relay';
+    FRequest.Params.Clear;
+    FRequest.AddBody(
+      Format('{"relay":%d,"state":"%s"}', [RelayIndex, NewState]),
+      ctAPPLICATION_JSON);
+    try
+      FRequest.Execute;
+    except
+      on E: Exception do
+      begin
+        SetStatus('Command error: ' + E.Message, True);
+        Exit;
+      end;
+    end;
+    if FResponse.StatusCode = 200 then
+      SetStatus(Format('Relay %d -> %s  OK', [RelayIndex, NewState]))
+    else
+      SetStatus(Format('Relay command failed (HTTP %d)',
+                       [FResponse.StatusCode]), True);
+  finally
+    FBusy := False;
+  end;
+  FetchAndUpdate;
+end;
+
+{ ══════════════════════════════════════════════════════════════════
+  POST /ResetAccumulatedPower.json
+  ══════════════════════════════════════════════════════════════════ }
+
+procedure TFormSmartConfig.BtnResetClick(Sender: TObject);
+begin
+  if MessageDlg('Reset Session, Month and Year energy counters to zero?',
+                mtConfirmation, [mbYes, mbNo], 0) <> mrYes then Exit;
+  if FBusy then Exit;
+  FBusy := True;
+  try
+    ConfigureREST;
+    FRequest.Method   := rmPOST;
+    FRequest.Resource := 'ResetAccumulatedPower.json';
+    FRequest.Params.Clear;
+    FRequest.AddBody('{}', ctAPPLICATION_JSON);
+    try
+      FRequest.Execute;
+    except
+      on E: Exception do
+      begin
+        SetStatus('Reset error: ' + E.Message, True);
+        Exit;
+      end;
+    end;
+    if FResponse.StatusCode = 200 then
+      SetStatus('Energy counters reset to zero')
+    else
+      SetStatus(Format('Reset failed (HTTP %d)', [FResponse.StatusCode]), True);
+  finally
+    FBusy := False;
+  end;
+  FetchAndUpdate;
+end;
+
+{ ══════════════════════════════════════════════════════════════════
+  Event handlers
+  ══════════════════════════════════════════════════════════════════ }
+
+procedure TFormSmartConfig.BtnConnectClick(Sender: TObject);
+begin
+  if Trim(FEdtIP.Text) = '' then
+  begin
+    ShowMessage('Please enter the board''s IP address first.');
+    FEdtIP.SetFocus;
+    Exit;
+  end;
+  SetStatus('Connecting...');
+  FetchAndUpdate;
+end;
+
+procedure TFormSmartConfig.ChkAutoClick(Sender: TObject);
+begin
+  FTimer.Enabled := FChkAuto.Checked;
+  if FChkAuto.Checked then
+    SetStatus(Format('Auto-refresh every %d ms', [POLL_INTERVAL]));
+end;
+
+procedure TFormSmartConfig.BtnOnClick(Sender: TObject);
+begin
+  SendRelayCommand((Sender as TButton).Tag, 'ON');
+end;
+
+procedure TFormSmartConfig.BtnOffClick(Sender: TObject);
+begin
+  SendRelayCommand((Sender as TButton).Tag, 'OFF');
+end;
+
+procedure TFormSmartConfig.TimerTick(Sender: TObject);
+begin
+  FetchAndUpdate;
+end;
+
+end.

@@ -1,556 +1,166 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Untitled Page</title>
-<meta name="generator" content="WYSIWYG Web Builder 17 - http://www.wysiwygwebbuilder.com">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADS11x5 ADC Configuration</title>
 <style>
-body
-{
-   background-color: #FFFFFF;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-size: 13px;
-   line-height: 1.1875;
-   margin: 0;
-   padding: 0;
-}
-a
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-a:visited
-{
-   color: #800080;
-}
-a:active
-{
-   color: #FF0000;
-}
-a:hover
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-input:focus, textarea:focus, select:focus
-{
-   outline: none;
-}
-#wb_Form2
-{
-   background-color: #808080;
-   background-image: none;
-   border: 1px solid #4F4F4F;
-   border-radius: 0px;
-}
-#wb_Text30 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: center;
-}
-#wb_Text30 div
-{
-   text-align: center;
-}
-#wb_Text24 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #DCDCDC;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text24 div
-{
-   text-align: left;
-}
-#wb_Form1
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #CCCCCC;
-   border-radius: 0px;
-}
-#wb_Text64 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text64 div
-{
-   text-align: right;
-}
-#wb_Text61 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text61 div
-{
-   text-align: left;
-}
-#wb_Text65 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text65 div
-{
-   text-align: right;
-}
-#edt_Res2
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#edt_Res2:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Button2
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#btnSave
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text2 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text2 div
-{
-   text-align: left;
-}
-#wb_Text5 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text5 div
-{
-   text-align: left;
-}
-#wb_Text4 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text4 div
-{
-   text-align: right;
-}
-#edt_Multiplier
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#edt_Multiplier:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text6 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text6 div
-{
-   text-align: left;
-}
-#edt_Res1
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#edt_Res1:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text1 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text1 div
-{
-   text-align: right;
-}
-#Editbox3
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox3:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox4
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox4:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text3 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text3 div
-{
-   text-align: right;
-}
-#Editbox5
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox5:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text7 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text7 div
-{
-   text-align: right;
-}
-#Button1
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 1px 6px 1px 6px;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
+:root{--page:#edf1f5;--ink:#152033;--muted:#687589;--panel:#fff;--panel-2:#f8fafc;--line:#d9e1ea;--field:#fdfefe;--teal:#0f766e;--teal-dark:#0a5f59;--blue:#2563eb;--amber:#b7791f;--rose:#be123c;--green:#15803d;--slate:#475569;--shadow-sm:0 2px 8px rgba(21,32,51,.06);--shadow:0 18px 45px rgba(21,32,51,.12)}
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.42;background:linear-gradient(180deg,#dfe9f3 0,#edf1f5 320px),var(--page)}
+.shell{width:min(860px,calc(100vw - 32px));margin:0 auto;padding:24px 0 36px}
+.topbar{position:relative;overflow:hidden;color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:24px 26px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:linear-gradient(135deg,#152033,#103f49,#0f766e);box-shadow:var(--shadow)}
+.topbar h1{margin:0;font-size:28px;font-weight:700}
+.topbar .hint{margin-top:7px;color:#cfe0ea}
+.topbar .meta{min-width:180px;color:#e6eef5;font-size:13px;text-align:right;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);padding:18px;margin-top:16px}
+.card h2{position:relative;display:flex;align-items:center;gap:10px;margin:-2px 0 16px;padding-bottom:12px;color:var(--ink);border-bottom:1px solid var(--line);font-size:18px;font-weight:700}
+.card h2::before{content:"";width:10px;height:28px;border-radius:6px;background:var(--teal);flex:0 0 auto}
+.card h2 .help-toggle{margin-left:auto;min-height:30px;padding:5px 10px;border:1px solid #b8c7d7;border-radius:6px;color:var(--teal);background:#f8fafc;font-size:12px;font-weight:700;line-height:1;box-shadow:none}
+.card h2 .help-toggle:hover{color:#fff;background:var(--teal);border-color:var(--teal);transform:none;box-shadow:none}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.inline-field{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
+.inline-field input{min-width:0}
+label{color:var(--muted);font-size:12px;font-weight:700}
+input[type="text"],input[type="number"]{min-height:38px;border:1px solid #bac7d5;border-radius:8px;background:var(--field);color:var(--ink);padding:8px 10px;font:inherit;transition:border-color 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+input:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.16)}
+input:disabled{color:#64748b;background:#eef2f6;cursor:not-allowed}
+.help-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.help-box{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:13px 14px}
+.help-box.full{grid-column:1/-1}
+.help-box h3{margin:0 0 8px;color:var(--ink);font-size:15px}
+.help-box p{margin:0;color:#334155}
+.help-box p+p{margin-top:8px}
+.help-box ul{margin:0;padding-left:18px;color:#334155}
+.help-box li+li{margin-top:5px}
+code{padding:1px 4px;border-radius:4px;background:#eef4fa;color:#0f172a}
+.hint{color:var(--muted);font-size:12px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+button,input[type="submit"],input[type="button"]{min-height:38px;border:1px solid transparent;border-radius:8px;background:var(--teal);color:#fff;padding:8px 15px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;box-shadow:0 5px 14px rgba(15,118,110,.22);transition:transform 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+button:hover,input[type="submit"]:hover,input[type="button"]:hover{background:var(--teal-dark);box-shadow:0 7px 18px rgba(15,118,110,.28);transform:translateY(-1px)}
+.secondary{background:var(--slate)!important;box-shadow:0 5px 14px rgba(71,85,105,.18)!important}
+.live-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.live-box{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:14px;text-align:center}
+.live-box.scaled{border-color:#a7f3d0;background:#f0fdf4}
+.live-label{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.live-value{font-size:28px;font-weight:700;color:var(--teal);line-height:1}
+.live-unit{color:var(--muted);font-size:12px;margin-top:4px}
+.live-status{margin-top:10px;font-size:12px;color:var(--muted);text-align:right}
+.live-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:12px 0 8px}
+.hidden{display:none}
+@media(max-width:640px){.form-grid,.help-grid{grid-template-columns:1fr}.help-box.full{grid-column:auto}.topbar{grid-template-columns:1fr}.topbar .meta{min-width:0;text-align:left}.inline-field{grid-template-columns:1fr}.live-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:380px){.live-grid{grid-template-columns:1fr}}
 </style>
-    
 </head>
 <body>
+<main class="shell">
+  <header class="topbar">
+    <div>
+      <h1>ADS11x5 ADC Configuration</h1>
+      <div class="hint">Analog to Digital Conversion &mdash; voltage divider and relay mapping.</div>
+    </div>
+    <div class="meta"><div>System time: %systemtime%</div>      <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
+</div>
+  </header>
 
-<div id="wb_Form2" style="position:absolute;left:15px;top:10px;width:464px;height:93px;z-index:22;">
-<form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
-<div id="wb_Text30" style="position:absolute;left:56px;top:51px;width:325px;height:15px;text-align:center;z-index:0;">
-<span style="color:#DCDCDC;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
-<div id="wb_Text24" style="position:absolute;left:75px;top:14px;width:367px;height:27px;z-index:1;">
-<span style="color:#F5F5F5;font-family:Arial;font-size:24px;">ADS 11x5 ADC Configuration</span></div>
-</form>
-</div>
-<div id="wb_Form1" style="position:absolute;left:15px;top:105px;width:466px;height:587px;z-index:23;">
-<form name="Form1" method="get" action="ADS11x5ConfigSave.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
-<div id="wb_Text64" style="position:absolute;left:38px;top:88px;width:192px;height:15px;text-align:right;z-index:2;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Resistor 1 Divider Value</span></div>
-<div id="wb_Text61" style="position:absolute;left:38px;top:15px;width:391px;height:21px;z-index:3;">
-<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Analog to Digital Conversion </strong></span></div>
-<div id="wb_Text65" style="position:absolute;left:26px;top:122px;width:205px;height:15px;text-align:right;z-index:4;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Resistor 2 Divider Value</span></div>
-<input type="number" id="edt_Res2" style="position:absolute;left:252px;top:115px;width:91px;height:18px;z-index:5;" name="Res2" value="%Res2%" spellcheck="false">
-<input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:26px;top:544px;width:90px;height:25px;z-index:6;">
-<input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:353px;top:544px;width:79px;height:25px;z-index:7;">
-<div id="wb_Text2" style="position:absolute;left:361px;top:122px;width:43px;height:15px;z-index:8;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">ohms</span></div>
-<div id="wb_Text5" style="position:absolute;left:17px;top:278px;width:433px;height:30px;z-index:9;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Resistance divider calculations. Check actual resistors values on the board and enter above.</span></div>
-<div id="wb_Text4" style="position:absolute;left:47px;top:152px;width:178px;height:30px;text-align:right;z-index:10;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Divider multipliyer value R2/(R1+R2)</span></div>
-<input type="text" id="edt_Multiplier" style="position:absolute;left:252px;top:153px;width:91px;height:18px;z-index:11;" name="ResMultiplier" value="%ResMultiplier%" spellcheck="false">
-<div id="wb_Text6" style="position:absolute;left:361px;top:88px;width:43px;height:15px;z-index:12;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">ohms</span></div>
-<input type="text" id="edt_Res1" style="position:absolute;left:253px;top:82px;width:89px;height:16px;z-index:13;" name="Res1" value="%Res1%" spellcheck="false">
-<div id="wb_Text1" style="position:absolute;left:40px;top:57px;width:192px;height:15px;text-align:right;z-index:14;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">ADS Number</span></div>
-<input type="text" id="Editbox3" style="position:absolute;left:253px;top:51px;width:89px;height:16px;z-index:15;" name="ADSNB" value="%ADSNB%" spellcheck="false">
-<div id="wb_Text3" style="position:absolute;left:27px;top:198px;width:205px;height:15px;text-align:right;z-index:16;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Relay 1</span></div>
-<input type="text" id="Editbox4" style="position:absolute;left:251px;top:191px;width:91px;height:18px;z-index:17;" name="TRelay1" value="%TRelay1%" spellcheck="false">
-<div id="wb_Text7" style="position:absolute;left:25px;top:231px;width:205px;height:15px;text-align:right;z-index:18;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Relay 2</span></div>
-<input type="text" id="Editbox5" style="position:absolute;left:251px;top:224px;width:91px;height:18px;z-index:19;" name="TRelay2" value="%TRelay2%" spellcheck="false">
-<input type="button" id="Button1" onclick="calcMultiplier(this);return false;" name="Calc" value="Calc" style="position:absolute;left:361px;top:155px;width:53px;height:24px;z-index:20;">
-</form>
-</div>
+  <section class="card" id="LiveCard">
+    <h2>Live Readings</h2>
+    <div class="live-section-label">Voltage channels &mdash; AIN2 &amp; AIN3 (raw / scaled)</div>
+    <div class="live-grid">
+      <div class="live-box"><div class="live-label">AIN2 Raw</div><div class="live-value" id="lv-v2">&mdash;</div><div class="live-unit">V</div></div>
+      <div class="live-box scaled"><div class="live-label">AIN2 Scaled</div><div class="live-value" id="lv-sv2">&mdash;</div><div class="live-unit">V (&times; multiplier)</div></div>
+      <div class="live-box"><div class="live-label">AIN3 Raw</div><div class="live-value" id="lv-v3">&mdash;</div><div class="live-unit">V</div></div>
+      <div class="live-box scaled"><div class="live-label">AIN3 Scaled</div><div class="live-value" id="lv-sv3">&mdash;</div><div class="live-unit">V (&times; multiplier)</div></div>
+      <div class="live-box"><div class="live-label">RMS Current (AIN0&minus;AIN1)</div><div class="live-value" id="lv-rms">&mdash;</div><div class="live-unit">A</div></div>
+      <div class="live-box"><div class="live-label">DC Current (AIN0&minus;AIN1)</div><div class="live-value" id="lv-dc">&mdash;</div><div class="live-unit">A</div></div>
+    </div>
+    <div class="live-status" id="lv-status">Connecting&hellip;</div>
+  </section>
+
+  <form method="get" action="ADS11x5ConfigSave.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
+    <section class="card">
+      <h2>ADC Settings <button type="button" class="help-toggle" id="HelpToggle" onclick="toggleHelp()">Show Help</button></h2>
+      <div class="form-grid">
+        <div class="field"><label for="ADSNB">ADS Number</label><input type="text" id="ADSNB" name="ADSNB" value="%ADSNB%" disabled></div>
+        <div class="field"><label for="edt_Res1">Resistor 1 Divider Value (ohms)</label><input type="text" id="edt_Res1" name="Res1" value="%Res1%"></div>
+        <div class="field"><label for="edt_Res2">Resistor 2 Divider Value (ohms)</label><input type="number" id="edt_Res2" name="Res2" value="%Res2%"></div>
+        <div class="field">
+          <label for="edt_Multiplier">Divider Multiplier R2/(R1+R2)</label>
+          <div class="inline-field">
+            <input type="text" id="edt_Multiplier" name="ResMultiplier" value="%ResMultiplier%">
+            <input type="button" onclick="calcMultiplier();return false;" name="Calc" value="Calc">
+          </div>
+        </div>
+        <div class="field full"><div class="hint">Resistance divider calculations. Check actual resistor values on the board and enter above.</div></div>
+        <div class="field"><label for="Editbox4">Relay 1</label><input type="text" id="Editbox4" name="TRelay1" value="%TRelay1%" disabled></div>
+        <div class="field"><label for="Editbox5">Relay 2</label><input type="text" id="Editbox5" name="TRelay2" value="%TRelay2%" disabled></div>
+      </div>
+      <div class="actions">
+        <input type="submit" name="TimerSave" value="Save">
+        <input type="button" class="secondary" onclick="window.location.href='/';return false;" value="Cancel">
+      </div>
+    </section>
+  </form>
+
+  <section class="card hidden" id="HelpSummary">
+    <h2>Help</h2>
+    <div class="help-grid">
+      <div class="help-box full"><h3>What This Page Is For</h3><p>This page configures the external ADS11x5 analog-to-digital converter used for more accurate analog voltage readings than the built-in ADC.</p></div>
+      <div class="help-box"><h3>What It Measures</h3><p>The ADS11x5 measures analog voltage on channels <strong>AIN2</strong> and <strong>AIN3</strong>, scaled using the <strong>Divider Multiplier</strong>.</p></div>
+      <div class="help-box"><h3>Common Uses</h3><ul><li>Battery voltage</li><li>Solar panel voltage</li><li>DC supply voltage</li><li>Analog voltage reduced by a resistor divider</li></ul></div>
+      <div class="help-box full"><h3>How The Voltage Divider Works</h3><p>Two resistors reduce the voltage before it reaches the ADS input. The firmware uses the multiplier to estimate the original voltage. For example, a real <code>24V</code> input may be reduced to <code>0.76V</code> at the ADS input, then scaled back to approximately <code>24V</code>.</p></div>
+      <div class="help-box"><h3>Important Settings</h3><ul><li><strong>Resistor 1:</strong> upper resistor in the divider.</li><li><strong>Resistor 2:</strong> lower resistor in the divider.</li><li><strong>Divider Multiplier:</strong> scales the ADS reading back to the original voltage.</li><li><strong>Calc:</strong> calculates the multiplier from the resistor values.</li></ul></div>
+      <div class="help-box"><h3>Disabled Fields</h3><ul><li><strong>ADS Number:</strong> saved in config but not currently used to select an ADS module.</li><li><strong>Relay 1 / Relay 2:</strong> saved in config but not currently used for relay control.</li></ul></div>
+      <div class="help-box full"><h3>Where The Reading Goes</h3><p>When power monitoring is enabled, the scaled ADS readings are inserted into the power JSON payload as <code>Volts2</code> and <code>Volts3</code>.</p></div>
+    </div>
+  </section>
+</main>
 <script>
-function submitForm1()
-{
-   var regexp;
-   var edt_Res2 = document.getElementById('edt_Res2');
-   if (!(edt_Res2.disabled || edt_Res2.style.display === 'none' || edt_Res2.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(edt_Res2.value))
-      {
-         alert("Calibration factor");
-         edt_Res2.focus();
-         return false;
-      }
-      if (edt_Res2.value == "")
-      {
-         alert("Calibration factor");
-         edt_Res2.focus();
-         return false;
-      }
-      if (edt_Res2.value != "" && !(edt_Res2.value > 5 && edt_Res2.value <= 1000000))
-      {
-         alert("Calibration factor");
-         edt_Res2.focus();
-         return false;
-      }
-   }
-   var edt_Multiplier = document.getElementById('edt_Multiplier');
-   if (!(edt_Multiplier.disabled || edt_Multiplier.style.display === 'none' || edt_Multiplier.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(edt_Multiplier.value))
-      {
-         alert("Calibration factor");
-         edt_Multiplier.focus();
-         return false;
-      }
-      if (edt_Multiplier.value == "")
-      {
-         alert("Calibration factor");
-         edt_Multiplier.focus();
-         return false;
-      }
-      if (edt_Multiplier.value != "" && !(edt_Multiplier.value > 5 && edt_Multiplier.value <= 5000))
-      {
-         alert("Calibration factor");
-         edt_Multiplier.focus();
-         return false;
-      }
-   }
-   var Editbox4 = document.getElementById('Editbox4');
-   if (!(Editbox4.disabled || Editbox4.style.display === 'none' || Editbox4.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox4.value))
-      {
-         alert("Calibration factor");
-         Editbox4.focus();
-         return false;
-      }
-      if (Editbox4.value == "")
-      {
-         alert("Calibration factor");
-         Editbox4.focus();
-         return false;
-      }
-      if (Editbox4.value != "" && !(Editbox4.value >= 1 && Editbox4.value <= 2))
-      {
-         alert("Calibration factor");
-         Editbox4.focus();
-         return false;
-      }
-   }
-   var Editbox5 = document.getElementById('Editbox5');
-   if (!(Editbox5.disabled || Editbox5.style.display === 'none' || Editbox5.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox5.value))
-      {
-         alert("Calibration factor");
-         Editbox5.focus();
-         return false;
-      }
-      if (Editbox5.value == "")
-      {
-         alert("Calibration factor");
-         Editbox5.focus();
-         return false;
-      }
-      if (Editbox5.value != "" && !(Editbox5.value >= 1 && Editbox5.value <= 2))
-      {
-         alert("Calibration factor");
-         Editbox5.focus();
-         return false;
-      }
-   }
-   return true;
+function toggleHelp(){
+  var h=document.getElementById('HelpSummary'),b=document.getElementById('HelpToggle');
+  if(!h||!b)return;
+  b.textContent=h.classList.toggle('hidden')?'Show Help':'Hide Help';
+}
+(function(){
+  function poll(){
+    fetch('/api/ads').then(function(r){return r.json();}).then(function(d){
+      document.getElementById('lv-v2').textContent=d.v2.toFixed(4);
+      document.getElementById('lv-sv2').textContent=d.sv2!=null?d.sv2.toFixed(2):'—';
+      document.getElementById('lv-v3').textContent=d.v3.toFixed(4);
+      document.getElementById('lv-sv3').textContent=d.sv3.toFixed(4);
+      document.getElementById('lv-rms').textContent=d.rms.toFixed(4);
+      document.getElementById('lv-dc').textContent=d.dc.toFixed(4);
+      document.getElementById('lv-status').textContent='Updated '+new Date().toLocaleTimeString();
+    }).catch(function(){document.getElementById('lv-status').textContent='Connection error — retrying…';});
+  }
+  poll();setInterval(poll,1000);
+}());
+function submitForm1(){
+  var re=/^[-+]?\d*\.?\d*$/;
+  function chk(id,min,max,label){
+    var e=document.getElementById(id);
+    if(e.disabled||e.style.display==='none')return true;
+    if(!re.test(e.value)||e.value===""){alert("Invalid "+label+" value.");e.focus();return false;}
+    if(!(+e.value>min&&+e.value<=max)){alert(label+" must be between "+min+" and "+max+".");e.focus();return false;}
+    return true;
+  }
+  if(!chk('edt_Res2',5,1000000,'Resistor 2'))return false;
+  if(!chk('edt_Multiplier',5,5000,'Multiplier'))return false;
+  if(!chk('Editbox4',0,3,'Relay 1'))return false;
+  if(!chk('Editbox5',0,3,'Relay 2'))return false;
+  return true;
+}
+function calcMultiplier(){
+  var r1=Number(document.getElementById("edt_Res1").value);
+  var r2=Number(document.getElementById("edt_Res2").value);
+  document.getElementById("edt_Multiplier").value=((r2/(r1+r2))*1000).toFixed(6);
 }
 </script>
 <script>
-      function calcMultiplier(selectObject) {
-         var r1 = Number(document.getElementById("edt_Res1").value);
-         var r2 = Number(document.getElementById("edt_Res2").value);
-         document.getElementById("edt_Multiplier").value = (r2/(r1+r2))*1000; 
-      }
-    </script>
+(function(){function ph(){fetch('/api/heap').then(function(r){return r.json();}).then(function(d){var f=document.getElementById('hb-free'),m=document.getElementById('hb-min'),b=document.getElementById('hb-blk');if(f&&d.heap!=null)f.textContent=Number(d.heap).toLocaleString();if(m&&d.heapMin!=null)m.textContent=Number(d.heapMin).toLocaleString();if(b&&d.heapMaxBlk!=null)b.textContent=Number(d.heapMaxBlk).toLocaleString();}).catch(function(){});}ph();setInterval(ph,30000);}());
+</script>
 </body>
 </html>

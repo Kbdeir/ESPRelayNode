@@ -1,0 +1,21 @@
+{
+  "ACS_Active": 0,
+  "RELAYNB": 1,
+  "PUB_TOPIC1": "/home/ControllerC8F09EF7DED4/Coils/C1",
+  "STATE_PUB_TOPIC": "/home/ControllerC8F09EF7DED4/Coils/State/C1",
+  "ttl_PUB_TOPIC": "/home/ControllerC8F09EF7DED4/sts/VTTL1",
+  "CURR_TTL_PUB_TOPIC": "/home/ControllerC8F09EF7DED4/sts/CURRVTTL1",
+  "i_ttl_PUB_TOPIC": "/home/ControllerC8F09EF7DED4/i/TTL1",
+  "ACS_AMPS": "/home/ControllerC8F09EF7DED4/Coils/C1/Amps1",
+  "LWILL_TOPIC": "/home/ControllerC8F09EF7DED4/LWT1",
+  "SUB_TOPIC1": "/home/ControllerC8F09EF7DED4/#",
+  "TemperatureValue": "/home/ControllerC8F09EF7DED4/Temp",
+  "AlexaName": "null",
+  "ttl": "0",
+  "tta": "0",
+  "ACS_elasticity": "0",
+  "Max_Current": "10",
+  "ACSmultiple": "30",
+  "ACS_Sensor_Model": "30",
+  "Submit": "Save Relay 1"
+}
