@@ -15,7 +15,9 @@ class TickCounter
     unsigned long long getTicks()
     {
       unsigned long ticks = ESP.getCycleCount();
-      unsigned long delta = (ticks - _lastCpuTickCount) & 0x7FFFFFFF;
+      // Use 0xFFFFFFFF (32-bit) mask — 0x7FFFFFFF (31-bit) discarded the MSB,
+      // causing incorrect deltas whenever the MSB was set (~half of all wraps).
+      unsigned long delta = (ticks - _lastCpuTickCount) & 0xFFFFFFFF;
       _lastCpuTickCount = ticks;
       _tickCounter += delta;
       return _tickCounter;
@@ -26,9 +28,9 @@ class TickCounter
       #ifndef ESP32
       return getTicks() / (ESP8266_CLOCK / 1000);
       #else
-      return getTicks() / (40000000/1000); // (ESP8266_CLOCK / 1000);      ESP.getCpuFreqMHz() 
+      // Use the actual CPU frequency — hardcoded 40 MHz was wrong at 80/160/240 MHz.
+      return getTicks() / ((unsigned long long)ESP.getCpuFreqMHz() * 1000ULL);
       #endif
-
     }
 
     unsigned long getSeconds()
@@ -36,9 +38,8 @@ class TickCounter
       #ifndef ESP32
       return getTicks() / ESP8266_CLOCK;
       #else
-      return getTicks() / 40000000; //ESP.getCpuFreqMHz();
+      return getTicks() / ((unsigned long long)ESP.getCpuFreqMHz() * 1000000ULL);
       #endif
-
     }
 };
 

@@ -35,6 +35,7 @@ class CircularBuffer
       //If we've overwritten the first byte then move up the out value to keep overwriting the oldest stuff
       if (_nextIn == _out)
         _out = (_out+1) % LEN;
+      return true;
     }
 
     bool read(T& value)
@@ -61,6 +62,7 @@ class CircularBuffer
     unsigned int size()
     {
       unsigned int len = (_nextIn - _out) & 0x7FFF;
+      return len;
     }
 };
 

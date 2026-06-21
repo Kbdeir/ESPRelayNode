@@ -60,6 +60,9 @@ extern "C"
     #ifdef ESP32_2RBoard
       #define Relay1Pin 18    
       #define InputPin01  33 // Input1 on IO33       
+      #ifndef TempSensorPin
+        #define TempSensorPin InputPin01
+      #endif
     #endif        
 #endif
 
@@ -160,12 +163,15 @@ typedef struct TConfigParams {
   String v_pass;
   String v_PhyLoc ;
 
-  IPAddress v_timeserver ;
+  String v_timeserver;
+  uint8_t v_NTP_UseVPN;
   signed char v_ntptz ;
   uint8_t v_MQTT_Active ;
+  uint8_t v_MQTT_UseVPN;
   // IPAddress v_MQTT_BROKER ;
   String v_MQTT_BROKER ;
   uint16_t v_MQTT_B_PRT ;
+  uint16_t v_MQTT_KeepAliveSeconds;
 
   String v_mqttUser;
   String v_mqttPass;
@@ -179,6 +185,7 @@ typedef struct TConfigParams {
 #ifndef HWESP32
   String v_TOGGLE_BTN_PUB_TOPIC ;
   String v_InputPin12_STATE_PUB_TOPIC ;
+  String v_InputPin13_STATE_PUB_TOPIC ;
   String v_InputPin14_STATE_PUB_TOPIC ;
   uint8_t v_IN0_INPUTMODE;
   uint8_t v_IN1_INPUTMODE;
@@ -191,7 +198,7 @@ typedef struct TConfigParams {
   uint8_t v_IN3_INPUTMODE;
   uint8_t v_IN4_INPUTMODE;
   uint8_t v_IN5_INPUTMODE;  
-  uint8_t v_IN6_INPUTMODE;  
+  uint8_t v_IN6_INPUTMODE;
 #endif  
 
 #ifdef HWESP32
@@ -213,6 +220,8 @@ typedef struct TConfigParams {
   uint8_t v_IN4_INPUTMODE;
   uint8_t v_IN5_INPUTMODE;  
   uint8_t v_IN6_INPUTMODE;
+  uint8_t v_TempSensorPin01_Active;
+  uint8_t v_TempSensorPin02_Active;
 #endif  
 
   String v_Sonar_distance ;
@@ -222,17 +231,34 @@ typedef struct TConfigParams {
   uint8_t v_CurrentTransformer_max_current ;
   double v_calibration;
   double v_PhaseCal;
+  float v_VCal_Vp;  // VCal calculator: transformer primary voltage (V), for reference only
+  float v_VCal_Vs;  // VCal calculator: transformer secondary voltage (V), for reference only
+  float v_VCal_R1;  // VCal calculator: divider R1 (kOhm), for reference only
+  float v_VCal_R2;  // VCal calculator: divider R2 (kOhm), for reference only
   String v_CurrentTransformerTopic ;
   uint16_t v_ToleranceOffTime;
   uint16_t v_ToleranceOnTime;    
   uint16_t v_CT_MaxAllowed_current;      
   float v_CT_adjustment;
-  uint8_t v_CT_saveThreshold;  
+  uint16_t v_CT_saveThreshold;
+  float v_CT_ZeroLoadCurrentMax;
+  float v_CT_ZeroLoadPowerMin;
+  float v_CT_ZeroLoadPowerMax;
+  uint32_t v_EmonReaderIntervalMs;
+  uint32_t v_EmonPublisherIntervalMs;
+  uint32_t v_OLEDUpdateIntervalMs;
+  uint8_t v_OLEDAlwaysOn;
   uint8_t v_Screen_orientation;  
   
-  uint16_t maSensor_L_Calibration, maSensor_HighCalibration, maSensor_max_range;  
+  uint16_t maSensor_L_Calibration, maSensor_HighCalibration, maSensor_max_range;
   String maSTopic ;
   uint8_t v_PRST;
+
+  uint8_t v_DailyRestartEnabled;  // 1 = restart daily at v_DailyRestartTime (heap permitting)
+  String  v_DailyRestartTime;     // "HH:MM", 24-hour
+
+  uint8_t v_OLED_HW_Active;      // 1 = OLED screen is physically connected
+  uint8_t v_ADS_HW_Active;       // 1 = ADS1X15 ADC chip is physically connected
 
 } TConfigParams;
 
@@ -267,8 +293,8 @@ int8_t R10;
   void relayon(void* obj);
   
   #ifdef ESP32
-  void fnTTL_CallBack(TimerHandle_t xTimer, void* obj);  
-  void fnTTA_CallBack(TimerHandle_t xTimer, void* obj);
+  void fnTTL_CallBack(TimerHandle_t xTimer);
+  void fnTTA_CallBack(TimerHandle_t xTimer);
   #endif
 
   #include <RelayClass.h>
@@ -300,10 +326,13 @@ GPIO16 	 0
 
 
 typedef enum {
-  ACTION_DISPALY_1,  
-  ACTION_DISPALY_2,   
-  ACTION_DISPALY_3, 
-  ACTION_DISPALY_4  
-} 
+  ACTION_DISPALY_1,
+  ACTION_DISPALY_2,
+  ACTION_DISPALY_3,
+  ACTION_DISPALY_4,
+  ACTION_DISPALY_5,
+  ACTION_DISPALY_6,
+  ACTION_DISPALY_7
+}
 DisplayActions;
 

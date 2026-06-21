@@ -1,714 +1,157 @@
-<!doctype html>
-<html>
+﻿<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Untitled Page</title>
-<meta name="generator" content="WYSIWYG Web Builder 17 - http://www.wysiwygwebbuilder.com">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pressure Sensor Configuration</title>
 <style>
-body
-{
-   background-color: #FFFFFF;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-size: 13px;
-   line-height: 1.1875;
-   margin: 0;
-   padding: 0;
-}
-a
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-a:visited
-{
-   color: #800080;
-}
-a:active
-{
-   color: #FF0000;
-}
-a:hover
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-input:focus, textarea:focus, select:focus
-{
-   outline: none;
-}
-#wb_Form2
-{
-   background-color: #808080;
-   background-image: none;
-   border: 1px solid #4F4F4F;
-   border-radius: 0px;
-}
-#wb_Text24 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #DCDCDC;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text24 div
-{
-   text-align: left;
-}
-#wb_Text30 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: center;
-}
-#wb_Text30 div
-{
-   text-align: center;
-}
-#wb_Form1
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #CCCCCC;
-   border-radius: 0px;
-}
-#wb_Text61 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text61 div
-{
-   text-align: left;
-}
-#Editbox44
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox44:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text62 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text62 div
-{
-   text-align: right;
-}
-#wb_Text63 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text63 div
-{
-   text-align: right;
-}
-#Editbox45
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox45:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text64 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text64 div
-{
-   text-align: right;
-}
-#Editbox46
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox46:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Editbox47
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox47:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text65 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text65 div
-{
-   text-align: right;
-}
-#btnSave
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Button2
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#edt_burdenRes
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#edt_burdenRes:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text1 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text1 div
-{
-   text-align: right;
-}
-#wb_Text2 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text2 div
-{
-   text-align: left;
-}
-#wb_Text3 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: center;
-}
-#wb_Text3 div
-{
-   text-align: center;
-}
-#wb_Text4 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text4 div
-{
-   text-align: left;
-}
-#wb_Text5 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text5 div
-{
-   text-align: left;
-}
-#maSHC_edt
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#maSHC_edt:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#Button1
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 1px 6px 1px 6px;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#Voltage_edt
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Voltage_edt:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text7 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text7 div
-{
-   text-align: right;
-}
-#wb_Text8 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text8 div
-{
-   text-align: right;
-}
-#wb_Text9 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text9 div
-{
-   text-align: right;
-}
-#Editbox1
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 18px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox1:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
+:root{--page:#edf1f5;--ink:#152033;--muted:#687589;--panel:#fff;--panel-2:#f8fafc;--line:#d9e1ea;--field:#fdfefe;--teal:#0f766e;--teal-dark:#0a5f59;--blue:#2563eb;--amber:#b7791f;--rose:#be123c;--green:#15803d;--slate:#475569;--shadow-sm:0 2px 8px rgba(21,32,51,.06);--shadow:0 18px 45px rgba(21,32,51,.12)}
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.42;background:linear-gradient(180deg,#dfe9f3 0,#edf1f5 320px),var(--page)}
+.shell{width:min(780px,calc(100vw - 32px));margin:0 auto;padding:24px 0 40px}
+.topbar{overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:22px 24px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:linear-gradient(135deg,#152033,#103f49,#0f766e);box-shadow:var(--shadow);color:#fff}
+.topbar h1{margin:0;font-size:24px;font-weight:700;color:#fff}
+.topbar .sub{margin-top:6px;font-size:13px;color:#cfe0ea}
+.live-panel{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:200px}
+.live-tile{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:9px 12px;text-align:center}
+.live-tile .lbl{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#a8c4d4;margin-bottom:4px}
+.live-tile .val{display:block;font-size:19px;font-weight:700;color:#f87171}
+.live-tile .unit{display:block;font-size:11px;color:#cfe0ea;margin-top:2px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);padding:20px;margin-top:16px}
+.card-title{display:flex;align-items:center;gap:10px;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:18px;font-weight:700;color:var(--ink)}
+.card-title::before{content:"";display:inline-block;width:10px;height:28px;border-radius:6px;background:var(--teal);flex-shrink:0}
+.subhead{margin:22px 0 10px;padding:7px 10px;color:#334155;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+.field label{display:block;color:var(--muted);font-size:12px;font-weight:700}
+.hint{color:var(--muted);font-size:12px;line-height:1.4}
+input[type="text"],input[type="number"]{display:block;width:100%;min-height:38px;border:1px solid #bac7d5;border-radius:8px;background:var(--field);color:var(--ink);padding:8px 10px;font:inherit;font-size:14px;transition:border-color 120ms ease,box-shadow 120ms ease}
+input[type="number"]:disabled{background:var(--panel-2);color:var(--muted);cursor:default}
+input[type="text"]:focus,input[type="number"]:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.16)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+input[type="submit"],input[type="button"]{display:inline-block;min-height:38px;border:1px solid transparent;border-radius:8px;background:var(--teal);color:#fff;padding:8px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;text-align:center;box-shadow:0 5px 14px rgba(15,118,110,.22);transition:transform 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+input[type="submit"]:hover,input[type="button"]:hover{background:var(--teal-dark);box-shadow:0 7px 18px rgba(15,118,110,.28);transform:translateY(-1px)}
+.btn-secondary{background:var(--slate)!important;box-shadow:0 5px 14px rgba(71,85,105,.18)!important}
+.help-box{display:none;margin:0 0 20px;padding:16px 18px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;color:#1e3a5f;font-size:13px;line-height:1.6}
+.help-box h3{margin:0 0 12px;font-size:14px;font-weight:700;color:#1e3a5f}
+.help-box h4{margin:14px 0 4px;font-size:13px;font-weight:700;color:#1e40af}
+.help-box p{margin:0 0 8px}
+.help-box p:last-child{margin-bottom:0}
+.help-box ul{margin:4px 0 8px;padding-left:18px}
+.help-box ul li{margin-bottom:4px}
+.btn-help{margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border:1px solid #bfdbfe;border-radius:6px;background:#eff6ff;color:#1d4ed8;font-size:12px;font-weight:700;cursor:pointer;line-height:1;transition:background 120ms ease,border-color 120ms ease}
+.btn-help:hover{background:#dbeafe;border-color:#93c5fd}
+@media(max-width:580px){.topbar,.live-panel{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
 </style>
-    
-
 </head>
 <body>
-<div id="wb_Form2" style="position:absolute;left:43px;top:18px;width:464px;height:93px;z-index:23;">
-<form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
-<div id="wb_Text30" style="position:absolute;left:56px;top:51px;width:325px;height:15px;text-align:center;z-index:0;">
-<span style="color:#DCDCDC;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
-</form>
-</div>
-<div id="wb_Text24" style="position:absolute;left:43px;top:28px;width:466px;height:27px;z-index:24;">
-<span style="color:#F5F5F5;font-family:Arial;font-size:24px;">Pressure Sensor Configuration</span></div>
-<div id="wb_Form1" style="position:absolute;left:43px;top:113px;width:466px;height:587px;z-index:25;">
-<form name="Form1" method="get" action="PressureSensorSave.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
-<div id="wb_Text62" style="position:absolute;left:35px;top:70px;width:82px;height:15px;text-align:right;z-index:1;">
-<span style="color:#000000;font-family:Arial;font-size:13px;"> Sensor Topic</span></div>
-<div id="wb_Text64" style="position:absolute;left:56px;top:179px;width:134px;height:15px;text-align:right;z-index:2;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">4 ma&nbsp; callibration</span></div>
-<input type="number" id="Editbox45" style="position:absolute;left:254px;top:102px;width:54px;height:18px;z-index:3;" name="maSHL" value="%maSHL%" spellcheck="false" title="0 - 100 Amps">
-<input type="number" id="Editbox46" style="position:absolute;left:201px;top:172px;width:54px;height:18px;z-index:4;" name="maSLC" value="%maSLC%" spellcheck="false">
-<div id="wb_Text61" style="position:absolute;left:35px;top:26px;width:270px;height:21px;z-index:5;">
-<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>04-20 ma Sensor</strong></span></div>
-<div id="wb_Text65" style="position:absolute;left:43px;top:212px;width:147px;height:15px;text-align:right;z-index:6;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">20 ma callibration</span></div>
-<input type="text" id="Editbox44" style="position:absolute;left:133px;top:64px;width:306px;height:16px;z-index:7;" name="maSTopic" value="%maSTopic%" spellcheck="false">
-<input type="number" id="Editbox47" style="position:absolute;left:201px;top:205px;width:54px;height:18px;z-index:8;" name="maSHC" value="%maSHC%" spellcheck="false">
-<input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:26px;top:544px;width:90px;height:25px;z-index:9;">
-<input type="submit" id="btnSave" name="TimerSave" value="Save" style="position:absolute;left:353px;top:544px;width:79px;height:25px;z-index:10;">
-<input type="number" id="edt_burdenRes" style="position:absolute;left:176px;top:342px;width:54px;height:18px;z-index:11;" name="maBurdenResistor" value="%maBurdenResistor%" spellcheck="false">
-<div id="wb_Text1" style="position:absolute;left:26px;top:349px;width:144px;height:15px;text-align:right;z-index:12;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Burden Resistor Value</span></div>
-<div id="wb_Text2" style="position:absolute;left:250px;top:349px;width:43px;height:15px;z-index:13;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">ohms</span></div>
-<div id="wb_Text3" style="position:absolute;left:13px;top:406px;width:262px;height:15px;text-align:center;z-index:14;">
-<span style="color:#FF0000;font-family:Arial;font-size:13px;"><strong>Current ADC Steps&nbsp; =&nbsp; %ma_ADC%</strong></span></div>
-<div id="wb_Text4" style="position:absolute;left:270px;top:179px;width:179px;height:15px;z-index:15;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">= ADC reading at 4 ma</span></div>
-<input type="number" id="maSHC_edt" onclick="calc20maCalibration(this);return false;" style="position:absolute;left:329px;top:470px;width:82px;height:18px;z-index:16;" name="maSHC_edt" value="" disabled spellcheck="false">
-<input type="button" id="Button1" onclick="calc20maCalibration(this);return false;" name="" value="Calculate 20ma calibration factor" style="position:absolute;left:35px;top:438px;width:230px;height:24px;z-index:17;">
-<div id="wb_Text5" style="position:absolute;left:16px;top:251px;width:433px;height:45px;z-index:18;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">This is ADC reading calibration at 20 ma, defaults to: <br><strong>0.02 * BurdenResistor * 1000 * (4096 / 3300) * (2450 / 3000).</strong><br>ADC_ATTEN_DB_11: Reading range:150 mV ~ <strong>2450 </strong>mV</span></div>
-<input type="number" id="Voltage_edt" onclick="calc20maCalibration(this);return false;" style="position:absolute;left:150px;top:470px;width:54px;height:18px;z-index:19;" name="Voltage_edt" value="3300" spellcheck="false">
-<div id="wb_Text7" style="position:absolute;left:16px;top:477px;width:126px;height:15px;text-align:right;z-index:20;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">System voltage (mv)</span></div>
-<div id="wb_Text8" style="position:absolute;left:201px;top:477px;width:115px;height:15px;text-align:right;z-index:21;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Result</span></div>
-<input type="number" id="Editbox1" style="position:absolute;left:254px;top:133px;width:54px;height:18px;z-index:22;" name="TankHeight" value="%TankHeight%" spellcheck="false">
-</form>
-</div>
-<div id="wb_Text63" style="position:absolute;left:0px;top:222px;width:286px;height:15px;text-align:right;z-index:26;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">maximum sensor measurment (cm)</span></div>
+<div class="shell">
+  <div class="topbar">
+    <div>
+      <div style="margin:0;font-size:24px;font-weight:700;color:#fff;">Pressure Sensor Configuration</div>
+      <div class="sub">4&ndash;20 mA sensor &mdash; MQTT topic, range, and ADC calibration.</div>
+      <div class="sub">System time: %systemtime%</div>
+      <div class="sub">Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
+    </div>
+    <div class="live-panel">
+      <div class="live-tile"><span class="lbl">ADC Steps</span><span class="val" id="liveADC">%ma_ADC%</span><span class="unit">raw</span></div>
+      <div class="live-tile"><span class="lbl">Level</span><span class="val" id="liveCM">&mdash;</span><span class="unit" id="liveFP">&mdash;&nbsp;&#37;</span></div>
+    </div>
+  </div>
 
-<div id="wb_Text9" style="position:absolute;left:0px;top:253px;width:286px;height:15px;text-align:right;z-index:28;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">Tank height (cm)</span></div>
+  <div class="card">
+    <div class="card-title">4&ndash;20 mA Sensor <button type="button" class="btn-help" id="btnHelp" onclick="toggleHelp()">&#9432; Help</button></div>
+
+    <div class="help-box" id="helpBox">
+      <h3>How this page works</h3>
+      <p>Your sensor outputs a current between 4 mA and 20 mA representing the physical measurement. A resistor converts that current into a voltage the ESP32 can read.</p>
+      <h4>MQTT Publish Topic</h4><p>The address where readings are broadcast. Example: <code>\controller\tank1</code></p>
+      <h4>Value at 4 mA &mdash; empty</h4><p>What the real-world measurement is at minimum signal (4 mA). For a water tank this is usually 0 cm.</p>
+      <h4>Value at 20 mA &mdash; full</h4><p>What the real-world measurement is at maximum signal (20 mA). For a 4-metre deep tank, enter 400 (cm).</p>
+      <h4>4 mA Calibration</h4><p>The raw ADC number when exactly 4 mA is flowing. Measure on your actual hardware &mdash; the calculator gives a rough estimate only.</p>
+      <h4>20 mA Calibration</h4><p>Same idea for maximum signal. The calculator gives a reliable estimate for this one.</p>
+      <h4>Burden Resistor</h4><p>The resistor that converts sensor current to voltage. A 150&thinsp;&Omega; resistor turns 20 mA into 3.0 V, giving best resolution.</p>
+      <h4>Calibration Calculator</h4><p>Enter your burden resistor and ADC full-scale voltage (Vmax) to get estimated calibration numbers. Vmax is typically 3100&ndash;3300 mV; 3179 mV matches this hardware.</p>
+    </div>
+
+    <form method="get" action="PressureSensorSave.html" id="Form1" onsubmit="return submitForm1()">
+      <div class="form-grid">
+        <div class="field full"><label for="maSTopic">MQTT Publish Topic</label><input type="text" id="maSTopic" name="maSTopic" value="%maSTopic%" maxlength="64"></div>
+        <div class="field"><label for="paramEmptyValue">Value at 4 mA &mdash; empty (cm)</label><input type="number" id="paramEmptyValue" name="paramEmptyValue" value="%paramEmptyValue%"><span class="hint">Reading when tank is empty (ADC at 4 mA). Usually 0.</span></div>
+        <div class="field"><label for="paramFullValue">Value at 20 mA &mdash; full (cm)</label><input type="number" id="paramFullValue" name="paramFullValue" value="%paramFullValue%" min="1" max="50000"><span class="hint">Reading when tank is full (ADC at 20 mA). E.g. 400.</span></div>
+        <div class="field"><label for="maSLC">4 mA Calibration (ADC steps at 4 mA)</label><input type="number" id="maSLC" name="maSLC" value="%maSLC%" min="1" max="4096"></div>
+        <div class="field"><label for="maSHC">20 mA Calibration (ADC steps at 20 mA)</label><input type="number" id="maSHC" name="maSHC" value="%maSHC%" min="6" max="5000"></div>
+        <div class="field"><label for="maBurdenResistor">Burden Resistor (ohms)</label><input type="number" id="maBurdenResistor" name="maBurdenResistor" value="%maBurdenResistor%" min="6" max="5000"></div>
+      </div>
+
+      <div class="subhead">Calibration Calculator</div>
+      <p class="hint" style="margin:0 0 14px"><strong>ADC = round(I &times; R &times; 4&thinsp;096&thinsp;000 / Vmax)</strong><br>With <code>ADC_ATTEN_DB_11</code> the ESP32 ADC full-scale is typically 3100&ndash;3300 mV. 3179 mV is the calibrated value for this hardware.</p>
+      <div class="form-grid">
+        <div class="field"><label for="Vref_edt">ADC Full-Scale Vmax (mV)</label><input type="number" id="Vref_edt" value="3179" min="2800" max="3600"></div>
+        <div class="field"><label>&nbsp;</label><span class="hint" style="padding-top:4px;display:block;">Derive yours: Vmax = (R &times; 0.02 &times; 1000) &times; 4096 / ADC<sub>20mA</sub>.</span></div>
+        <div class="field"><label for="maSLC_edt">4 mA result (writes to field above)</label><input type="number" id="maSLC_edt" disabled></div>
+        <div class="field"><label for="maSHC_edt">20 mA result (writes to field above)</label><input type="number" id="maSHC_edt" disabled></div>
+        <div class="field full"><input type="button" onclick="calcCalibration();return false;" value="Calculate and apply calibration factors"></div>
+      </div>
+
+      <div class="actions">
+        <input type="submit" value="Save">
+        <input type="button" class="btn-secondary" onclick="window.location.href='/';return false;" value="Cancel">
+      </div>
+    </form>
+  </div>
+</div>
 <script>
-function submitForm1()
-{
-   var regexp;
-   var Editbox45 = document.getElementById('Editbox45');
-   if (!(Editbox45.disabled || Editbox45.style.display === 'none' || Editbox45.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox45.value))
-      {
-         alert("Please enter only digit characters in the \"maSHL\" field.");
-         Editbox45.focus();
-         return false;
-      }
-      if (Editbox45.value == "")
-      {
-         alert("Please enter a value for the \"maSHL\" field.");
-         Editbox45.focus();
-         return false;
-      }
-      if (Editbox45.value != "" && !(Editbox45.value >= 0 && Editbox45.value <= 500))
-      {
-         alert("Please enter a value greater than or equal to \"0\" and less than or equal to \"500\" in the \"maSHL\" field.");
-         Editbox45.focus();
-         return false;
-      }
-   }
-   var Editbox46 = document.getElementById('Editbox46');
-   if (!(Editbox46.disabled || Editbox46.style.display === 'none' || Editbox46.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox46.value))
-      {
-         alert("Calibration factor");
-         Editbox46.focus();
-         return false;
-      }
-      if (Editbox46.value == "")
-      {
-         alert("Calibration factor");
-         Editbox46.focus();
-         return false;
-      }
-      if (Editbox46.value != "" && !(Editbox46.value > 0 && Editbox46.value <= 4096))
-      {
-         alert("Calibration factor");
-         Editbox46.focus();
-         return false;
-      }
-   }
-   var Editbox47 = document.getElementById('Editbox47');
-   if (!(Editbox47.disabled || Editbox47.style.display === 'none' || Editbox47.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox47.value))
-      {
-         alert("Calibration factor");
-         Editbox47.focus();
-         return false;
-      }
-      if (Editbox47.value == "")
-      {
-         alert("Calibration factor");
-         Editbox47.focus();
-         return false;
-      }
-      if (Editbox47.value != "" && !(Editbox47.value > 5 && Editbox47.value <= 5000))
-      {
-         alert("Calibration factor");
-         Editbox47.focus();
-         return false;
-      }
-   }
-   var edt_burdenRes = document.getElementById('edt_burdenRes');
-   if (!(edt_burdenRes.disabled || edt_burdenRes.style.display === 'none' || edt_burdenRes.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(edt_burdenRes.value))
-      {
-         alert("Calibration factor");
-         edt_burdenRes.focus();
-         return false;
-      }
-      if (edt_burdenRes.value == "")
-      {
-         alert("Calibration factor");
-         edt_burdenRes.focus();
-         return false;
-      }
-      if (edt_burdenRes.value != "" && !(edt_burdenRes.value > 5 && edt_burdenRes.value <= 5000))
-      {
-         alert("Calibration factor");
-         edt_burdenRes.focus();
-         return false;
-      }
-   }
-   var maSHC_edt = document.getElementById('maSHC_edt');
-   if (!(maSHC_edt.disabled || maSHC_edt.style.display === 'none' || maSHC_edt.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(maSHC_edt.value))
-      {
-         alert("Calibration factor");
-         maSHC_edt.focus();
-         return false;
-      }
-      if (maSHC_edt.value == "")
-      {
-         alert("Calibration factor");
-         maSHC_edt.focus();
-         return false;
-      }
-      if (maSHC_edt.value != "" && !(maSHC_edt.value > 5 && maSHC_edt.value <= 5000))
-      {
-         alert("Calibration factor");
-         maSHC_edt.focus();
-         return false;
-      }
-   }
-   var Voltage_edt = document.getElementById('Voltage_edt');
-   if (!(Voltage_edt.disabled || Voltage_edt.style.display === 'none' || Voltage_edt.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Voltage_edt.value))
-      {
-         alert("Calibration factor");
-         Voltage_edt.focus();
-         return false;
-      }
-      if (Voltage_edt.value == "")
-      {
-         alert("Calibration factor");
-         Voltage_edt.focus();
-         return false;
-      }
-   }
-   var Editbox1 = document.getElementById('Editbox1');
-   if (!(Editbox1.disabled || Editbox1.style.display === 'none' || Editbox1.style.visibility === 'hidden'))
-   {
-      regexp = /^[-+]?\d*\.?\d*$/;
-      if (!regexp.test(Editbox1.value))
-      {
-         alert("Please enter only digit characters in the \"TankHeight\" field.");
-         Editbox1.focus();
-         return false;
-      }
-      if (Editbox1.value == "")
-      {
-         alert("Please enter a value for the \"TankHeight\" field.");
-         Editbox1.focus();
-         return false;
-      }
-      if (Editbox1.value != "" && !(Editbox1.value >= 0 && Editbox1.value <= 500))
-      {
-         alert("Please enter a value greater than or equal to \"0\" and less than or equal to \"500\" in the \"TankHeight\" field.");
-         Editbox1.focus();
-         return false;
-      }
-   }
-   return true;
+function toggleHelp(){
+  var box=document.getElementById('helpBox'),btn=document.getElementById('btnHelp');
+  var vis=box.style.display==='block';
+  box.style.display=vis?'none':'block';
+  btn.textContent=vis?'ℹ Help':'ℹ Hide help';
 }
+function submitForm1(){
+  var ev=document.getElementById('paramEmptyValue');
+  if(ev.value===''){alert('Please enter a value for "Value at 4 mA".');ev.focus();return false;}
+  var fv=document.getElementById('paramFullValue');
+  if(fv.value===''){alert('Please enter a value for "Value at 20 mA".');fv.focus();return false;}
+  if(+fv.value<=+ev.value){alert('"Value at 20 mA" must be greater than "Value at 4 mA".');fv.focus();return false;}
+  var lc=document.getElementById('maSLC');
+  if(lc.value===''){alert('Please enter a value for 4 mA Calibration.');lc.focus();return false;}
+  if(!(+lc.value>0&&+lc.value<=4096)){alert('4 mA Calibration must be between 1 and 4096.');lc.focus();return false;}
+  var hc=document.getElementById('maSHC');
+  if(hc.value===''){alert('Please enter a value for 20 mA Calibration.');hc.focus();return false;}
+  if(!(+hc.value>5&&+hc.value<=5000)){alert('20 mA Calibration must be between 6 and 5000.');hc.focus();return false;}
+  if(+hc.value<=+lc.value){alert('20 mA Calibration must be greater than 4 mA Calibration.');hc.focus();return false;}
+  var br=document.getElementById('maBurdenResistor');
+  if(br.value===''){alert('Please enter a Burden Resistor value.');br.focus();return false;}
+  if(!(+br.value>5&&+br.value<=5000)){alert('Burden Resistor must be between 6 and 5000 ohms.');br.focus();return false;}
+  return true;
+}
+function calcCalibration(){
+  var r=parseFloat(document.getElementById('maBurdenResistor').value);
+  var v=parseFloat(document.getElementById('Vref_edt').value);
+  if(!r||!v||v===0){alert('Enter valid Burden Resistor and Vref values first.');return;}
+  var slc=Math.round(0.004*r*4096000/v),shc=Math.round(0.020*r*4096000/v);
+  document.getElementById('maSLC_edt').value=slc;document.getElementById('maSHC_edt').value=shc;
+  document.getElementById('maSLC').value=slc;document.getElementById('maSHC').value=shc;
+}
+(function(){
+  function refresh(){
+    var req=new XMLHttpRequest();req.open('GET','/PressureSensor.json',true);
+    req.onreadystatechange=function(){
+      if(req.readyState!==4||req.status!==200)return;
+      var d;try{d=JSON.parse(req.responseText);}catch(e){return;}
+      var adc=document.getElementById('liveADC'),cm=document.getElementById('liveCM'),fp=document.getElementById('liveFP');
+      if(adc)adc.textContent=d.adc!=null?d.adc:'—';
+      if(cm)cm.textContent=d.cm!=null?d.cm+' cm':'—';
+      if(fp)fp.textContent=d.fp!=null?d.fp+' \x25':'— \x25';
+    };req.send();
+  }
+  document.addEventListener('DOMContentLoaded',function(){refresh();setInterval(refresh,1000);});
+})();
 </script>
 <script>
-      function calc20maCalibration(selectObject) {
-         var x = document.getElementById("edt_burdenRes").value;
-         var v = document.getElementById("Voltage_edt").value;
-         document.getElementById("maSHC_edt").value =(0.02*x*1000*4096/v)*2450/v ; 
-      }
-    </script>
-</body>
+(function(){function ph(){fetch('/api/heap').then(function(r){return r.json();}).then(function(d){var f=document.getElementById('hb-free'),m=document.getElementById('hb-min'),b=document.getElementById('hb-blk');if(f&&d.heap!=null)f.textContent=Number(d.heap).toLocaleString();if(m&&d.heapMin!=null)m.textContent=Number(d.heapMin).toLocaleString();if(b&&d.heapMaxBlk!=null)b.textContent=Number(d.heapMaxBlk).toLocaleString();}).catch(function(){});}ph();setInterval(ph,30000);}());
+</script></body>
 </html>

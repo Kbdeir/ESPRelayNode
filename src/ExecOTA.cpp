@@ -36,7 +36,7 @@ void execOTA(String host, int port) {
 
     unsigned long timeout = millis();
     while (UPclient.available() == 0) {
-      if (millis() - timeout > 50000) {
+      if (millis() - timeout > 100000) {
         Serial.println("Client Timeout !");
         UPclient.stop();
         return;

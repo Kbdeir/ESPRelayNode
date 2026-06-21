@@ -1,12 +1,15 @@
 #include <HSTConfig.h>
 #define Tbuffer_size  1000
 
+#define HST_DEFAULT_AMPSVOLTSRATIO  6.25
 
-HSTConfig::HSTConfig(uint8_t para_id) 
+
+HSTConfig::HSTConfig(uint8_t para_id)
 {
     id = para_id;
     enabled = true;
-    AmpsVoltsRatio = 0;
+    AmpsVoltsRatio = HST_DEFAULT_AMPSVOLTSRATIO;
+    manualOffset = 0;
 
 }
 
@@ -16,6 +19,7 @@ HSTConfig::HSTConfig(uint8_t para_id,
 {
     id              = para_id;
     AmpsVoltsRatio  = para_AmpsVoltsRatio;
+    manualOffset    = 0;
     enabled         = true;
 
 }
@@ -25,6 +29,22 @@ HSTConfig::~HSTConfig(){
 }
 
 void HSTConfig::watch(){
+}
+
+static void writeHSTConfigDefaults(const char* filename, HSTConfig &cfg) {
+  StaticJsonDocument<buffer_size> json;
+  json["HSTNB"]          = cfg.id;
+  json["CEnabled"]       = "1";
+  json["AmpsVoltsRatio"] = HST_DEFAULT_AMPSVOLTSRATIO;
+  json["manualOffset"]   = cfg.manualOffset;
+
+  File f = SPIFFS.open(filename, "w");
+  if (f) {
+    serializeJson(json, f);
+    f.flush();
+    f.close();
+    Serial.println(F("\n[INFO   ] HSTConfig defaults written."));
+  }
 }
 
 bool saveHSTConfig(AsyncWebServerRequest *request)
@@ -44,6 +64,7 @@ bool saveHSTConfig(AsyncWebServerRequest *request)
   }
 
   request->hasParam("CEnabled")   ? json["CEnabled"]   =  "1"   : json["CEnabled"]   = "0" ;
+  if (!request->hasParam("HSTNB")) json["HSTNB"] = "1";
 
   // Serialize JSON to file
   if (serializeJson(json, configFile) == 0) {
@@ -61,9 +82,9 @@ config_read_error_t loadHSTConfig(char* filename, HSTConfig &para_HSTConfig) {
 
   //Serial.println(F("[INFO  TP] opening /HSTConfig.json file - 0"));
   if (! SPIFFS.exists(filename)) {
-    Serial.println(F("\n[INFO   ] HSTConfig file does not exist!:"));
-    Serial.print(filename);
-    return FILE_NOT_FOUND;
+    Serial.println(F("\n[INFO   ] HSTConfig file does not exist — creating with defaults."));
+    writeHSTConfigDefaults(filename, para_HSTConfig);
+    return SUCCESS;
   }
 
   //Serial.println(F("[INFO  TP] opening /HSTConfig.json file - 1"));
@@ -93,11 +114,11 @@ config_read_error_t loadHSTConfig(char* filename, HSTConfig &para_HSTConfig) {
   }
 
   para_HSTConfig.id             = (json["HSTNB"].as<String>()!="") ? json["HSTNB"].as<uint8_t>() : 0;
-  para_HSTConfig.enabled        = json["CEnabled"]; //.as<String>()!="") ? json["CEnabled"].as<uint8_t>() : 0;
-  para_HSTConfig.AmpsVoltsRatio = (json["AmpsVoltsRatio"].as<String>()!="") ? json["AmpsVoltsRatio"].as<double>() : 0;
+  para_HSTConfig.enabled        = (json["CEnabled"].as<String>() == "1");
+  para_HSTConfig.AmpsVoltsRatio = (json["AmpsVoltsRatio"].as<String>()!="") ? json["AmpsVoltsRatio"].as<double>() : HST_DEFAULT_AMPSVOLTSRATIO;
+  para_HSTConfig.manualOffset   = (json["manualOffset"].as<String>()!="") ? json["manualOffset"].as<double>() : 0;
 
-    configFile.flush();
-    configFile.close();
+  configFile.close();
     
   return SUCCESS;
 }

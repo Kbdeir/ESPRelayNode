@@ -5,10 +5,20 @@
 
 #include <ArduinoJson.h>
 #include "FS.h"
+#include <defines.h>
 
-#ifdef ESP32
-#include "SPIFFS.h"
-#endif
+#include <FS.h>
+#ifdef USE_LittleFS
+   #ifdef ESP32 
+    #define SPIFFS LITTLEFS
+    #else 
+    #define SPIFFS LittleFS
+   #endif
+  #include <LittleFS.h>
+#else
+  #include <SPIFFS.h>
+#endif 
+
 
 #include <ConfigParams.h>
 #include <ESPAsyncWebServer.h>
@@ -47,7 +57,7 @@ config_read_error_t loadIRMapConfig(TIRMap &IRMap);
 bool saveRelayDefaultConfig(uint8_t rnb);
 bool saveRelayConfig(AsyncWebServerRequest *request);
 bool saveRelayConfig(Trelayconf *RConfParam);
-void saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh);
-void loadCTReadings(float &KWh,  float &MTD_KWh, float &YTD_KWh);
+void saveCTReadings(double KWh, double MTD_KWh, double YTD_KWh, int lastDay=-1, int lastMonth=-1, int lastYear=-1);
+void loadCTReadings(double &KWh, double &MTD_KWh, double &YTD_KWh, int &lastDay, int &lastMonth, int &lastYear);
 
 #endif

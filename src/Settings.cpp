@@ -4,9 +4,16 @@
 #include <Settings.h>
 #include <defines.h>
 
-#ifdef ESP32
-#include "SPIFFS.h"
-#endif
+
+
+#ifdef USE_LittleFS
+  #define SPIFFS LITTLEFS
+  #include <LittleFS.h>
+#else
+  #include <SPIFFS.h>
+#endif 
+
+
 
 #ifndef ESP32
 #include <EEPROM.h>

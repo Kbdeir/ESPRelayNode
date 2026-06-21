@@ -1,0 +1,680 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Current Sensor Configuration</title>
+<style>
+:root {
+  --page: #edf1f5;
+  --ink: #152033;
+  --muted: #687589;
+  --panel: #ffffff;
+  --panel-2: #f8fafc;
+  --line: #d9e1ea;
+  --field: #fdfefe;
+  --teal: #0f766e;
+  --teal-dark: #0a5f59;
+  --blue: #2563eb;
+  --amber: #b7791f;
+  --amber-bg: #fffbeb;
+  --amber-border: #fcd34d;
+  --rose: #be123c;
+  --green: #15803d;
+  --slate: #475569;
+  --shadow-sm: 0 2px 8px rgba(21, 32, 51, 0.06);
+  --shadow: 0 18px 45px rgba(21, 32, 51, 0.12);
+}
+
+* { box-sizing: border-box; }
+html { background: var(--page); }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.42;
+  background: linear-gradient(180deg, #dfe9f3 0, #edf1f5 320px), var(--page);
+}
+
+.shell {
+  width: min(1220px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 24px 0 36px;
+}
+
+.topbar {
+  position: relative;
+  overflow: hidden;
+  max-width: 820px;
+  margin: 0 auto;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 24px 26px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  background: linear-gradient(135deg, #152033, #103f49, #0f766e);
+  box-shadow: var(--shadow);
+}
+
+.topbar h1 { margin: 0; font-size: 28px; font-weight: 700; }
+.topbar .hint { margin-top: 7px; color: #cfe0ea; }
+.topbar .meta {
+  min-width: 230px;
+  color: #e6eef5;
+  font-size: 13px;
+  text-align: right;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.status-row {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+  max-width: 820px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.status {
+  position: relative;
+  min-height: 62px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(217, 225, 234, 0.95);
+  border-radius: 8px;
+  padding: 9px 11px;
+  box-shadow: var(--shadow-sm);
+}
+.status::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 14px; bottom: 14px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--teal);
+}
+.status span { display: block; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.status strong { display: block; margin-top: 4px; font-size: 14px; overflow-wrap: anywhere; }
+.status-values { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 9px; margin-top: 5px; }
+.status-values div { min-width: 0; }
+.status-values span { color: #7b8797; font-size: 10px; }
+.status-values strong { margin-top: 2px; }
+.status strong .status-reading {
+  display: inline;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-transform: none;
+}
+.power-reset-row { grid-column: 1 / -1; }
+.status-button {
+  width: auto; min-height: 24px; margin-top: 2px;
+  padding: 3px 7px; border-radius: 6px; font-size: 11px; box-shadow: none;
+}
+
+.grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 820px);
+  gap: 16px;
+  align-items: start;
+  justify-content: center;
+}
+
+aside { position: sticky; top: 14px; }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.card h2 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -2px 0 0;
+  padding-bottom: 12px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+.card h2::before {
+  content: "";
+  width: 10px; height: 28px;
+  border-radius: 6px;
+  background: var(--teal);
+  flex: 0 0 auto;
+}
+.card.ct h2::before { background: var(--blue); }
+
+.card h2 .toggle-icon {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
+  transition: transform 200ms ease;
+}
+.card h2.collapsed .toggle-icon { transform: rotate(-90deg); }
+
+.card-body { margin-top: 16px; }
+.card-body.collapsed { display: none; }
+
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+
+label { color: var(--muted); font-size: 12px; font-weight: 700; }
+
+input[type="text"],
+input[type="number"],
+select {
+  min-height: 38px;
+  border: 1px solid #bac7d5;
+  border-radius: 8px;
+  background: var(--field);
+  color: var(--ink);
+  padding: 8px 10px;
+  font: inherit;
+  transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--blue);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  align-items: center;
+}
+
+button, input[type="submit"], .button-link {
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--teal);
+  color: #ffffff;
+  padding: 8px 15px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: 0 5px 14px rgba(15, 118, 110, 0.22);
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+button:hover, input[type="submit"]:hover, .button-link:hover {
+  background: var(--teal-dark);
+  box-shadow: 0 7px 18px rgba(15, 118, 110, 0.28);
+  transform: translateY(-1px);
+}
+.secondary { background: var(--slate) !important; box-shadow: 0 5px 14px rgba(71, 85, 105, 0.18) !important; }
+.danger { background: var(--rose) !important; }
+
+.save-status { font-size: 13px; font-weight: 700; }
+.save-status.ok  { color: var(--green); }
+.save-status.err { color: var(--rose); }
+
+.hint { color: var(--muted); font-size: 12px; }
+
+/* Sonar help box */
+.help-box {
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #1e3a5f;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.help-box h3 { margin: 0 0 10px; font-size: 14px; font-weight: 700; color: #1e40af; }
+.help-box h4 { margin: 12px 0 4px; font-size: 13px; font-weight: 700; }
+.help-box p  { margin: 0 0 6px; }
+.help-box code { background: #dbeafe; border-radius: 4px; padding: 1px 5px; font-family: monospace; font-size: 12px; }
+.help-box .table-scroll { overflow-x: auto; margin: 8px 0; }
+.help-box table { border-collapse: collapse; width: 100%; min-width: 480px; margin: 0; font-size: 12px; }
+.help-box th, .help-box td { border: 1px solid #bfdbfe; padding: 5px 8px; text-align: left; }
+.help-box th { background: #dbeafe; font-weight: 700; }
+
+/* Warning box */
+.warn-box {
+  display: flex;
+  gap: 10px;
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #78350f;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.warn-box .warn-icon { font-size: 18px; flex-shrink: 0; line-height: 1.3; }
+.warn-box strong { color: #92400e; }
+
+.link-list { display: grid; gap: 9px; }
+.link-list .button-link {
+  display: block;
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  text-align: left;
+}
+.link-list .button-link:hover { background: #f2f7fb; border-color: #bdd0df; }
+
+@media (max-width: 920px) {
+  .grid, .status-row, .form-grid { grid-template-columns: minmax(0, 1fr); }
+  aside { position: static; }
+  .topbar { grid-template-columns: 1fr; }
+  .topbar .meta { min-width: 0; text-align: left; }
+}
+
+@media (max-width: 480px) {
+  .shell { padding: 16px 0 28px; }
+  .topbar { padding: 16px 14px; }
+  .topbar h1 { font-size: 22px; }
+  .card { padding: 14px; }
+  .status-values { grid-template-columns: minmax(0, 1fr); }
+  .help-box, .warn-box { padding: 10px 12px; }
+  .help-box table { font-size: 11px; }
+  .help-box th, .help-box td { padding: 4px 6px; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div>
+      <h1>Current Sensor Configuration</h1>
+      <div class="hint">Configure CT sensor calibration and EmonLib parameters. Sonar distance sensor is in a separate collapsible section below.</div>
+    </div>
+    <div class="meta">
+      <div>System time: <span id="topbar-time">-</span></div>
+      <div>Uptime: <span id="topbar-uptime">-</span></div>
+      <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
+    </div>
+  </header>
+
+  <section class="status-row">
+    <div class="status" id="card-power-status">
+      <span>Power sensor</span>
+      <div class="status-values">
+        <div><span>Voltage</span><strong><span class="status-reading" id="CT_VOLTAGE">-</span> V</strong></div>
+        <div><span>Current</span><strong><span class="status-reading" id="CT_CURRENT">-</span> A</strong></div>
+        <div><span>Power</span><strong><span class="status-reading" id="CT_POWER">-</span> W</strong></div>
+        <div><span>Power factor</span><strong id="CT_PF">-</strong></div>
+        <div class="power-reset-row">
+          <button type="button" class="danger status-button" id="ResetAccumulatedPowerButton">Reset accumulated power</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <div>
+      <form id="Form1" onsubmit="return saveConfig()">
+
+        <!-- ── Sonar Section (collapsible) ───────────────────────────── -->
+        <section class="card" id="card-sonar">
+          <h2 id="h2-sonar" onclick="toggleCard('sonar')">
+            <span>HC-SR04 Sonar / Ultrasonic Distance Sensor</span>
+            <span class="toggle-icon">&#9660;</span>
+          </h2>
+
+          <div class="card-body" id="body-sonar">
+
+            <div class="help-box">
+              <h3>&#128268; Wiring &amp; Pin Assignment</h3>
+              <p>The HC-SR04 ultrasonic sensor uses two GPIO pins shared with the input header:</p>
+              <div class="table-scroll">
+              <table>
+                <tr><th>HC-SR04 Pin</th><th>GPIO</th><th>Header Pin</th><th>Note</th></tr>
+                <tr><td><strong>VCC</strong></td><td>—</td><td>5 V rail</td><td>Sensor requires 5 V supply</td></tr>
+                <tr><td><strong>GND</strong></td><td>—</td><td>GND</td><td></td></tr>
+                <tr><td><strong>TRIG</strong></td><td><code>GPIO17</code></td><td>Input 3</td><td>3.3 V output — direct connection safe</td></tr>
+                <tr><td><strong>ECHO</strong></td><td><code>GPIO32</code></td><td>Input 4</td><td>⚠ 5 V output — use voltage divider!</td></tr>
+              </table>
+              </div>
+              <h4>ECHO voltage divider (required)</h4>
+              <p>The HC-SR04 ECHO pin outputs 5 V, but GPIO32 is a 3.3 V logic pin. Connect a
+              <strong>1 kΩ resistor in series</strong> then a <strong>2 kΩ resistor to GND</strong> between the ECHO pin and GPIO32.
+              This divides 5 V down to 3.33 V, which is within the safe input range.</p>
+              <p>Alternatively, use an <strong>HC-SR04+ (3.3 V variant)</strong> which can be powered at 3.3 V and outputs 3.3 V on ECHO — no divider needed.</p>
+              <h4>Enabling sonar in firmware</h4>
+              <p>Sonar is a compile-time feature. Uncomment <code>#define SR04</code> in <code>src/defines.h</code> then rebuild and flash.
+              The alternative serial-mode variant is <code>#define SR04_SERIAL</code>.</p>
+            </div>
+
+            <div class="warn-box" id="sonar-conflict-warn">
+              <span class="warn-icon">&#9888;</span>
+              <div>
+                <strong>Input pin conflict</strong> — Sonar TRIG uses <strong>GPIO17 (Input 3)</strong> and ECHO uses <strong>GPIO32 (Input 4)</strong>.
+                When sonar is active these two inputs cannot be used for relay control, toggle switches, or any other input function.
+                If you have devices wired to Input 3 or Input 4, disconnect them before enabling sonar.
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field"><label for="Sonar_distance">MQTT Publish Topic</label><input type="text" id="Sonar_distance" name="Sonar_distance" spellcheck="false" placeholder="e.g. home/tank/distance" maxlength="64"></div>
+              <div class="field"><label for="Sonar_distance_max">Max Measurable Distance (cm)</label><input type="number" id="Sonar_distance_max" name="Sonar_distance_max" placeholder="e.g. 400"><div class="hint">Readings beyond this distance are discarded. HC-SR04 typical max: 400 cm.</div></div>
+            </div>
+
+          </div><!-- /body-sonar -->
+        </section>
+
+        <!-- ── Current Transformer Section ───────────────────────────── -->
+        <section class="card ct">
+          <h2>Current Transformer (CT Sensor)</h2>
+
+          <div class="form-grid" style="margin-top:16px">
+            <div class="field full"><label for="CurrentTransformerTopic">Current Sensor MQTT Topic</label><input type="text" id="CurrentTransformerTopic" name="CurrentTransformerTopic" spellcheck="false" maxlength="64"></div>
+            <div class="field"><label for="CurrentTransformer_max_current">CT Max Current (A)</label><input type="number" id="CurrentTransformer_max_current" name="CurrentTransformer_max_current"></div>
+            <div class="field full">
+              <label for="calibration">VCal (Voltage Calibration)</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <input type="number" step="any" id="calibration" name="calibration" style="flex:1;min-width:120px">
+                <button type="button" class="secondary" style="white-space:nowrap" onclick="toggleVCalc()">Estimate VCal</button>
+              </div>
+              <div class="hint">Current sensor 50A / 1V: ICAL should start around 50, not 30.<br>
+              Voltage transformer 235V / 13.5V, divider 100k / 7.5k:<br>
+              Transformer ratio: 235 / 13.5 = 17.41 &nbsp; Divider reciprocal: (100k + 7.5k) / 7.5k = 14.33 &nbsp; VCAL = 17.41 × 14.33 = 249.5</div>
+
+              <div id="vcal-calc" class="form-grid" style="display:none;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2)">
+                <div class="field"><label for="vcalc-vp">Transformer primary (V)</label><input type="number" step="any" id="vcalc-vp" placeholder="235" oninput="computeVCal()"></div>
+                <div class="field"><label for="vcalc-vs">Transformer secondary (V)</label><input type="number" step="any" id="vcalc-vs" placeholder="13.5" oninput="computeVCal()"></div>
+                <div class="field"><label for="vcalc-r1">Divider R1 (kΩ, top)</label><input type="number" step="any" id="vcalc-r1" placeholder="100" oninput="computeVCal()"></div>
+                <div class="field"><label for="vcalc-r2">Divider R2 (kΩ, bottom)</label><input type="number" step="any" id="vcalc-r2" placeholder="7.5" oninput="computeVCal()"></div>
+                <div class="field full">
+                  <span class="hint">Estimated VCAL: <strong id="vcalc-result">-</strong></span>
+                  <button type="button" onclick="applyVCal()">Use this value</button>
+                </div>
+              </div>
+            </div>
+            <div class="field full">
+              <label for="PhaseCal">PhaseCal</label>
+              <input type="text" id="PhaseCal" name="PhaseCal" spellcheck="false">
+              <div class="hint">Recommended starting value: 1.7. Test with a known resistive load (lamp, heater, kettle) and adjust until power factor is close to 1.00. Typical useful range: 1.0 to 2.5.</div>
+            </div>
+            <div class="field"><label for="ToleranceOffTime">Tolerance OFF Time</label><input type="number" id="ToleranceOffTime" name="ToleranceOffTime"></div>
+            <div class="field"><label for="ToleranceOnTime">Tolerance ON Time</label><input type="number" id="ToleranceOnTime" name="ToleranceOnTime"></div>
+            <div class="field"><label for="CT_MaxAllowed_current">Max Current Before Shutdown (A)</label><input type="number" id="CT_MaxAllowed_current" name="CT_MaxAllowed_current"></div>
+            <div class="field"><label for="CT_adjustment">CT Adjustment</label><input type="text" id="CT_adjustment" name="CT_adjustment" spellcheck="false"></div>
+            <div class="field"><label for="CT_saveThreshold">Save Threshold (Wh)</label><input type="number" id="CT_saveThreshold" name="CT_saveThreshold"></div>
+            <div class="field"><label for="CT_ZeroLoadCurrentMax">Zero-Load Current Max (A)</label><input type="number" step="0.001" id="CT_ZeroLoadCurrentMax" name="CT_ZeroLoadCurrentMax"></div>
+            <div class="field"><label for="CT_ZeroLoadPowerMin">Zero-Load Power Min (W)</label><input type="number" step="0.01" id="CT_ZeroLoadPowerMin" name="CT_ZeroLoadPowerMin"></div>
+            <div class="field"><label for="CT_ZeroLoadPowerMax">Zero-Load Power Max (W)</label><input type="number" step="0.01" id="CT_ZeroLoadPowerMax" name="CT_ZeroLoadPowerMax"></div>
+            <div class="field"><label for="EmonReaderIntervalMs">Power Measurement Interval (ms)</label><input type="number" min="500" step="100" id="EmonReaderIntervalMs" name="EmonReaderIntervalMs"></div>
+            <div class="field"><label for="EmonPublisherIntervalMs">Power Publish Interval (ms)</label><input type="number" min="1000" step="100" id="EmonPublisherIntervalMs" name="EmonPublisherIntervalMs"></div>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button type="submit" id="BtnSave">Save</button>
+          <a class="button-link secondary" href="/">Back to Config</a>
+          <span class="save-status" id="SaveStatus"></span>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<script>
+/* ── Collapsible sonar section ─────────────────────────────────────── */
+var SONAR_KEY = 'cc-sonar-open';
+
+function toggleCard(id) {
+  var h2   = document.getElementById('h2-'   + id);
+  var body = document.getElementById('body-' + id);
+  var open = body.classList.toggle('collapsed');
+  h2.classList.toggle('collapsed', !open);
+  // open=true means classList.toggle returned true = class WAS added = now collapsed
+  localStorage.setItem(SONAR_KEY, open ? '0' : '1');
+}
+
+function initCollapsible() {
+  var stored = localStorage.getItem(SONAR_KEY);
+  // Default: collapsed (sonar is typically not the focus of this page)
+  var isOpen = (stored === '1');
+  var h2   = document.getElementById('h2-sonar');
+  var body = document.getElementById('body-sonar');
+  if (!isOpen) {
+    body.classList.add('collapsed');
+    h2.classList.add('collapsed');
+  }
+}
+
+/* ── VCal calculator ────────────────────────────────────────────────── */
+function toggleVCalc() {
+  var p = document.getElementById("vcal-calc");
+  p.style.display = (p.style.display === "none" || !p.style.display) ? "block" : "none";
+}
+function computeVCal() {
+  var vp = parseFloat(document.getElementById("vcalc-vp").value);
+  var vs = parseFloat(document.getElementById("vcalc-vs").value);
+  var r1 = parseFloat(document.getElementById("vcalc-r1").value);
+  var r2 = parseFloat(document.getElementById("vcalc-r2").value);
+  var out = document.getElementById("vcalc-result");
+  if (!vp || !vs || !r2 || (r1 + r2) <= 0) { out.textContent = "-"; return; }
+  var vcal = (vp / vs) * ((r1 + r2) / r2);
+  out.textContent = vcal.toFixed(2);
+}
+function applyVCal() {
+  var out = document.getElementById("vcalc-result");
+  if (out.textContent === "-") return;
+  setVal("calibration", out.textContent);
+}
+
+/* ── Config load / save ────────────────────────────────────────────── */
+function setText(id, v) {
+  var e = document.getElementById(id);
+  if (e) e.textContent = (v !== undefined && v !== null && v !== "") ? String(v) : "-";
+}
+function setVal(id, v) {
+  var e = document.getElementById(id);
+  if (e) e.value = (v !== undefined && v !== null) ? v : "";
+}
+function numVal(id) { var e = document.getElementById(id); return e ? parseFloat(e.value) : 0; }
+function strVal(id) { var e = document.getElementById(id); return e ? e.value : ""; }
+
+function loadConfig() {
+  var req = new XMLHttpRequest();
+  req.open("GET", "/CurrentConfig.json", true);
+  req.onreadystatechange = function () {
+    if (req.readyState !== 4 || req.status !== 200) return;
+    var data;
+    try { data = JSON.parse(req.responseText); } catch (e) { return; }
+
+    setText("topbar-time",   data.systemtime);
+    setText("topbar-uptime", data.uptime);
+
+    setText("CT_VOLTAGE",    data.CT_VOLTAGE);
+    setText("CT_CURRENT",    data.CT_CURRENT);
+    setText("CT_POWER",      data.CT_POWER);
+    setText("CT_PF",         data.CT_PF);
+
+    setVal("Sonar_distance",                 data.Sonar_distance);
+    setVal("Sonar_distance_max",             data.Sonar_distance_max);
+    setVal("CurrentTransformerTopic",        data.CurrentTransformerTopic);
+    setVal("CurrentTransformer_max_current", data.CurrentTransformer_max_current);
+    setVal("calibration",                    data.calibration);
+    setVal("PhaseCal",                       data.PhaseCal);
+    setVal("vcalc-vp", data.VCal_Vp || "");
+    setVal("vcalc-vs", data.VCal_Vs || "");
+    setVal("vcalc-r1", data.VCal_R1 || "");
+    setVal("vcalc-r2", data.VCal_R2 || "");
+    computeVCal();
+    setVal("ToleranceOffTime",               data.ToleranceOffTime);
+    setVal("ToleranceOnTime",               data.ToleranceOnTime);
+    setVal("CT_MaxAllowed_current",          data.CT_MaxAllowed_current);
+    setVal("CT_adjustment",                  data.CT_adjustment);
+    setVal("CT_saveThreshold",               data.CT_saveThreshold);
+    setVal("CT_ZeroLoadCurrentMax",          data.CT_ZeroLoadCurrentMax);
+    setVal("CT_ZeroLoadPowerMin",            data.CT_ZeroLoadPowerMin);
+    setVal("CT_ZeroLoadPowerMax",            data.CT_ZeroLoadPowerMax);
+    setVal("EmonReaderIntervalMs",           data.EmonReaderIntervalMs);
+    setVal("EmonPublisherIntervalMs",        data.EmonPublisherIntervalMs);
+
+    if (data.emonLib === false) document.getElementById("card-power-status").style.display = "none";
+
+    // Show conflict warning only when Input 3 or Input 4 MQTT topics are configured,
+    // indicating the user has something wired to those pins.
+    checkSonarConflict(data);
+  };
+  req.send();
+}
+
+function checkSonarConflict(data) {
+  // Fetch input config to see if Input3 (GPIO17) or Input4 (GPIO32) are in use.
+  var req = new XMLHttpRequest();
+  req.open("GET", "/InputsConfig.json", true);
+  req.onreadystatechange = function () {
+    if (req.readyState !== 4 || req.status !== 200) return;
+    var d;
+    try { d = JSON.parse(req.responseText); } catch (e) { return; }
+    var warn = document.getElementById('sonar-conflict-warn');
+    if (!warn) return;
+    // I3MODE = Input 3 (GPIO17 / InputPin03 / TRIG_PIN) mode; 0 = INPUT_NONE (inactive)
+    // I4MODE = Input 4 (GPIO32 / InputPin04 / ECHO_PIN) mode; 0 = INPUT_NONE (inactive)
+    var active3 = (d.I3MODE !== undefined && d.I3MODE !== null && Number(d.I3MODE) > 0);
+    var active4 = (d.I4MODE !== undefined && d.I4MODE !== null && Number(d.I4MODE) > 0);
+    if (active3 || active4) {
+      var pins = [];
+      if (active3) pins.push('GPIO17 / Input 3');
+      if (active4) pins.push('GPIO32 / Input 4');
+      warn.querySelector('div').innerHTML =
+        '<strong>&#9888; Active input conflict detected</strong> — ' +
+        pins.join(' and ') + ' ' + (pins.length > 1 ? 'are' : 'is') +
+        ' currently configured as input(s). Enabling sonar will <strong>disable these inputs</strong>. ' +
+        'Remove the input configuration on the <a href="/InputsConfig.html">Inputs Config</a> page before activating sonar.';
+      warn.style.borderColor = '#f87171';
+      warn.style.background  = '#fef2f2';
+      warn.querySelector('.warn-icon').textContent = '⚠️';
+    }
+  };
+  req.send();
+}
+
+function saveConfig() {
+  var btn = document.getElementById("BtnSave");
+  var status = document.getElementById("SaveStatus");
+  btn.disabled = true;
+  status.textContent = "Saving...";
+  status.className = "save-status";
+
+  var payload = JSON.stringify({
+    Sonar_distance:                 strVal("Sonar_distance"),
+    Sonar_distance_max:             numVal("Sonar_distance_max"),
+    CurrentTransformerTopic:        strVal("CurrentTransformerTopic"),
+    CurrentTransformer_max_current: numVal("CurrentTransformer_max_current"),
+    calibration:                    numVal("calibration"),
+    PhaseCal:                       numVal("PhaseCal"),
+    VCal_Vp:                        numVal("vcalc-vp"),
+    VCal_Vs:                        numVal("vcalc-vs"),
+    VCal_R1:                        numVal("vcalc-r1"),
+    VCal_R2:                        numVal("vcalc-r2"),
+    ToleranceOffTime:               numVal("ToleranceOffTime"),
+    ToleranceOnTime:                numVal("ToleranceOnTime"),
+    CT_MaxAllowed_current:          numVal("CT_MaxAllowed_current"),
+    CT_adjustment:                  numVal("CT_adjustment"),
+    CT_saveThreshold:               numVal("CT_saveThreshold"),
+    CT_ZeroLoadCurrentMax:          numVal("CT_ZeroLoadCurrentMax"),
+    CT_ZeroLoadPowerMin:            numVal("CT_ZeroLoadPowerMin"),
+    CT_ZeroLoadPowerMax:            numVal("CT_ZeroLoadPowerMax"),
+    EmonReaderIntervalMs:           numVal("EmonReaderIntervalMs"),
+    EmonPublisherIntervalMs:        numVal("EmonPublisherIntervalMs")
+  });
+
+  var req = new XMLHttpRequest();
+  req.open("POST", "/CurrentConfig.json", true);
+  req.setRequestHeader("Content-Type", "application/json");
+  req.onreadystatechange = function () {
+    if (req.readyState !== 4) return;
+    btn.disabled = false;
+    var data = {};
+    try { data = JSON.parse(req.responseText || "{}"); } catch (e) {}
+    if (req.status >= 200 && req.status < 300 && data.ok) {
+      status.textContent = "Saved.";
+      status.className = "save-status ok";
+    } else {
+      status.textContent = data.message || "Save failed.";
+      status.className = "save-status err";
+    }
+  };
+  req.send(payload);
+  return false;
+}
+
+function refreshSensorStatus() {
+  var req = new XMLHttpRequest();
+  req.open("GET", "/SensorStatus.json", true);
+  req.onreadystatechange = function () {
+    if (req.readyState !== 4 || req.status !== 200) return;
+    var data;
+    try { data = JSON.parse(req.responseText); } catch (e) { return; }
+    setText("CT_VOLTAGE",    data.CT_VOLTAGE);
+    setText("CT_CURRENT",    data.CT_CURRENT);
+    setText("CT_POWER",      data.CT_POWER);
+    setText("CT_PF",         data.CT_PF);
+    setText("topbar-time",   data.time);
+    setText("topbar-uptime", data.uptime);
+  };
+  req.send();
+}
+
+function resetAccumulatedPower() {
+  if (!confirm("Reset accumulated power values to zero?")) return;
+  if (!confirm("Please confirm again. This will erase KWh, MTD, and YTD accumulated power values.")) return;
+  var button = document.getElementById("ResetAccumulatedPowerButton");
+  if (button) { button.disabled = true; button.textContent = "Resetting..."; }
+  var req = new XMLHttpRequest();
+  req.open("POST", "/ResetAccumulatedPower.json", true);
+  req.onreadystatechange = function () {
+    if (req.readyState !== 4) return;
+    if (button) { button.disabled = false; button.textContent = "Reset accumulated power"; }
+    var data = {};
+    try { data = JSON.parse(req.responseText || "{}"); } catch (e) {}
+    alert((req.status >= 200 && req.status < 300 && data.ok)
+      ? "Accumulated power values were reset."
+      : (data.message || "Failed to reset."));
+  };
+  req.send();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  initCollapsible();
+  loadConfig();
+  var btn = document.getElementById("ResetAccumulatedPowerButton");
+  if (btn) btn.addEventListener("click", resetAccumulatedPower);
+  setInterval(refreshSensorStatus, 3000);
+});
+</script>
+<script>
+(function(){function ph(){fetch('/api/heap').then(function(r){return r.json();}).then(function(d){var f=document.getElementById('hb-free'),m=document.getElementById('hb-min'),b=document.getElementById('hb-blk');if(f&&d.heap!=null)f.textContent=Number(d.heap).toLocaleString();if(m&&d.heapMin!=null)m.textContent=Number(d.heapMin).toLocaleString();if(b&&d.heapMaxBlk!=null)b.textContent=Number(d.heapMaxBlk).toLocaleString();}).catch(function(){});}ph();setInterval(ph,30000);}());
+</script>
+</body>
+</html>

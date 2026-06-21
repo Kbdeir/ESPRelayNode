@@ -3,22 +3,17 @@
 
 extern std::vector<void *> relays ; // a list to hold all relays
 
-InputSensor::InputSensor(uint8_t p, fnptr_d on_callback,input_mode clickmode ) {
-/*
-  pin = p;
-  fclickmode =  clickmode;
-  pinMode ( pin, INPUT_PULLUP);
+InputSensor::InputSensor(uint8_t p, fnptr_d on_callback, input_mode clickmode) {
+  pin                              = p;
+  fclickmode                       = clickmode;
+  fon_callback                     = on_callback;
+  Input_debouncer                  = nullptr; // allocated in initialize()
   onInputChange_RelayServiceRoutine = nullptr;
-  onInputClick_RelayServiceRoutine = nullptr;
-  onInputLOOP_RelayServiceRoutine = nullptr;
-  Input_debouncer = new Bounce();
-  Input_debouncer->attach(pin,INPUT_PULLUP);
-  Input_debouncer->interval(25); // interval in ms
-  rchangedflag = false;
-  mqtt_topic="/none";
-  post_mqtt = false;
-  fon_callback = on_callback;
-  */
+  onInputClick_RelayServiceRoutine  = nullptr;
+  onInputLOOP_RelayServiceRoutine   = nullptr;
+  rchangedflag                     = false;
+  mqtt_topic                       = "/none";
+  post_mqtt                        = false;
 }
 
 
@@ -51,6 +46,7 @@ void InputSensor::initialize(uint8_t p, fnptr_d on_callback, input_mode clickmod
 
     onInputLOOP_RelayServiceRoutine = nullptr;
 
+    delete Input_debouncer;
     Input_debouncer = new Bounce();
     //Input_debouncer->attach(pin,INPUT_PULLUP);
     Input_debouncer->attach(pin,PULLMODE);
@@ -63,6 +59,7 @@ void InputSensor::initialize(uint8_t p, fnptr_d on_callback, input_mode clickmod
 };
 
 void InputSensor::watch() {
+    if (!this->Input_debouncer) return;
     this->Input_debouncer->update();
     if (attachedrelays.size() == 0) {
        if (fclickmode==INPUT_NORMAL) {
@@ -114,24 +111,27 @@ void InputSensor::clearAttachedRelays() {
 }
 
 
-InputSensor * getinputbynumber(uint8_t nb) {
-  if (nb < inputs.size()) {
-    InputSensor * inp = static_cast<InputSensor *>(inputs.at(nb));
-    if (inp) {
-      return inp;
-    } else { return nullptr;}
-  }   else { return nullptr;}
+InputSensor * getinputbynumber(uint8_t pin) {
+  for (void* it : inputs) {
+    InputSensor* inp = static_cast<InputSensor *>(it);
+    if (inp && inp->pin == pin) return inp;
+  }
+  return nullptr;
 }
 
 
 void applyIRMap(int8_t Inpn, int8_t rlyn) {
   if ((Inpn > -1) && (rlyn > -1)) {
+    if (inputs.empty() || relays.empty()) return;
     InputSensor * t = nullptr;
-    Relay * r = nullptr;
-    if ((Inpn <= inputs.size()-1) && (rlyn <= relays.size()-1)) {
-      t = static_cast<InputSensor *>(inputs.at(Inpn));
-      r = static_cast<Relay *>(relays.at(rlyn));
-      if ((t != nullptr) && (r !=nullptr)) {
+    for (void* it : inputs) {
+      InputSensor* inp = static_cast<InputSensor *>(it);
+      if (inp && inp->pin == (uint8_t)Inpn) { t = inp; break; }
+    }
+    if (t == nullptr) return;
+    if ((size_t)rlyn < relays.size()) {
+      Relay * r = static_cast<Relay *>(relays.at(rlyn));
+      if (r != nullptr) {
         if ((t->fclickmode==INPUT_COPY_TO_RELAY) || (t->fclickmode==INPUT_RELAY_TOGGLE)) {
           t->addrelay(r);
         }

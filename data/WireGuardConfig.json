@@ -1,0 +1,1 @@
+{"VPNEnabled":"1","VPNProtocol":"WireGuard","WGPrivateKey":"YDmCuo4stlb2QJUwRuA2Sou6U/E86SpuRkSdgfS8aGc=","WGLocalIP":"10.3.254.20","WGPeerPublicKey":"eO8P4KJIZIu8r6rjL0bZ3F6KtR7SLHuBl/vmW2Qx9ko=","WGPeerEndpoint":"kbdeiraws.homeip.net:13231","WGAllowedIPs":"0.0.0.0/0","WGDnsServers":"8.8.8.8","WGDnsLivenessCheck":"1","WGDnsLivenessInterval":"5"}

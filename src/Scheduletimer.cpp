@@ -24,18 +24,26 @@
 
 #include "Scheduletimer.h"
 
-Schedule_timer::Schedule_timer(){
-};
+Schedule_timer::Schedule_timer()
+    : timer(0), repeat(0), resolution(MILLIS_), user_res(SECONDS_),
+      counts(0), ksb_seconds(0), status(STOPPED_),
+      callback(nullptr), periodcallback(nullptr),
+      periodcallback_interval(1), lastTime(0),
+      ksb_lastsecondcounter(0), diffTime(0), enabled(false) {}
 
-Schedule_timer::Schedule_timer(int a, int b): timer(a),repeat(b){
-
-};
+Schedule_timer::Schedule_timer(int a, int b)
+    : timer(a), repeat(b), resolution(MILLIS_), user_res(SECONDS_),
+      counts(0), ksb_seconds(0), status(STOPPED_),
+      callback(nullptr), periodcallback(nullptr),
+      periodcallback_interval(1), lastTime(0),
+      ksb_lastsecondcounter(0), diffTime(0), enabled(false) {}
 
 Schedule_timer::Schedule_timer(fnptr_a callback, uint32_t timer, uint16_t repeat, ksb_resolution_t resolution,
 			fnptr_a periodcallback, ksb_user_resolution_t user_res ) {
 
 		this->resolution = resolution;
 		if (resolution == MICROS_) timer = timer * 1000;
+		periodcallback_interval = 1;
 		if (user_res == MINUTES_) {
 			timer = timer * 60;
 			periodcallback_interval = 60;
@@ -47,10 +55,10 @@ Schedule_timer::Schedule_timer(fnptr_a callback, uint32_t timer, uint16_t repeat
 		this->periodcallback = periodcallback;
 		enabled = false;
 		lastTime = 0;
-	  	ksb_lastsecondcounter = 0;
+		ksb_lastsecondcounter = 0;
 		counts = 0;
 		ksb_seconds = 0;
-		periodcallback_interval = 1 ;
+		diffTime = 0;
 		}
 
 
@@ -98,48 +106,49 @@ void Schedule_timer::update(void* p_obj) {
 
 bool Schedule_timer::tick(void* p_obj) {
 	if (!enabled)	return false;
-	if (repeat > 0) { 
+	if (repeat > 0) {
 		if (repeat - counts == 0) {
 			this->stop();
 			return false;
 		}
-		}
+	}
 	if (resolution == MILLIS_) {
-		if ((millis() - lastTime) >= timer) {
-			lastTime = millis();
-			//if (repeat - counts == 1) enabled = false;
-			counts++;
-	  		return true;
-			}
-			if ((millis() - ksb_lastsecondcounter) >= 1000 * periodcallback_interval) {
-				ksb_lastsecondcounter = millis();
-				ksb_seconds++;
-	  			if (periodcallback != NULL) periodcallback(p_obj);
-			}
-		}
-	else {
-
-		if ((micros() - lastTime) >= timer) {
-			lastTime = micros();
-			//if (repeat - counts == 1) enabled = false;
+		unsigned long now = millis();
+		if ((now - lastTime) >= timer) {
+			lastTime = now;
 			counts++;
 			return true;
-			}
-			if ((micros() - ksb_lastsecondcounter) >= 1000000 * periodcallback_interval) {
-				ksb_seconds++;
-				ksb_lastsecondcounter = micros();
-	  			if (periodcallback != NULL) periodcallback(p_obj);
-			}
 		}
+		if ((now - ksb_lastsecondcounter) >= 1000 * periodcallback_interval) {
+			ksb_lastsecondcounter = now;
+			ksb_seconds++;
+			if (periodcallback != NULL) periodcallback(p_obj);
+		}
+	} else {
+		unsigned long now = micros();
+		if ((now - lastTime) >= timer) {
+			lastTime = now;
+			counts++;
+			return true;
+		}
+		if ((now - ksb_lastsecondcounter) >= 1000000 * periodcallback_interval) {
+			ksb_seconds++;
+			ksb_lastsecondcounter = now;
+			if (periodcallback != NULL) periodcallback(p_obj);
+		}
+	}
 	return false;
 	}
 
 void Schedule_timer::interval(uint32_t timer) {
+	// IMPORTANT: pass the same unit you used at construction.
+	// For MICROS_ timers, this multiplies by 1000 again — the same scaling the
+	// constructor applied. Do NOT pre-scale before calling interval() on a MICROS_ timer.
 	if (resolution == MICROS_) timer = timer * 1000;
-		if (user_res == MINUTES_) {
-			timer = timer * 60;
-			periodcallback_interval = 60;
-		}
+	if (user_res == MINUTES_) {
+		timer = timer * 60;
+		periodcallback_interval = 60;
+	}
 	this->timer = timer;
 	}
 

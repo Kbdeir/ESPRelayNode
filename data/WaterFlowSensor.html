@@ -1,0 +1,145 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Water Flow Sensor Configuration</title>
+<style>
+:root{--page:#edf1f5;--ink:#152033;--muted:#687589;--panel:#fff;--panel-2:#f8fafc;--line:#d9e1ea;--field:#fdfefe;--teal:#0f766e;--teal-dark:#0a5f59;--blue:#2563eb;--amber:#b7791f;--slate:#475569;--shadow-sm:0 2px 8px rgba(21,32,51,.06);--shadow:0 18px 45px rgba(21,32,51,.12)}
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.42;background:linear-gradient(180deg,#dfe9f3 0,#edf1f5 320px),var(--page)}
+.shell{width:min(860px,calc(100vw - 32px));margin:0 auto;padding:24px 0 36px}
+.topbar{position:relative;overflow:hidden;color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:24px 26px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:linear-gradient(135deg,#152033,#103f49,#0f766e);box-shadow:var(--shadow)}
+.topbar h1{margin:0;font-size:28px;font-weight:700}
+.topbar .hint{margin-top:7px;color:#cfe0ea}
+.topbar .meta{min-width:180px;color:#e6eef5;font-size:13px;text-align:right;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);padding:18px;margin-top:16px}
+.card h2{position:relative;display:flex;align-items:center;gap:10px;margin:-2px 0 16px;padding-bottom:12px;color:var(--ink);border-bottom:1px solid var(--line);font-size:18px;font-weight:700}
+.card h2::before{content:"";width:10px;height:28px;border-radius:6px;background:var(--teal);flex:0 0 auto}
+.card h2 .help-toggle{margin-left:auto;min-height:30px;padding:5px 10px;border:1px solid #b8c7d7;border-radius:6px;color:var(--teal);background:#f8fafc;font-size:12px;font-weight:700;line-height:1;box-shadow:none}
+.card h2 .help-toggle:hover{color:#fff;background:var(--teal);border-color:var(--teal);transform:none;box-shadow:none}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+label{color:var(--muted);font-size:12px;font-weight:700}
+input[type="text"],input[type="number"]{min-height:38px;border:1px solid #bac7d5;border-radius:8px;background:var(--field);color:var(--ink);padding:8px 10px;font:inherit;transition:border-color 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+input:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.16)}
+.hint{color:var(--muted);font-size:12px;line-height:1.5}
+.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.summary-box{min-height:116px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:13px 14px}
+.summary-box h3{margin:0 0 8px;color:var(--ink);font-size:15px}
+.summary-box p,.summary-box ul{margin:0;color:#334155}
+.summary-box ul{padding-left:18px}
+.summary-box li+li{margin-top:5px}
+.note{margin-top:12px;padding:11px 12px;border-left:4px solid var(--amber);border-radius:6px;background:#fff8e6;color:#3f3420;line-height:1.5}
+.live-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.live-box{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:14px;text-align:center}
+.live-label{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.live-value{font-size:32px;font-weight:700;color:var(--teal);line-height:1}
+.live-unit{color:var(--muted);font-size:12px;margin-top:4px}
+.live-status{margin-top:10px;font-size:12px;color:var(--muted);text-align:right}
+code{padding:1px 4px;border-radius:4px;background:#eef4fa;color:#0f172a}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+button,input[type="submit"],input[type="button"]{min-height:38px;border:1px solid transparent;border-radius:8px;background:var(--teal);color:#fff;padding:8px 15px;font:inherit;font-weight:700;cursor:pointer;text-align:center;box-shadow:0 5px 14px rgba(15,118,110,.22);transition:transform 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+button:hover,input[type="submit"]:hover,input[type="button"]:hover{background:var(--teal-dark);box-shadow:0 7px 18px rgba(15,118,110,.28);transform:translateY(-1px)}
+.secondary{background:var(--slate)!important;box-shadow:0 5px 14px rgba(71,85,105,.18)!important}
+.hidden{display:none}
+@media(max-width:480px){.live-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.form-grid,.summary-grid{grid-template-columns:1fr}.topbar{grid-template-columns:1fr}.topbar .meta{min-width:0;text-align:left}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div>
+      <h1>Water Flow Sensor</h1>
+      <div class="hint">Configure the flow sensor MQTT topic and calibration factor.</div>
+    </div>
+    <div class="meta"><div>System time: %systemtime%</div>      <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
+</div>
+  </header>
+
+  <section class="card" id="LiveCard">
+    <h2>Live Reading</h2>
+    <div class="live-grid">
+      <div class="live-box"><div class="live-label">Pulses / Second</div><div class="live-value" id="lv-pps">&mdash;</div></div>
+      <div class="live-box"><div class="live-label">Flow Rate</div><div class="live-value" id="lv-flow">&mdash;</div><div class="live-unit">L / min</div></div>
+      <div class="live-box"><div class="live-label">Total Volume</div><div class="live-value" id="lv-total">&mdash;</div><div class="live-unit">L</div></div>
+    </div>
+    <div class="live-status" id="lv-status">Connecting&hellip;</div>
+    <div class="actions">
+      <button type="button" class="secondary" onclick="resetTotal()">Reset Total Volume</button>
+    </div>
+  </section>
+
+  <form method="get" action="WaterFlowSensorSave.html" enctype="text/plain" id="Form1" onsubmit="return submitForm1()">
+    <section class="card">
+      <h2>Sensor Settings <button type="button" class="help-toggle" id="HelpToggle" onclick="toggleHelp()">Show Help</button></h2>
+      <div class="form-grid">
+        <div class="field full"><label for="Editbox44">Sensor MQTT Topic</label><input type="text" id="Editbox44" name="wfs_Topic" value="%wfs_Topic%" maxlength="64"></div>
+        <div class="field">
+          <label for="Editbox45">Flow Sensor Calibration Factor</label>
+          <input type="text" id="Editbox45" name="wfs_Cal" value="%wfs_Cal%" title="Calibration factor for pulse-to-volume conversion">
+          <div class="hint">Higher values reduce the reported flow rate; lower values increase it.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <input type="submit" name="TimerSave" value="Save">
+        <input type="button" class="secondary" onclick="window.location.href='/';return false;" value="Cancel">
+      </div>
+    </section>
+  </form>
+
+  <section class="card hidden" id="HelpSummary">
+    <h2>Summary</h2>
+    <div class="summary-grid">
+      <div class="summary-box"><h3>Connection</h3><ul><li>Signal wire connects to <strong>Input 6 / GPIO27</strong>.</li><li>The firmware enables <code>INPUT_PULLUP</code> on this pin.</li><li>Sensor output should pulse low; pulses are counted on the falling edge.</li><li>Power and ground must match the sensor module requirements.</li></ul></div>
+      <div class="summary-box"><h3>Functionality</h3><ul><li>Each pulse interrupt increments an internal counter.</li><li>Every 5 seconds, the device calculates flow in litres per minute.</li><li>It also accumulates total water volume in litres since boot.</li><li>Readings are published to MQTT as retained messages.</li></ul></div>
+      <div class="summary-box"><h3>MQTT Output</h3><ul><li><strong>Sensor MQTT Topic</strong> receives the current flow rate.</li><li>The value is formatted with one decimal place, e.g. <code>12.4</code>.</li><li>Total volume is published to the fixed topic <code>TotalLiters</code>.</li></ul></div>
+      <div class="summary-box"><h3>Restrictions</h3><ul><li>Available only when the firmware is built with <code>WaterFlowSensor</code>.</li><li>Input 6 cannot be used as a normal input mode while this feature is enabled.</li><li>The accumulated total is saved to flash every 5 minutes and survives reboots.</li></ul></div>
+    </div>
+    <div class="note">Calibration converts pulse frequency into litres per minute. The default factor is <strong>4.5</strong>, which is common for YF-style hall-effect flow sensors, but the best value depends on your exact sensor and plumbing.</div>
+  </section>
+</main>
+<script>
+function toggleHelp(){
+  var h=document.getElementById('HelpSummary'),b=document.getElementById('HelpToggle');
+  if(!h||!b)return;
+  b.textContent=h.classList.toggle('hidden')?'Show Help':'Hide Help';
+}
+(function(){
+  var prev=null;
+  function poll(){
+    fetch('/api/wfs').then(function(r){return r.json();}).then(function(d){
+      var pps='—';
+      if(prev!==null){var delta=d.pulses-prev;if(delta<0)delta+=0x100000000;pps=delta;}
+      prev=d.pulses;
+      document.getElementById('lv-pps').textContent=pps;
+      document.getElementById('lv-flow').textContent=d.flow.toFixed(1);
+      document.getElementById('lv-total').textContent=d.total.toFixed(3);
+      document.getElementById('lv-status').textContent='Updated '+new Date().toLocaleTimeString();
+    }).catch(function(){document.getElementById('lv-status').textContent='Connection error — retrying…';});
+  }
+  poll();setInterval(poll,1000);
+}());
+function resetTotal(){
+  if(!confirm('Reset total volume to zero?'))return;
+  fetch('/api/wfs/reset',{method:'POST'}).then(function(r){return r.json();}).then(function(d){
+    if(d.ok){document.getElementById('lv-total').textContent='0.000';document.getElementById('lv-status').textContent='Total reset at '+new Date().toLocaleTimeString();}
+    else{alert('Reset failed.');}
+  }).catch(function(){alert('Reset request failed.');});
+}
+function submitForm1(){
+  var e=document.getElementById('Editbox45');
+  if(!(e.disabled||e.style.display==='none'||e.style.visibility==='hidden')){
+    if(e.value===""){alert("Please enter a value for the calibration factor.");e.focus();return false;}
+  }
+  return true;
+}
+</script>
+<script>
+(function(){function ph(){fetch('/api/heap').then(function(r){return r.json();}).then(function(d){var f=document.getElementById('hb-free'),m=document.getElementById('hb-min'),b=document.getElementById('hb-blk');if(f&&d.heap!=null)f.textContent=Number(d.heap).toLocaleString();if(m&&d.heapMin!=null)m.textContent=Number(d.heapMin).toLocaleString();if(b&&d.heapMaxBlk!=null)b.textContent=Number(d.heapMaxBlk).toLocaleString();}).catch(function(){});}ph();setInterval(ph,30000);}());
+</script>
+</body>
+</html>

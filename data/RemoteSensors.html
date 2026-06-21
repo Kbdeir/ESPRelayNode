@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remote Sensor Sources</title>
+<style>
+:root{--page:#edf1f5;--ink:#152033;--muted:#687589;--panel:#fff;--panel-2:#f8fafc;--line:#d9e1ea;--field:#fdfefe;--teal:#0f766e;--teal-dark:#0a5f59;--blue:#2563eb;--amber:#b7791f;--rose:#be123c;--green:#15803d;--slate:#475569;--shadow-sm:0 2px 8px rgba(21,32,51,.06);--shadow:0 18px 45px rgba(21,32,51,.12)}
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.42;background:linear-gradient(180deg,#dfe9f3 0,#edf1f5 320px),var(--page)}
+.shell{width:min(940px,calc(100vw - 32px));margin:0 auto;padding:24px 0 36px}
+.topbar{position:relative;overflow:hidden;color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:24px 26px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:linear-gradient(135deg,#152033,#103f49,#0f766e);box-shadow:var(--shadow)}
+.topbar h1{margin:0;font-size:28px;font-weight:700}
+.topbar .hint{margin-top:7px;color:#cfe0ea}
+.topbar .meta{min-width:200px;color:#e6eef5;font-size:13px;text-align:right;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);padding:18px;margin-top:16px}
+.card h2{position:relative;display:flex;align-items:center;gap:10px;margin:-2px 0 16px;padding-bottom:12px;color:var(--ink);border-bottom:1px solid var(--line);font-size:18px;font-weight:700}
+.card h2::before{content:"";width:10px;height:28px;border-radius:6px;background:var(--blue);flex:0 0 auto}
+.subhead{margin:20px 0 10px;padding:7px 10px;color:#334155;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;font-weight:700;font-size:12px;text-transform:uppercase}
+.subhead:first-child{margin-top:0}
+.rs-grid{display:grid;grid-template-columns:1fr 2fr 1fr 1fr;gap:14px 16px}
+.field{display:flex;flex-direction:column;gap:6px}
+label{color:var(--muted);font-size:12px;font-weight:700}
+input[type="text"]{min-height:38px;border:1px solid #bac7d5;border-radius:8px;background:var(--field);color:var(--ink);padding:8px 10px;font:inherit;transition:border-color 120ms ease,box-shadow 120ms ease}
+input:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.16)}
+.check-row{min-height:38px;display:flex;align-items:center;gap:9px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.hint{color:var(--muted);font-size:12px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+button,input[type="submit"],input[type="button"]{min-height:38px;border:1px solid transparent;border-radius:8px;background:var(--teal);color:#fff;padding:8px 15px;font:inherit;font-weight:700;cursor:pointer;text-align:center;box-shadow:0 5px 14px rgba(15,118,110,.22);transition:transform 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+button:hover,input[type="submit"]:hover,input[type="button"]:hover{background:var(--teal-dark);box-shadow:0 7px 18px rgba(15,118,110,.28);transform:translateY(-1px)}
+.secondary{background:var(--slate)!important;box-shadow:0 5px 14px rgba(71,85,105,.18)!important}
+.gate-link{display:inline-flex;align-items:center;gap:7px;align-self:center;padding:8px 15px;border-radius:8px;background:var(--blue);border:none;color:#fff;font:inherit;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer;box-shadow:0 5px 14px rgba(37,99,235,.22);transition:transform 120ms ease,box-shadow 120ms ease,background-color 120ms ease;min-height:38px}
+.gate-link:hover{background:#1d4ed8;box-shadow:0 7px 18px rgba(37,99,235,.28);transform:translateY(-1px)}
+.live-val{font-weight:700;font-family:monospace;font-size:13px}
+.live-age{color:var(--muted);font-size:11px}
+.parse-btn{margin-top:5px;font-size:12px;min-height:30px;padding:4px 10px}
+.pi-row{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;margin-top:10px}
+.pi-payload{flex:1;min-width:0;font-family:monospace;font-size:12px}
+.pi-select{min-height:38px;flex:0 0 220px;border:1px solid #bac7d5;border-radius:8px;background:var(--field);color:var(--ink);padding:6px 10px;font:inherit;cursor:pointer}
+.pi-select:disabled{opacity:.5;cursor:default}
+@media(max-width:860px){.rs-grid{grid-template-columns:1fr 1fr}.topbar{grid-template-columns:1fr}.topbar .meta{min-width:0;text-align:left}}
+@media(max-width:480px){.rs-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <div>
+      <h1>Remote Sensor Sources</h1>
+      <div class="hint">Map MQTT topics published by other boards to numbered sensor slots. Slots appear as condition sources in Automation Rules.</div>
+    </div>
+    <div class="meta">
+      <div>System time: %systemtime%</div>
+      <div>Uptime: %uptime%</div>
+      <div>Heap: <strong>%heap%</strong> B</div>
+    </div>
+  </header>
+
+  <div class="card">
+    <h2>How it works</h2>
+    <p class="hint" style="margin:0">The remote board publishes its sensor value to an MQTT topic. This board subscribes and caches the latest value. Set <strong>JSON Key</strong> if the payload is a JSON object (e.g. <code>{"realPower":2450}</code> &rarr; key&nbsp;=&nbsp;<code>realPower</code>); leave blank if the payload is a plain number. Each filled slot appears as <em>Remote N: Label</em> in Automation Rule condition dropdowns.</p>
+  </div>
+
+  <form method="get" action="saveremotesensors.html" id="RemoteForm">
+    <div class="card">
+      <h2>Sensor Slots</h2>
+      %RS_ROWS%
+    </div>
+    <div class="actions">
+      <input type="submit" value="Save">
+      <input type="button" class="secondary" onclick="window.location.href='/'" value="Back to Config">
+      <a class="gate-link" href="/Automation">Automation Rules &rarr;</a>
+    </div>
+  </form>
+  <div class="card" id="pi-card" style="display:none">
+    <h2 id="pi-title">Key Inspector</h2>
+    <div class="field">
+      <label>Available JSON Keys <span class="hint">(editable — comma-separated)</span></label>
+      <input type="text" id="pi-payload" class="pi-payload" placeholder="(no MQTT data received for this slot yet)">
+    </div>
+    <div class="pi-row">
+      <button type="button" onclick="parsePanelContent()">Parse</button>
+      <select id="pi-combo" class="pi-select" onchange="applyCombo()" disabled>
+        <option value="">— select key —</option>
+      </select>
+    </div>
+  </div>
+</main>
+<script>
+var _keys={},_activeSlot=0;
+
+function refreshLive(){
+  fetch('/api/remotesensors').then(function(r){return r.json();}).then(function(data){
+    data.forEach(function(s,i){
+      var n=i+1,vEl=document.getElementById('rs'+n+'_v'),aEl=document.getElementById('rs'+n+'_a');
+      if(!vEl||!aEl)return;
+      if(!s.topic){vEl.textContent='';aEl.textContent='';return;}
+      // raw = "key1,key2,...|displayString"  or  "key1,key2,..."  or  "on" (plain)
+      var raw=s.raw||'',pipe=raw.indexOf('|');
+      var disp=pipe>=0?raw.substring(pipe+1):'';
+      var keys=pipe>=0?raw.substring(0,pipe):raw;
+      if(raw)_keys[n]=keys;
+      if(s.valid){
+        if(disp) vEl.textContent=disp;
+        else if(keys&&keys.indexOf(',')<0&&isNaN(Number(keys))) vEl.textContent=keys;
+        else vEl.textContent=s.value.toFixed(3);
+      } else {
+        vEl.textContent='--';
+      }
+      aEl.textContent=s.valid?s.age+'s ago':'never seen';
+    });
+  }).catch(function(){});
+}
+setInterval(refreshLive,3000);
+refreshLive();
+
+function parsePayload(n){
+  _activeSlot=n;
+  var card=document.getElementById('pi-card');
+  document.getElementById('pi-title').textContent='Key Inspector — Slot '+n;
+  card.style.display='';
+  document.getElementById('pi-payload').value=_keys[n]||'';
+  parsePanelContent();
+  card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function parsePanelContent(){
+  var combo=document.getElementById('pi-combo');
+  combo.innerHTML='<option value="">— select key —</option>';
+  combo.disabled=true;
+  var raw=(document.getElementById('pi-payload').value||'').trim();
+  if(!raw)return;
+  var keys=raw.split(',').map(function(k){return k.trim();}).filter(function(k){return k.length>0;});
+  if(!keys.length)return;
+  keys.forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=k;combo.appendChild(o);});
+  combo.disabled=false;
+}
+
+function applyCombo(){
+  var v=document.getElementById('pi-combo').value;
+  var inp=document.getElementById('rs'+_activeSlot+'_key');
+  if(v&&inp)inp.value=v;
+}
+</script>
+</body>
+</html>

@@ -15,6 +15,10 @@ void ACS_Calibrate_Start(Relay &arelay, ACS712 &asensor){
 		case 30:
 			sensitivity = 0.066;
 			break;
+		default:
+			Serial.printf("[WARN   ] Unknown ACS model %d, defaulting to 20A (0.100 V/A)\n", type);
+			sensitivity = 0.100;
+			break;
 	}
 	Serial.println("[INFO   ] Sensitivity = " + String(sensitivity));
 	asensor.setSensitivity(sensitivity);

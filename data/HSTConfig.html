@@ -1,252 +1,112 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Untitled Page</title>
-<meta name="generator" content="WYSIWYG Web Builder 17 - http://www.wysiwygwebbuilder.com">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HST Hall Sensor Configuration</title>
 <style>
-body
-{
-   background-color: #FFFFFF;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-size: 13px;
-   line-height: 1.1875;
-   margin: 0;
-   padding: 0;
-}
-a
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-a:visited
-{
-   color: #800080;
-}
-a:active
-{
-   color: #FF0000;
-}
-a:hover
-{
-   color: #0000FF;
-   text-decoration: underline;
-}
-input:focus, textarea:focus, select:focus
-{
-   outline: none;
-}
-#wb_Form2
-{
-   background-color: #808080;
-   background-image: none;
-   border: 1px solid #4F4F4F;
-   border-radius: 0px;
-}
-#wb_Text30 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: center;
-}
-#wb_Text30 div
-{
-   text-align: center;
-}
-#wb_Text24 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #DCDCDC;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text24 div
-{
-   text-align: left;
-}
-#wb_Form1
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #CCCCCC;
-   border-radius: 0px;
-}
-#wb_Text64 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text64 div
-{
-   text-align: right;
-}
-#wb_Text61 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text61 div
-{
-   text-align: left;
-}
-#Button2
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#btnSave
-{
-   border: 1px solid #2E6DA4;
-   border-radius: 4px;
-   background-color: #3370B7;
-   background-image: none;
-   color: #FFFFFF;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   padding: 0;
-   text-align: center;
-   -webkit-appearance: none;
-   margin: 0;
-}
-#wb_Text5 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: left;
-}
-#wb_Text5 div
-{
-   text-align: left;
-}
-#edt_Res1
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#edt_Res1:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
-#wb_Text1 
-{
-   background-color: transparent;
-   background-image: none;
-   border: 0px solid #000000;
-   border-radius: 0px;
-   padding: 0;
-   margin: 0;
-   text-align: right;
-}
-#wb_Text1 div
-{
-   text-align: right;
-}
-#Editbox3
-{
-   border: 1px solid #CCCCCC;
-   border-radius: 4px;
-   background-color: #FFFFFF;
-   background-image: none;
-   color: #000000;
-   font-family: Arial;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 13px;
-   line-height: 16px;
-   padding: 4px 4px 4px 4px;
-   margin: 0;
-   text-align: left;
-}
-#Editbox3:focus
-{
-   border-color: #66AFE9;
-   box-shadow: inset 0px 1px 1px rgba(0,0,0,0.075), 0px 0px 8px rgba(102,175,233,0.60);
-   outline: 0;
-}
+:root{--page:#edf1f5;--ink:#152033;--muted:#687589;--panel:#fff;--panel-2:#f8fafc;--line:#d9e1ea;--field:#fdfefe;--teal:#0f766e;--teal-dark:#0a5f59;--blue:#2563eb;--amber:#b7791f;--rose:#be123c;--green:#15803d;--slate:#475569;--shadow-sm:0 2px 8px rgba(21,32,51,.06);--shadow:0 18px 45px rgba(21,32,51,.12)}
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.42;background:linear-gradient(180deg,#dfe9f3 0,#edf1f5 320px),var(--page)}
+.shell{width:min(860px,calc(100vw - 32px));margin:0 auto;padding:24px 0 36px}
+.topbar{position:relative;overflow:hidden;color:#fff;border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:24px 26px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:linear-gradient(135deg,#152033,#103f49,#0f766e);box-shadow:var(--shadow)}
+.topbar h1{margin:0;font-size:28px;font-weight:700}
+.topbar .hint{margin-top:7px;color:#cfe0ea}
+.topbar .meta{min-width:180px;color:#e6eef5;font-size:13px;text-align:right;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);padding:18px;margin-top:16px}
+.card h2{position:relative;display:flex;align-items:center;gap:10px;margin:-2px 0 16px;padding-bottom:12px;color:var(--ink);border-bottom:1px solid var(--line);font-size:18px;font-weight:700}
+.card h2::before{content:"";width:10px;height:28px;border-radius:6px;background:var(--teal);flex:0 0 auto}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+label{color:var(--muted);font-size:12px;font-weight:700}
+input[type="text"],input[type="number"]{min-height:38px;border:1px solid #bac7d5;border-radius:8px;background:var(--field);color:var(--ink);padding:8px 10px;font:inherit;transition:border-color 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+input:focus{outline:none;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.16)}
+.hint{color:var(--muted);font-size:12px;line-height:1.5}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+button,input[type="submit"],input[type="button"]{min-height:38px;border:1px solid transparent;border-radius:8px;background:var(--teal);color:#fff;padding:8px 15px;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;text-align:center;box-shadow:0 5px 14px rgba(15,118,110,.22);transition:transform 120ms ease,box-shadow 120ms ease,background-color 120ms ease}
+button:hover,input[type="submit"]:hover,input[type="button"]:hover{background:var(--teal-dark);box-shadow:0 7px 18px rgba(15,118,110,.28);transform:translateY(-1px)}
+.secondary{background:var(--slate)!important;box-shadow:0 5px 14px rgba(71,85,105,.18)!important}
+.live-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.live-box{border:1px solid var(--line);border-radius:8px;background:var(--panel-2);padding:14px;text-align:center}
+.live-label{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.live-value{font-size:32px;font-weight:700;color:var(--teal);line-height:1}
+.live-unit{color:var(--muted);font-size:12px;margin-top:4px}
+.live-status{margin-top:10px;font-size:12px;color:var(--muted);text-align:right}
+@media(max-width:640px){.form-grid,.live-grid{grid-template-columns:1fr}.topbar{grid-template-columns:1fr}.topbar .meta{min-width:0;text-align:left}}
 </style>
-    
 </head>
 <body>
+<main class="shell">
+  <header class="topbar">
+    <div>
+      <h1>HST Hall Sensor Configuration</h1>
+      <div class="hint">HSTS016L Analog to Digital Conversion &mdash; Hall-Effect current transformer setup.</div>
+    </div>
+    <div class="meta"><div>System time: %systemtime%</div>      <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
+</div>
+  </header>
 
-<div id="wb_Form2" style="position:absolute;left:15px;top:10px;width:464px;height:93px;z-index:11;">
-<form name="Getimerform" method="get" action="Timer1" enctype="text/plain" id="Form2">
-<div id="wb_Text30" style="position:absolute;left:56px;top:51px;width:325px;height:15px;text-align:center;z-index:0;">
-<span style="color:#DCDCDC;font-family:Arial;font-size:13px;">System time: %systemtime%</span></div>
-<div id="wb_Text24" style="position:absolute;left:75px;top:14px;width:367px;height:27px;z-index:1;">
-<span style="color:#F5F5F5;font-family:Arial;font-size:24px;">HSTS016L ADC Configuration</span></div>
-</form>
-</div>
-<div id="wb_Form1" style="position:absolute;left:15px;top:105px;width:466px;height:587px;z-index:12;">
-<form name="Form1" method="get" action="ADS11x5ConfigSave.html" enctype="text/plain" id="Form1">
-<div id="wb_Text64" style="position:absolute;left:26px;top:113px;width:192px;height:15px;text-align:right;z-index:2;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">AmpsVoltsRatio </span></div>
-<div id="wb_Text61" style="position:absolute;left:38px;top:15px;width:391px;height:42px;z-index:3;">
-<span style="color:#000000;font-family:Arial;font-size:19px;"><strong>Analog to Digital Conversion HST Hall Sensor</strong></span></div>
-<input type="button" id="Button2" onclick="window.location.href='/';return false;" name="Cancelbtn" value="Cancel" style="position:absolute;left:26px;top:544px;width:90px;height:25px;z-index:4;">
-<input type="submit" id="btnSave" name="HSTSave" value="Save" style="position:absolute;left:353px;top:544px;width:79px;height:25px;z-index:5;">
-<div id="wb_Text5" style="position:absolute;left:17px;top:169px;width:415px;height:179px;z-index:6;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">If using &quot;Hall-Effect&quot; Current Transformer, key in value using this formula: mVperAmp = maximum voltage range (in milli volt) / current rating of CT<br><br>For example, a 20A Hall-Effect Current Transformer rated at 20A, 2.5V +/- 0.625V, mVperAmp will be 625 mV / 20A = 31.25mV/A <br><br>For example, a 50A Hall-Effect Current Transformer rated at 50A, 2.5V +/- 0.625V, mVperAmp will be 625 mV / 50A = 12.5 mV/A<br><br>For example, a 50A Hall-Effect Current Transformer rated at 100A, 2.5V +/- 0.625V, mVperAmp will be 625 mV / 100A = 6.25 mV/A</span></div>
-<input type="text" id="edt_Res1" style="position:absolute;left:241px;top:107px;width:89px;height:16px;z-index:7;" name="AmpsVoltsRatio" value="%AmpsVoltsRatio%" spellcheck="false">
-<div id="wb_Text1" style="position:absolute;left:28px;top:82px;width:192px;height:15px;text-align:right;z-index:8;">
-<span style="color:#000000;font-family:Arial;font-size:13px;">HST Number</span></div>
-<input type="text" id="Editbox3" style="position:absolute;left:241px;top:76px;width:89px;height:16px;z-index:9;" name="HSTNB" value="%HSTNB%" spellcheck="false">
-</form>
-</div>
+  <section class="card" id="LiveCard">
+    <h2>Live Readings</h2>
+    <div class="live-grid">
+      <div class="live-box"><div class="live-label">RMS Current (AIN0&minus;AIN1)</div><div class="live-value" id="lv-rms">&mdash;</div><div class="live-unit">A</div></div>
+      <div class="live-box"><div class="live-label">DC Current (AIN0&minus;AIN1)</div><div class="live-value" id="lv-dc">&mdash;</div><div class="live-unit">A</div></div>
+    </div>
+    <div class="live-status" id="lv-status">Connecting&hellip;</div>
+  </section>
+
+  <form method="get" action="HSTConfigSave.html" enctype="text/plain" id="Form1">
+    <section class="card">
+      <h2>HST Settings</h2>
+      <div class="form-grid">
+        <div class="field"><label for="Editbox3">HST Number</label><input type="text" id="Editbox3" name="HSTNB" value="%HSTNB%" disabled></div>
+        <div class="field"><label for="edt_Res1">Amps/Volts Ratio (mV/A)</label><input type="text" id="edt_Res1" name="AmpsVoltsRatio" value="%AmpsVoltsRatio%"></div>
+        <div class="field full">
+          <div class="hint">Calculate mVperAmp using: <strong>mVperAmp = max voltage range (mV) / current rating (A)</strong><br><br>Examples:<br>&bull; 20A CT rated at 2.5V &plusmn;0.625V &rarr; 625 mV / 20A = 31.25 mV/A<br>&bull; 50A CT rated at 2.5V &plusmn;0.625V &rarr; 625 mV / 50A = 12.5 mV/A<br>&bull; 100A CT rated at 2.5V &plusmn;0.625V &rarr; 625 mV / 100A = 6.25 mV/A</div>
+        </div>
+        <div class="field">
+          <label for="edt_manualOffset">DC Current Offset (A)</label>
+          <input type="text" id="edt_manualOffset" name="manualOffset" value="%manualOffset%">
+          <div class="hint">Subtracted from the DC current reading to zero out sensor bias. Connect the CT with no load, read the DC Current above, and enter that value here.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <input type="submit" name="HSTSave" value="Save">
+        <input type="button" class="secondary" onclick="window.location.href='/';return false;" value="Cancel">
+      </div>
+    </section>
+  </form>
+
+  <section class="card">
+    <h2>Wiring &amp; Pin Reference</h2>
+    <div class="form-grid">
+      <div class="field">
+        <label>Sensor signal &mdash; ADS1x15 inputs</label>
+        <div class="hint">The HST analog output is read in <strong>differential mode</strong> through the ADS1x15 ADC. The sensor is not connected directly to any ESP32 GPIO.<br><br>&bull; <strong>ADS AIN0</strong> &mdash; HST signal (+)<br>&bull; <strong>ADS AIN1</strong> &mdash; HST reference (&minus;)</div>
+      </div>
+      <div class="field">
+        <label>ADS1x15 &harr; ESP32 &mdash; I&sup2;C bus</label>
+        <div class="hint">The ADS chip talks to the ESP32 over I&sup2;C. These two pins are shared with all other I&sup2;C devices on the board.<br><br>&bull; <strong>SDA &mdash; GPIO 21</strong><br>&bull; <strong>SCL &mdash; GPIO 22</strong></div>
+      </div>
+    </div>
+  </section>
+</main>
 <script>
-      function calcMultiplier(selectObject) {
-         var r1 = Number(document.getElementById("edt_Res1").value);
-         var r2 = Number(document.getElementById("edt_Res2").value);
-         document.getElementById("edt_Multiplier").value = (r2/(r1+r2))*1000; 
-      }
-    </script>
+(function(){
+  function poll(){
+    fetch('/api/ads').then(function(r){return r.json();}).then(function(d){
+      document.getElementById('lv-rms').textContent=d.rms.toFixed(3);
+      document.getElementById('lv-dc').textContent=d.dc.toFixed(3);
+      document.getElementById('lv-status').textContent='Updated '+new Date().toLocaleTimeString();
+    }).catch(function(){document.getElementById('lv-status').textContent='Connection error — retrying…';});
+  }
+  poll();setInterval(poll,1000);
+}());
+</script>
+<script>
+(function(){function ph(){fetch('/api/heap').then(function(r){return r.json();}).then(function(d){var f=document.getElementById('hb-free'),m=document.getElementById('hb-min'),b=document.getElementById('hb-blk');if(f&&d.heap!=null)f.textContent=Number(d.heap).toLocaleString();if(m&&d.heapMin!=null)m.textContent=Number(d.heapMin).toLocaleString();if(b&&d.heapMaxBlk!=null)b.textContent=Number(d.heapMaxBlk).toLocaleString();}).catch(function(){});}ph();setInterval(ph,30000);}());
+</script>
 </body>
 </html>

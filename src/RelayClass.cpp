@@ -4,29 +4,39 @@
 
 #ifdef ESP32
 
-void fnTTA_CallBack(TimerHandle_t xTimer, void* obj) { // called when the TTA is over
-// to be implemented
-    Relay * rly = static_cast<Relay *>(pvTimerGetTimerID( xTimer ));
+// Callbacks must match TimerCallbackFunction_t = void(*)(TimerHandle_t).
+// The relay pointer is recovered via pvTimerGetTimerID.
+// Actual work (which includes mqttClient.publish) is deferred to watch()
+// via volatile flags so it runs on the Arduino task, not the timer daemon task.
+
+void fnTTA_CallBack(TimerHandle_t xTimer) {
+    Relay * rly = static_cast<Relay *>(pvTimerGetTimerID(xTimer));
     if (rly) {
-      rly->running_TTA++;   
-      if (rly->running_TTA == rly->RelayConfParam->v_tta){
-        rly->fttacallback(rly);
-        rly->stop_tta_timer();
-      }
+        bool should_stop = false;
+        portENTER_CRITICAL(&rly->timerFlagsMux);
+        rly->running_TTA++;
+        if (rly->running_TTA >= rly->RelayConfParam->v_tta) {
+            rly->tta_expired = true;
+            should_stop = true;
+        }
+        portEXIT_CRITICAL(&rly->timerFlagsMux);
+        if (should_stop) rly->stop_tta_timer();
     }
 }
 
-void fnTTL_CallBack(TimerHandle_t xTimer, void* obj) { // called when the TTL is runing and over
-    Relay * rly = static_cast<Relay *>(pvTimerGetTimerID( xTimer ));
+void fnTTL_CallBack(TimerHandle_t xTimer) {
+    Relay * rly = static_cast<Relay *>(pvTimerGetTimerID(xTimer));
     if (rly) {
-      rly->running_TTL++;       
-      //Serial.printf ("\n fnTTL_Callback called %u", rly->running_TTL) ; 
-      if (rly->running_TTL > 2) rly->fttlupdatecallback(rly);
-      if (rly->running_TTL == rly->RelayConfParam->v_ttl){
-          // Serial.println (F("TTL last run")) ; 
-          rly->fttlcallback(rly);
-          rly->stop_ttl_timer();
-      } 
+        bool should_stop = false;
+        portENTER_CRITICAL(&rly->timerFlagsMux);
+        rly->running_TTL++;
+        if (rly->running_TTL > 2) rly->ttl_update = true;
+        if (rly->running_TTL >= rly->RelayConfParam->v_ttl) {
+            rly->ttl_expired = true;
+            should_stop = true;
+        }
+        portEXIT_CRITICAL(&rly->timerFlagsMux);
+        if (should_stop) rly->stop_ttl_timer();
     }
 }
 #endif
@@ -65,10 +75,12 @@ Relay::Relay(uint8_t p,
   RelayConfParam = new Trelayconf;
 
   lockupdate = false;
+  pmillis = 0;
   freeinterval = 10; // was 200
   r_in_mode = 1;
   timerpaused = false;
   hastimerrunning = false;
+  freelock = nullptr;
 
   // tickers callback functions for ttl, acs, tta
   fttlupdatecallback        = ttlupdatecallback;
@@ -78,16 +90,17 @@ Relay::Relay(uint8_t p,
   fttacallback              = ttacallback;
 
   // timers
-  ticker_relay_ttl = new Schedule_timer(fttlcallback,0,0,MILLIS_,fttlupdatecallback, SECONDS_);
-  ticker_relay_tta = new Schedule_timer(fttacallback,0,0,MILLIS_);  
+  ticker_relay_ttl = new Schedule_timer(fttlcallback,60000,0,MILLIS_,fttlupdatecallback, SECONDS_);
+  ticker_relay_tta = new Schedule_timer(fttacallback,60000,0,MILLIS_);  
   ticker_ACS712 = new Schedule_timer (fticker_ACS712_func,1000,0,MILLIS_);
   ticker_ACS_MQTT = new Schedule_timer (fticker_ACS712_mqtt_func,1000,0,MILLIS_);
 
 
   #ifdef ESP32
-    ttltimer = xTimerCreate("ttltimer", pdMS_TO_TICKS(1000), pdTRUE, (void*)  this, reinterpret_cast<TimerCallbackFunction_t>(fnTTL_CallBack));
-    ttatimer = xTimerCreate("ttatimer", pdMS_TO_TICKS(1000), pdTRUE, (void*)  this, reinterpret_cast<TimerCallbackFunction_t>(fnTTA_CallBack));      
-  #endif  
+    timerFlagsMux = portMUX_INITIALIZER_UNLOCKED;
+    ttltimer = xTimerCreate("ttltimer", pdMS_TO_TICKS(1000), pdTRUE, (void*) this, fnTTL_CallBack);
+    ttatimer = xTimerCreate("ttatimer", pdMS_TO_TICKS(1000), pdTRUE, (void*) this, fnTTA_CallBack);
+  #endif
 
   fonchangeInterruptService = onchangeInterruptService;
   fgeneralinLoopFunc        = NULL;
@@ -106,10 +119,28 @@ Relay::~Relay(){
 
 void Relay::watch(){
 
-  //#ifndef ESP32
+  // Process FreeRTOS timer expirations deferred from the timer daemon task.
+  // Flags are set by fnTTL_CallBack / fnTTA_CallBack (timer task context);
+  // callbacks are invoked here in the Arduino main loop so mqttClient.publish
+  // is always called from the correct task.
+  #ifdef ESP32
+  bool local_ttl_update, local_ttl_expired, local_tta_expired, local_rchanged;
+  portENTER_CRITICAL(&timerFlagsMux);
+  local_ttl_update  = this->ttl_update;   this->ttl_update   = false;
+  local_ttl_expired = this->ttl_expired;  this->ttl_expired  = false;
+  local_tta_expired = this->tta_expired;  this->tta_expired  = false;
+  local_rchanged    = this->rchangedflag; this->rchangedflag = false;
+  portEXIT_CRITICAL(&timerFlagsMux);
+  if (local_ttl_update  && fttlupdatecallback)    fttlupdatecallback(this);
+  if (local_ttl_expired && fttlcallback)           fttlcallback(this);
+  if (local_tta_expired && fttacallback)           fttacallback(this);
+  // fonchangeInterruptService deferred here — must run on the Arduino loop task
+  // because it calls mqttClient.publish() which is not AsyncTCP-task-safe.
+  if (local_rchanged    && fonchangeInterruptService) fonchangeInterruptService(this);
+  #endif
+
    if (this->ticker_relay_ttl)  this->ticker_relay_ttl->update(this);
    if (this->ticker_relay_tta)  this->ticker_relay_tta->update(this);
-  //#endif   
    if (this->ticker_ACS712)     this->ticker_ACS712->update(this);
    if (this->ticker_ACS_MQTT)   this->ticker_ACS_MQTT->update(this);
 
@@ -123,6 +154,7 @@ String Relay::getRelayPubTopic() {
    }
 
 void Relay::setRelayConfig(Trelayconf * RelayConf) {
+      delete RelayConfParam;
       RelayConfParam = RelayConf;
    }
 
@@ -131,7 +163,7 @@ Trelayconf * Relay::getRelayConfig() {
    }
 
 void Relay::setRelayTag(char *Relayt)
-   { strcpy (RelayTag, Relayt); }
+   { strlcpy(RelayTag, Relayt, sizeof(RelayTag)); }
 
 void Relay::setIdNumber(int id)
    { IDRelayTag = id; }
@@ -242,9 +274,6 @@ boolean Relay::loadrelayparams(uint8_t rnb) {   //){
   char rfilename[20];
   mkRelayConfigName(rfilename, rnb);
 
-    if(SPIFFS.begin()) { Serial.print(F("[INFO   ] SPIFFS Initialize....ok")); }
-      else {Serial.println(F("[INFO   ] SPIFFS Initialization...failed")); }
-
     // const char* filename = "/config.json";
 
     if (!(SPIFFS.exists(rfilename))) {
@@ -265,7 +294,9 @@ boolean Relay::loadrelayparams(uint8_t rnb) {   //){
 
     size_t size = configFile.size();
     if (size > buffer_size) {
-         Serial.println(F("[INFO   ] Relay Config file size is too large, rebuilding."));
+         Serial.printf("[INFO   ] %s is %u bytes, exceeds buffer_size=%d — rebuilding with this board's chip ID (%s)\n",
+                       rfilename, (unsigned)size, (int)buffer_size, CID().c_str());
+         configFile.close();
          saveRelayDefaultConfig(rnb);
          return false;
     }
@@ -273,29 +304,39 @@ boolean Relay::loadrelayparams(uint8_t rnb) {   //){
   StaticJsonDocument<buffer_size> json;
   DeserializationError error = deserializeJson(json, configFile);
   if (error) {
-    Serial.println(F("Failed to read file, using default configuration"));  
+    Serial.printf("[INFO   ] Failed to parse %s (%u bytes, buffer_size=%d): %s — rebuilding with this board's chip ID (%s)\n",
+                  rfilename, (unsigned)size, (int)buffer_size, error.c_str(), CID().c_str());
+    configFile.close();
+    saveRelayDefaultConfig(rnb);
+    return false;
   }
 
-     RelayConfParam->v_relaynb            = (json["RELAYNB"].as<String>()!="") ? json["RELAYNB"].as<uint8_t>() : 0;
-     RelayConfParam->v_PUB_TOPIC1         = (json["PUB_TOPIC1"].as<String>()!="") ? json["PUB_TOPIC1"].as<String>() : String("/none");
-     RelayConfParam->v_TemperatureValue   = (json["TemperatureValue"].as<String>()!="") ? json["TemperatureValue"].as<String>() : String("0");
-     RelayConfParam->v_AlexaName          = (json["AlexaName"].as<String>()!="") ? json["AlexaName"].as<String>() : String("0");
-     RelayConfParam->v_ttl_PUB_TOPIC      = (json["ttl_PUB_TOPIC"].as<String>()!="") ? json["ttl_PUB_TOPIC"].as<String>() : String("/ttlpubnone");
-     RelayConfParam->v_i_ttl_PUB_TOPIC    = (json["i_ttl_PUB_TOPIC"].as<String>()!="") ? json["i_ttl_PUB_TOPIC"].as<String>() : String("/ittlnone");
-     RelayConfParam->v_ACS_AMPS           = (json["ACS_AMPS"].as<String>()!="") ? json["ACS_AMPS"].as<String>() : String("/none");
-     RelayConfParam->v_CURR_TTL_PUB_TOPIC = (json["CURR_TTL_PUB_TOPIC"].as<String>()!="") ? json["CURR_TTL_PUB_TOPIC"].as<String>() : String("/ttlcnone");
-     RelayConfParam->v_STATE_PUB_TOPIC    = (json["STATE_PUB_TOPIC"].as<String>()!="") ? json["STATE_PUB_TOPIC"].as<String>() : String("/statenone");
-     RelayConfParam->v_ACS_Sensor_Model   = (json["ACS_Sensor_Model"].as<String>()!="") ? json["ACS_Sensor_Model"].as<String>() : String("10");
-     RelayConfParam->v_ttl                = (json["ttl"].as<String>()!="") ? json["ttl"].as<uint32_t>() : 0;
-     RelayConfParam->v_tta                = (json["tta"].as<String>()!="") ? json["tta"].as<uint32_t>() : 0;
-     RelayConfParam->v_Max_Current        = (json["Max_Current"].as<String>()!="") ? json["Max_Current"].as<uint8_t>() : 10;
-     RelayConfParam->v_LWILL_TOPIC        = (json["LWILL_TOPIC"].as<String>()!="") ? json["LWILL_TOPIC"].as<String>() : String("/lwtnone");
-     RelayConfParam->v_SUB_TOPIC1         = (json["SUB_TOPIC1"].as<String>()!="") ? json["SUB_TOPIC1"].as<String>() : String("/inone");
-     RelayConfParam->v_ACS_Active         = (json["ACS_Active"].as<String>()!="") ? json["ACS_Active"].as<uint8_t>() == 1 : false;
-     RelayConfParam->v_IN0_INPUTMODE       =  MyConfParam.v_IN0_INPUTMODE; //json["I0MODE"].as<uint8_t>();
-     RelayConfParam->v_IN1_INPUTMODE       =  MyConfParam.v_IN1_INPUTMODE; //json["I1MODE"].as<uint8_t>();
-     RelayConfParam->v_IN2_INPUTMODE       =  MyConfParam.v_IN2_INPUTMODE; //json["I2MODE"].as<uint8_t>();
-     RelayConfParam->v_ACS_elasticity      = (json["ACS_elasticity"].as<String>()!="") ? json["ACS_elasticity"].as<uint16_t>() : 0;
+     // Use const char* to read strings from the StaticJsonDocument pool (zero heap temp).
+     // String("field") = cstr assigns from pool pointer — one alloc for the persistent value.
+     // Numeric fields use the | operator for null-safe defaults without any String creation.
+     auto cstr = [&](const char* key, const char* def) -> const char* {
+       const char* v = json[key].as<const char*>(); return (v && v[0]) ? v : def;
+     };
+     RelayConfParam->v_relaynb            = json["RELAYNB"]      | (uint8_t)0;
+     RelayConfParam->v_PUB_TOPIC1         = cstr("PUB_TOPIC1",         "/none");
+     RelayConfParam->v_TemperatureValue   = cstr("TemperatureValue",    "0");
+     RelayConfParam->v_AlexaName          = cstr("AlexaName",           "0");
+     RelayConfParam->v_ttl_PUB_TOPIC      = cstr("ttl_PUB_TOPIC",      "/ttlpubnone");
+     RelayConfParam->v_i_ttl_PUB_TOPIC    = cstr("i_ttl_PUB_TOPIC",    "/ittlnone");
+     RelayConfParam->v_ACS_AMPS           = cstr("ACS_AMPS",            "/none");
+     RelayConfParam->v_CURR_TTL_PUB_TOPIC = cstr("CURR_TTL_PUB_TOPIC", "/ttlcnone");
+     RelayConfParam->v_STATE_PUB_TOPIC    = cstr("STATE_PUB_TOPIC",     "/statenone");
+     RelayConfParam->v_ACS_Sensor_Model   = cstr("ACS_Sensor_Model",    "10");
+     RelayConfParam->v_ttl                = json["ttl"]          | (uint32_t)0;
+     RelayConfParam->v_tta                = json["tta"]          | (uint32_t)0;
+     RelayConfParam->v_Max_Current        = json["Max_Current"]  | (uint8_t)10;
+     RelayConfParam->v_LWILL_TOPIC        = cstr("LWILL_TOPIC",         "/lwtnone");
+     RelayConfParam->v_SUB_TOPIC1         = cstr("SUB_TOPIC1",          "/inone");
+     RelayConfParam->v_ACS_Active         = (json["ACS_Active"] | 0) == 1;
+     RelayConfParam->v_IN0_INPUTMODE      = MyConfParam.v_IN0_INPUTMODE;
+     RelayConfParam->v_IN1_INPUTMODE      = MyConfParam.v_IN1_INPUTMODE;
+     RelayConfParam->v_IN2_INPUTMODE      = MyConfParam.v_IN2_INPUTMODE;
+     RelayConfParam->v_ACS_elasticity     = json["ACS_elasticity"] | (uint16_t)0;
     
      configFile.close();
      return true;
@@ -307,38 +348,41 @@ int Relay::readrelay (){
 }
 
 bool Relay::readPersistedrelay (){
-  char rfilename[20];
-  strcpy(rfilename,"/relayPersist");
-  strcat(rfilename, String(this->RelayConfParam->v_relaynb).c_str());
-  strcat(rfilename,".json");  
+  char rfilename[32];
+  snprintf(rfilename, sizeof(rfilename), "/relayPersist%u.json",
+           (unsigned)this->RelayConfParam->v_relaynb);
 
   File configFile = SPIFFS.open(rfilename, "r");
   if (!configFile) {
     Serial.println(F("[INFO   ] Failed to open relayPersist file"));
-    return ERROR_OPENING_FILE;
+    return false;
   }
   StaticJsonDocument<100> json;
   DeserializationError error = deserializeJson(json, configFile);
   if (error) {
-    Serial.println(F("[INFO   ] Failed to read file, using default configuration"));
-    saveDefaultConfig();
-    return JSONCONFIG_CORRUPTED;    
+    Serial.println(F("[INFO   ] Failed to read relayPersist file"));
+    configFile.close();
+    return false;
   }
-  bool temp = false;
-  temp =  (json["status"].as<uint8_t>() == 1);
+  bool temp = (json["status"].as<uint8_t>() == 1);
 
-  mdigitalWrite(this->getRelayPin(),temp);
   configFile.close();
+  mdigitalWrite(this->getRelayPin(), temp);
   return temp;
 }
 
 bool Relay::savePersistedrelay(){
+  // Throttle: skip write if value hasn't changed and less than 30 s have elapsed.
+  uint8_t currentVal = (digitalRead(this->pin) == HIGH) ? 1 : 0;
+  if (currentVal == persistLastVal)
+    return true;
+  persistLastVal = currentVal;
+
   StaticJsonDocument<100> json;
-  
-  char rfilename[20];
-  strcpy(rfilename,"/relayPersist");
-  strcat(rfilename, String(this->RelayConfParam->v_relaynb).c_str());
-  strcat(rfilename,".json");
+
+  char rfilename[32];
+  snprintf(rfilename, sizeof(rfilename), "/relayPersist%u.json",
+           (unsigned)this->RelayConfParam->v_relaynb);
 
   File configFile = SPIFFS.open(rfilename, "w");
     if (!configFile) {
@@ -346,7 +390,7 @@ bool Relay::savePersistedrelay(){
       return FAILURE;
     }
 
-    json[F("status")] = (digitalRead(this->pin)) == HIGH ? "1" : "0";
+    json[F("status")] = (digitalRead(this->pin)) == HIGH ? 1 : 0;
     Serial.println(F("\n[INFO   ] Serializing status"));
 
     if (serializeJsonPretty(json, configFile) == 0) {
@@ -354,7 +398,8 @@ bool Relay::savePersistedrelay(){
       configFile.close();
       return false;
     }
-  configFile.println("\n");
+  configFile.print("\n");
+  configFile.flush();
   configFile.close();
 
   return true;
@@ -369,9 +414,20 @@ uint8_t Relay::getRelayPin(){
 }
 
 void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
+    // M6: make the test-and-set of lockupdate atomic on dual-core ESP32.
+    #ifdef ESP32
+    bool proceed = false;
+    portENTER_CRITICAL(&timerFlagsMux);
+    if (!lockupdate) { lockupdate = true; proceed = true; }
+    portEXIT_CRITICAL(&timerFlagsMux);
+    if (!proceed) return;
     this->freelockreset();
+    {
+    #else
     if (!lockupdate){
+      this->freelockreset();
       lockupdate = true;
+    #endif
       // uint8_t sts = digitalRead(pn);
       // rchangedflag = (sts != v); // ksb0 this has been removed to correct the situation where the actual status of the io pin is ot in sync with the mqqt status
       // rchangedflag = true;
@@ -382,9 +438,17 @@ void Relay::mdigitalWrite(uint8_t pn, uint8_t v)  {
         if (this->hastimerrunning) {   
           this->timerpaused = (v==LOW); 
         }
-        if (fonchangeInterruptService)  {
+        if (fonchangeInterruptService) {
+          #ifdef ESP32
+          // Defer to watch() on the Arduino loop task — mqttClient.publish()
+          // is not safe to call from the AsyncTCP or timer-daemon tasks that
+          // can also call mdigitalWrite().
+          portENTER_CRITICAL(&timerFlagsMux);
+          rchangedflag = true;
+          portEXIT_CRITICAL(&timerFlagsMux);
+          #else
           fonchangeInterruptService(this);
-          // rchangedflag = false; 
+          #endif
         }
       // }
     }
@@ -396,7 +460,7 @@ Relay * getrelaybypin(uint8_t pn){
       Relay * rtemp = nullptr;
       for (std::vector<void *>::iterator it = relays.begin(); it != relays.end(); ++it)  {
         rtemp = static_cast<Relay *>(*it);
-        if (pn == rtemp->getRelayPin()) {
+        if (rtemp && pn == rtemp->getRelayPin()) {
           rly = rtemp;
         }
       }
@@ -423,7 +487,5 @@ Relay * getrelaybynumber(uint8_t nb){
 
 
 void mkRelayConfigName(char name[], uint8_t rnb){
-  strcpy(name,"/relay");
-  strcat(name, String(rnb).c_str());
-  strcat(name,".json");
+  snprintf(name, 16, "/relay%u.json", (unsigned)rnb);
 }

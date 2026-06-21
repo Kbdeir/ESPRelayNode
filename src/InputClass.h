@@ -11,7 +11,7 @@ typedef void (*fnptr_a)(void* t);
 typedef void (*fnptr_b)(int, void* t);
 typedef void (*fnptr_d)(void* t, void* t1);
 
-enum input_mode {INPUT_NONE, INPUT_TOGGLE, INPUT_NORMAL, INPUT_RELAY_TOGGLE, INPUT_COPY_TO_RELAY} ;
+enum input_mode {INPUT_NONE, INPUT_TOGGLE, INPUT_NORMAL, INPUT_RELAY_TOGGLE, INPUT_COPY_TO_RELAY, INPUT_TEMPERATURE} ;
 
 class InputSensor{
   private:
@@ -20,7 +20,7 @@ class InputSensor{
 
   public:
     uint8_t pin;
-    Bounce *Input_debouncer;
+    Bounce *Input_debouncer = nullptr;
     boolean rchangedflag;
     String mqtt_topic;
     boolean post_mqtt;
