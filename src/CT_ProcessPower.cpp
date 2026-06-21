@@ -33,6 +33,8 @@
 extern DisplayActions CURRENT_Display_Action;
 extern void saveCTReadings(double KWh, double MTD_KWh, double YTD_KWh);
 extern   Adafruit_ADS1115 ads;
+#include <RelayClass.h>
+extern Relay* getrelaybynumber(int number);
 
 
 // Wrappers with the correct TimerCallbackFunction_t signature (void(*)(TimerHandle_t)).
@@ -230,18 +232,14 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
           "\"voltage\":\"%.0f\",\"amps\":\"%.1f\",\"power\":\"%.0f\",\"r_power\":\"%.0f\","
           "\"wh\":\"%.2f\",\"MTD_wh\":\"%.2f\",\"YTD_wh\":\"%.2f\","
           "\"PF\":\"%.2f\",\"Volts2\":\"[VOLTS2]\",\"Volts3\":\"[VOLTS3]\",\"HST_Amps\":\"[HST_AMPS]\",\"DCAmps\":\"[DCAMPS]\","
-          "\"PFC\":\"%.2f\",\"IP\":\"%s\",\"R1\":\"%s\",\"R2\":\"%s\"}]}}",
+          "\"PFC\":\"%.2f\",\"IP\":\"%s\",\"R0\":\"%s\",\"R1\":\"%s\"}]}}",
           MyConfParam.v_PhyLoc.c_str(),
           supplyVoltage, Irms, realPower, realPower,
           wh / 1000.0f, MTD_Wh / 1000.0f, YTD_Wh / 1000.0f,
           powerFactor, powerFactor2,
           WiFi.localIP().toString().c_str(),
-          digitalRead(RelayPin) == HIGH ? ON : OFF,
-  #ifdef ESP32_2RBoard
-          digitalRead(Relay1Pin) == HIGH ? ON : OFF
-  #else
-          ""
-  #endif
+          []{ Relay* r = getrelaybynumber(0); return (r && r->readrelay() == HIGH) ? ON : OFF; }(),
+          []{ Relay* r = getrelaybynumber(1); return (r && r->readrelay() == HIGH) ? ON : OFF; }()
         );
         strncpy(jsonPost, jsonBuf, sizeof(jsonPost) - 1);
         jsonPost[sizeof(jsonPost) - 1] = '\0';
