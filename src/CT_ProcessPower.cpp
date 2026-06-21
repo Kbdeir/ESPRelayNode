@@ -34,7 +34,6 @@ extern DisplayActions CURRENT_Display_Action;
 extern void saveCTReadings(double KWh, double MTD_KWh, double YTD_KWh);
 extern   Adafruit_ADS1115 ads;
 #include <RelayClass.h>
-extern Relay* getrelaybynumber(int number);
 
 
 // Wrappers with the correct TimerCallbackFunction_t signature (void(*)(TimerHandle_t)).
