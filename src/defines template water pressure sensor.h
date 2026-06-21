@@ -68,11 +68,13 @@ EmonLib current and pressure sensor do conflict with each other on GPIO35, so do
 // select feature type
 // *******************
 // #define MQTTPostInitStatus             // until further granual dev. this allows/diallows posting of initial status of Inputsnsr02
-// #define SR04                         // utrasonic sensor code 
-// #define SR04_SERIAL 
+// #define SR04                         // utrasonic sensor code
+// #define SR04_SERIAL
 // #define SolarHeaterControllerMode    // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
 // #define StepperMode
 // #define blockingTime                 // better use blocking for ESP8266
+// #define _AUTOMATION_RULES_           // Sensor-condition-driven relay automation (Automation.html). No hardware required.
+// #define _REMOTE_SENSORS_             // MQTT-sourced remote board sensor values for use in automation conditions (RemoteSensors.html). Requires MQTT.
 
 
 #define HK_name_len 30

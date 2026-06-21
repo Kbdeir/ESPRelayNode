@@ -40,43 +40,42 @@ EmonLib current and pressure sensor do conflict with each other on GPIO35, so do
     // #define HWver03_4R               // AliExpress 4 relays board
     
 #else
-    #define HWESP32                     // ESP32 based board. 1 relay, 6 inputs
-    #define ESP32_2RBoard               // for 2 relays based boards
+    #define HWESP32                  // ESP32 based board. 1 relay, 6 inputs
+    // #define ESP32_2RBoard            // for 2 relays based boards
     // #define ESP32_3RBoard            // for 3 relays based boards
     // #define ESP32_4RBoard            // for 4 relays based boards
     
-     #define OLED_1306                  // OLED only available on ESP32
+    // #define OLED_1306                // OLED only available on ESP32
     // #define OLED_ThingPulse
-     #define _emonlib_                  // ESP32_2RBoard only; uses CT/voltage ADC pins
+    // #define _emonlib_                // ESP32_2RBoard only; uses CT/voltage ADC pins
     // #define _pressureSensor_         // ESP32_2RBoard only; uses pressure ADC pin
-     #define _ADS1X15_                  // uncomment to activate a default to ADS1115, ADS1115 is a 16-bit ADC, offering higher precision, while the ADS1015 is a 12-bit ADC with a higher maximum sample rate
-    //   #define _ADS1015_              // uncomment to if using ADS1015
-     #define _ADS_ASYNC_            // uncomment to use lib
-    //   #define _ADS1X15_CURRENT_      // uncomment to use ADS to measure AC current exclusive with _ADS1X15_DC_Current_
-    //   #define _ADS1X15_VOLTAGE_      // uncomment to use ADS to measure AC voltage
-       #define _ADS1X15_DC_Current_   // uncomment to use ADS to measure DC current on same pin used for _ADS1X15_CURRENT_ - these are exclusive
-       #define _HST_                  // Uncomment to use DC Hall sensor
-       #define WaterFlowSensor
-       #define _AUTOMATION_RULES_     // Uncomment to enable sensor-condition-driven relay automation rules (Automation.html)
-       #define _REMOTE_SENSORS_       // Uncomment to enable MQTT-sourced remote board sensor values for use in automation conditions
-       #define HA_DISCOVERY        // Publish Home Assistant MQTT discovery configs (homeassistant/<component>/.../config) for relays + sensors
+    //   #define _ADS1X15_                // uncomment to activate a default to ADS1115, ADS1115 is a 16-bit ADC, offering higher precision, while the ADS1015 is a 12-bit ADC with a higher maximum sample rate
+    //   #define _ADS1015_                // uncomment to if using ADS1015
+   //    #define _ADS_ASYNC_              // uncomment to use lib
+     //#define _ADS1X15_CURRENT_        // uncomment to use ADS to measure current
+     //#define _ADS1X15_VOLTAGE_        // uncomment to use ADS to measure voltage
+   //  #define _ADS1X15_DC_Current_     // uncomment to use ADS to measure DC current on same pin used for _ADS1X15_CURRENT_ - these are exclusive
+   //  #define _HST_                    // Uncomment to use DC Hall sensor
+    // #define WaterFlowSensor
 
     // #define _NEWMETHOD_
 
     #define PULLMODE_ INPUT_PULLUP
     // #define PULLMODE_ INPUT_PULLDOWN
 
-    // #define DEBUG_ENABLED            // enable debug messages theough TELNET port 23
+    // #define DEBUG_ENABLED               // enable debug messages theough TELNET port 23
 #endif
 
 // select feature type
 // *******************
 // #define MQTTPostInitStatus             // until further granual dev. this allows/diallows posting of initial status of Inputsnsr02
-// #define SR04                         // utrasonic sensor code 
-// #define SR04_SERIAL 
- #define SolarHeaterControllerMode    // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
+// #define SR04                         // utrasonic sensor code
+// #define SR04_SERIAL
+// #define SolarHeaterControllerMode    // solar Water Heater Controller Mode. Relay on/off within temp sensors interval
 // #define StepperMode
 // #define blockingTime                 // better use blocking for ESP8266
+   #define _AUTOMATION_RULES_           // Sensor-condition-driven relay automation (Automation.html). No hardware required.
+   #define _REMOTE_SENSORS_             // MQTT-sourced remote board sensor values for use in automation conditions (RemoteSensors.html). Requires MQTT.
 
 
 #if defined(_ADS1X15_DC_Current_) && defined(_ADS1X15_CURRENT_)
