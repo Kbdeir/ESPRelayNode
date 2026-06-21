@@ -21,4 +21,5 @@ class StoredWireGuardConfig
 };
 
 bool saveWireGuardConfig(AsyncWebServerRequest *request);
+bool saveWireGuardConfigFromJson(const String& body);
 config_read_error_t loadWireGuardConfig(const char *filename, StoredWireGuardConfig &config);

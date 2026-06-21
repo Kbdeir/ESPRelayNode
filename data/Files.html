@@ -135,12 +135,12 @@ textarea{width:100%;min-height:360px;border:1px solid var(--line);border-radius:
 
   <div class="card">
     <h2>Upload File</h2>
-    <p class="hint-text">Upload a file from your computer to this board. If the path matches an existing file, it will be overwritten.</p>
+    <p class="hint-text">Upload one or more files to this board. Select multiple files to upload them in sequence. Existing files at the same path will be overwritten.</p>
     <div class="field-row">
       <label for="upload-path">Save as path</label>
       <input type="text" id="upload-path" placeholder="/example.json">
     </div>
-    <input type="file" id="upload-file">
+    <input type="file" id="upload-file" multiple>
     <div class="gzip-opt" id="upload-gzip-row">
       <label class="gzip-row"><input type="checkbox" id="upload-gzip">&nbsp;Compress with gzip before upload</label>
       <span class="gzip-sub">Shrinks HTML/CSS/JS by ~70%. The device serves <code>.gz</code> files transparently — browsers decompress automatically. Any existing uncompressed version of the file will be deleted after upload.</span>
@@ -508,13 +508,30 @@ var GZIP_SUB_NORMAL = 'Shrinks HTML/CSS/JS by ~70%. The device serves .gz files 
 var GZIP_SUB_TOKENS = 'Cannot compress: this file uses server-side template tokens (%TOKEN%) that the ESP32 substitutes when serving the page. Gzip files are sent byte-for-byte, bypassing substitution — dynamic values would not appear.';
 
 uploadFileInput.addEventListener('change', function() {
-  var f = this.files && this.files[0];
-  if (f) uploadPathInput.value = '/' + f.name;
-  btnUpload.disabled = !f;
-  var canGzip = !!window.CompressionStream && f && /\.(html|css|js)$/i.test(f.name);
+  var files = this.files;
+  var count = files ? files.length : 0;
+  btnUpload.disabled = count === 0;
   var gzipRow = document.getElementById('upload-gzip-row');
   var gzipCb  = document.getElementById('upload-gzip');
   var gzipSub = gzipRow ? gzipRow.querySelector('.gzip-sub') : null;
+
+  if (count > 1) {
+    uploadPathInput.value = '';
+    uploadPathInput.disabled = true;
+    uploadPathInput.placeholder = count + ' files — HTML/CSS/JS without tokens auto-gzipped';
+    if (gzipRow) gzipRow.className = 'gzip-opt';
+    if (gzipCb) { gzipCb.checked = false; gzipCb.disabled = true; }
+    return;
+  }
+
+  uploadPathInput.disabled = false;
+  uploadPathInput.placeholder = '/example.json';
+  if (gzipCb) gzipCb.disabled = false;
+
+  var f = count === 1 ? files[0] : null;
+  if (f) uploadPathInput.value = '/' + f.name;
+
+  var canGzip = !!window.CompressionStream && f && /\.(html|css|js)$/i.test(f.name);
   if (gzipRow) gzipRow.className = 'gzip-opt' + (canGzip ? ' visible' : '');
   if (!canGzip) {
     if (gzipCb) { gzipCb.checked = false; gzipCb.disabled = false; }
@@ -523,7 +540,6 @@ uploadFileInput.addEventListener('change', function() {
     if (p.endsWith('.gz')) uploadPathInput.value = p.slice(0, -3);
     return;
   }
-  // Read file content to detect server-side template tokens (%IDENTIFIER%)
   var reader = new FileReader();
   reader.onload = function(ev) {
     var hasTokens = /%[A-Z_][A-Z_0-9]*%/.test(ev.target.result);
@@ -550,8 +566,80 @@ document.getElementById('upload-gzip').addEventListener('change', function() {
 });
 
 btnUpload.addEventListener('click', function() {
-  var f = uploadFileInput.files && uploadFileInput.files[0];
-  if (!f) return;
+  var files = uploadFileInput.files;
+  if (!files || !files.length) return;
+  var btn = this;
+
+  if (files.length > 1) {
+    var fileArr = Array.prototype.slice.call(files);
+    var msg = 'Upload ' + fileArr.length + ' files to the device?\n\n'
+      + fileArr.map(function(f){ return '  /' + f.name; }).join('\n')
+      + '\n\nExisting files at those paths will be overwritten.';
+    if (!window.confirm(msg)) return;
+    btn.disabled = true;
+    var failed = [];
+    function finishMulti() {
+      btn.disabled = false;
+      uploadFileInput.value = '';
+      uploadPathInput.disabled = false;
+      uploadPathInput.placeholder = '/example.json';
+      var gzipCbR = document.getElementById('upload-gzip');
+      if (gzipCbR) gzipCbR.disabled = false;
+      if (failed.length) {
+        showStatus('upload-status', false, 'Failed (' + failed.length + '): ' + failed.join(', '));
+      } else {
+        showStatus('upload-status', true, fileArr.length + ' files uploaded.');
+        loadFileList();
+      }
+    }
+    function uploadNext(i) {
+      if (i >= fileArr.length) { finishMulti(); return; }
+      var f = fileArr[i];
+      var label = (i + 1) + ' of ' + fileArr.length;
+      var canGzip = !!window.CompressionStream && /\.(html|css|js)$/i.test(f.name);
+
+      function doRaw() {
+        showStatus('upload-status', null, 'Uploading ' + label + ': ' + f.name + '…');
+        fetch('/api/files/content?path=' + encodeURIComponent('/' + f.name), {
+          method: 'POST', credentials: 'same-origin', body: f
+        })
+          .then(function(r){ return r.json(); })
+          .then(function(d){ if (!(d && d.ok)) failed.push(f.name); })
+          .catch(function(){ failed.push(f.name); })
+          .then(function(){ uploadNext(i + 1); });
+      }
+
+      if (!canGzip) { doRaw(); return; }
+
+      showStatus('upload-status', null, 'Checking ' + label + ': ' + f.name + '…');
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        if (/%[A-Z_][A-Z_0-9]*%/.test(ev.target.result)) { doRaw(); return; }
+        var gzPath = '/' + f.name + '.gz';
+        var uncompPath = '/' + f.name;
+        var uncompExists = allFiles.some(function(fi){ return fi.name === uncompPath; });
+        showStatus('upload-status', null, 'Compressing ' + label + ': ' + f.name + '…');
+        new Response(f.stream().pipeThrough(new CompressionStream('gzip'))).blob()
+          .then(function(blob) {
+            showStatus('upload-status', null, 'Uploading ' + label + ': ' + f.name + '.gz…');
+            return fetch('/api/files/content?path=' + encodeURIComponent(gzPath), {
+              method: 'POST', credentials: 'same-origin', body: blob
+            }).then(function(r){ return r.json(); });
+          })
+          .then(function(d) {
+            if (!(d && d.ok)) { failed.push(f.name); return; }
+            if (uncompExists) return postForm('/api/files/delete', { path: uncompPath }).catch(function(){});
+          })
+          .catch(function(){ failed.push(f.name); })
+          .then(function(){ uploadNext(i + 1); });
+      };
+      reader.readAsText(f);
+    }
+    uploadNext(0);
+    return;
+  }
+
+  var f = files[0];
   var path = uploadPathInput.value.trim();
   if (!path.startsWith('/') || path.indexOf('..') >= 0 || path.length < 2) {
     showStatus('upload-status', false, 'Enter a valid absolute path, e.g. /example.json');
@@ -568,7 +656,6 @@ btnUpload.addEventListener('click', function() {
   if (uncompExists) msg += '\n\nThe uncompressed version (' + uncompPath + ') will also be deleted.';
   if (!window.confirm(msg)) return;
 
-  var btn = this;
   btn.disabled = true;
 
   function resetForm() {

@@ -69,26 +69,27 @@ input[type="submit"],.button-link{min-height:40px;border:1px solid var(--teal-da
 
   <section class="card">
     <h2>VPN Configuration</h2>
-    <form method="get" action="VPNConfigSave.html" enctype="text/plain" id="VPNConfig">
+    <form id="VPNConfig">
       <div class="form-grid">
-        <div class="field full"><label class="check-row" for="VPNEnabled"><input type="checkbox" id="VPNEnabled" name="VPNEnabled" value="%VPNEnabled%"><span>Enable VPN tunnel</span></label></div>
+        <div class="field full"><label class="check-row" for="VPNEnabled"><input type="checkbox" id="VPNEnabled" name="VPNEnabled"><span>Enable VPN tunnel</span></label></div>
         <div class="field full"><label for="VPNProtocol">VPN Protocol</label><select name="VPNProtocol" id="VPNProtocol"><option value="WireGuard">WireGuard</option></select></div>
-        <div class="field full"><label for="WGPrivateKey">Private Key (base64)</label><textarea id="WGPrivateKey" name="WGPrivateKey" placeholder="Paste your WireGuard private key here">%WGPrivateKey%</textarea></div>
-        <div class="field"><label for="WGLocalIP">Local Tunnel IP</label><input type="text" id="WGLocalIP" name="WGLocalIP" value="%WGLocalIP%" placeholder="10.0.0.2"></div>
-        <div class="field full"><label for="WGPeerPublicKey">Peer Public Key (base64)</label><textarea id="WGPeerPublicKey" name="WGPeerPublicKey" placeholder="Paste your peer's public key here">%WGPeerPublicKey%</textarea></div>
-        <div class="field"><label for="WGPeerEndpoint">Peer Endpoint</label><input type="text" id="WGPeerEndpoint" name="WGPeerEndpoint" value="%WGPeerEndpoint%" placeholder="vpn.example.com:51820"></div>
-        <div class="field"><label for="WGAllowedIPs">Allowed IPs</label><input type="text" id="WGAllowedIPs" name="WGAllowedIPs" value="%WGAllowedIPs%" placeholder="10.0.0.0/24, 192.168.1.0/24"></div>
-        <div class="field"><label for="WGDnsServers">DNS Servers (optional, comma-separated)</label><input type="text" id="WGDnsServers" name="WGDnsServers" value="%WGDnsServers%" placeholder="10.0.0.1, 8.8.8.8"></div>
-        <div class="field"><label>DNS Liveness</label><label class="check-row" for="WGDnsLivenessCheck"><input type="checkbox" id="WGDnsLivenessCheck" name="WGDnsLivenessCheck" value="%WGDnsLivenessCheck%"><span>Enable DNS liveness check</span></label></div>
-        <div class="field"><label for="WGDnsLivenessInterval">DNS liveness interval (seconds)</label><input type="number" id="WGDnsLivenessInterval" name="WGDnsLivenessInterval" value="%WGDnsLivenessInterval%" min="5"></div>
+        <div class="field full"><label for="WGPrivateKey">Private Key (base64)</label><textarea id="WGPrivateKey" name="WGPrivateKey" placeholder="Paste your WireGuard private key here"></textarea></div>
+        <div class="field"><label for="WGLocalIP">Local Tunnel IP</label><input type="text" id="WGLocalIP" name="WGLocalIP" value="" placeholder="10.0.0.2"></div>
+        <div class="field full"><label for="WGPeerPublicKey">Peer Public Key (base64)</label><textarea id="WGPeerPublicKey" name="WGPeerPublicKey" placeholder="Paste your peer's public key here"></textarea></div>
+        <div class="field"><label for="WGPeerEndpoint">Peer Endpoint</label><input type="text" id="WGPeerEndpoint" name="WGPeerEndpoint" value="" placeholder="vpn.example.com:51820"></div>
+        <div class="field"><label for="WGAllowedIPs">Allowed IPs</label><input type="text" id="WGAllowedIPs" name="WGAllowedIPs" value="" placeholder="10.0.0.0/24, 192.168.1.0/24"></div>
+        <div class="field"><label for="WGDnsServers">DNS Servers (optional, comma-separated)</label><input type="text" id="WGDnsServers" name="WGDnsServers" value="" placeholder="10.0.0.1, 8.8.8.8"></div>
+        <div class="field"><label>DNS Liveness</label><label class="check-row" for="WGDnsLivenessCheck"><input type="checkbox" id="WGDnsLivenessCheck" name="WGDnsLivenessCheck"><span>Enable DNS liveness check</span></label></div>
+        <div class="field"><label for="WGDnsLivenessInterval">DNS liveness interval (seconds)</label><input type="number" id="WGDnsLivenessInterval" name="WGDnsLivenessInterval" value="30" min="5"></div>
       </div>
       <div class="actions">
-        <input type="submit" name="Submit" value="Save VPN Configuration">
+        <button type="button" class="button-link" id="saveBtn">Save VPN Configuration</button>
         <label class="button-link secondary" for="importConfFile" style="cursor:pointer">Import .conf</label>
         <input type="file" id="importConfFile" style="position:absolute;width:0.1px;height:0.1px;opacity:0;overflow:hidden;z-index:-1">
         <button type="button" class="button-link secondary" id="exportConfBtn">Export .conf</button>
         <a class="button-link secondary" href="/">Cancel</a>
       </div>
+      <div id="vpn-save-status" style="margin-top:10px;font-size:13px;min-height:18px;color:#0f766e;"></div>
     </form>
   </section>
 </main>
@@ -173,6 +174,49 @@ input[type="submit"],.button-link{min-height:40px;border:1px solid var(--teal-da
     };
     reader.readAsText(file);
   });
+})();
+</script>
+<script>
+(function(){
+  function g(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+  function showStatus(msg,ok){
+    var el=document.getElementById('vpn-save-status');if(!el)return;
+    el.textContent=msg;el.style.color=ok===false?'#dc2626':'#0f766e';
+    if(ok!==null)setTimeout(function(){el.textContent='';},3000);
+  }
+  function loadConfig(){
+    fetch('/api/vpnconfig',{credentials:'same-origin'})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var cb=document.getElementById('VPNEnabled');if(cb)cb.checked=(d.VPNEnabled==='1');
+        var dcb=document.getElementById('WGDnsLivenessCheck');if(dcb)dcb.checked=(d.WGDnsLivenessCheck==='1');
+        function sv(id,v){var el=document.getElementById(id);if(el)el.value=v||'';}
+        sv('WGPrivateKey',d.WGPrivateKey);sv('WGLocalIP',d.WGLocalIP);
+        sv('WGPeerPublicKey',d.WGPeerPublicKey);sv('WGPeerEndpoint',d.WGPeerEndpoint);
+        sv('WGAllowedIPs',d.WGAllowedIPs);sv('WGDnsServers',d.WGDnsServers);
+        sv('WGDnsLivenessInterval',d.WGDnsLivenessInterval||30);
+      })
+      .catch(function(){showStatus('Failed to load configuration.',false);});
+  }
+  document.getElementById('saveBtn').addEventListener('click',function(){
+    var btn=this;btn.disabled=true;
+    var payload={
+      VPNEnabled:document.getElementById('VPNEnabled').checked?'1':'0',
+      VPNProtocol:'WireGuard',
+      WGPrivateKey:g('WGPrivateKey'),WGLocalIP:g('WGLocalIP'),
+      WGPeerPublicKey:g('WGPeerPublicKey'),WGPeerEndpoint:g('WGPeerEndpoint'),
+      WGAllowedIPs:g('WGAllowedIPs'),WGDnsServers:g('WGDnsServers'),
+      WGDnsLivenessCheck:document.getElementById('WGDnsLivenessCheck').checked?'1':'0',
+      WGDnsLivenessInterval:parseInt(document.getElementById('WGDnsLivenessInterval').value)||30
+    };
+    fetch('/api/vpnconfig',{method:'POST',credentials:'same-origin',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json();})
+      .then(function(d){showStatus(d.ok?'Saved.':'Save failed.',d.ok?true:false);})
+      .catch(function(){showStatus('Error saving.',false);})
+      .then(function(){btn.disabled=false;});
+  });
+  loadConfig();
 })();
 </script>
 </body>

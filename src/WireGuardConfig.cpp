@@ -47,6 +47,17 @@ bool saveWireGuardConfig(AsyncWebServerRequest *request)
   return true;
 }
 
+bool saveWireGuardConfigFromJson(const String& body)
+{
+  StaticJsonDocument<WIREGUARD_CONFIG_BUFFER_SIZE> req;
+  if (deserializeJson(req, body) != DeserializationError::Ok) return false;
+  File f = SPIFFS.open("/WireGuardConfig.json", "w");
+  if (!f) return false;
+  bool ok = (serializeJson(req, f) > 0);
+  f.close();
+  return ok;
+}
+
 config_read_error_t loadWireGuardConfig(const char *filename, StoredWireGuardConfig &config)
 {
   if (!SPIFFS.exists(filename)) {

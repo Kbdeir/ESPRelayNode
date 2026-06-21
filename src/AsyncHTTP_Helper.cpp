@@ -2131,9 +2131,48 @@ void SetAsyncHTTP(){
 
     AsyncWeb_server.on("/VPNConfig.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
-      loadWireGuardConfig("/WireGuardConfig.json", PWireGuardConfig);
-      request->send(SPIFFS, "/VPNConfig.html", String(), false, WireGuardConfProcessor);
+      request->send(SPIFFS, "/VPNConfig.html");
     });
+
+    AsyncWeb_server.on("/api/vpnconfig", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      loadWireGuardConfig("/WireGuardConfig.json", PWireGuardConfig);
+      StaticJsonDocument<768> doc;
+      doc["VPNEnabled"]            = PWireGuardConfig.enabled ? "1" : "0";
+      doc["VPNProtocol"]           = PWireGuardConfig.protocol;
+      doc["WGPrivateKey"]          = PWireGuardConfig.privateKey;
+      doc["WGLocalIP"]             = PWireGuardConfig.localIp;
+      doc["WGPeerPublicKey"]       = PWireGuardConfig.peerPublicKey;
+      doc["WGPeerEndpoint"]        = PWireGuardConfig.peerEndpoint;
+      doc["WGAllowedIPs"]          = PWireGuardConfig.allowedIps;
+      doc["WGDnsServers"]          = PWireGuardConfig.dnsServers;
+      doc["WGDnsLivenessCheck"]    = PWireGuardConfig.dnsLivenessCheck ? "1" : "0";
+      doc["WGDnsLivenessInterval"] = (int)PWireGuardConfig.dnsLivenessInterval;
+      char payload[512];
+      serializeJson(doc, payload, sizeof(payload));
+      request->send(200, "application/json", payload);
+    });
+
+    AsyncWeb_server.on("/api/vpnconfig", HTTP_POST,
+      [](AsyncWebServerRequest *request){
+        if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+        if (!request->_tempObject) { request->send(400, "application/json", F("{\"ok\":false}")); return; }
+        String* body = reinterpret_cast<String*>(request->_tempObject);
+        bool ok = saveWireGuardConfigFromJson(*body);
+        delete body;
+        request->_tempObject = nullptr;
+        if (ok) {
+          loadWireGuardConfig("/WireGuardConfig.json", PWireGuardConfig);
+          wireGuardRequestApplyConfig();
+        }
+        request->send(200, "application/json", ok ? "{\"ok\":true}" : "{\"ok\":false}");
+      },
+      nullptr,
+      [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+        if (!index) request->_tempObject = new String();
+        reinterpret_cast<String*>(request->_tempObject)->concat((char*)data, len);
+      }
+    );
 
     AsyncWeb_server.on("/WireGuardStatus.json", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
