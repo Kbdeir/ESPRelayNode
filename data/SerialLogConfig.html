@@ -141,6 +141,10 @@ button {
       <div><div class="row-label">HADISC &nbsp;<code style="font-size:11px;color:#64748b">[HADISC ]</code></div><div class="row-desc">Home Assistant MQTT discovery publishes</div></div>
       <label class="toggle"><input type="checkbox" id="cat-HADISC" checked><span class="slider"></span></label>
     </div>
+    <div class="row">
+      <div><div class="row-label">CT136 &nbsp;<code style="font-size:11px;color:#64748b">[CT136  ]</code></div><div class="row-desc">4&ndash;20 mA pressure sensor ADC readings</div></div>
+      <label class="toggle"><input type="checkbox" id="cat-CT136" checked><span class="slider"></span></label>
+    </div>
 
     <div class="actions">
       <button class="btn-all"  onclick="setAll(true)">Enable All</button>
@@ -152,7 +156,7 @@ button {
 </div>
 
 <script>
-var CATS = ["INFO","WG","WFS","MQTT","NTP","WIFI","CT","TIMERS","PING","SYSTEM","HTTP","ALEXA","OLED","HADISC"];
+var CATS = ["INFO","WG","WFS","MQTT","NTP","WIFI","CT","TIMERS","PING","SYSTEM","HTTP","ALEXA","OLED","HADISC","CT136"];
 
 function load() {
   fetch("/api/seriallog")

@@ -2476,6 +2476,11 @@ void SetAsyncHTTP(){
       request->send(SPIFFS, "/Backup.html");
     });
 
+    AsyncWeb_server.on("/FirmwareMaintenance.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      if (!request->authenticate("user", "pass")) return request->requestAuthentication();
+      request->send(SPIFFS, "/FirmwareMaintenance.html");
+    });
+
     AsyncWeb_server.on("/Files.html", HTTP_GET, [](AsyncWebServerRequest *request){
       if (!request->authenticate("user", "pass")) return request->requestAuthentication();
       request->send(SPIFFS, "/Files.html");

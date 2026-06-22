@@ -17,7 +17,8 @@
 #define SLOG_ALEXA   (1u << 11)
 #define SLOG_OLED    (1u << 12)
 #define SLOG_HADISC  (1u << 13)
-#define SLOG_ALL     0x3FFFu
+#define SLOG_CT136   (1u << 14)
+#define SLOG_ALL     0x7FFFu
 
 extern volatile uint32_t g_serialLogMask;
 

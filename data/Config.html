@@ -273,42 +273,9 @@ button:hover,input[type="submit"]:hover,.button-link:hover{background:var(--teal
           <a class="button-link" href="./VPNConfig.html">&#128274; VPN Configuration</a>
           <a class="button-link" href="./SerialLogConfig.html">&#128220; Serial Log Settings</a>
           <a class="button-link" href="./Backup.html">&#128190; Backup &amp; Restore</a>
+          <a class="button-link" href="./FirmwareMaintenance.html">&#128296; Firmware Maintenance</a>
           <a class="button-link secondary" href="./Files.html">&#128193; File Manager</a>
         </div>
-      </section>
-      <section class="card">
-        <h2>Firmware Update</h2>
-        <form method="post" action="/update" enctype="multipart/form-data" onsubmit="return uploadFirmware(this)">
-          <div class="field">
-            <label for="FileUpload1">Firmware File</label>
-            <input type="file" name="update" id="FileUpload1">
-            <div class="upload-progress" id="FirmwareUploadProgress" style="display:none">
-              <div class="upload-progress-bar"><div class="upload-progress-fill" id="FirmwareUploadFill"></div></div>
-              <div class="upload-progress-text" id="FirmwareUploadText"></div>
-            </div>
-            <div id="FirmwareDebug" style="display:none;font-size:11px;color:#555;margin-top:6px;font-family:monospace;white-space:pre-wrap;"></div>
-          </div>
-          <div class="actions"><input type="submit" name="firmwareload" value="Upload And Update"></div>
-        </form>
-        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);">
-          <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">Core Dump</div>
-          <div id="CoreDumpStatus" style="font-size:12px;color:var(--muted);margin-bottom:8px;">Checking&hellip;</div>
-          <button type="button" id="EraseCoreDumpBtn" class="danger" style="min-width:100%;display:none;" onclick="eraseCoreDump()">Erase Core Dump</button>
-        </div>
-      </section>
-      <section class="card">
-        <h2>Filesystem Update</h2>
-        <form method="post" action="/updatefs" enctype="multipart/form-data" onsubmit="return uploadFilesystem(this)">
-          <div class="field">
-            <label for="FsFileUpload">Filesystem Image (.bin)</label>
-            <input type="file" name="update" id="FsFileUpload">
-            <div class="upload-progress" id="FsUploadProgress" style="display:none">
-              <div class="upload-progress-bar"><div class="upload-progress-fill" id="FsUploadFill"></div></div>
-              <div class="upload-progress-text" id="FsUploadText"></div>
-            </div>
-          </div>
-          <div class="actions"><input type="submit" value="Upload Filesystem"></div>
-        </form>
       </section>
     </aside>
   </div>
@@ -439,38 +406,6 @@ function resetAccumulatedPower(){
   };req.send();
 }
 
-function refreshCoreDumpStatus(){
-  fetchJson("/CoreDumpStatus.json",function(t){
-    var el=document.getElementById("CoreDumpStatus"),btn=document.getElementById("EraseCoreDumpBtn");
-    if(!el)return;
-    if(!t){el.textContent="Status unavailable.";return;}
-    var d={};try{d=JSON.parse(t);}catch(e){}
-    if(d.hasDump){
-      el.textContent="Crash dump present — task: "+d.task+", cause: "+d.excCause+", EPC1: 0x"+(d.epc1>>>0).toString(16).toUpperCase();
-      el.style.color="var(--rose)";
-      if(btn)btn.style.display="";
-    }else{
-      el.textContent="No crash dump stored.";
-      el.style.color="var(--muted)";
-      if(btn)btn.style.display="none";
-    }
-  });
-}
-
-function eraseCoreDump(){
-  if(!confirm("Erase the stored crash dump from flash?"))return;
-  var btn=document.getElementById("EraseCoreDumpBtn");
-  if(btn){btn.disabled=true;btn.textContent="Erasing…";}
-  var req=new XMLHttpRequest();req.open("POST","/EraseCoreDump.json",true);
-  req.onreadystatechange=function(){
-    if(req.readyState!==4)return;
-    var d={};try{d=JSON.parse(req.responseText);}catch(e){}
-    if(btn){btn.disabled=false;btn.textContent="Erase Core Dump";}
-    alert(d.ok?"Core dump erased successfully.":(d.message||"Erase failed."));
-    refreshCoreDumpStatus();
-  };req.send();
-}
-
 function initCollapsible(){
   document.querySelectorAll("h2.collapsible").forEach(function(h2){
     var id=h2.getAttribute("data-collapse"),body=id&&document.getElementById(id);
@@ -484,109 +419,6 @@ function initCollapsible(){
     });
   });
 }
-
-// OTA firmware upload
-(function(){
-  var PCT="\x25",_t=null,_p=0,_d=false;
-  function _dbg(m){var e=document.getElementById("FirmwareDebug");if(e)e.textContent+=m+"\n";console.log("[OTA] "+m);}
-  function _bar(pct,lbl){
-    var fill=document.getElementById("FirmwareUploadFill"),text=document.getElementById("FirmwareUploadText");
-    _p=Math.max(0,Math.min(100,pct|0));
-    var bar=fill?fill.parentElement:document.getElementById("FirmwareUploadProgress");
-    if(bar){var p=_p+PCT;bar.style.background="linear-gradient(to right,#0f766e "+p+",#eef4fa "+p+")";}
-    if(text)text.textContent=(lbl!==undefined)?lbl:(_p+PCT);
-  }
-  function _stop(){if(_t){clearInterval(_t);_t=null;}}
-  function _tick(cap,step,ms){_stop();_t=setInterval(function(){if(_p<cap)_bar(Math.min(cap,_p+step));},ms);}
-  function _fin(m){if(_d){_dbg("(done: "+m+")");return;}_d=true;_stop();_bar(100,m);_dbg(m);}
-  function _show(){
-    var p=document.getElementById("FirmwareUploadProgress"),d=document.getElementById("FirmwareDebug");
-    if(p)p.style.display="";if(d)d.style.display="";
-  }
-  window.uploadFirmware=function(form){
-    var fi=document.getElementById("FileUpload1"),btn=document.getElementById("Button5");
-    if(!form||!fi)return true;
-    if(form.getAttribute("data-uploading")==="1")return false;
-    if(!fi.files||!fi.files.length){alert("Please choose a firmware file.");fi.focus();return false;}
-    _show();
-    _dbg("Uploading: "+fi.files[0].name+" ("+fi.files[0].size+" bytes)");
-    form.setAttribute("data-uploading","1");
-    if(btn){btn.disabled=true;btn.value="Uploading...";}
-    _p=0;_d=false;_bar(0,"Uploading...");_tick(90,1,600);
-    var xhr=new XMLHttpRequest();xhr.open("POST",form.action||"/update",true);
-    xhr.upload.onprogress=function(ev){if(!ev.lengthComputable||!ev.total)return;_stop();_bar(Math.round(ev.loaded/ev.total*90),"Uploading "+Math.round(ev.loaded/ev.total*100)+PCT);};
-    xhr.upload.onloadend=function(){_stop();_bar(Math.max(_p,90),"Flashing...");_tick(97,1,1200);};
-    xhr.onreadystatechange=function(){
-      if(xhr.readyState!==4)return;
-      var body=(xhr.responseText||"").trim();
-      _dbg("server: HTTP "+xhr.status+(body?" | "+body:""));
-      if(xhr.status>=200&&xhr.status<300){
-        var ok=(body.length===0)||body.toUpperCase().indexOf("OK")===0||(body.toUpperCase().indexOf("OK")!==-1&&body.toUpperCase().indexOf("FAIL")===-1);
-        _fin(ok?"200 OK — Update successful. Rebooting...":"Update FAILED — "+body);
-      }else if(xhr.status===0){
-        _fin("Connection closed — rebooting...");
-      }else{
-        _fin("Update failed (HTTP "+xhr.status+(body?" — "+body:"")+")");
-      }
-    };
-    xhr.onerror=function(){_fin("Connection error — rebooting...");};
-    xhr.send(new FormData(form));return false;
-  };
-  window.initFirmwareUploadProgress=function(){
-    _stop();_p=0;_d=false;
-    var fill=document.getElementById("FirmwareUploadFill"),text=document.getElementById("FirmwareUploadText"),dbg=document.getElementById("FirmwareDebug");
-    var prog=document.getElementById("FirmwareUploadProgress");
-    if(fill)fill.classList.remove("ota-active");
-    var bar=fill?fill.parentElement:prog;
-    if(bar)bar.style.background="";
-    if(text)text.textContent="";
-    if(dbg){dbg.textContent="";dbg.style.display="none";}
-    if(prog)prog.style.display="none";
-  };
-})();
-
-// Filesystem image upload
-(function(){
-  var PCT="\x25",_t=null,_p=0,_d=false;
-  function _bar(pct,lbl){
-    var fill=document.getElementById("FsUploadFill"),text=document.getElementById("FsUploadText");
-    _p=Math.max(0,Math.min(100,pct|0));
-    var bar=fill?fill.parentElement:document.getElementById("FsUploadProgress");
-    if(bar){var p=_p+PCT;bar.style.background="linear-gradient(to right,#0f766e "+p+",#eef4fa "+p+")";}
-    if(text)text.textContent=(lbl!==undefined)?lbl:(_p+PCT);
-  }
-  function _stop(){if(_t){clearInterval(_t);_t=null;}}
-  function _tick(cap,step,ms){_stop();_t=setInterval(function(){if(_p<cap)_bar(Math.min(cap,_p+step));},ms);}
-  function _fin(m){if(_d)return;_d=true;_stop();_bar(100,m);}
-  function _show(){var p=document.getElementById("FsUploadProgress");if(p)p.style.display="";}
-  window.uploadFilesystem=function(form){
-    var fi=document.getElementById("FsFileUpload");
-    if(!form||!fi)return true;
-    if(form.getAttribute("data-uploading")==="1")return false;
-    if(!fi.files||!fi.files.length){alert("Please choose a filesystem image file.");fi.focus();return false;}
-    _show();
-    form.setAttribute("data-uploading","1");
-    _p=0;_d=false;_bar(0,"Uploading...");_tick(90,1,600);
-    var xhr=new XMLHttpRequest();xhr.open("POST","/updatefs",true);
-    xhr.upload.onprogress=function(ev){if(!ev.lengthComputable||!ev.total)return;_stop();_bar(Math.round(ev.loaded/ev.total*90),"Uploading "+Math.round(ev.loaded/ev.total*100)+PCT);};
-    xhr.upload.onloadend=function(){_stop();_bar(Math.max(_p,90),"Flashing...");_tick(97,1,1200);};
-    xhr.onreadystatechange=function(){
-      if(xhr.readyState!==4)return;
-      var body=(xhr.responseText||"").trim();
-      if(xhr.status>=200&&xhr.status<300){
-        var ok=body.toUpperCase().indexOf("FAIL")===-1;
-        _fin(ok?"OK — Filesystem updated. Rebooting...":"FAILED — "+body);
-      }else if(xhr.status===0){
-        _fin("Connection closed — rebooting...");
-      }else{
-        _fin("Failed (HTTP "+xhr.status+(body?" — "+body:"")+")");
-        form.removeAttribute("data-uploading");
-      }
-    };
-    xhr.onerror=function(){_fin("Connection error.");form.removeAttribute("data-uploading");};
-    xhr.send(new FormData(form));return false;
-  };
-}());
 
 // Heap monitor
 (function(){
@@ -609,7 +441,7 @@ document.addEventListener("DOMContentLoaded",function(){
   var oledCb=document.getElementById("OLED_HW_Active"),adsCb=document.getElementById("ADS_HW_Active");
   if(oledCb)oledCb.addEventListener("change",updateOledHwVisibility);
   if(adsCb)adsCb.addEventListener("change",updateAdsHwVisibility);
-  initFirmwareUploadProgress();initCollapsible();refreshFeatureFlags();refreshStatus();refreshCoreDumpStatus();
+  initCollapsible();refreshFeatureFlags();refreshStatus();
   setInterval(refreshStatus,3000);
 });
 </script>

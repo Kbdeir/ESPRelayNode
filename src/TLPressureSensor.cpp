@@ -6,6 +6,7 @@
 #include "esp_adc_cal.h"
 #include "esp_task_wdt.h"
 #include "CT_ProcessPower.h"
+#include "SerialLog.h"
 
 #define TL_BUFFER_SIZE  512
 extern bool webing;
@@ -46,7 +47,7 @@ float TLPressureSensor::read(unsigned int nsamples) {
         sampleI = acc / nsamples;
         measure = mapf(sampleI, maSLC, maSHC, paramEmptyValue, paramFullValue);
         preparejson();
-        Serial.printf("[CT136  ] ADC=%.1f  cm=%.1f  empty=%d  full=%d\n", sampleI, measure, paramEmptyValue, paramFullValue);
+        SLOG(SLOG_CT136, "[CT136  ] ADC=%.1f  cm=%.1f  empty=%d  full=%d\n", sampleI, measure, paramEmptyValue, paramFullValue);
         return measure;
       }
       return measure;  // return last known value when web UI is active

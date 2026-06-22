@@ -32,6 +32,7 @@ static const struct { const char* key; uint32_t bit; } kCategories[] = {
   { "ALEXA",  SLOG_ALEXA  },
   { "OLED",   SLOG_OLED   },
   { "HADISC", SLOG_HADISC },
+  { "CT136",  SLOG_CT136  },
 };
 static const int kNumCats = sizeof(kCategories) / sizeof(kCategories[0]);
 
