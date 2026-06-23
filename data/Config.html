@@ -277,6 +277,10 @@ button:hover,input[type="submit"]:hover,.button-link:hover{background:var(--teal
           <a class="button-link secondary" href="./Files.html">&#128193; File Manager</a>
         </div>
       </section>
+      <section class="card">
+        <h2>Core Dump</h2>
+        <div id="coredump-indicator" style="font-size:13px;color:var(--muted)">Checking&hellip;</div>
+      </section>
     </aside>
   </div>
 </main>
@@ -431,6 +435,27 @@ function initCollapsible(){
   ph();setInterval(ph,30000);
 }());
 
+function refreshCoreDumpStatus(){
+  fetch("/CoreDumpStatus.json").then(function(r){return r.json();}).then(function(d){
+    var el=document.getElementById("coredump-indicator");
+    if(!el)return;
+    if(d.hasDump){
+      el.innerHTML='<span style="color:var(--rose);font-weight:700;font-size:13px">&#9888; Crash dump stored</span>'
+        +'<div style="margin-top:8px;font-size:11px;font-family:monospace;line-height:1.7;color:var(--ink)">'
+        +'Task: <b>'+d.task+'</b><br>'
+        +'Cause: <b>'+d.excCause+'</b><br>'
+        +'EPC1: <b>0x'+(d.epc1>>>0).toString(16).toUpperCase()+'</b>'
+        +'</div>'
+        +'<a href="./coredump.html" style="display:inline-block;margin-top:10px;padding:6px 12px;background:var(--rose);color:#fff;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none">&#128269; View Core Dump</a>';
+    }else{
+      el.innerHTML='<span style="color:var(--green);font-size:13px">&#10003; No crash dump stored</span>';
+    }
+  }).catch(function(){
+    var el=document.getElementById("coredump-indicator");
+    if(el)el.textContent="Status unavailable.";
+  });
+}
+
 document.addEventListener("DOMContentLoaded",function(){
   fetchAndApplyConfig();
   var sb=document.getElementById("WifiScanButton"),sr=document.getElementById("WifiScanResults");
@@ -441,7 +466,7 @@ document.addEventListener("DOMContentLoaded",function(){
   var oledCb=document.getElementById("OLED_HW_Active"),adsCb=document.getElementById("ADS_HW_Active");
   if(oledCb)oledCb.addEventListener("change",updateOledHwVisibility);
   if(adsCb)adsCb.addEventListener("change",updateAdsHwVisibility);
-  initCollapsible();refreshFeatureFlags();refreshStatus();
+  initCollapsible();refreshFeatureFlags();refreshStatus();refreshCoreDumpStatus();
   setInterval(refreshStatus,3000);
 });
 </script>

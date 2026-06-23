@@ -14,6 +14,8 @@ body{margin:0;min-height:100vh;color:var(--ink);font-family:Arial,Helvetica,sans
 .topbar h1{margin:0;font-size:28px;font-weight:700}
 .topbar .hint{margin-top:7px;color:#cfe0ea}
 .topbar .meta{min-width:200px;color:#e6eef5;font-size:13px;text-align:right;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 12px}
+.back-link{color:#a8d8cf;font-size:13px;text-decoration:none;white-space:nowrap;margin-top:6px;display:inline-block}
+.back-link:hover{color:#fff}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:var(--shadow-sm);padding:18px;margin-top:16px}
 .card h2{position:relative;display:flex;align-items:center;gap:10px;margin:-2px 0 16px;padding-bottom:12px;color:var(--ink);border-bottom:1px solid var(--line);font-size:18px;font-weight:700}
 .card h2::before{content:"";width:10px;height:28px;border-radius:6px;background:var(--teal);flex:0 0 auto}
@@ -44,10 +46,12 @@ button:hover,input[type="submit"]:hover,input[type="button"]:hover{background:va
       <div class="hint">Configure MQTT topics, timers, and current sensing for each relay.</div>
     </div>
     <div class="meta">
+      <div>Chip ID: <span id="topbar-chipid">—</span></div>
       <div>System time: <span id="topbar-time">-</span></div>
       <div>Relay 0: <span id="RSTATE0">-</span> &nbsp; Relay 1: <span id="RSTATE1">-</span></div>
-          <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
-</div>
+      <div>Heap: <strong id="hb-free">—</strong> B | min: <strong id="hb-min">—</strong> B | blk: <strong id="hb-blk">—</strong> B</div>
+      <a class="back-link" href="/">&#8592; Back to Config</a>
+    </div>
   </header>
 
   <section class="card">
@@ -130,7 +134,7 @@ function applyRelayData(d){
   function sv(id,v){var e=document.getElementById(id);if(e)e.value=(v!=null)?v:"";}
   function st(id,v){var e=document.getElementById(id);if(e)e.textContent=(v!=null&&v!=="")?String(v):"-";}
   function sc(id,v){var e=document.getElementById(id);if(e)e.checked=(v===1||v==="1"||v===true);}
-  st("topbar-time",d.systemtime);st("RSTATE0",d.RSTATE0);st("RSTATE1",d.RSTATE1);
+  st("topbar-chipid",d.NODEID);st("topbar-time",d.systemtime);st("RSTATE0",d.RSTATE0);st("RSTATE1",d.RSTATE1);
   st("relay-heading-nb",d.RELAYNB!=null?d.RELAYNB:"");
   var btn=document.getElementById("Button1Relay");
   if(btn)btn.value="Save Relay "+(d.RELAYNB!=null?d.RELAYNB:"");
