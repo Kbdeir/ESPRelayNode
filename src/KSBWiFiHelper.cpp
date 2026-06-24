@@ -130,10 +130,11 @@ void WiFiDisconnected(WiFiEvent_t event, WiFiEventInfo_t info)
                     Serial.println("Error initializing ESP-NOW");
                     return;
                 }
-                    Serial.println(" >>>>>  ESP-NOW");
+                    Serial.println(" >>>>>  ESP-NOW initiated");
                 
                 // Once ESPNow is successfully Init, we will register for recv CB to
                 // get recv packer info
+                esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
                 esp_now_register_recv_cb(OnDataRecv);
     #endif  
 

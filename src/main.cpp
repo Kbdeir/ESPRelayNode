@@ -2,8 +2,21 @@
 // #define USEPREF n
 // SW V 10.0 @ 25/09/2022
 
+#include <FS.h>
 
 #include <defines.h>
+
+#ifdef USE_LittleFS
+   #ifdef ESP32 
+    #define SPIFFS LITTLEFS
+    #else 
+    #define SPIFFS LittleFS
+   #endif
+  #include <LittleFS.h>
+#else
+  #include <SPIFFS.h>
+#endif 
+
 #include <Wire.h>
 #ifdef ESP32
 #include "esp_adc_cal.h"
@@ -25,6 +38,11 @@
   #endif
 #endif
 
+
+#ifdef ESP_NOW
+  #include <espnow.h>
+#endif 
+
 #include <Arduino.h>
 #include <string.h>
 #include <Modbus.h>
@@ -32,18 +50,20 @@
 #include <JSONConfig.h>
 #include <Scheduletimer.h>
 #include "ACS712.h"
-#include "OneButton.h"
-#include <Bounce2.h>
+// #include "OneButton.h"
+// #include <Bounce2.h>
 #include <RelayClass.h>
 #include <vector>
 #include <ACS_Helper.h>
 #include <InputClass.h>
 #include <TimerClass.h>
 #include <TempSensor.h>
-
 #include <TempConfig.h>
 #include <ADS11x5Config.h>
+
+#ifdef _HST_
 #include <HSTConfig.h>
+#endif
 
 #ifdef ESP32
   #include <ESP32Ping.h>
@@ -54,6 +74,13 @@
 #ifdef ESP32
 #ifdef WaterFlowSensor
 #include <WaterFlowSensor.h>;
+#endif
+#endif
+
+#ifdef ESP32
+#ifdef BMSmode
+#include <BMSClient.h>
+BMSClient bmsClient;
 #endif
 #endif
 
@@ -83,7 +110,7 @@ extern AsyncPing Pings;
 #include <SimpleTimer.h>
 
 
-OneButton MYbutton(ConfigInputPin, true);
+//OneButton MYbutton(ConfigInputPin, true);
 DisplayActions CURRENT_Display_Action = ACTION_DISPALY_1; // DISPLAY SCREEN 1 ON STARTUP
 
 #ifndef ESP32
@@ -407,7 +434,11 @@ extern SoftwareSerial myPort;
   const int unrolled = 13; //number of full rotations from fully rolled to fully unrolled
 #endif
 
-
+#ifdef OLED_1306
+volatile bool buttonPressed = false;
+volatile unsigned long lastInterruptTime = 0;
+const unsigned long debounceDelay = 50; // milliseconds
+#endif
 
 long timezone     = 1;
 byte xtries = 0;
@@ -486,6 +517,12 @@ struct_message myData;
 // callback function that will be executed when data is received
     #ifndef ESP32
         void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) {
+
+            if (len >= 4 && memcmp(incomingData, "PING", 4) == 0) {
+            Serial.println("[PING] Received — replying with PONG...");
+            esp_now_send(mac, (uint8_t*)"PONG", strlen("PONG"));
+            return;
+        }
           memcpy(&myData, incomingData, sizeof(myData));
           Serial.print("\n[ESP_NOW] Bytes received: ");
           Serial.print(len);
@@ -545,10 +582,19 @@ void IRAM_ATTR pulseCounter() // Interupt function for WaterFlowSensor
 #endif
 #endif
 
+#ifdef ESP32
+#ifdef BMSmode
+      long currentMillis_BMS=0;
+      long previousMillis_BMS=0;
+      int BMS_interval=1000;
+#endif
+#endif
+
 
 void myClickFunction() {
-  Serial.print(F("\n[INFO   ] >>>>> Conf Button Clicked <<<<< \n")); //MYbUTTON
+  //Serial.print(F("\n[INFO   ] >>>>> Conf Button Clicked <<<<< \n")); //MYbUTTON
   #ifdef OLED_1306
+ // display.dim(true);
   display.clearDisplay();
   if (CURRENT_Display_Action == ACTION_DISPALY_1) {
     CURRENT_Display_Action = ACTION_DISPALY_2;
@@ -561,16 +607,21 @@ void myClickFunction() {
     display.setCursor(0,0);    
     display.println(">> Page 3 <<");    
   } else if (CURRENT_Display_Action == ACTION_DISPALY_3) {
-    CURRENT_Display_Action = ACTION_DISPALY_4;
+    CURRENT_Display_Action = ACTION_DISPALY_1;  
+    //CURRENT_Display_Action = ACTION_DISPALY_4;
     Serial.print(F("\n[INFO   ] >>>>> PAGE 4 <<<<< \n")); 
     display.setCursor(0,0);    
-    display.println(">> Page 4 <<");    
+    display.println(">> Page 1 <<");    
   } else if (CURRENT_Display_Action == ACTION_DISPALY_4) {
     CURRENT_Display_Action = ACTION_DISPALY_1;
-    Serial.print(F("\n[INFO   ] >>>>> PAGE 1 <<<<< \n")); 
+    //Serial.print(F("\n[INFO   ] >>>>> PAGE 1 <<<<< \n")); 
     display.setCursor(0,0);    
     display.println(">> Page 1 <<");    
   } 
+  display.println("");   
+  display.println("");   
+  display.println(">>    WAIT !!!   <<");  
+  display.display();
   #endif
 } 
 
@@ -1754,6 +1805,18 @@ void toggleLED(void * parameter){
 */
 #endif
 
+#ifdef OLED_1306
+void IRAM_ATTR handleButtonInterrupt() {
+  unsigned long currentTime = millis();
+
+  // Debounce logic
+  if (currentTime - lastInterruptTime > debounceDelay) {
+    lastInterruptTime = currentTime;
+    buttonPressed = true;
+  }
+}
+#endif
+
 void setup() {
 /*
 #ifdef ESP32
@@ -1767,6 +1830,7 @@ void setup() {
   );
 #endif
 */
+
 
 
 
@@ -1801,6 +1865,13 @@ void setup() {
   #endif
 
   Serial.begin(115200);
+
+  #ifdef BMSmode
+    bmsClient.init("C0:D6:3C:55:6B:C4"); // replace with your BMS MAC Address!!
+    if(bmsClient.connect()) {
+        Serial.println("Connected to BMS!");
+    }
+  #endif
 
   #ifdef OLED_ThingPulse
     display.init();
@@ -1876,8 +1947,17 @@ void setup() {
   */
   
 
+    //LITTLEFS.format(); 
+    #ifdef ESP32
+      if (!SPIFFS.begin(true)) {
+    #else
+      if (!SPIFFS.begin()) {
+    #endif
+    Serial.println("❌ LittleFS mount failed!");
+    return;
+  }
 
-
+    Serial.println("✅ LittleFS mounted successfully.");
          
         /*
           only need to format SPIFFS the first time we run a
@@ -1886,15 +1966,15 @@ void setup() {
         */        
         #ifdef ESP32
         // SPIFFS.format();
-          if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
-            Serial.println(F("SPIFFS Mount Failed"));
-           if(SPIFFS.format()) { Serial.println("File System Formated"); }
-            return;
-          }
+     //   if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
+     //       Serial.println(F("SPIFFS Mount Failed"));
+     //      if(SPIFFS.format()) { Serial.println("File System Formated"); }
+     //       return;
+     //     }
           listDir(SPIFFS, "/", 0);  
         #else
-          // SPIFFS.format();
-          SPIFFS.begin();
+        // SPIFFS.format();
+        //   SPIFFS.begin();
         //  if(!SPIFFS.begin()){
         //    if(SPIFFS.format()) { Serial.println("File System Formated"); }
         //      else { Serial.println("File System Formatting Error"); } 
@@ -2198,8 +2278,8 @@ void setup() {
   #endif
 
   // link the myClickFunction function to be called on a click event.   
-  // MYbutton.setClickTicks(500);
-  MYbutton.attachClick(myClickFunction); 
+  //MYbutton.setClickTicks(50);
+  //MYbutton.attachClick(myClickFunction); 
 
   if (relay0.RelayConfParam->v_TemperatureValue != "0") {
     #if not defined _emonlib_ && not defined _pressureSensor_
@@ -2207,12 +2287,59 @@ void setup() {
     #endif
     TempSensorSecond.tempbegin();
   }
-}
+
+  #ifdef OLED_1306
+    #ifdef ESP32
+      pinMode(ConfigInputPin, INPUT_PULLUP);
+      attachInterrupt(digitalPinToInterrupt(ConfigInputPin), handleButtonInterrupt, FALLING);
+    #endif
+  #endif 
+
+  #ifdef _ALEXA_
+    fauxmo.begin();
+  #endif
+
+  #ifdef AppleHKHomeSpan
+    homeSpan.begin(Category::Other, "HomeSpan", "1.0.0");
+    HomespanInitiated = true;
+  #endif 
+
+  Serial.println(F("[SYSTEM ] Setup completed"));
+
+} // setup
+
+
+#ifdef OLED_1306
+void tskfn_OLEDUpdate() {
+    display.setCursor(1,54);  // col,row      
+    display.setTextColor(BLACK,WHITE);
+    display.print(WiFi.localIP().toString());
+    display.setTextColor(WHITE);      
+    display.setCursor(100,54);  // col,row    
+    if ((WiFi.status() == WL_CONNECTED))  display.print(F("*"));   
+    if ((WiFi.status() != WL_CONNECTED)) display.print(F("x"));  
+    display.setCursor(110,54);  // col,row   
+    if (mqttClient.connected()) display.print(F("M"));   
+    if (!mqttClient.connected()) display.print(F("m"));   
+    display.display();
+}  
+#endif   
+
+
 
 
 void loop() {
 
-  MYbutton.tick(&MYbutton); 
+  #ifdef OLED_1306
+  // MYbutton.tick(&MYbutton); 
+  // Check if the ISR flagged a valid button press
+  if (buttonPressed) {
+    buttonPressed = false; // Reset the flag
+    Serial.println("Button clicked!");
+    // Insert your button-click handling logic here
+    myClickFunction();
+  }
+  #endif   
 
   #ifdef _ALEXA_
     fauxmo.handle();
@@ -2323,6 +2450,26 @@ void loop() {
       Inputsnsr06.watch();         
       #endif
 
+      #ifdef BMSmode
+          currentMillis_BMS = millis();
+          if (currentMillis_BMS - previousMillis_BMS > BMS_interval) {
+
+            if(bmsClient.isConnected()) {
+                bmsClient.update();
+                
+                // Retrieve and display data
+                Serial.printf("Total Voltage: %.2f V\n", bmsClient.getTotalVoltage());
+                Serial.printf("SOC: %d %%\n", bmsClient.getSOC());
+            }
+
+            char res[8]; 
+            char res2[8]; 
+            dtostrf(bmsClient.getSOC(), 6, 1, res); // Leave room for too large numbers!
+            mqttClient.publish("BMS", QOS2, RETAINED, res); // String(TSolarPanel).c_str());   
+
+          }
+      #endif
+
       #ifdef WaterFlowSensor
           currentMillis_WFS = millis();
           if (currentMillis_WFS - previousMillis_WFS > interval) {
@@ -2342,7 +2489,7 @@ void loop() {
             // Add the millilitres passed in this second to the cumulative total
             totalMilliLitres += flowMilliLitres;
             // Print the flow rate for this second in litres / minute
-            Serial.print("Flow rate: ");
+            Serial.print("\nFlow rate: ");
             Serial.print(int(flowRate));  // Print the integer part of the variable
             Serial.print("L/min");
             Serial.print("\t");       // Print tab space
@@ -2593,7 +2740,6 @@ void loop() {
               display.print(String(MCelcius));
               display.setTextSize(1);        
       
-
               display.setCursor(rect_width + 10 ,StartRow + 2 );    
               display.println(F("TEMP 2"));
               display.setCursor(rect_width + 8,StartRow + 16 );   
@@ -2633,7 +2779,9 @@ void loop() {
     }
   #endif  
 
-}
+} // end main loop()
+
+
 
 
 #if defined (_emonlib_)  || defined (_pressureSensor_) 
@@ -2641,9 +2789,11 @@ void loop() {
     void tskfn_EmonPublisher() {
         if (!started_in_confMode){
           if (mqttClient.connected()) {
+            if (!(CT_1.jsonPost.indexOf("[VOLTS2]") != -1)) {
             mqttClient.publish((MyConfParam.v_CurrentTransformerTopic).c_str(), QOS2, RETAINED, CT_1.jsonPost.c_str());        
-          }  
-    }
+            }  
+          }
+      }
     }
     #endif
     #ifdef _pressureSensor_
@@ -2660,6 +2810,7 @@ void loop() {
                 #if not defined _pressureSensor_
                 if ((CURRENT_Display_Action == ACTION_DISPALY_1) || (CURRENT_Display_Action == ACTION_DISPALY_2)) {
                   #ifdef OLED_1306
+                  display.dim(false);
                   CT_1.DisplayPower(display, mqttClient, MyConfParam.v_Screen_orientation);
                   #endif
                   }
@@ -2744,24 +2895,6 @@ void tskfn_espAlexaStateUpdate(){
 #endif
 
 
-#ifdef OLED_1306
-void tskfn_OLEDUpdate() {
-    display.setCursor(1,54);  // col,row      
-    display.setTextColor(BLACK,WHITE);
-    display.print(WiFi.localIP().toString());
-    display.setTextColor(WHITE);      
-    display.setCursor(100,54);  // col,row    
-    if ((WiFi.status() == WL_CONNECTED))  display.print(F("*"));   
-    if ((WiFi.status() != WL_CONNECTED)) display.print(F("x"));  
-    display.setCursor(110,54);  // col,row   
-    if (mqttClient.connected()) display.print(F("M"));   
-    if (!mqttClient.connected()) display.print(F("m"));   
-
-    MYbutton.tick(&MYbutton); 
-    display.display();
-}  
-#endif    
-
 
 #ifdef _ADS1X15_
   void tskfn_ADSRead() {  
@@ -2821,18 +2954,14 @@ void tskfn_OLEDUpdate() {
         #endif
         //Voltage0 = (val_0 * ADSStep)/1000;  
         //Serial.printf("\nADS 1115 Volatge 0 = %f, %u, %.2f, ADS1.toVoltage %f", Voltage0, val_0, (Voltage0 * mutiplyer), ADS1.toVoltage(ADS1.readADC(0)) * mutiplyer);
-        
         Voltage2 = (val_2 * ADSStep)/1000;  
-        #ifdef _emonlib_
-        CT_1.jsonPost.replace("[VOLTS2]", String(Voltage2 * mutiplyer));
-        #endif
         //Serial.printf("\nADS 1115 Volatge 2 = %f, %u, %.2f, ADS1.toVoltage %f", Voltage2, val_2, (Voltage2 * mutiplyer), ADS1.toVoltage(ADS1.readADC(2)) * mutiplyer);
         Voltage3 = (val_3 * ADSStep)/1000;  
         #ifdef _emonlib_
+        CT_1.jsonPost.replace("[VOLTS2]",String(Voltage2 * mutiplyer));
         CT_1.jsonPost.replace("[VOLTS3]",String(Voltage3 * mutiplyer));
         #endif
         //Serial.printf("\nADS 1115 ADS1.toVoltage 3 = %f, %u, %.2f, ADS1.toVoltage %f", Voltage3, val_3, (Voltage3 * mutiplyer), ADS1.toVoltage(ADS1.readADC(3)) * mutiplyer);
-
 
         #ifdef _ADS1X15_DC_Current_   /* read DC current */
           #ifndef _ADS1X15_CURRENT_   /* make sure pin is not used for _ADS1X5_CURRENT_*/
@@ -2923,6 +3052,8 @@ void tskfn_OLEDUpdate() {
     #endif
   }    
 #endif
+
+
 
 #ifdef _NEWMETHOD_
   void tskfn_PF() {  

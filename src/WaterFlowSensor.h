@@ -1,3 +1,6 @@
+
+#ifdef WaterFlowSensor
+
 #ifndef _WaterFlowSensor_
 #define _WaterFlowSensor_
 
@@ -11,4 +14,5 @@
     void saveconfigWFS(AsyncWebServerRequest *request);
 #endif
 
+#endif
 #endif

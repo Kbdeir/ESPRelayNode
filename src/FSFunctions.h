@@ -1,6 +1,14 @@
 #ifdef ESP32
-  #include "FS.h"
-  #include "SPIFFS.h"
+
+  
+#include <FS.h>
+#ifdef USE_LittleFS
+  #define SPIFFS LITTLEFS
+  #include <LittleFS.h> 
+#else
+  #include <SPIFFS.h>
+#endif 
+
 
   #define FORMAT_SPIFFS_IF_FAILED true
 

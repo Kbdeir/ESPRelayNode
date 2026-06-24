@@ -5,10 +5,20 @@
 
 #include <ArduinoJson.h>
 #include "FS.h"
+#include <defines.h>
 
-#ifdef ESP32
-#include "SPIFFS.h"
-#endif
+#include <FS.h>
+#ifdef USE_LittleFS
+   #ifdef ESP32 
+    #define SPIFFS LITTLEFS
+    #else 
+    #define SPIFFS LittleFS
+   #endif
+  #include <LittleFS.h>
+#else
+  #include <SPIFFS.h>
+#endif 
+
 
 #include <ConfigParams.h>
 #include <ESPAsyncWebServer.h>

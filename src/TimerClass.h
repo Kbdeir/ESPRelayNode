@@ -5,10 +5,10 @@
 
 #include "Arduino.h"
 #include <ConfigParams.h>
-#include <JSONConfig.h>
-#include <Scheduletimer.h>
-#include <OneButton.h>
-#include <Bounce2.h>
+//#include <JSONConfig.h>
+//#include <Scheduletimer.h>
+//#include <OneButton.h>
+//#include <Bounce2.h>
 
 typedef void (*fnptr)();
 typedef void (*fnptr_a)(void* t);

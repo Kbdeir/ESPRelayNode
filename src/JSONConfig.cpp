@@ -1,5 +1,20 @@
 #include <JSONConfig.h>
 #include <RelayClass.h>
+#include <defines.h>
+
+#include <FS.h>
+#ifdef USE_LittleFS
+   #ifdef ESP32 
+    #define SPIFFS LITTLEFS
+    #else 
+    #define SPIFFS LittleFS
+   #endif
+  #include <LittleFS.h>
+#else
+  #include <SPIFFS.h>
+#endif 
+
+
 
 #ifdef INVERTERLINK
   #include <Settings.h>
@@ -248,6 +263,7 @@ bool saveConfig(TConfigParams &ConfParam){
       return false;
     }
   configFile.println("\n\n");
+  configFile.flush();
   configFile.close();
 
   return true;
@@ -287,6 +303,7 @@ bool saveConfig(TConfigParams &ConfParam, AsyncWebServerRequest *request){
     return false;
   }
   configFile.println("\n\n");
+  configFile.flush();
   configFile.close();
 
   return true;
@@ -375,6 +392,7 @@ bool saveDefaultConfig(){
     return false;    
   }
   configFile.println("\n\n");
+  configFile.flush();
   configFile.close();
 
   Serial.println (F("[INFO   ] Printing out default settings"));
@@ -438,6 +456,7 @@ bool saveDefaultIRMapConfig(){
     return FAILURE;    
   }
     configFile.println("\n\n");
+    configFile.flush();
     configFile.close();
 
   return SUCCESS;
@@ -472,6 +491,7 @@ bool saveIRMapConfig(AsyncWebServerRequest *request){
     return false;    
   }
   configFile.println("\n\n");
+  configFile.flush();
   configFile.close();
   return true;
 }
@@ -596,6 +616,7 @@ bool saveRelayDefaultConfig(uint8_t rnb){
     return false;      
   }
   configFile.println("\n\n");
+  configFile.flush();
   configFile.close();
 
   return true;
@@ -632,6 +653,7 @@ bool saveRelayConfig(AsyncWebServerRequest *request){
     return false;    
   }
   configFile.println("\n\n");
+  configFile.flush();
   configFile.close();
 
   return true;
@@ -687,6 +709,7 @@ bool saveRelayConfig(Trelayconf * RConfParam){
   if (serializeJsonPretty(dummy, configFile) == 0) {
     Serial.println(F("Failed to write to file"));
   }*/
+  configFile.flush();
   configFile.close();
 
   return true;
@@ -701,7 +724,6 @@ void saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
     json[F("MTD_KWh")]=String(MTD_KWh);
     json[F("YTD_KWh")]=String(YTD_KWh);
 
-    // SPIFFS.remove("/AccumulatedPower.json");
     File configFile = SPIFFS.open("/AccumulatedPower.json", "w");
     if (!configFile) {
       Serial.println(F("\n[INFO   ] Failed to write relay Power file"));
@@ -720,6 +742,7 @@ void saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
   if (serializeJsonPretty(dummy, configFile) == 0) {
     Serial.println(F("Failed to write to file"));
   }*/
+  configFile.flush();
   configFile.close();
 
   //return true;
@@ -731,33 +754,15 @@ void saveCTReadings(float KWh,  float MTD_KWh, float YTD_KWh){
 void loadCTReadings(float &KWh,  float &MTD_KWh, float &YTD_KWh) {
 Serial.println(F("[INFO   ] loading SPIFFS"));
 
-  if(SPIFFS.begin())
-  {
-    Serial.println(F("[INFO   ] SPIFFS Initialize....ok"));
-  }
-  else
-  {
-    Serial.println(F("[INFO   ] SPIFFS Initialization...failed"));
-  }
-  
 
-  Serial.println(F("[INFO   ] Opening /AccumulatedPower.json"));
-  if (! SPIFFS.exists("/AccumulatedPower.json")) {
-    Serial.println(F("[INFO   ] AccumulatedPower file does not exist!"));
-    KWh      =  0;
-    MTD_KWh  =  0;
-    YTD_KWh  =  0;
-    //return false;
-  }
-
-  Serial.println(F("[INFO   ] Starting /AccumulatedPower.json parsing"));
+  Serial.println(F("[INFO   ] Starting AccumulatedPower.json parsing"));
   File configFile = SPIFFS.open("/AccumulatedPower.json", "r");
   if (!configFile) {
     Serial.println(F("[INFO   ] Failed to open AccumulatedPower.json file"));
     KWh      =  0;
     MTD_KWh  =  0;
     YTD_KWh  =  0;
-    //return false;
+    saveCTReadings(0,0,0); 
   }
 
   StaticJsonDocument<500> json;

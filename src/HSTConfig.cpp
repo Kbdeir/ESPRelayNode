@@ -96,8 +96,7 @@ config_read_error_t loadHSTConfig(char* filename, HSTConfig &para_HSTConfig) {
   para_HSTConfig.enabled        = json["CEnabled"]; //.as<String>()!="") ? json["CEnabled"].as<uint8_t>() : 0;
   para_HSTConfig.AmpsVoltsRatio = (json["AmpsVoltsRatio"].as<String>()!="") ? json["AmpsVoltsRatio"].as<double>() : 0;
 
-    configFile.flush();
-    configFile.close();
+  configFile.close();
     
   return SUCCESS;
 }

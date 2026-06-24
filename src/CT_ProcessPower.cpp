@@ -313,6 +313,7 @@ bool CTPROCESSOR::ThresholdCossLowTimerActive() {
         display.setTextColor(WHITE);
   
         }
+        display.display();
 
       #endif    
   }

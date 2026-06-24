@@ -7,11 +7,16 @@
 #include "FS.h"
 #include <ConfigParams.h>
 
-#ifdef ESP32
-#include "SPIFFS.h"
-#endif
 
-       
+
+#ifdef USE_LittleFS
+  #define SPIFFS LITTLEFS
+  #include <LITTLEFS.h> 
+#else
+  #include <SPIFFS.h>
+#endif 
+
+      
 
 class Settings
 {

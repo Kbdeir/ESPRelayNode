@@ -1,4 +1,5 @@
 #ifdef ESP32
+//#ifdef _pressureSensor_
 
 #include "Arduino.h"
 #include "TLPressureSensor.h"
@@ -35,6 +36,7 @@ TLPressureSensor::~TLPressureSensor(){
 
 float TLPressureSensor::read(unsigned int nsamples) {
       // double measure2 = 0;
+      // Serial.println(F("[20ma   ] Reading 1"));
       if (!webing) {
       for (unsigned int nn = 0; nn < nsamples; nn++)
         {           
@@ -47,8 +49,10 @@ float TLPressureSensor::read(unsigned int nsamples) {
         // measure2 =  (sampleI-maSLC) * (max_sensor_measurment_capacity/(top - maSLC));      //277 / 169; // maSLC = 553 
         measure = mapf(sampleI, maSLC, top ,0 , max_sensor_measurment_capacity);
         preparejson();
+        Serial.printf("[CT136  ]  ADC reading = %.1f , measurment by maping ADC reading - cm: = %.1f, top %f \n",sampleI, measure,  top); 
+        //Serial.printf("[CT136  ]  ADC reading = %.1f , measurment by maping ADC reading - cm: = %.1f, voltage1 %.2f, top %f \n",sampleI, measure,  top); 
         return measure;
-        // Serial.printf("[CT136  ]  ADC reading = %.1f , measurment by maping ADC reading - cm: = %.1f, voltage1 %.2f, top %f \n",sampleI, measure,  top);      
+             
  }
 }
 
@@ -190,7 +194,7 @@ config_read_error_t TLsaveconfig(AsyncWebServerRequest *request){
   }
 
 #endif
-
+//#endif
 
 
 

@@ -92,6 +92,8 @@ bool saveNodeTimer(AsyncWebServerRequest *request){
   if (serializeJsonPretty(dummy, configFile) == 0) {
     Serial.println(F("Failed to write to file"));
   }*/
+
+  configFile.flush();
   configFile.close();
 
     #ifndef ESP32  

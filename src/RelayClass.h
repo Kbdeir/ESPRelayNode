@@ -6,8 +6,8 @@
 #include "Arduino.h"
 #include <ConfigParams.h>
 #include <JSONConfig.h>
-#include <OneButton.h>
-#include <Bounce2.h>
+//#include <OneButton.h>
+//#include <Bounce2.h>
 // #include <InputClass.h>
 #ifdef ESP32
 extern "C"

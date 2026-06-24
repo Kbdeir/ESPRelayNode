@@ -111,8 +111,7 @@ config_read_error_t loadADS11x5Config(char* filename, ADS11x5Config &para_ADS11x
   para_ADS11x5Config.relay1         = (json["TRelay1"].as<String>()!="") ? json["TRelay1"].as<uint8_t>() : 0;
   para_ADS11x5Config.relay2         = (json["TRelay2"].as<String>()!="") ? json["TRelay2"].as<uint8_t>() : 0;
 
-    configFile.flush();
-    configFile.close();
+  configFile.close();
     
   return SUCCESS;
 }

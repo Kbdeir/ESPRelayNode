@@ -15,9 +15,9 @@
 #include "RemoteDebug.h"
 extern   RemoteDebug Debug;
 #endif
-#include "OneButton.h"
+//#include "OneButton.h"
 
-extern OneButton MYbutton;;
+//extern OneButton MYbutton;;
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
@@ -267,7 +267,7 @@ void EnergyMonitor::calcVI(unsigned int crossings, unsigned int timeout)
      unsigned int sumxi = 0;
      unsigned int sumxv = 0;
       
-     MYbutton.tick(&MYbutton); 
+     //MYbutton.tick(&MYbutton); 
 
     sampleV = analogRead(inPinV);    
 

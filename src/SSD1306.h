@@ -1,3 +1,5 @@
+#ifdef OLED_1306
+
 #pragma once
 #ifndef _SSD1306_
 #define _SSD1306_
@@ -364,5 +366,5 @@ void SSD_1306() {
 }
 
 
-
+#endif
 #endif

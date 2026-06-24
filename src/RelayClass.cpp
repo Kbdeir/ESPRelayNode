@@ -355,6 +355,7 @@ bool Relay::savePersistedrelay(){
       return false;
     }
   configFile.println("\n");
+  configFile.flush();
   configFile.close();
 
   return true;

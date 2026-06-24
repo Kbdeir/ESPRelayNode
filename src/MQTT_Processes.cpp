@@ -236,11 +236,11 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
 }
 
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
-  Serial.print(F("[MQTT   ] Subscribe ack"));
+  Serial.print(F("\n[MQTT   ] Subscribe ack"));
   Serial.print(F("  packetId: "));
   Serial.print(packetId);
   Serial.print(F("  qos: "));
-  Serial.println(qos);
+  Serial.print(qos);
 }
 
 void onMqttUnsubscribe(uint16_t packetId) {

@@ -1,4 +1,5 @@
 #ifdef ESP32
+#ifdef WaterFlowSensor
 
 #include "Arduino.h"
 #include "WaterFlowSensor.h"
@@ -17,21 +18,22 @@ void saveDefaultWFSConfig(){
   json["wfs_Topic"]="FlowRate";
   json["wfs_Cal"]="4.5";
 
-  File configFile = SPIFFS.open("/WaterFlowSensorConfig.json", "w");
+  File configFile = SPIFFS.open("/WaterFlowSensorConfig.json", "w",true);
   if (!configFile) {
     Serial.println(F("[INFO   ] Failed to write default WaterFlowSensorConfig config file"));
+    exit;
 
   }
 
   if (serializeJsonPretty(json, configFile) == 0) {
     Serial.println(F("[INFO   ] Failed to write to WaterFlowSensorConfig.json"));
-    configFile.close();
-  
   }
     configFile.println("\n\n");
+    configFile.flush();
     configFile.close();
 
 }
+
 
 void loadconfigWFS(char* filename){
   Serial.println(F("[INFO  TP] opening /WaterFlowSensorConfig.json file - 0"));
@@ -40,7 +42,7 @@ void loadconfigWFS(char* filename){
     saveDefaultWFSConfig();
   }
 
-  Serial.println(F("[INFO  TP] opening /WaterFlowSensorConfig.json file - 1"));
+  Serial.println(F("[INFO  TP] opening WaterFlowSensorConfig.json file - 1"));
   File configFile = SPIFFS.open(filename, "r");
   if (!configFile) {
     Serial.println(F("\n[INFO   ] Failed to open WaterFlowSensorConfig file"));
@@ -66,7 +68,6 @@ void loadconfigWFS(char* filename){
   WaterFlowSensor_Topic = (json["wfs_Topic"].as<String>()!="") ? json["wfs_Topic"].as<String>() : "FlowRate";
   calibrationFactor = (json["wfs_Cal"].as<String>()!="") ? json["wfs_Cal"].as<float>() : 4.5;
  
-  configFile.flush();
   configFile.close();
 
 };
@@ -102,7 +103,7 @@ void saveconfigWFS(AsyncWebServerRequest *request){
 
 
 
-
+#endif
 #endif
 
 
