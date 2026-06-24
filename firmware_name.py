@@ -1,5 +1,5 @@
 Import("env")
-import re, os, shutil
+import re, os, shutil, atexit
 
 def get_active_profile(defines_path):
     try:
@@ -16,19 +16,18 @@ defines_h = os.path.join(env.get("PROJECT_SRC_DIR", "src"), "defines.h")
 profile = get_active_profile(defines_h)
 
 if profile:
-    def copy_bin(source, target, env):
-        build_dir = env.subst("$BUILD_DIR")
+    build_dir = env.subst("$BUILD_DIR")
+
+    def copy_bin_at_exit():
         src = os.path.join(build_dir, "firmware.bin")
         dst = os.path.join(build_dir, f"firmware-{profile}.bin")
         if os.path.exists(src):
             shutil.copy2(src, dst)
-            print(f"[firmware_name] Created: firmware-{profile}.bin")
+            print(f"[firmware_name] Created: {dst}")
         else:
-            print(f"[firmware_name] Warning: {src} not found")
+            print(f"[firmware_name] {src} not found, skipping")
 
-    # env.subst() resolves $BUILD_DIR to the real path so SCons can match the target
-    firmware_bin = env.subst("$BUILD_DIR/firmware.bin")
-    env.AddPostAction(firmware_bin, copy_bin)
-    print(f"[firmware_name] Post-build: will copy to firmware-{profile}.bin")
+    atexit.register(copy_bin_at_exit)
+    print(f"[firmware_name] Will produce firmware-{profile}.bin after build")
 else:
     print("[firmware_name] Warning: no active PROFILE_xxx found in defines.h")
